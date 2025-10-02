@@ -13,7 +13,7 @@ import java.sql.Timestamp;
 public class Payroll {
 
     private int payrollId;
-    private int empId;
+    private Employee employee;
     private double totalWorkDay;
     private double totalWorkHours;
     private double si;
@@ -29,11 +29,11 @@ public class Payroll {
     public Payroll() {
     }
 
-    public Payroll(int payrollId, int empId, double totalWorkDay, double totalWorkHours, double si,
+    public Payroll(int payrollId, Employee employee, double totalWorkDay, double totalWorkHours, double si,
             double hi, double ui, double tax, double totalSalary,
             Timestamp updatedAt, int month, int year, Timestamp createdAt) {
         this.payrollId = payrollId;
-        this.empId = empId;
+        this.employee = employee;
         this.totalWorkDay = totalWorkDay;
         this.totalWorkHours = totalWorkHours;
         this.si = si;
@@ -55,12 +55,12 @@ public class Payroll {
         this.payrollId = payrollId;
     }
 
-    public int getEmpId() {
-        return empId;
+    public Employee getEmpId() {
+        return employee;
     }
 
-    public void setEmpId(int empId) {
-        this.empId = empId;
+    public void setEmpId(Employee empId) {
+        this.employee = empId;
     }
 
     public double getTotalWorkDay() {
