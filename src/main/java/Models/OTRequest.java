@@ -18,8 +18,8 @@ public class OTRequest {
     private Date date;
     private double otHours;
     private Integer approvedBy;   // can be null
-    private Timestamp approvedAt; // can be null
-    private String status;       // Pending, Approved, Rejected
+    private Timestamp approvedAt; 
+    private String status;       
     private Timestamp createdAt;
 
     public OTRequest() {
