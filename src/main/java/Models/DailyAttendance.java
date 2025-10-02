@@ -15,7 +15,7 @@ import java.sql.Timestamp;
 public class DailyAttendance {
 
     private int id;
-    private int empId;
+    private Employee employee;
     private Date date;
     private double workDay;      // DECIMAL(3,2)
     private Time checkInTime;
@@ -29,10 +29,10 @@ public class DailyAttendance {
     public DailyAttendance() {
     }
 
-    public DailyAttendance(int id, int empId, Date date, double workDay, Time checkInTime, Time checkOutTime,
+    public DailyAttendance(int id, Employee emp, Date date, double workDay, Time checkInTime, Time checkOutTime,
             double otHours, String status, boolean isLocked, Timestamp createdAt) {
         this.id = id;
-        this.empId = empId;
+        this.employee = emp;
         this.date = date;
         this.workDay = workDay;
         this.checkInTime = checkInTime;
@@ -51,12 +51,12 @@ public class DailyAttendance {
         this.id = id;
     }
 
-    public int getEmpId() {
-        return empId;
+    public Employee getEmpId() {
+        return employee;
     }
 
-    public void setEmpId(int empId) {
-        this.empId = empId;
+    public void setEmpId(Employee employee) {
+        this.employee = employee;
     }
 
     public Date getDate() {

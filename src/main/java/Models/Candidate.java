@@ -15,19 +15,19 @@ public class Candidate {
     private String email;
     private String phone;
     private String cv;
-    private int postId;
+    private RecruitmentPost post;
     private Timestamp appliedAt;
 
     public Candidate() {
     }
 
-    public Candidate(int candidateId, String name, String email, String phone, String cv, int postId, Timestamp appliedAt) {
+    public Candidate(int candidateId, String name, String email, String phone, String cv, RecruitmentPost post, Timestamp appliedAt) {
         this.candidateId = candidateId;
         this.name = name;
         this.email = email;
         this.phone = phone;
         this.cv = cv;
-        this.postId = postId;
+        this.post = post;
         this.appliedAt = appliedAt;
     }
 
@@ -71,12 +71,12 @@ public class Candidate {
         this.cv = cv;
     }
 
-    public int getPostId() {
-        return postId;
+    public RecruitmentPost getPostId() {
+        return post;
     }
 
-    public void setPostId(int postId) {
-        this.postId = postId;
+    public void setPostId(RecruitmentPost post) {
+        this.post = post;
     }
 
     public Timestamp getAppliedAt() {
