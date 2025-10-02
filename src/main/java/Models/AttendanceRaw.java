@@ -13,7 +13,7 @@ import java.sql.Time;
  */
 public class AttendanceRaw {
     private int id;
-    private int empId;
+    private Employee employee;
     private Date date;
     private Time checkTime;
     private String checkType; // "IN" or "OUT"
@@ -21,9 +21,9 @@ public class AttendanceRaw {
     public AttendanceRaw() {
     }
 
-    public AttendanceRaw(int id, int empId, Date date, Time checkTime, String checkType) {
+    public AttendanceRaw(int id, Employee emp, Date date, Time checkTime, String checkType) {
         this.id = id;
-        this.empId = empId;
+        this.employee = emp;
         this.date = date;
         this.checkTime = checkTime;
         this.checkType = checkType;
@@ -37,12 +37,12 @@ public class AttendanceRaw {
         this.id = id;
     }
 
-    public int getEmpId() {
-        return empId;
+    public Employee getEmpId() {
+        return employee;
     }
 
-    public void setEmpId(int empId) {
-        this.empId = empId;
+    public void setEmpId(Employee emp) {
+        this.employee = emp;
     }
 
     public Date getDate() {

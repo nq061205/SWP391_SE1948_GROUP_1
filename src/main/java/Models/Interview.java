@@ -15,9 +15,9 @@ import java.sql.Timestamp;
 public class Interview {
 
     private int interviewId;
-    private int candidateId;
-    private Integer createdBy;
-    private Integer interviewedBy;
+    private Employee candidate;
+    private Employee createdBy;
+    private Employee interviewedBy;
     private Date date;
     private Time time;
     private String result; // Pending, Pass, Fail
@@ -27,10 +27,10 @@ public class Interview {
     public Interview() {
     }
 
-    public Interview(int interviewId, int candidateId, Integer createBy, Integer interviewBy, Date date,
+    public Interview(int interviewId, Employee candidate, Employee createBy, Employee interviewBy, Date date,
             Time time, String result, Timestamp createdAt, Timestamp updateAt) {
         this.interviewId = interviewId;
-        this.candidateId = candidateId;
+        this.candidate = candidate;
         this.createdBy = createBy;
         this.interviewedBy = interviewBy;
         this.date = date;
@@ -48,27 +48,27 @@ public class Interview {
         this.interviewId = interviewId;
     }
 
-    public int getCandidateId() {
-        return candidateId;
+    public Employee getCandidateId() {
+        return candidate;
     }
 
-    public void setCandidateId(int candidateId) {
-        this.candidateId = candidateId;
+    public void setCandidateId(Employee candidate) {
+        this.candidate = candidate;
     }
 
-    public Integer getCreatedBy() {
+    public Employee getCreatedBy() {
         return createdBy;
     }
 
-    public void setCreatedBy(Integer createBy) {
+    public void setCreatedBy(Employee createBy) {
         this.createdBy = createBy;
     }
 
-    public Integer getInterviewedBy() {
+    public Employee getInterviewedBy() {
         return interviewedBy;
     }
 
-    public void setInterviewedBy(Integer interviewBy) {
+    public void setInterviewedBy(Employee interviewBy) {
         this.interviewedBy = interviewBy;
     }
 

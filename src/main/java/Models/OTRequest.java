@@ -14,20 +14,20 @@ import java.sql.Timestamp;
 public class OTRequest {
 
     private int otId;
-    private int empId;
+    private Employee employee;
     private Date date;
     private double otHours;
-    private Integer approvedBy;   // can be null
-    private Timestamp approvedAt; 
-    private String status;       
+    private Employee approvedBy;   // can be null
+    private Timestamp approvedAt; // can be null
+    private String status;       // Pending, Approved, Rejected
     private Timestamp createdAt;
 
     public OTRequest() {
     }
 
-    public OTRequest(int otId, int empId, Date date, double otHours, Integer approvedBy, Timestamp approvedAt, String status, Timestamp createdAt) {
+    public OTRequest(int otId, Employee emp, Date date, double otHours, Employee approvedBy, Timestamp approvedAt, String status, Timestamp createdAt) {
         this.otId = otId;
-        this.empId = empId;
+        this.employee = emp;
         this.date = date;
         this.otHours = otHours;
         this.approvedBy = approvedBy;
@@ -44,12 +44,12 @@ public class OTRequest {
         this.otId = otId;
     }
 
-    public int getEmpId() {
-        return empId;
+    public Employee getEmpId() {
+        return employee;
     }
 
-    public void setEmpId(int empId) {
-        this.empId = empId;
+    public void setEmpId(Employee empId) {
+        this.employee = empId;
     }
 
     public Date getDate() {
@@ -68,11 +68,11 @@ public class OTRequest {
         this.otHours = otHours;
     }
 
-    public Integer getApprovedBy() {
+    public Employee getApprovedBy() {
         return approvedBy;
     }
 
-    public void setApprovedBy(Integer approvedBy) {
+    public void setApprovedBy(Employee approvedBy) {
         this.approvedBy = approvedBy;
     }
 

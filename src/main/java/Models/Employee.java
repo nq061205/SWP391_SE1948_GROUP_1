@@ -21,14 +21,14 @@ public class Employee {
     private String positionTitle;
     private String image;
     private int dependantCount;
-    private String depId;
+    private Department dept;
     private Integer roleId;
 
     public Employee() {
     }
 
     public Employee(int empId, String empCode, String fullname, String email, String password, boolean gender, Date dob,
-            String phone, String positionTitle, String image, int dependantCount, String depId, Integer roleId) {
+            String phone, String positionTitle, String image, int dependantCount, Department dept, Integer roleId) {
         this.empId = empId;
         this.empCode = empCode;
         this.fullname = fullname;
@@ -40,7 +40,7 @@ public class Employee {
         this.positionTitle = positionTitle;
         this.image = image;
         this.dependantCount = dependantCount;
-        this.depId = depId;
+        this.dept = dept;
         this.roleId = roleId;
     }
 
@@ -132,12 +132,12 @@ public class Employee {
         this.dependantCount = dependantCount;
     }
 
-    public String getDepId() {
-        return depId;
+    public Department getDept() {
+        return dept;
     }
 
-    public void setDepId(String depId) {
-        this.depId = depId;
+    public void setDepId(Department dept) {
+        this.dept = dept;
     }
 
     public Integer getRoleId() {
