@@ -14,7 +14,7 @@ import java.sql.Timestamp;
 public class Contract {
 
     private int contractId;
-    private int empId;
+    private Employee employee;
     private String type;        // Internship, Probation, Fixed-term, Permanent, Seasonal, Other
     private Date startDate;
     private Date endDate;
@@ -24,9 +24,9 @@ public class Contract {
     public Contract() {
     }
 
-    public Contract(int contractId, int empId, String type, Date startDate, Date endDate, Timestamp createdAt, String contractImg) {
+    public Contract(int contractId, Employee emp, String type, Date startDate, Date endDate, Timestamp createdAt, String contractImg) {
         this.contractId = contractId;
-        this.empId = empId;
+        this.employee = emp;
         this.type = type;
         this.startDate = startDate;
         this.endDate = endDate;
@@ -42,12 +42,12 @@ public class Contract {
         this.contractId = contractId;
     }
 
-    public int getEmpId() {
-        return empId;
+    public Employee getEmpId() {
+        return employee;
     }
 
-    public void setEmpId(int empId) {
-        this.empId = empId;
+    public void setEmpId(Employee emp) {
+        this.employee = emp;
     }
 
     public String getType() {

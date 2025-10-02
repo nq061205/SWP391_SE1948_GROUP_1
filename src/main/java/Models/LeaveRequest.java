@@ -14,13 +14,13 @@ import java.sql.Timestamp;
 public class LeaveRequest {
 
     private int leaveId;
-    private int empId;
+    private Employee employee;
     private String leaveType;   // Annual Leave, Sick, Unpaid, Maternity, Other
     private String reason;
     private double dayRequested;
     private Date startDate;
     private Date endDate;
-    private Integer approvedBy;
+    private Employee approvedBy;
     private Timestamp approvedAt;
     private String status;      // Pending, Approved, Rejected
     private String note;
@@ -29,11 +29,11 @@ public class LeaveRequest {
     public LeaveRequest() {
     }
 
-    public LeaveRequest(int leaveId, int empId, String leaveType, String reason, double dayRequested,
-            Date startDate, Date endDate, Integer approveBy, Timestamp approveAt,
+    public LeaveRequest(int leaveId, Employee emp, String leaveType, String reason, double dayRequested,
+            Date startDate, Date endDate, Employee approveBy, Timestamp approveAt,
             String status, String note, Timestamp createdAt) {
         this.leaveId = leaveId;
-        this.empId = empId;
+        this.employee = emp;
         this.leaveType = leaveType;
         this.reason = reason;
         this.dayRequested = dayRequested;
@@ -54,12 +54,12 @@ public class LeaveRequest {
         this.leaveId = leaveId;
     }
 
-    public int getEmpId() {
-        return empId;
+    public Employee getEmpId() {
+        return employee;
     }
 
-    public void setEmpId(int empId) {
-        this.empId = empId;
+    public void setEmpId(Employee emp) {
+        this.employee = emp;
     }
 
     public String getLeaveType() {
@@ -102,11 +102,11 @@ public class LeaveRequest {
         this.endDate = endDate;
     }
 
-    public Integer getApprovedBy() {
+    public Employee getApprovedBy() {
         return approvedBy;
     }
 
-    public void setApprovedBy(Integer approveBy) {
+    public void setApprovedBy(Employee approveBy) {
         this.approvedBy = approveBy;
     }
 

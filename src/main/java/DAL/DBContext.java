@@ -5,7 +5,7 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 
 public class DBContext {
-    private static String url = "jdbc:mysql://localhost:3306/test?useSSL=false&serverTimezone=UTC";
+    private static String url = "jdbc:mysql://localhost:3306/hrm?useSSL=false&serverTimezone=UTC";
     private static String user = "root";
     private static String pass = "Lecamtu2005!";
 
