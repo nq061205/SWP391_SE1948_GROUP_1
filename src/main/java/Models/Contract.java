@@ -89,4 +89,9 @@ public class Contract {
     public void setContractImg(String contractImg) {
         this.contractImg = contractImg;
     }
+
+    @Override
+    public String toString() {
+        return "Contract{" + "contractId=" + contractId + ", employee=" + employee + ", type=" + type + ", startDate=" + startDate + ", endDate=" + endDate + ", createdAt=" + createdAt + ", contractImg=" + contractImg + '}';
+    }
 }

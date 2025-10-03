@@ -86,4 +86,9 @@ public class Candidate {
     public void setAppliedAt(Timestamp appliedAt) {
         this.appliedAt = appliedAt;
     }
+
+    @Override
+    public String toString() {
+        return "Candidate{" + "candidateId=" + candidateId + ", name=" + name + ", email=" + email + ", phone=" + phone + ", cv=" + cv + ", post=" + post + ", appliedAt=" + appliedAt + '}';
+    }
 }

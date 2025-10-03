@@ -141,4 +141,11 @@ public class LeaveRequest {
     public void setCreatedAt(Timestamp createdAt) {
         this.createdAt = createdAt;
     }
+
+    @Override
+    public String toString() {
+        return "LeaveRequest{" + "leaveId=" + leaveId + ", employee=" + employee + ", leaveType=" + leaveType + ", reason=" + reason + ", dayRequested=" + dayRequested + ", startDate=" + startDate + ", endDate=" + endDate + ", approvedBy=" + approvedBy + ", approvedAt=" + approvedAt + ", status=" + status + ", note=" + note + ", createdAt=" + createdAt + '}';
+    }
+    
+    
 }

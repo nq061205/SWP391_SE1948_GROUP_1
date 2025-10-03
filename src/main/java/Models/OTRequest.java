@@ -99,4 +99,11 @@ public class OTRequest {
     public void setCreatedAt(Timestamp createdAt) {
         this.createdAt = createdAt;
     }
+
+    @Override
+    public String toString() {
+        return "OTRequest{" + "otId=" + otId + ", employee=" + employee + ", date=" + date + ", otHours=" + otHours + ", approvedBy=" + approvedBy + ", approvedAt=" + approvedAt + ", status=" + status + ", createdAt=" + createdAt + '}';
+    }
+    
+    
 }

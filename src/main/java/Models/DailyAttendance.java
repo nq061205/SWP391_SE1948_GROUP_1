@@ -130,4 +130,9 @@ public class DailyAttendance {
     public void setUpdatedAt(Timestamp updatedAt) {
         this.updatedAt = updatedAt;
     }
+
+    @Override
+    public String toString() {
+        return "DailyAttendance{" + "id=" + id + ", employee=" + employee + ", date=" + date + ", workDay=" + workDay + ", checkInTime=" + checkInTime + ", checkOutTime=" + checkOutTime + ", otHours=" + otHours + ", status=" + status + ", isLocked=" + isLocked + ", createdAt=" + createdAt + ", updatedAt=" + updatedAt + '}';
+    }
 }
