@@ -91,4 +91,6 @@ public class Candidate {
     public String toString() {
         return "Candidate{" + "candidateId=" + candidateId + ", name=" + name + ", email=" + email + ", phone=" + phone + ", cv=" + cv + ", post=" + post + ", appliedAt=" + appliedAt + '}';
     }
+
+   
 }

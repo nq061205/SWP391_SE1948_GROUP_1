@@ -21,19 +21,21 @@ public class OTRequest {
     private Timestamp approvedAt; // can be null
     private String status;       // Pending, Approved, Rejected
     private Timestamp createdAt;
+    private Timestamp updatedAt;
 
     public OTRequest() {
     }
 
-    public OTRequest(int otId, Employee emp, Date date, double otHours, Employee approvedBy, Timestamp approvedAt, String status, Timestamp createdAt) {
+    public OTRequest(int otId, Employee employee, Date date, double otHours, Employee approvedBy, Timestamp approvedAt, String status, Timestamp createdAt, Timestamp updatedAt) {
         this.otId = otId;
-        this.employee = emp;
+        this.employee = employee;
         this.date = date;
         this.otHours = otHours;
         this.approvedBy = approvedBy;
         this.approvedAt = approvedAt;
         this.status = status;
         this.createdAt = createdAt;
+        this.updatedAt = updatedAt;
     }
 
     public int getOtId() {
@@ -100,9 +102,25 @@ public class OTRequest {
         this.createdAt = createdAt;
     }
 
+    public Employee getEmployee() {
+        return employee;
+    }
+
+    public void setEmployee(Employee employee) {
+        this.employee = employee;
+    }
+
+    public Timestamp getUpdatedAt() {
+        return updatedAt;
+    }
+
+    public void setUpdatedAt(Timestamp updatedAt) {
+        this.updatedAt = updatedAt;
+    }
+
     @Override
     public String toString() {
-        return "OTRequest{" + "otId=" + otId + ", employee=" + employee + ", date=" + date + ", otHours=" + otHours + ", approvedBy=" + approvedBy + ", approvedAt=" + approvedAt + ", status=" + status + ", createdAt=" + createdAt + '}';
+        return "OTRequest{" + "otId=" + otId + ", employee=" + employee + ", date=" + date + ", otHours=" + otHours + ", approvedBy=" + approvedBy + ", approvedAt=" + approvedAt + ", status=" + status + ", createdAt=" + createdAt + ", updatedAt=" + updatedAt + '}';
     }
     
     
