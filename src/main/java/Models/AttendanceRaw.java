@@ -68,5 +68,10 @@ public class AttendanceRaw {
     public void setCheckType(String checkType) {
         this.checkType = checkType;
     }
+
+    @Override
+    public String toString() {
+        return "AttendanceRaw{" + "id=" + id + ", employee=" + employee + ", date=" + date + ", checkTime=" + checkTime + ", checkType=" + checkType + '}';
+    }
 }
 

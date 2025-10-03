@@ -150,4 +150,10 @@ public class Payroll {
     public void setCreatedAt(Timestamp createdAt) {
         this.createdAt = createdAt;
     }
+
+    @Override
+    public String toString() {
+        return "Payroll{" + "payrollId=" + payrollId + ", employee=" + employee + ", totalWorkDay=" + totalWorkDay + ", totalWorkHours=" + totalWorkHours + ", si=" + si + ", hi=" + hi + ", ui=" + ui + ", tax=" + tax + ", totalSalary=" + totalSalary + ", updatedAt=" + updatedAt + ", month=" + month + ", year=" + year + ", createdAt=" + createdAt + '}';
+    }
+    
 }

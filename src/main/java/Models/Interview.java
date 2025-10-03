@@ -112,4 +112,9 @@ public class Interview {
         this.updatedAt = updatedAt;
     }
 
+    @Override
+    public String toString() {
+        return "Interview{" + "interviewId=" + interviewId + ", candidate=" + candidate + ", createdBy=" + createdBy + ", interviewedBy=" + interviewedBy + ", date=" + date + ", time=" + time + ", result=" + result + ", createdAt=" + createdAt + ", updatedAt=" + updatedAt + '}';
+    }
+
 }

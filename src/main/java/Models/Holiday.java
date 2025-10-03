@@ -79,4 +79,10 @@ public class Holiday {
     public void setCreatedAt(Timestamp createdAt) {
         this.createdAt = createdAt;
     }
+
+    @Override
+    public String toString() {
+        return "Holiday{" + "holidayId=" + holidayId + ", date=" + date + ", name=" + name + ", updatedAt=" + updatedAt + ", source=" + source + ", createdAt=" + createdAt + '}';
+    }
+    
 }

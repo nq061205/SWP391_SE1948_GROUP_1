@@ -107,4 +107,10 @@ public class RecruitmentPost {
     public void setApprovedAt(Timestamp approveAt) {
         this.approvedAt = approveAt;
     }
+
+    @Override
+    public String toString() {
+        return "RecruitmentPost{" + "postId=" + postId + ", title=" + title + ", content=" + content + ", status=" + status + ", isDelete=" + isDelete + ", createdBy=" + createdBy + ", approvedBy=" + approvedBy + ", department=" + department + ", approvedAt=" + approvedAt + '}';
+    }
+    
 }
