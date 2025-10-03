@@ -99,4 +99,10 @@ public class Salary {
     public void setActive(boolean active) {
         isActive = active;
     }
+
+    @Override
+    public String toString() {
+        return "Salary{" + "salaryId=" + salaryId + ", employee=" + employee + ", baseSalary=" + baseSalary + ", allowance=" + allowance + ", startDate=" + startDate + ", endDate=" + endDate + ", createdAt=" + createdAt + ", isActive=" + isActive + '}';
+    }
+    
 }

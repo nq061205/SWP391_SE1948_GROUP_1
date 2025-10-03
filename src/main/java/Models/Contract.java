@@ -18,20 +18,20 @@ public class Contract {
     private String type;        // Internship, Probation, Fixed-term, Permanent, Seasonal, Other
     private Date startDate;
     private Date endDate;
-    private Timestamp createdAt;
     private String contractImg;
+    private Timestamp createdAt;
 
     public Contract() {
     }
 
-    public Contract(int contractId, Employee emp, String type, Date startDate, Date endDate, Timestamp createdAt, String contractImg) {
+    public Contract(int contractId, Employee employee, String type, Date startDate, Date endDate, String contractImg, Timestamp createdAt) {
         this.contractId = contractId;
-        this.employee = emp;
+        this.employee = employee;
         this.type = type;
         this.startDate = startDate;
         this.endDate = endDate;
-        this.createdAt = createdAt;
         this.contractImg = contractImg;
+        this.createdAt = createdAt;
     }
 
     public int getContractId() {
@@ -42,12 +42,12 @@ public class Contract {
         this.contractId = contractId;
     }
 
-    public Employee getEmpId() {
+    public Employee getEmployee() {
         return employee;
     }
 
-    public void setEmpId(Employee emp) {
-        this.employee = emp;
+    public void setEmployee(Employee employee) {
+        this.employee = employee;
     }
 
     public String getType() {
@@ -89,4 +89,10 @@ public class Contract {
     public void setContractImg(String contractImg) {
         this.contractImg = contractImg;
     }
+
+    @Override
+    public String toString() {
+        return "Contract{" + "contractId=" + contractId + ", employee=" + employee + ", type=" + type + ", startDate=" + startDate + ", endDate=" + endDate + ", createdAt=" + createdAt + ", contractImg=" + contractImg + '}';
+    }
+    
 }

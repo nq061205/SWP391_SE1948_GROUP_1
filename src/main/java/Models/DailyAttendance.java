@@ -29,10 +29,9 @@ public class DailyAttendance {
     public DailyAttendance() {
     }
 
-    public DailyAttendance(int id, Employee emp, Date date, double workDay, Time checkInTime, Time checkOutTime,
-            double otHours, String status, boolean isLocked, Timestamp createdAt) {
+    public DailyAttendance(int id, Employee employee, Date date, double workDay, Time checkInTime, Time checkOutTime, double otHours, String status, boolean isLocked, Timestamp createdAt, Timestamp updatedAt) {
         this.id = id;
-        this.employee = emp;
+        this.employee = employee;
         this.date = date;
         this.workDay = workDay;
         this.checkInTime = checkInTime;
@@ -41,6 +40,23 @@ public class DailyAttendance {
         this.status = status;
         this.isLocked = isLocked;
         this.createdAt = createdAt;
+        this.updatedAt = updatedAt;
+    }
+
+    public Employee getEmployee() {
+        return employee;
+    }
+
+    public void setEmployee(Employee employee) {
+        this.employee = employee;
+    }
+
+    public boolean isLocked() {
+        return isLocked;
+    }
+
+    public void setLocked(boolean isLocked) {
+        this.isLocked = isLocked;
     }
 
     public int getId() {
@@ -49,14 +65,6 @@ public class DailyAttendance {
 
     public void setId(int id) {
         this.id = id;
-    }
-
-    public Employee getEmpId() {
-        return employee;
-    }
-
-    public void setEmpId(Employee employee) {
-        this.employee = employee;
     }
 
     public Date getDate() {
@@ -107,14 +115,6 @@ public class DailyAttendance {
         this.status = status;
     }
 
-    public boolean isLocked() {
-        return isLocked;
-    }
-
-    public void setLocked(boolean locked) {
-        isLocked = locked;
-    }
-
     public Timestamp getCreatedAt() {
         return createdAt;
     }
@@ -130,4 +130,11 @@ public class DailyAttendance {
     public void setUpdatedAt(Timestamp updatedAt) {
         this.updatedAt = updatedAt;
     }
+
+    @Override
+    public String toString() {
+        return "DailyAttendance{" + "id=" + id + ", employee=" + employee + ", date=" + date + ", workDay=" + workDay + ", checkInTime=" + checkInTime + ", checkOutTime=" + checkOutTime + ", otHours=" + otHours + ", status=" + status + ", isLocked=" + isLocked + ", createdAt=" + createdAt + ", updatedAt=" + updatedAt + '}';
+    }
+    
+    
 }
