@@ -29,7 +29,7 @@
         <link rel="shortcut icon" type="image/x-icon" href="${pageContext.request.contextPath}/assets1/images/favicon.png" />
 
         <!-- PAGE TITLE HERE ============================================= -->
-        <title>EduChamp : Education HTML Template </title>
+        <title>Human Tech - HomePage</title>
 
         <!-- MOBILE SPECIFIC ============================================= -->
         <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -134,7 +134,7 @@
                                          data-paddingbottom="[10,10,10,10]"
                                          data-paddingleft="[0,0,0,0]"
                                          style="z-index: 6; font-family:rubik; font-weight:700; text-align:center; white-space: normal;">
-                                        Welcome To University
+                                        Welcome To Human Tech
                                     </div>
 
                                     <!-- LAYER NR. 3 -->
@@ -156,7 +156,7 @@
                                          data-paddingbottom="[0,0,0,0]"
                                          data-paddingleft="[0,0,0,0]"
                                          style="z-index: 7; white-space: nowrap; color:#fff; font-family:rubik; font-size:18px; font-weight:400;">
-                                        Batter Education For A Better 
+                                        Make Dreams View 
                                     </div>
 
                                     <!-- LAYER NR. 3 -->
@@ -178,7 +178,7 @@
                                          data-paddingbottom="[0,0,0,0]"
                                          data-paddingleft="[0,0,0,0]"
                                          style="z-index: 7; text-transform:capitalize; white-space: unset; color:#fff; font-family:rubik; font-size:18px; line-height:28px; font-weight:400;">
-                                        Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the
+                                        A professional IT solutions company committed to providing innovative products and reliable services for businesses and communities.
                                     </div>
                                     <!-- LAYER NR. 4 -->
                                     <div class="tp-caption Newspaper-Button rev-btn " 
@@ -292,7 +292,7 @@
                                          data-paddingbottom="[10,10,10,10]"
                                          data-paddingleft="[0,0,0,0]"
                                          style="z-index: 6; font-family:rubik; font-weight:700; text-align:center; white-space: normal;text-transform:uppercase;">
-                                        Welcome To University
+                                        Welcome To Human Tech
                                     </div>
 
                                     <!-- LAYER NR. 3 -->
@@ -314,7 +314,7 @@
                                          data-paddingbottom="[0,0,0,0]"
                                          data-paddingleft="[0,0,0,0]"
                                          style="z-index: 7; white-space: nowrap;text-transform:uppercase; color:#fff; font-family:rubik; font-size:18px; font-weight:400;">
-                                        Batter Education For A Better 
+                                        Make Dreams View 
                                     </div>
 
                                     <!-- LAYER NR. 3 -->
@@ -336,7 +336,7 @@
                                          data-paddingbottom="[0,0,0,0]"
                                          data-paddingleft="[0,0,0,0]"
                                          style="z-index: 7; text-transform:capitalize; white-space: unset; color:#fff; font-family:rubik; font-size:18px; line-height:28px; font-weight:400;">
-                                        Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the
+                                        A professional IT solutions company committed to providing innovative products and reliable services for businesses and communities.
                                     </div>
                                     <!-- LAYER NR. 4 -->
                                     <div class="tp-caption Newspaper-Button rev-btn " 
@@ -399,8 +399,8 @@
                                             <div class="feature-box-sm radius bg-white">
                                                 <i class="fa fa-bank text-primary"></i>
                                             </div>
-                                            <h4><a href="#">Best Industry Leaders</a></h4>
-                                            <a href="#" class="btn radius-xl">View More</a>
+                                            <h4><a href="javascript:;">Best Industry Leaders</a></h4>
+                                            <a href="javascript:;" class="btn radius-xl">View More</a>
                                         </div>
                                     </div>
                                 </div>
@@ -413,8 +413,8 @@
                                             <div class="feature-box-sm radius bg-white">
                                                 <i class="fa fa-book text-primary"></i>
                                             </div>
-                                            <h4><a href="#">Learn Courses Online</a></h4>
-                                            <a href="#" class="btn radius-xl">View More</a>
+                                            <h4><a href="javascript:;">Learn Courses Online</a></h4>
+                                            <a href="javascript:;" class="btn radius-xl">View More</a>
                                         </div>
                                     </div>
                                 </div>
@@ -427,8 +427,8 @@
                                             <div class="feature-box-sm radius bg-white">
                                                 <i class="fa fa-file-text-o text-primary"></i>
                                             </div>
-                                            <h4><a href="#">Book Library & Store</a></h4>
-                                            <a href="#" class="btn radius-xl">View More</a>
+                                            <h4><a href="javascript:;">Book Library & Store</a></h4>
+                                            <a href="javascript:;" class="btn radius-xl">View More</a>
                                         </div>
                                     </div>
                                 </div>
