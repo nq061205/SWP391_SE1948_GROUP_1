@@ -1,0 +1,29 @@
+# -----------------------------
+# Maven / Java
+# -----------------------------
+/target/                   
+*.class                    
+*.jar
+*.war
+*.ear
+
+*.log
+
+# IDE NetBeans
+/nbproject/private/         
+/nbbuild/
+/dist/
+/nbdist/
+/.nb-gradle/
+
+# IDE IntelliJ 
+.idea/
+*.iml
+*.iws
+/out/
+
+# Mac / Windows
+.DS_Store
+Thumbs.db
+
+src/main/resources/config.properties
