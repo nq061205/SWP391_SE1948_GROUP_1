@@ -21,17 +21,15 @@ public class Payroll {
     private double ui;
     private double tax;
     private double totalSalary;
-    private Timestamp updatedAt;
     private int month;
     private int year;
     private Timestamp createdAt;
+    private Timestamp updatedAt;
 
     public Payroll() {
     }
 
-    public Payroll(int payrollId, Employee employee, double totalWorkDay, double totalWorkHours, double si,
-            double hi, double ui, double tax, double totalSalary,
-            Timestamp updatedAt, int month, int year, Timestamp createdAt) {
+    public Payroll(int payrollId, Employee employee, double totalWorkDay, double totalWorkHours, double si, double hi, double ui, double tax, double totalSalary, int month, int year, Timestamp createdAt, Timestamp updatedAt) {
         this.payrollId = payrollId;
         this.employee = employee;
         this.totalWorkDay = totalWorkDay;
@@ -41,10 +39,10 @@ public class Payroll {
         this.ui = ui;
         this.tax = tax;
         this.totalSalary = totalSalary;
-        this.updatedAt = updatedAt;
         this.month = month;
         this.year = year;
         this.createdAt = createdAt;
+        this.updatedAt = updatedAt;
     }
 
     public int getPayrollId() {
@@ -53,14 +51,6 @@ public class Payroll {
 
     public void setPayrollId(int payrollId) {
         this.payrollId = payrollId;
-    }
-
-    public Employee getEmpId() {
-        return employee;
-    }
-
-    public void setEmpId(Employee empId) {
-        this.employee = empId;
     }
 
     public double getTotalWorkDay() {
@@ -150,4 +140,18 @@ public class Payroll {
     public void setCreatedAt(Timestamp createdAt) {
         this.createdAt = createdAt;
     }
+
+    public Employee getEmployee() {
+        return employee;
+    }
+
+    public void setEmployee(Employee employee) {
+        this.employee = employee;
+    }
+
+    @Override
+    public String toString() {
+        return "Payroll{" + "payrollId=" + payrollId + ", employee=" + employee + ", totalWorkDay=" + totalWorkDay + ", totalWorkHours=" + totalWorkHours + ", si=" + si + ", hi=" + hi + ", ui=" + ui + ", tax=" + tax + ", totalSalary=" + totalSalary + ", month=" + month + ", year=" + year + ", createdAt=" + createdAt + ", updatedAt=" + updatedAt + '}';
+    }
+    
 }

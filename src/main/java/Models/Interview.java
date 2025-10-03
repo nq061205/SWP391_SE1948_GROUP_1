@@ -28,7 +28,7 @@ public class Interview {
     }
 
     public Interview(int interviewId, Employee candidate, Employee createBy, Employee interviewBy, Date date,
-            Time time, String result, Timestamp createdAt, Timestamp updateAt) {
+            Time time, String result, Timestamp createdAt, Timestamp updatedAt) {
         this.interviewId = interviewId;
         this.candidate = candidate;
         this.createdBy = createBy;
@@ -37,7 +37,7 @@ public class Interview {
         this.time = time;
         this.result = result;
         this.createdAt = createdAt;
-        this.updatedAt = updateAt;
+        this.updatedAt = updatedAt;
     }
 
     public int getInterviewId() {
@@ -46,14 +46,6 @@ public class Interview {
 
     public void setInterviewId(int interviewId) {
         this.interviewId = interviewId;
-    }
-
-    public Employee getCandidateId() {
-        return candidate;
-    }
-
-    public void setCandidateId(Employee candidate) {
-        this.candidate = candidate;
     }
 
     public Employee getCreatedBy() {
@@ -110,6 +102,19 @@ public class Interview {
 
     public void setUpdatedAt(Timestamp updatedAt) {
         this.updatedAt = updatedAt;
+    }
+
+    public Employee getCandidate() {
+        return candidate;
+    }
+
+    public void setCandidate(Employee candidate) {
+        this.candidate = candidate;
+    }
+
+    @Override
+    public String toString() {
+        return "Interview{" + "interviewId=" + interviewId + ", candidate=" + candidate + ", createdBy=" + createdBy + ", interviewedBy=" + interviewedBy + ", date=" + date + ", time=" + time + ", result=" + result + ", createdAt=" + createdAt + ", updatedAt=" + updatedAt + '}';
     }
 
 }

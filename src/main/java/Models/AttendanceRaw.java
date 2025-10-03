@@ -37,11 +37,11 @@ public class AttendanceRaw {
         this.id = id;
     }
 
-    public Employee getEmpId() {
+    public Employee getEmp() {
         return employee;
     }
 
-    public void setEmpId(Employee emp) {
+    public void setEmp(Employee emp) {
         this.employee = emp;
     }
 
@@ -68,5 +68,11 @@ public class AttendanceRaw {
     public void setCheckType(String checkType) {
         this.checkType = checkType;
     }
+
+    @Override
+    public String toString() {
+        return "AttendanceRaw{" + "id=" + id + ", employee=" + employee + ", date=" + date + ", checkTime=" + checkTime + ", checkType=" + checkType + '}';
+    }
+    
 }
 

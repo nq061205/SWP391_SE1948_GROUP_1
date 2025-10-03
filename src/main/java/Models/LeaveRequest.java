@@ -25,25 +25,25 @@ public class LeaveRequest {
     private String status;      // Pending, Approved, Rejected
     private String note;
     private Timestamp createdAt;
+    private Timestamp updatedAt;
 
     public LeaveRequest() {
     }
 
-    public LeaveRequest(int leaveId, Employee emp, String leaveType, String reason, double dayRequested,
-            Date startDate, Date endDate, Employee approveBy, Timestamp approveAt,
-            String status, String note, Timestamp createdAt) {
+    public LeaveRequest(int leaveId, Employee employee, String leaveType, String reason, double dayRequested, Date startDate, Date endDate, Employee approvedBy, Timestamp approvedAt, String status, String note, Timestamp createdAt, Timestamp updatedAt) {
         this.leaveId = leaveId;
-        this.employee = emp;
+        this.employee = employee;
         this.leaveType = leaveType;
         this.reason = reason;
         this.dayRequested = dayRequested;
         this.startDate = startDate;
         this.endDate = endDate;
-        this.approvedBy = approveBy;
-        this.approvedAt = approveAt;
+        this.approvedBy = approvedBy;
+        this.approvedAt = approvedAt;
         this.status = status;
         this.note = note;
         this.createdAt = createdAt;
+        this.updatedAt = updatedAt;
     }
 
     public int getLeaveId() {
@@ -52,14 +52,6 @@ public class LeaveRequest {
 
     public void setLeaveId(int leaveId) {
         this.leaveId = leaveId;
-    }
-
-    public Employee getEmpId() {
-        return employee;
-    }
-
-    public void setEmpId(Employee emp) {
-        this.employee = emp;
     }
 
     public String getLeaveType() {
@@ -141,4 +133,26 @@ public class LeaveRequest {
     public void setCreatedAt(Timestamp createdAt) {
         this.createdAt = createdAt;
     }
+
+    public Employee getEmployee() {
+        return employee;
+    }
+
+    public void setEmployee(Employee employee) {
+        this.employee = employee;
+    }
+
+    public Timestamp getUpdatedAt() {
+        return updatedAt;
+    }
+
+    public void setUpdatedAt(Timestamp updatedAt) {
+        this.updatedAt = updatedAt;
+    }
+
+    @Override
+    public String toString() {
+        return "LeaveRequest{" + "leaveId=" + leaveId + ", employee=" + employee + ", leaveType=" + leaveType + ", reason=" + reason + ", dayRequested=" + dayRequested + ", startDate=" + startDate + ", endDate=" + endDate + ", approvedBy=" + approvedBy + ", approvedAt=" + approvedAt + ", status=" + status + ", note=" + note + ", createdAt=" + createdAt + ", updatedAt=" + updatedAt + '}';
+    }
+    
 }
