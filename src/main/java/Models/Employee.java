@@ -22,13 +22,13 @@ public class Employee {
     private String image;
     private int dependantCount;
     private Department dept;
-    private Integer roleId;
+    private int roleId;
 
     public Employee() {
     }
 
     public Employee(int empId, String empCode, String fullname, String email, String password, boolean gender, Date dob,
-            String phone, String positionTitle, String image, int dependantCount, Department dept, Integer roleId) {
+            String phone, String positionTitle, String image, int dependantCount, Department dept, int roleId) {
         this.empId = empId;
         this.empCode = empCode;
         this.fullname = fullname;
@@ -140,11 +140,11 @@ public class Employee {
         return dept;
     }
 
-    public Integer getRoleId() {
+    public int getRoleId() {
         return roleId;
     }
 
-    public void setRoleId(Integer roleId) {
+    public void setRoleId(int roleId) {
         this.roleId = roleId;
     }
 
