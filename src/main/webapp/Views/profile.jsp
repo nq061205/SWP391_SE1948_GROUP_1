@@ -20,7 +20,7 @@
 
         <!-- OG -->
         <meta property="og:title" content="EduChamp : Education HTML Template" />
-        <meta property="og:description" content="EduChamp : Education HTML Template" />
+        <meta property="og:description" content="Profile" />
         <meta property="og:image" content="" />
         <meta name="format-detection" content="telephone=no">
 
