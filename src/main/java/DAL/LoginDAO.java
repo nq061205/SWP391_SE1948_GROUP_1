@@ -45,7 +45,7 @@ public class LoginDAO {
 
                     Department dept = new Department();
                     dept.setDepId(rs.getString("dep_id"));
-                    emp.setDepId(dept);
+                    emp.setDept(dept);
 
                     emp.setRoleId(rs.getInt("role_id"));
                     return emp;
@@ -76,7 +76,7 @@ public class LoginDAO {
 
             Department dept = new Department();
             dept.setDepId(rs.getString("dep_id"));
-            emp.setDepId(dept);
+            emp.setDept(dept);
 
             emp.setRoleId(rs.getInt("role_id"));
             return emp;

@@ -62,7 +62,6 @@
                     <div class="account-container">
                         <div class="heading-bx left">
                             <h2 class="title-head">Login to your <span>Account</span></h2>
-                            <p>Don't have an account? <a href="register.html">Create one here</a></p>
                         </div>	
                         <form class="contact-bx" action="${pageContext.request.contextPath}/login" method="post">
                             <div class="row placeani">
@@ -70,7 +69,10 @@
                                     <div class="form-group">
                                         <div class="input-group">
                                             <label>Enter Code Here:</label>
-                                            <input name="emp_code" type="text" required="" class="form-control">
+                                            <input name="emp_code" type="text"
+                                                   required="" class="form-control"
+                                                   <c:if test="${requestScope.rememberEmpCode != null}">value="${requestScope.rememberEmpCode}"
+                                                   </c:if>>
                                         </div>
                                     </div>
                                 </div>
@@ -78,7 +80,9 @@
                                     <div class="form-group">
                                         <div class="input-group"> 
                                             <label>Your Password</label>
-                                            <input name="password" type="password" class="form-control" required="">
+                                            <input name="password" type="password" class="form-control" required=""
+                                                   <c:if test="${requestScope.rememberEmpPass != null}">value="${requestScope.rememberEmpPass}"
+                                                   </c:if>>
                                         </div>
                                     </div>
                                 </div>
@@ -88,7 +92,9 @@
                                 <div class="col-lg-12">
                                     <div class="form-group form-forget">
                                         <div class="custom-control custom-checkbox">
-                                            <input type="checkbox" class="custom-control-input" id="customControlAutosizing">
+                                            <input name="remember" type="checkbox" class="custom-control-input" id="customControlAutosizing"
+                                                   <c:if test="${requestScope.rememberEmpPass != null}">checked
+                                                   </c:if>>
                                             <label class="custom-control-label" for="customControlAutosizing">Remember me</label>
                                         </div>
                                         <a href="${pageContext.request.contextPath}/forgetpassword" class="ml-auto">Forgot Password?</a>
@@ -98,9 +104,8 @@
                                     <button name="login" type="submit" value="Submit" class="btn button-md">Login</button>
                                 </div>
                                 <div class="col-lg-12">
-                                    <h6>Login with Social media</h6>
+                                    <h6>Login with Google</h6>
                                     <div class="d-flex">
-                                        <a class="btn flex-fill m-r5 facebook" href="#"><i class="fa fa-facebook"></i>Facebook</a>
                                         <a class="btn flex-fill m-l5 google-plus"
                                            href="https://accounts.google.com/o/oauth2/auth?scope=email%20profile%20openid&redirect_uri=http://localhost:8080/HRMSystem/login&response_type=code&client_id=894304309167-tqnvrsa9lgk9guhaqskoamiv96bab7hi.apps.googleusercontent.com&access_type=offline&prompt=consent">
                                             <i class="fa fa-google-plus"></i>Google Plus

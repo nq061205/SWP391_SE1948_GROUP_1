@@ -13,8 +13,8 @@ import com.google.gson.JsonObject;
 
 public class GoogleLogin {
 
-    private static final String CLIENT_ID = "XXXX";
-    private static final String CLIENT_SECRET = "YYYY";
+    private static final String CLIENT_ID = "YYYY";
+    private static final String CLIENT_SECRET = "XXXX";
     private static final String REDIRECT_URI = KeyLoader.get("google.redirect.uri");
     private static final String GRANT_TYPE = KeyLoader.get("google.grant.type");
     private static final String LINK_GET_TOKEN = KeyLoader.get("google.token.link");
