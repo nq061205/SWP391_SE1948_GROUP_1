@@ -19,12 +19,13 @@ public class RecruitmentPost {
     private Employee approvedBy;
     private Department department;
     private Timestamp approvedAt;
+    private Timestamp createdAt;
+    private Timestamp updatedAt;
 
     public RecruitmentPost() {
     }
 
-    public RecruitmentPost(int postId, String title, String content, String status, boolean isDelete,
-            Employee createdBy, Employee approvedBy, Department dep, Timestamp approvedAt) {
+    public RecruitmentPost(int postId, String title, String content, String status, boolean isDelete, Employee createdBy, Employee approvedBy, Department department, Timestamp approvedAt, Timestamp createdAt, Timestamp updatedAt) {
         this.postId = postId;
         this.title = title;
         this.content = content;
@@ -32,8 +33,10 @@ public class RecruitmentPost {
         this.isDelete = isDelete;
         this.createdBy = createdBy;
         this.approvedBy = approvedBy;
-        this.department = dep;
+        this.department = department;
         this.approvedAt = approvedAt;
+        this.createdAt = createdAt;
+        this.updatedAt = updatedAt;
     }
 
     public int getPostId() {
@@ -92,14 +95,6 @@ public class RecruitmentPost {
         this.approvedBy = approvedBy;
     }
 
-    public Department getDept() {
-        return department;
-    }
-
-    public void setDepId(Department dep) {
-        this.department = dep;
-    }
-
     public Timestamp getApprovedAt() {
         return approvedAt;
     }
@@ -107,4 +102,34 @@ public class RecruitmentPost {
     public void setApprovedAt(Timestamp approveAt) {
         this.approvedAt = approveAt;
     }
+
+    public Department getDepartment() {
+        return department;
+    }
+
+    public void setDepartment(Department department) {
+        this.department = department;
+    }
+
+    public Timestamp getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(Timestamp createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public Timestamp getUpdatedAt() {
+        return updatedAt;
+    }
+
+    public void setUpdatedAt(Timestamp updatedAt) {
+        this.updatedAt = updatedAt;
+    }
+
+    @Override
+    public String toString() {
+        return "RecruitmentPost{" + "postId=" + postId + ", title=" + title + ", content=" + content + ", status=" + status + ", isDelete=" + isDelete + ", createdBy=" + createdBy + ", approvedBy=" + approvedBy + ", department=" + department + ", approvedAt=" + approvedAt + ", createdAt=" + createdAt + ", updatedAt=" + updatedAt + '}';
+    }
+    
 }
