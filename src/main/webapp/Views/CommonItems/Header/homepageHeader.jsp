@@ -23,7 +23,7 @@
                                 <option data-icon="flag flag-us">English US</option>
                             </select>
                         </li>
-                        <li><a href="login.html">Login</a></li>
+                        <li><a href="login">Login</a></li>
                         <li><a href="javascript:;">About Us</a></li>
                     </ul>
                 </div>

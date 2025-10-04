@@ -22,13 +22,12 @@ public class Employee {
     private String image;
     private int dependantCount;
     private Department dept;
-    private Integer roleId;
+    private Role role;
 
     public Employee() {
     }
 
-    public Employee(int empId, String empCode, String fullname, String email, String password, boolean gender, Date dob,
-            String phone, String positionTitle, String image, int dependantCount, Department dept, Integer roleId) {
+    public Employee(int empId, String empCode, String fullname, String email, String password, boolean gender, Date dob, String phone, String positionTitle, String image, int dependantCount, Department dept, Role role) {
         this.empId = empId;
         this.empCode = empCode;
         this.fullname = fullname;
@@ -41,8 +40,9 @@ public class Employee {
         this.image = image;
         this.dependantCount = dependantCount;
         this.dept = dept;
-        this.roleId = roleId;
+        this.role = role;
     }
+
 
     public void setDept(Department dept) {
         this.dept = dept;
@@ -140,17 +140,18 @@ public class Employee {
         return dept;
     }
 
-    public Integer getRoleId() {
-        return roleId;
+    public Role getRole() {
+        return role;
     }
 
-    public void setRoleId(Integer roleId) {
-        this.roleId = roleId;
+    public void setRole(Role role) {
+        this.role = role;
     }
+
 
     @Override
     public String toString() {
-        return "Employee{" + "empId=" + empId + ", empCode=" + empCode + ", fullname=" + fullname + ", email=" + email + ", password=" + password + ", gender=" + gender + ", dob=" + dob + ", phone=" + phone + ", positionTitle=" + positionTitle + ", image=" + image + ", dependantCount=" + dependantCount + ", dept=" + dept + ", roleId=" + roleId + '}';
+        return "Employee{" + "empId=" + empId + ", empCode=" + empCode + ", fullname=" + fullname + ", email=" + email + ", password=" + password + ", gender=" + gender + ", dob=" + dob + ", phone=" + phone + ", positionTitle=" + positionTitle + ", image=" + image + ", dependantCount=" + dependantCount + ", dept=" + dept + ", role=" + role + '}';
     }
     
 }
