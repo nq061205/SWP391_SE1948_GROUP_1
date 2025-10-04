@@ -41,4 +41,5 @@ public class RolePermission {
     public String toString() {
         return "RolePermission{" + "roleId=" + roleId + ", permission=" + permission + '}';
     }
+    
 }

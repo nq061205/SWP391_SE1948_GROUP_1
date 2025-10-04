@@ -41,4 +41,5 @@ public class Permission {
     public String toString() {
         return "Permission{" + "permissionId=" + permissionId + ", permissionName=" + permissionName + '}';
     }
+    
 }

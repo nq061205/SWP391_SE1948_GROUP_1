@@ -18,7 +18,8 @@ import java.util.ArrayList;
 public class UserDAO extends DBContext {
 
     
-    private final DeptDAO dept = new DeptDAO();
+    private final DeptDAO deptDAO = new DeptDAO();
+    private final RoleDAO roleDAO = new RoleDAO();
     private Connection connection;
 
     public UserDAO() {
@@ -32,7 +33,7 @@ public class UserDAO extends DBContext {
         Employee employee = new Employee();
         try {
             String sql = "select * from employee where emp_code = ?";
-            Department deparment = dept.getDepartmentByEmpCode(emp_code);
+            Department deparment = deptDAO.getDepartmentByEmpCode(emp_code);
             PreparedStatement stm = connection.prepareStatement(sql);
             stm.setString(1, emp_code);
             ResultSet rs = stm.executeQuery();
@@ -50,7 +51,7 @@ public class UserDAO extends DBContext {
                         rs.getString("image"),
                         rs.getInt("dependant_count"),
                         deparment,
-                        rs.getInt("role_id")
+                        roleDAO.getRoleByEmpId(rs.getInt("emp_id"))
                 );
             }
         } catch (SQLException ex) {
@@ -63,7 +64,7 @@ public class UserDAO extends DBContext {
          Employee employee = new Employee();
         try {
             String sql = "select * from employee where emp_id = ?";
-            Department deparment = dept.getDepartmentByEmpId(emp_id);
+            Department deparment = deptDAO.getDepartmentByEmpId(emp_id);
             PreparedStatement stm = connection.prepareStatement(sql);
             stm.setInt(1, emp_id);
             ResultSet rs = stm.executeQuery();
@@ -81,7 +82,7 @@ public class UserDAO extends DBContext {
                         rs.getString("image"),
                         rs.getInt("dependant_count"),
                         deparment,
-                        rs.getInt("role_id")
+                        roleDAO.getRoleByEmpId(rs.getInt("emp_id"))
                 );
             }
         } catch (SQLException ex) {
