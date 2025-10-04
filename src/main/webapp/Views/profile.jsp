@@ -56,11 +56,10 @@
     </head>
 
     <body class="ttr-opened-sidebar ttr-pinned-sidebar">
-
-        <!-- HEADER + NAVBAR -->
         <%@ include file="CommonItems/Header/dashboardHeader.jsp" %>
         <%@ include file="CommonItems/Navbar/empNavbar.jsp" %>
 
+        
         <!-- SCRIPT ZONE -->
         <script src="${pageContext.request.contextPath}/assets2/js/jquery.min.js"></script>
         <script src="${pageContext.request.contextPath}/assets2/vendors/bootstrap/js/popper.min.js"></script>
