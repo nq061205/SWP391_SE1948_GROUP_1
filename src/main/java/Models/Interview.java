@@ -27,12 +27,11 @@ public class Interview {
     public Interview() {
     }
 
-    public Interview(int interviewId, Candidate candidate, Employee createBy, Employee interviewBy, Date date,
-            Time time, String result, Timestamp createdAt, Timestamp updatedAt) {
+    public Interview(int interviewId, Candidate candidate, Employee createdBy, Employee interviewedBy, Date date, Time time, String result, Timestamp createdAt, Timestamp updatedAt) {
         this.interviewId = interviewId;
         this.candidate = candidate;
-        this.createdBy = createBy;
-        this.interviewedBy = interviewBy;
+        this.createdBy = createdBy;
+        this.interviewedBy = interviewedBy;
         this.date = date;
         this.time = time;
         this.result = result;
