@@ -17,7 +17,7 @@ import jakarta.servlet.http.HttpServletResponse;
  * @author nq061205
  */
 public class ProfileServlet extends HttpServlet {
-   
+
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
@@ -30,5 +30,5 @@ public class ProfileServlet extends HttpServlet {
     throws ServletException, IOException {
     }
 
-   
+    
 }
