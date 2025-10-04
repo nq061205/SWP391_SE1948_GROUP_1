@@ -46,14 +46,6 @@ public class OTRequest {
         this.otId = otId;
     }
 
-    public Employee getEmpId() {
-        return employee;
-    }
-
-    public void setEmpId(Employee empId) {
-        this.employee = empId;
-    }
-
     public Date getDate() {
         return date;
     }
@@ -122,6 +114,5 @@ public class OTRequest {
     public String toString() {
         return "OTRequest{" + "otId=" + otId + ", employee=" + employee + ", date=" + date + ", otHours=" + otHours + ", approvedBy=" + approvedBy + ", approvedAt=" + approvedAt + ", status=" + status + ", createdAt=" + createdAt + ", updatedAt=" + updatedAt + '}';
     }
-    
     
 }

@@ -46,36 +46,12 @@ public class LeaveRequest {
         this.updatedAt = updatedAt;
     }
 
-    public Employee getEmployee() {
-        return employee;
-    }
-
-    public void setEmployee(Employee employee) {
-        this.employee = employee;
-    }
-
-    public Timestamp getUpdatedAt() {
-        return updatedAt;
-    }
-
-    public void setUpdatedAt(Timestamp updatedAt) {
-        this.updatedAt = updatedAt;
-    }
-
     public int getLeaveId() {
         return leaveId;
     }
 
     public void setLeaveId(int leaveId) {
         this.leaveId = leaveId;
-    }
-
-    public Employee getEmpId() {
-        return employee;
-    }
-
-    public void setEmpId(Employee emp) {
-        this.employee = emp;
     }
 
     public String getLeaveType() {
@@ -158,10 +134,25 @@ public class LeaveRequest {
         this.createdAt = createdAt;
     }
 
+    public Employee getEmployee() {
+        return employee;
+    }
+
+    public void setEmployee(Employee employee) {
+        this.employee = employee;
+    }
+
+    public Timestamp getUpdatedAt() {
+        return updatedAt;
+    }
+
+    public void setUpdatedAt(Timestamp updatedAt) {
+        this.updatedAt = updatedAt;
+    }
+
     @Override
     public String toString() {
-        return "LeaveRequest{" + "leaveId=" + leaveId + ", employee=" + employee + ", leaveType=" + leaveType + ", reason=" + reason + ", dayRequested=" + dayRequested + ", startDate=" + startDate + ", endDate=" + endDate + ", approvedBy=" + approvedBy + ", approvedAt=" + approvedAt + ", status=" + status + ", note=" + note + ", createdAt=" + createdAt + '}';
+        return "LeaveRequest{" + "leaveId=" + leaveId + ", employee=" + employee + ", leaveType=" + leaveType + ", reason=" + reason + ", dayRequested=" + dayRequested + ", startDate=" + startDate + ", endDate=" + endDate + ", approvedBy=" + approvedBy + ", approvedAt=" + approvedAt + ", status=" + status + ", note=" + note + ", createdAt=" + createdAt + ", updatedAt=" + updatedAt + '}';
     }
-    
     
 }

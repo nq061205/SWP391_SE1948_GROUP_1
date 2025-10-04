@@ -16,20 +16,20 @@ public class Holiday {
     private int holidayId;
     private Date date;
     private String name;
-    private Timestamp updatedAt;
     private String source;
     private Timestamp createdAt;
+    private Timestamp updatedAt;
 
     public Holiday() {
     }
 
-    public Holiday(int holidayId, Date date, String name, Timestamp updatedAt, String source, Timestamp createdAt) {
+    public Holiday(int holidayId, Date date, String name, String source, Timestamp createdAt, Timestamp updatedAt) {
         this.holidayId = holidayId;
         this.date = date;
         this.name = name;
-        this.updatedAt = updatedAt;
         this.source = source;
         this.createdAt = createdAt;
+        this.updatedAt = updatedAt;
     }
 
     public int getHolidayId() {
@@ -56,14 +56,6 @@ public class Holiday {
         this.name = name;
     }
 
-    public Timestamp getUpdatedAt() {
-        return updatedAt;
-    }
-
-    public void setUpdatedAt(Timestamp updateAt) {
-        this.updatedAt = updateAt;
-    }
-
     public String getSource() {
         return source;
     }
@@ -80,9 +72,17 @@ public class Holiday {
         this.createdAt = createdAt;
     }
 
+    public Timestamp getUpdatedAt() {
+        return updatedAt;
+    }
+
+    public void setUpdatedAt(Timestamp updatedAt) {
+        this.updatedAt = updatedAt;
+    }
+
     @Override
     public String toString() {
-        return "Holiday{" + "holidayId=" + holidayId + ", date=" + date + ", name=" + name + ", updatedAt=" + updatedAt + ", source=" + source + ", createdAt=" + createdAt + '}';
+        return "Holiday{" + "holidayId=" + holidayId + ", date=" + date + ", name=" + name + ", source=" + source + ", createdAt=" + createdAt + ", updatedAt=" + updatedAt + '}';
     }
-    
+
 }

@@ -71,11 +71,11 @@ public class Candidate {
         this.cv = cv;
     }
 
-    public RecruitmentPost getPostId() {
+    public RecruitmentPost getPost() {
         return post;
     }
 
-    public void setPostId(RecruitmentPost post) {
+    public void setPost(RecruitmentPost post) {
         this.post = post;
     }
 
@@ -91,6 +91,5 @@ public class Candidate {
     public String toString() {
         return "Candidate{" + "candidateId=" + candidateId + ", name=" + name + ", email=" + email + ", phone=" + phone + ", cv=" + cv + ", post=" + post + ", appliedAt=" + appliedAt + '}';
     }
-
-   
+    
 }

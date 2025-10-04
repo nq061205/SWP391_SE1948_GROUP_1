@@ -3,17 +3,17 @@ package Helpers;
 import java.io.InputStream;
 import java.util.Properties;
 
-public class ConfigLoader {
+public class KeyLoader {
 
     private static Properties props = new Properties();
 
     static {
-        try (InputStream input = ConfigLoader.class.getClassLoader()
-                .getResourceAsStream("config.properties")) {
+        try (InputStream input = KeyLoader.class.getClassLoader()
+                .getResourceAsStream("googlekey.properties")) {
             if (input != null) {
                 props.load(input);
             } else {
-                System.out.println("Không tìm thấy file config.properties");
+                System.out.println("Không tìm thấy file googlekey.properties");
             }
         } catch (Exception e) {
             e.printStackTrace();

@@ -104,4 +104,5 @@ public class Salary {
     public String toString() {
         return "Salary{" + "salaryId=" + salaryId + ", employee=" + employee + ", baseSalary=" + baseSalary + ", allowance=" + allowance + ", startDate=" + startDate + ", endDate=" + endDate + ", createdAt=" + createdAt + ", isActive=" + isActive + '}';
     }
+    
 }
