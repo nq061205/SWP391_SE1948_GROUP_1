@@ -23,21 +23,15 @@
         <nav class="ttr-sidebar-navi">
             <ul>
                 <li>
-                    <a href="index.html" class="ttr-material-button">
-                        <span class="ttr-icon"><i class="ti-home"></i></span>
-                        <span class="ttr-label">Dashborad</span>
-                    </a>
-                </li>
-                <li>
-                    <a href="courses.html" class="ttr-material-button">
+                    <a href="profile.html" class="ttr-material-button">
                         <span class="ttr-icon"><i class="ti-book"></i></span>
-                        <span class="ttr-label">Courses</span>
+                        <span class="ttr-label">Profile</span>
                     </a>
                 </li>
                 <li>
                     <a href="#" class="ttr-material-button">
                         <span class="ttr-icon"><i class="ti-email"></i></span>
-                        <span class="ttr-label">Mailbox</span>
+                        <span class="ttr-label">Application</span>
                         <span class="ttr-arrow-icon"><i class="fa fa-angle-down"></i></span>
                     </a>
                     <ul>
