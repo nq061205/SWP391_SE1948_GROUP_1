@@ -15,7 +15,7 @@ import java.sql.Timestamp;
 public class Interview {
 
     private int interviewId;
-    private Employee candidate;
+    private Candidate candidate;
     private Employee createdBy;
     private Employee interviewedBy;
     private Date date;
@@ -27,7 +27,7 @@ public class Interview {
     public Interview() {
     }
 
-    public Interview(int interviewId, Employee candidate, Employee createBy, Employee interviewBy, Date date,
+    public Interview(int interviewId, Candidate candidate, Employee createBy, Employee interviewBy, Date date,
             Time time, String result, Timestamp createdAt, Timestamp updatedAt) {
         this.interviewId = interviewId;
         this.candidate = candidate;
@@ -104,11 +104,11 @@ public class Interview {
         this.updatedAt = updatedAt;
     }
 
-    public Employee getCandidate() {
+    public Candidate getCandidate() {
         return candidate;
     }
 
-    public void setCandidate(Employee candidate) {
+    public void setCandidate(Candidate candidate) {
         this.candidate = candidate;
     }
 
