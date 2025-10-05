@@ -4,7 +4,7 @@
  */
 package Controllers;
 
-import DAL.LoginDAO;
+import DAL.EmployeeDAO;
 import Models.Employee;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -93,7 +93,7 @@ public class RecoveryPassword extends HttpServlet {
             String email = (String) session.getAttribute("resetEmail");
             session.removeAttribute("resetEmail");
             session.removeAttribute("resetToken");
-            LoginDAO lDao = new LoginDAO();
+            EmployeeDAO lDao = new EmployeeDAO();
             Employee emp = lDao.getEmployeeByEmail(email);
             lDao.updatePassword(emp.getEmpCode(), newPassword);
 
