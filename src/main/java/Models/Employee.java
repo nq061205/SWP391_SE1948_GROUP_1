@@ -23,6 +23,8 @@ public class Employee {
     private int dependantCount;
     private Department dept;
     private Role role;
+    private boolean status;
+
 
     public Employee() {
     }
@@ -147,11 +149,21 @@ public class Employee {
     public void setRole(Role role) {
         this.role = role;
     }
+    
+    public boolean isStatus() {
+        return status;
+    }
 
+    public void setStatus(boolean status) {
+        this.status = status;
+    }
 
     @Override
     public String toString() {
-        return "Employee{" + "empId=" + empId + ", empCode=" + empCode + ", fullname=" + fullname + ", email=" + email + ", password=" + password + ", gender=" + gender + ", dob=" + dob + ", phone=" + phone + ", positionTitle=" + positionTitle + ", image=" + image + ", dependantCount=" + dependantCount + ", dept=" + dept + ", role=" + role + '}';
+        return "Employee{" + "empId=" + empId + ", empCode=" + empCode + ", fullname=" + fullname + ", email=" + email + ", password=" + password + ", gender=" + gender + ", dob=" + dob + ", phone=" + phone + ", positionTitle=" + positionTitle + ", image=" + image + ", dependantCount=" + dependantCount + ", dept=" + dept + ", role=" + role + ", status=" + status + '}';
     }
+
+
+    
     
 }
