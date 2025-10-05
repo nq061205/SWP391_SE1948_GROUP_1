@@ -44,9 +44,28 @@ public class RoleDAO extends DBContext {
         }
         return null;
     }
+      public Role getRoleByRoleId(int roleId) {
+        Role role = new Role();
+        try {
+            String sql = "select * from role where role_id = ?";
+            PreparedStatement stm = connection.prepareStatement(sql);
+            stm.setInt(1, roleId);
+            ResultSet rs = stm.executeQuery();
+            if (rs.next()) {
+                role = new Role(
+                        rs.getInt("role_id"),
+                        rs.getString("role_name")
+                );
+                return role;
+            }
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
+        return null;
+    }
 
      public static void main(String[] args) {
         RoleDAO dao = new RoleDAO();
-        System.out.println(dao.getRoleByEmpId(1).toString());
+        System.out.println(dao.getRoleByRoleId(1).toString());
     }
 }
