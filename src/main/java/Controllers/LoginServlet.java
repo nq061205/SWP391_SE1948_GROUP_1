@@ -5,7 +5,7 @@
 package Controllers;
 
 import API.GoogleLogin;
-import DAL.LoginDAO;
+import DAL.EmployeeDAO;
 import Models.Employee;
 import Models.GoogleAccount;
 import java.io.IOException;
@@ -49,7 +49,7 @@ public class LoginServlet extends HttpServlet {
                 return;
             }
             GoogleLogin google = new GoogleLogin();
-            LoginDAO ldao = new LoginDAO();
+            EmployeeDAO ldao = new EmployeeDAO();
             GoogleAccount googleAcc = google.getUserInfo(google.getToken(code));
             Employee emp = ldao.getEmployeeByEmail(googleAcc.getEmail());
             if (emp == null) {
@@ -73,7 +73,7 @@ public class LoginServlet extends HttpServlet {
             String emp_code = request.getParameter("emp_code");
             String password = request.getParameter("password");
             String remember = request.getParameter("remember");
-            LoginDAO lDao = new LoginDAO();
+            EmployeeDAO lDao = new EmployeeDAO();
             HttpSession session = request.getSession();
             Employee employee = lDao.getEmployeeByUsernamePassword(emp_code, password);
             if (employee != null) {
