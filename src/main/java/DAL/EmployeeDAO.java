@@ -17,25 +17,166 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * @author Do Quang Huy_HE191197
+ * @author Combined version of UserDAO and EmployeeDAO
  */
-public class EmployeeDAO {
+public class EmployeeDAO extends DBContext {
 
+    private final DeptDAO deptDAO = new DeptDAO();
+    private final RoleDAO roleDAO = new RoleDAO();
     private Connection connection;
     private String status = "ok";
     private List<Employee> empList;
-    LoginDAO logindao = new LoginDAO();
 
     public EmployeeDAO() {
         try {
-            DBContext db = new DBContext();
-            connection = db.getConnection();
+            connection = new DBContext().getConnection();
         } catch (Exception e) {
             status = "Connection failed: " + e.getMessage();
             e.printStackTrace();
         }
     }
-    
+
+    // =========================================================
+    // FROM UserDAO
+    // =========================================================
+    public Employee getEmployeeByEmpCode(String emp_code) {
+        Employee employee = new Employee();
+        try {
+            String sql = "select * from employee where emp_code = ?";
+            Department department = deptDAO.getDepartmentByEmpCode(emp_code);
+            PreparedStatement stm = connection.prepareStatement(sql);
+            stm.setString(1, emp_code);
+            ResultSet rs = stm.executeQuery();
+            if (rs.next()) {
+                employee = new Employee(
+                        rs.getInt("emp_id"),
+                        rs.getString("emp_code"),
+                        rs.getString("fullname"),
+                        rs.getString("email"),
+                        rs.getString("password"),
+                        rs.getBoolean("gender"),
+                        rs.getDate("dob"),
+                        rs.getString("phone"),
+                        rs.getString("position_title"),
+                        rs.getString("image"),
+                        rs.getInt("dependant_count"),
+                        department,
+                        roleDAO.getRoleByEmpId(rs.getInt("emp_id"))
+                );
+                employee.setStatus(rs.getBoolean("status"));
+            }
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
+        return employee;
+    }
+
+    public Employee getEmployeeByEmpId(int emp_id) {
+        Employee employee = new Employee();
+        try {
+            String sql = "select * from employee where emp_id = ?";
+            Department department = deptDAO.getDepartmentByEmpId(emp_id);
+            PreparedStatement stm = connection.prepareStatement(sql);
+            stm.setInt(1, emp_id);
+            ResultSet rs = stm.executeQuery();
+            if (rs.next()) {
+                employee = new Employee(
+                        rs.getInt("emp_id"),
+                        rs.getString("emp_code"),
+                        rs.getString("fullname"),
+                        rs.getString("email"),
+                        rs.getString("password"),
+                        rs.getBoolean("gender"),
+                        rs.getDate("dob"),
+                        rs.getString("phone"),
+                        rs.getString("position_title"),
+                        rs.getString("image"),
+                        rs.getInt("dependant_count"),
+                        department,
+                        roleDAO.getRoleByEmpId(rs.getInt("emp_id"))
+                );
+                employee.setStatus(rs.getBoolean("status"));
+            }
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
+        return employee;
+    }
+
+    public Employee getEmployeeByUsernamePassword(String username, String pass) throws SQLException {
+        String sql = "SELECT * FROM Employee WHERE emp_code = ? AND password = ?";
+        try (PreparedStatement stm = connection.prepareStatement(sql)) {
+            stm.setString(1, username);
+            stm.setString(2, pass);
+
+            try (ResultSet rs = stm.executeQuery()) {
+                if (rs.next()) {
+                    Employee emp = new Employee();
+                    emp.setEmpId(rs.getInt("emp_id"));
+                    emp.setEmpCode(rs.getString("emp_code"));
+                    emp.setFullname(rs.getString("fullname"));
+                    emp.setEmail(rs.getString("email"));
+                    emp.setPassword(rs.getString("password"));
+                    emp.setGender(rs.getBoolean("gender"));
+                    emp.setDob(rs.getDate("dob"));
+                    emp.setPhone(rs.getString("phone"));
+                    emp.setPositionTitle(rs.getString("position_title"));
+                    emp.setImage(rs.getString("image"));
+                    emp.setDependantCount(rs.getInt("dependant_count"));
+                    Department dept = deptDAO.getDepartmentByEmpId(rs.getInt("emp_id"));
+                    emp.setDept(dept);
+                    Role role = roleDAO.getRoleByEmpId(rs.getInt("emp_id"));
+                    emp.setRole(role);
+                    emp.setStatus(rs.getBoolean("status"));
+                    return emp;
+                }
+            }
+        }
+        return null;
+    }
+
+    public Employee getEmployeeByEmail(String email) throws SQLException {
+        String sql = "SELECT * FROM Employee WHERE email = ?";
+        try (PreparedStatement stm = connection.prepareStatement(sql)) {
+            stm.setString(1, email);
+            ResultSet rs = stm.executeQuery();
+            if (rs.next()) {
+                Employee emp = new Employee();
+                emp.setEmpId(rs.getInt("emp_id"));
+                emp.setEmpCode(rs.getString("emp_code"));
+                emp.setFullname(rs.getString("fullname"));
+                emp.setEmail(rs.getString("email"));
+                emp.setPassword(rs.getString("password"));
+                emp.setGender(rs.getBoolean("gender"));
+                emp.setDob(rs.getDate("dob"));
+                emp.setPhone(rs.getString("phone"));
+                emp.setPositionTitle(rs.getString("position_title"));
+                emp.setImage(rs.getString("image"));
+                emp.setDependantCount(rs.getInt("dependant_count"));
+                Department dept = deptDAO.getDepartmentByEmpId(rs.getInt("emp_id"));
+                emp.setDept(dept);
+                Role role = roleDAO.getRoleByEmpId(rs.getInt("emp_id"));
+                emp.setRole(role);
+                emp.setStatus(rs.getBoolean("status"));
+                return emp;
+            }
+        }
+        return null;
+    }
+
+    public boolean updatePassword(String empCode, String newPassword) throws SQLException {
+        String sql = "UPDATE Employee SET password = ? WHERE emp_code = ?";
+        try (PreparedStatement stm = connection.prepareStatement(sql)) {
+            stm.setString(1, newPassword);
+            stm.setString(2, empCode);
+            int rows = stm.executeUpdate();
+            return rows > 0;
+        }
+    }
+
+    // =========================================================
+    // FROM EmployeeDAO
+    // =========================================================
     public List<Employee> getAllEmployees(int roleId) {
         empList = new ArrayList<>();
         String sql = "select * from Employee where role_id = ?";
@@ -53,12 +194,13 @@ public class EmployeeDAO {
                 emp.setDob(rs.getDate("dob"));
                 emp.setPhone(rs.getString("phone"));
                 emp.setPositionTitle(rs.getString("position_title"));
-                
+                emp.setImage(rs.getString("image"));
+                emp.setDependantCount(rs.getInt("dependant_count"));
+
                 Department dept = getDepartmentByDeptID(rs.getString("dep_id"));
                 emp.setDept(dept);
-                
-                
-                Role role = logindao.getRoleByRoleID(rs.getInt("role_id"));
+
+                Role role = roleDAO.getRoleByRoleId(rs.getInt("role_id"));
                 emp.setRole(role);
                 empList.add(emp);
             }
@@ -67,10 +209,10 @@ public class EmployeeDAO {
         }
         return empList;
     }
-    
+
     public Department getDepartmentByDeptID(String deptID) {
         Department dept = new Department();
-        String sql="select * from Department where dep_id =?";
+        String sql = "select * from Department where dep_id =?";
         try {
             PreparedStatement ps = connection.prepareStatement(sql);
             ps.setString(1, deptID);
@@ -81,10 +223,16 @@ public class EmployeeDAO {
                 dept.setDescription(rs.getString("description"));
             }
         } catch (SQLException ex) {
-Logger.getLogger(EmployeeDAO.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(EmployeeDAO.class.getName()).log(Level.SEVERE, null, ex);
         }
         return dept;
     }
-     
 
+    // =========================================================
+    // MAIN TEST
+    // =========================================================
+    public static void main(String[] args) {
+        EmployeeDAO dao = new EmployeeDAO();
+        System.out.println(dao.getEmployeeByEmpId(1).toString());
+    }
 }

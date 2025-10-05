@@ -128,6 +128,7 @@
                             <li><a href="user-profile.html">My profile</a></li>
                             <li><a href="list-view-calendar.html">Activity</a></li>
                             <li><a href="mailbox.html">Messages</a></li>
+                            <li><a href="mailbox.html">Change Password</a></li>
                             <li><a href="../login.html">Logout</a></li>
                         </ul>
                     </div>

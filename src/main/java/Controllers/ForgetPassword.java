@@ -5,7 +5,7 @@
 package Controllers;
 
 import API.EmailUtil;
-import DAL.LoginDAO;
+import DAL.EmployeeDAO;
 import Models.Employee;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -81,8 +81,8 @@ public class ForgetPassword extends HttpServlet {
             throws ServletException, IOException {
         try {
             String email = request.getParameter("email");
-            LoginDAO lDao = new LoginDAO();
-            Employee emp = lDao.getEmployeeByEmail(email);
+            EmployeeDAO uDao = new EmployeeDAO();
+            Employee emp = uDao.getEmployeeByEmail(email);
             HttpSession session = request.getSession();
             if (emp == null) {
                 request.setAttribute("errorMessage", "Email does not exist");
