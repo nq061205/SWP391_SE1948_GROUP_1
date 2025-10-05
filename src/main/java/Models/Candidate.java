@@ -17,11 +17,12 @@ public class Candidate {
     private String cv;
     private RecruitmentPost post;
     private Timestamp appliedAt;
+    private boolean result;
 
     public Candidate() {
     }
 
-    public Candidate(int candidateId, String name, String email, String phone, String cv, RecruitmentPost post, Timestamp appliedAt) {
+    public Candidate(int candidateId, String name, String email, String phone, String cv, RecruitmentPost post, Timestamp appliedAt, boolean result) {
         this.candidateId = candidateId;
         this.name = name;
         this.email = email;
@@ -29,7 +30,18 @@ public class Candidate {
         this.cv = cv;
         this.post = post;
         this.appliedAt = appliedAt;
+        this.result = result;
     }
+
+    public boolean isResult() {
+        return result;
+    }
+
+    public void setResult(boolean result) {
+        this.result = result;
+    }
+
+    
 
     public int getCandidateId() {
         return candidateId;
@@ -89,7 +101,9 @@ public class Candidate {
 
     @Override
     public String toString() {
-        return "Candidate{" + "candidateId=" + candidateId + ", name=" + name + ", email=" + email + ", phone=" + phone + ", cv=" + cv + ", post=" + post + ", appliedAt=" + appliedAt + '}';
+        return "Candidate{" + "candidateId=" + candidateId + ", name=" + name + ", email=" + email + ", phone=" + phone + ", cv=" + cv + ", post=" + post + ", appliedAt=" + appliedAt + ", result=" + result + '}';
     }
+
+    
     
 }
