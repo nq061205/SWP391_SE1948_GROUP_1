@@ -36,30 +36,19 @@
                     </a>
                     <ul>
                         <li>
-                            <a href="mailbox.html" class="ttr-material-button"><span class="ttr-label">Mail Box</span></a>
+                            <a href="mailbox.html" class="ttr-material-button"><span class="ttr-label">My application</span></a>
                         </li>
                         <li>
-                            <a href="mailbox-compose.html" class="ttr-material-button"><span class="ttr-label">Compose</span></a>
-                        </li>
-                        <li>
-                            <a href="mailbox-read.html" class="ttr-material-button"><span class="ttr-label">Mail Read</span></a>
+                            <a href="mailbox-compose.html" class="ttr-material-button"><span class="ttr-label">Send application</span></a>
                         </li>
                     </ul>
                 </li>
                 <li>
                     <a href="#" class="ttr-material-button">
                         <span class="ttr-icon"><i class="ti-calendar"></i></span>
-                        <span class="ttr-label">Calendar</span>
+                        <span class="ttr-label">Attendance</span>
                         <span class="ttr-arrow-icon"><i class="fa fa-angle-down"></i></span>
                     </a>
-                    <ul>
-                        <li>
-                            <a href="basic-calendar.html" class="ttr-material-button"><span class="ttr-label">Basic Calendar</span></a>
-                        </li>
-                        <li>
-                            <a href="list-view-calendar.html" class="ttr-material-button"><span class="ttr-label">List View</span></a>
-                        </li>
-                    </ul>
                 </li>
                 <li>
                     <a href="bookmark.html" class="ttr-material-button">

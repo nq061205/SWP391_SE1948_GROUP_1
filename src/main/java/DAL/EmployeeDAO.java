@@ -40,9 +40,9 @@ public class EmployeeDAO extends DBContext {
     // FROM UserDAO
     // =========================================================
     public Employee getEmployeeByEmpCode(String emp_code) {
-        Employee employee = new Employee();
+        Employee employee = null;
         try {
-            String sql = "select * from employee where emp_code = ?";
+            String sql = "SELECT * FROM Employee WHERE emp_code = ?";
             Department department = deptDAO.getDepartmentByEmpCode(emp_code);
             PreparedStatement stm = connection.prepareStatement(sql);
             stm.setString(1, emp_code);
@@ -72,9 +72,9 @@ public class EmployeeDAO extends DBContext {
     }
 
     public Employee getEmployeeByEmpId(int emp_id) {
-        Employee employee = new Employee();
+        Employee employee = null;
         try {
-            String sql = "select * from employee where emp_id = ?";
+            String sql = "SELECT * FROM Employee WHERE emp_id = ?";
             Department department = deptDAO.getDepartmentByEmpId(emp_id);
             PreparedStatement stm = connection.prepareStatement(sql);
             stm.setInt(1, emp_id);
@@ -179,7 +179,7 @@ public class EmployeeDAO extends DBContext {
     // =========================================================
     public List<Employee> getAllEmployees(int roleId) {
         empList = new ArrayList<>();
-        String sql = "select * from Employee where role_id = ?";
+        String sql = "SELECT * FROM Employee WHERE role_id = ?";
         try {
             PreparedStatement ps = connection.prepareStatement(sql);
             ps.setInt(1, roleId);
@@ -212,12 +212,12 @@ public class EmployeeDAO extends DBContext {
 
     public Department getDepartmentByDeptID(String deptID) {
         Department dept = new Department();
-        String sql = "select * from Department where dep_id =?";
+        String sql = "SELECT * FROM Department WHERE dep_id = ?";
         try {
             PreparedStatement ps = connection.prepareStatement(sql);
             ps.setString(1, deptID);
             ResultSet rs = ps.executeQuery();
-            while (rs.next()) {
+            if (rs.next()) {
                 dept.setDepId(rs.getString("dep_id"));
                 dept.setDepName(rs.getString("dep_name"));
                 dept.setDescription(rs.getString("description"));
@@ -228,11 +228,8 @@ public class EmployeeDAO extends DBContext {
         return dept;
     }
 
-    // =========================================================
-    // MAIN TEST
-    // =========================================================
     public static void main(String[] args) {
         EmployeeDAO dao = new EmployeeDAO();
-        System.out.println(dao.getEmployeeByEmpId(1).toString());
+        System.out.println(dao.getEmployeeByEmpId(1));
     }
 }

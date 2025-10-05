@@ -18,7 +18,7 @@ import java.util.ArrayList;
 public class LeaveRequestDAO {
 
     private Connection connection;
-    private EmployeeDAO userDAO = new EmployeeDAO();
+    private EmployeeDAO employeeDAO = new EmployeeDAO();
 
     public LeaveRequestDAO() {
         try {
@@ -34,7 +34,7 @@ public class LeaveRequestDAO {
             PreparedStatement stm = connection.prepareStatement(sql);
             stm.setInt(1, emp_id);
             ResultSet rs = stm.executeQuery();
-            Employee employee = userDAO.getEmployeeByEmpId(emp_id);
+            Employee employee = employeeDAO.getEmployeeByEmpId(emp_id);
             while (rs.next()) {
                 list.add(new LeaveRequest(
                         rs.getInt("leave_id"),
@@ -44,7 +44,7 @@ public class LeaveRequestDAO {
                         rs.getDouble("day_requested"),
                         rs.getDate("start_date"),
                         rs.getDate("end_date"),
-                        userDAO.getEmployeeByEmpId(rs.getInt("approved_by")),
+                        employeeDAO.getEmployeeByEmpId(rs.getInt("approved_by")),
                         rs.getTimestamp("approved_at"),
                         rs.getString("status"),
                         rs.getString("note"),
