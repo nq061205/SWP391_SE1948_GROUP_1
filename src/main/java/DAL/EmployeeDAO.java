@@ -25,6 +25,8 @@ public class EmployeeDAO {
     private String status = "ok";
     private List<Employee> empList;
     LoginDAO logindao = new LoginDAO();
+    private final DeptDAO deptDAO = new DeptDAO();
+    private final RoleDAO roleDAO = new RoleDAO();
 
     public EmployeeDAO() {
         try {
@@ -35,7 +37,7 @@ public class EmployeeDAO {
             e.printStackTrace();
         }
     }
-    
+
     public List<Employee> getAllEmployees(int roleId) {
         empList = new ArrayList<>();
         String sql = "select * from Employee where role_id = ?";
@@ -53,11 +55,10 @@ public class EmployeeDAO {
                 emp.setDob(rs.getDate("dob"));
                 emp.setPhone(rs.getString("phone"));
                 emp.setPositionTitle(rs.getString("position_title"));
-                
+
                 Department dept = getDepartmentByDeptID(rs.getString("dep_id"));
                 emp.setDept(dept);
-                
-                
+
                 Role role = logindao.getRoleByRoleID(rs.getInt("role_id"));
                 emp.setRole(role);
                 empList.add(emp);
@@ -67,10 +68,10 @@ public class EmployeeDAO {
         }
         return empList;
     }
-    
+
     public Department getDepartmentByDeptID(String deptID) {
         Department dept = new Department();
-        String sql="select * from Department where dep_id =?";
+        String sql = "select * from Department where dep_id =?";
         try {
             PreparedStatement ps = connection.prepareStatement(sql);
             ps.setString(1, deptID);
@@ -81,10 +82,74 @@ public class EmployeeDAO {
                 dept.setDescription(rs.getString("description"));
             }
         } catch (SQLException ex) {
-Logger.getLogger(EmployeeDAO.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(EmployeeDAO.class.getName()).log(Level.SEVERE, null, ex);
         }
         return dept;
     }
-     
 
+    public Employee getEmployeeByEmpCode(String emp_code) {
+        Employee employee = new Employee();
+        try {
+            String sql = "select * from employee where emp_code = ?";
+            Department deparment = deptDAO.getDepartmentByEmpCode(emp_code);
+            PreparedStatement stm = connection.prepareStatement(sql);
+            stm.setString(1, emp_code);
+            ResultSet rs = stm.executeQuery();
+            if (rs.next()) {
+                employee = new Employee(
+                        rs.getInt("emp_id"),
+                        rs.getString("emp_code"),
+                        rs.getString("fullname"),
+                        rs.getString("email"),
+                        rs.getString("password"),
+                        rs.getBoolean("gender"),
+                        rs.getDate("dob"),
+                        rs.getString("phone"),
+                        rs.getString("position_title"),
+                        rs.getString("image"),
+                        rs.getInt("dependant_count"),
+                        deparment,
+                        roleDAO.getRoleByEmpId(rs.getInt("emp_id"))
+                );
+            }
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
+        return employee;
+    }
+
+    public Employee getEmployeeByEmpId(int emp_id) {
+        Employee employee = new Employee();
+        try {
+            String sql = "select * from employee where emp_id = ?";
+            Department deparment = deptDAO.getDepartmentByEmpId(emp_id);
+            PreparedStatement stm = connection.prepareStatement(sql);
+            stm.setInt(1, emp_id);
+            ResultSet rs = stm.executeQuery();
+            if (rs.next()) {
+                employee = new Employee(
+                        rs.getInt("emp_id"),
+                        rs.getString("emp_code"),
+                        rs.getString("fullname"),
+                        rs.getString("email"),
+                        rs.getString("password"),
+                        rs.getBoolean("gender"),
+                        rs.getDate("dob"),
+                        rs.getString("phone"),
+                        rs.getString("position_title"),
+                        rs.getString("image"),
+                        rs.getInt("dependant_count"),
+                        deparment,
+                        roleDAO.getRoleByEmpId(rs.getInt("emp_id"))
+                );
+            }
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
+        return employee;
+    }
+    public static void main(String[] args) {
+        EmployeeDAO dao = new EmployeeDAO();
+        System.out.println(dao.getEmployeeByEmpId(1).toString());
+    }
 }
