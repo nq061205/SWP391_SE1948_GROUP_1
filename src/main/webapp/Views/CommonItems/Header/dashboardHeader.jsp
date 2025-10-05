@@ -122,7 +122,7 @@
                     </div>
                 </li>
                 <li>
-                    <a href="#" class="ttr-material-button ttr-submenu-toggle"><span class="ttr-user-avatar"><img alt="" src="assets/images/testimonials/pic3.jpg" width="32" height="32"></span></a>
+                    <a href="#" class="ttr-material-button ttr-submenu-toggle"><span class="ttr-user-avatar"><img alt="" src="${pageContext.request.contextPath}/assets2/images/testimonials/pic3.jpg" width="32" height="32"></span></a>
                     <div class="ttr-header-submenu">
                         <ul>
                             <li><a href="user-profile.html">My profile</a></li>
