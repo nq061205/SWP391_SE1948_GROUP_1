@@ -12,6 +12,10 @@
         <servlet-name>ForgetPassword</servlet-name>
         <servlet-class>Controllers.ForgetPassword</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>ProfileServlet</servlet-name>
+        <servlet-class>Controllers.ProfileServlet</servlet-class>
+    </servlet>
     <servlet-mapping>
         <servlet-name>HomePageServlet</servlet-name>
         <url-pattern>/homepage</url-pattern>
@@ -23,6 +27,10 @@
     <servlet-mapping>
         <servlet-name>ForgetPassword</servlet-name>
         <url-pattern>/forgetpassword</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>ProfileServlet</servlet-name>
+        <url-pattern>/profile</url-pattern>
     </servlet-mapping>
     <session-config>
         <session-timeout>
