@@ -18,7 +18,7 @@ import java.util.ArrayList;
 public class OTRequestDAO {
 
     private Connection connection;
-    private UserDAO userDAO = new UserDAO();
+    private EmployeeDAO employeeDAO = new EmployeeDAO();
 
     public OTRequestDAO() {
         try {
@@ -34,14 +34,14 @@ public class OTRequestDAO {
             PreparedStatement stm = connection.prepareStatement(sql);
             stm.setInt(1, emp_id);
             ResultSet rs = stm.executeQuery();
-            Employee employee = userDAO.getEmployeeByEmpId(emp_id);
+            Employee employee = employeeDAO.getEmployeeByEmpId(emp_id);
             while (rs.next()) {
                 list.add(new OTRequest(
                         rs.getInt("ot_id"),
                         employee,
                         rs.getDate("date"),
                         rs.getDouble("ot_hours"),
-                        userDAO.getEmployeeByEmpId(rs.getInt("approved_by")),
+                        employeeDAO.getEmployeeByEmpId(rs.getInt("approved_by")),
                         rs.getTimestamp("approved_at"),
                         rs.getString("status"),
                         rs.getTimestamp("created_at"),

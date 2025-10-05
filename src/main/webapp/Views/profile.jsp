@@ -4,6 +4,7 @@
     Author     : Lenovo
 --%>
 
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ page contentType="text/html" pageEncoding="UTF-8"%>
 <!DOCTYPE html>
 <html lang="en">
@@ -56,10 +57,117 @@
     </head>
 
     <body class="ttr-opened-sidebar ttr-pinned-sidebar">
+
+        <!-- HEADER + NAVBAR -->
         <%@ include file="CommonItems/Header/dashboardHeader.jsp" %>
         <%@ include file="CommonItems/Navbar/empNavbar.jsp" %>
+        <main class="ttr-wrapper">
+            <div class="container-fluid">
+                <div class="db-breadcrumb">
+                    <h4 class="breadcrumb-title">Personal information</h4>
+                    <ul class="db-breadcrumb-list">
+                        <li><a href="#"><i class="fa fa-home"></i>Home</a></li>
+                        <li>Personal Profile</li>
+                    </ul>
+                </div>	
 
-        
+                <div class="row">
+                    <div class="col-lg-12 m-b30">
+                        <div class="widget-box">
+                            <div class="wc-title">
+                                <h4>Hồ sơ cá nhân</h4>
+                            </div>
+                            <div class="widget-inner">
+                                <form class="edit-profile m-b30" action="${pageContext.request.contextPath}/profile" method="POST">
+                                    <div class="row">
+                                        <!-- Avatar -->
+                                        <div class="col-md-3 text-center">
+                                            <div class="profile-avatar mb-3">
+                                                <img src="${sessionScope.user.image}" alt="Avatar"  width="150" height="150">
+                                            </div>
+                                            <h5 class="mt-2">${sessionScope.user.fullname}</h5>
+                                            <p class="text-muted">${sessionScope.user.email}</p>
+                                        </div>
+
+                                        <!-- Profile form -->
+                                        <div class="col-md-9">
+                                            <div class="form-group row">
+                                                <label class="col-sm-3 col-form-label">Fullname</label>
+                                                <div class="col-sm-9">
+                                                    <input name="fullName" class="form-control" type="text" value="${sessionScope.user.fullname}"
+                                                           <c:if test="${click != 'save'}"> readonly required </c:if>
+                                                               >
+                                                    </div>
+                                                </div>
+
+                                                <div class="form-group row">
+                                                    <label class="col-sm-3 col-form-label">Position</label>
+                                                    <div class="col-sm-9">
+                                                        <input name="position" class="form-control" type="text" value="${sessionScope.user.positionTitle}" readonly>
+                                                </div>
+                                            </div>
+
+                                            <div class="form-group row">
+                                                <label class="col-sm-3 col-form-label">Email</label>
+                                                <div class="col-sm-9">
+                                                    <input class="form-control" type="text" value="${sessionScope.user.email}" readonly>
+                                                </div>
+                                            </div>
+
+                                            <div class="form-group row">
+                                                <label class="col-sm-3 col-form-label">Gender</label>
+                                                <div class="col-sm-9">
+                                                    <c:if test="${click != 'save'}">
+                                                        <input class="form-control" type="text"
+                                                               value='${sessionScope.user.gender == "true" ? "Male" : "Female"}'
+                                                               readonly>
+                                                    </c:if>
+                                                    <c:if test="${click == 'save'}">
+                                                        <select name="gender" class="form-control">
+                                                            <option value="true" ${sessionScope.user.gender == "true" ? "selected" : ""}>Male</option>
+                                                            <option value="false" ${sessionScope.user.gender == "false" ? "selected" : ""}>Female</option>
+                                                        </select>
+                                                    </c:if>
+                                                </div>
+                                            </div>
+
+                                            <div class="form-group row">
+                                                <label class="col-sm-3 col-form-label">Day of birth</label>
+                                                <div class="col-sm-9">
+                                                    <input name="dob" class="form-control" type="date" value="${sessionScope.user.dob}"
+                                                           <c:if test="${click != 'save'}"> readonly </c:if>
+                                                               >
+                                                    </div>
+                                                </div>
+
+                                                <div class="form-group row">
+                                                    <label class="col-sm-3 col-form-label">Phone</label>
+                                                    <div class="col-sm-9">
+                                                        <input name="phone" 
+                                                               class="form-control" type="text" value="${sessionScope.user.phone}" pattern="\d{10}" title="Phone must include 10 number" minlength="10" maxlength="10"
+                                                        <c:if test="${click != 'save'}"> readonly </c:if>>
+                                                    </div>
+                                                </div>
+                                                <div class="form-group row mt-4">
+                                                    <div class="col-sm-9 offset-sm-3">
+                                                    <c:if test="${click != 'save'}">
+                                                        <button type="submit" name="click" value=""class="btn btn-primary">Change information</button>
+                                                    </c:if>
+                                                    <c:if test="${click == 'save'}">
+                                                        <button type="reset"class="btn btn-secondary">Cancel</button>
+                                                        <button type="submit" name="click" value="save"class="btn btn-primary">Save</button>
+                                                    </c:if>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div> <!-- widget-inner -->
+                        </div> <!-- widget-box -->
+                    </div>
+                </div>
+            </div>
+        </main>
         <!-- SCRIPT ZONE -->
         <script src="${pageContext.request.contextPath}/assets2/js/jquery.min.js"></script>
         <script src="${pageContext.request.contextPath}/assets2/vendors/bootstrap/js/popper.min.js"></script>
