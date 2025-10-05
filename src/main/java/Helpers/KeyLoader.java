@@ -9,7 +9,7 @@ public class KeyLoader {
 
     static {
         try (InputStream input = KeyLoader.class.getClassLoader()
-                .getResourceAsStream("googlekey.properties")) {
+                .getResourceAsStream("google_key.properties")) {
             if (input != null) {
                 props.load(input);
             } else {
