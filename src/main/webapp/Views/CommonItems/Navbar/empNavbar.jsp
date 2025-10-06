@@ -23,23 +23,26 @@
         <nav class="ttr-sidebar-navi">
             <ul>
                 <li>
-                    <a href="profile.html" class="ttr-material-button">
+                    <a href="${pageContext.request.contextPath}/Views/profile.jsp" class="ttr-material-button">
                         <span class="ttr-icon"><i class="ti-book"></i></span>
                         <span class="ttr-label">Profile</span>
                     </a>
                 </li>
                 <li>
-                    <a href="#" class="ttr-material-button">
+                    <a href="${pageContext.request.contextPath}/Views/listapplication.jsp" class="ttr-material-button">
                         <span class="ttr-icon"><i class="ti-email"></i></span>
                         <span class="ttr-label">Application</span>
                         <span class="ttr-arrow-icon"><i class="fa fa-angle-down"></i></span>
                     </a>
                     <ul>
                         <li>
-                            <a href="mailbox.html" class="ttr-material-button"><span class="ttr-label">My application</span></a>
+                            <a href="${pageContext.request.contextPath}/application?typeapplication=leave" class="ttr-material-button"><span class="ttr-label">Leave request</span></a>
                         </li>
                         <li>
-                            <a href="mailbox-compose.html" class="ttr-material-button"><span class="ttr-label">Send application</span></a>
+                            <a href="${pageContext.request.contextPath}/application?typeapplication=ot" class="ttr-material-button"><span class="ttr-label">Overtime request</span></a>
+                        </li>
+                        <li>
+                            <a href="${pageContext.request.contextPath}/Views/composeapplication.jsp" class="ttr-material-button"><span class="ttr-label">Send application</span></a>
                         </li>
                     </ul>
                 </li>
