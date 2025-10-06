@@ -26,50 +26,42 @@ import java.util.logging.Logger;
  */
 public class LoginServlet extends HttpServlet {
 
-
-    
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        try {
-            String code = request.getParameter("code");
-            Cookie[] cookies = request.getCookies();
-            if (cookies != null) {
-                for (Cookie cooky : cookies) {
-                    if ("rememberUser".equals(cooky.getName())) {
-                        request.setAttribute("rememberEmpCode", cooky.getValue());
-                    }
-                    if("rememberPass".equals(cooky.getName())){
-                        request.setAttribute("rememberEmpPass", cooky.getValue());
-                    }
+        String code = request.getParameter("code");
+        Cookie[] cookies = request.getCookies();
+        if (cookies != null) {
+            for (Cookie cooky : cookies) {
+                if ("rememberUser".equals(cooky.getName())) {
+                    request.setAttribute("rememberEmpCode", cooky.getValue());
+                }
+                if ("rememberPass".equals(cooky.getName())) {
+                    request.setAttribute("rememberEmpPass", cooky.getValue());
                 }
             }
-            if (code == null) {
-                request.getRequestDispatcher("Views/login.jsp").forward(request, response);
-                return;
-            }
-            GoogleLogin google = new GoogleLogin();
-            EmployeeDAO ldao = new EmployeeDAO();
-            GoogleAccount googleAcc = google.getUserInfo(google.getToken(code));
-            Employee emp = ldao.getEmployeeByEmail(googleAcc.getEmail());
-            if (emp == null) {
-                request.setAttribute("errorMessage", "Account does not valid");
-                request.getRequestDispatcher("Views/login.jsp").forward(request, response);
-                return;
-            }
-            HttpSession ses = request.getSession();
-            ses.setAttribute("employee", emp);
-            response.sendRedirect("homepage");
-        } catch (SQLException ex) {
-            Logger.getLogger(LoginServlet.class.getName()).log(Level.SEVERE, null, ex);
         }
+        if (code == null) {
+            request.getRequestDispatcher("Views/login.jsp").forward(request, response);
+            return;
+        }
+        GoogleLogin google = new GoogleLogin();
+        EmployeeDAO ldao = new EmployeeDAO();
+        GoogleAccount googleAcc = google.getUserInfo(google.getToken(code));
+        Employee emp = ldao.getEmployeeByEmail(googleAcc.getEmail());
+        if (emp == null) {
+            request.setAttribute("errorMessage", "Account does not valid");
+            request.getRequestDispatcher("Views/login.jsp").forward(request, response);
+            return;
+        }
+        HttpSession ses = request.getSession();
+        ses.setAttribute("employee", emp);
+        response.sendRedirect("homepage");
     }
-    
-    
+
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        try {
             String emp_code = request.getParameter("emp_code");
             String password = request.getParameter("password");
             String remember = request.getParameter("remember");
@@ -80,13 +72,13 @@ public class LoginServlet extends HttpServlet {
                 session.setAttribute("employee", employee);
                 if ("on".equals(remember)) {
                     Cookie cookieUser = new Cookie("rememberUser", emp_code);
-                    cookieUser.setMaxAge(7*24*60*60);
+                    cookieUser.setMaxAge(7 * 24 * 60 * 60);
                     response.addCookie(cookieUser);
-                    
+
                     Cookie cookiePass = new Cookie("rememberPass", password);
-                    cookiePass.setMaxAge(7*24*60*60);
+                    cookiePass.setMaxAge(7 * 24 * 60 * 60);
                     response.addCookie(cookiePass);
-                }else{
+                } else {
                     Cookie ckUser = new Cookie("rememberUser", "");
                     ckUser.setMaxAge(0);
                     response.addCookie(ckUser);
@@ -98,15 +90,9 @@ public class LoginServlet extends HttpServlet {
             } else {
                 request.setAttribute("errorMessage", "Employee Code or Password invalid");
                 request.getRequestDispatcher("Views/login.jsp").forward(request, response);
-            }
-        } catch (SQLException ex) {
-            Logger.getLogger(LoginServlet.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        } 
     }
 
-
-    
-    
     @Override
     public String getServletInfo() {
         return "Short description";
