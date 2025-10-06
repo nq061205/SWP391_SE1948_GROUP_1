@@ -80,13 +80,11 @@ public class ChangePassword extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        try {
             HttpSession session = request.getSession();
             Employee emp = (Employee) session.getAttribute("employee");
             String currentPass = request.getParameter("currentPassword");
             String newPass = request.getParameter("newPassword");
             String confirmPass = request.getParameter("confirmPassword");
-
             if (!currentPass.equals(emp.getPassword())) {
                 request.setAttribute("errorMessage", "password is incorect");
                 request.getRequestDispatcher("Views/changepassword.jsp").forward(request, response);
@@ -103,9 +101,7 @@ public class ChangePassword extends HttpServlet {
             request.setAttribute("successMessage", "New password has been updated");
             request.getRequestDispatcher("Views/changepassword.jsp").forward(request, response);
 
-        } catch (SQLException ex) {
-            Logger.getLogger(ChangePassword.class.getName()).log(Level.SEVERE, null, ex);
-        }
+
 
     }
 
