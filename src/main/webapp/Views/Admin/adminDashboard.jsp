@@ -8,7 +8,6 @@
 <!DOCTYPE html>
 <html>
     <head>
-
         <!-- META ============================================= -->
         <meta charset="utf-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -26,11 +25,11 @@
         <meta name="format-detection" content="telephone=no">
 
         <!-- FAVICONS ICON ============================================= -->
-        <link rel="icon" href="../error-404.html" type="image/x-icon" />
+        <link rel="icon" href="${pageContext.request.contextPath}/assets2/images/favicon.ico" type="image/x-icon" />
         <link rel="shortcut icon" type="image/x-icon" href="${pageContext.request.contextPath}/assets2/images/favicon.png" />
 
         <!-- PAGE TITLE HERE ============================================= -->
-        <title>Human Tech - Dashboard</title>
+        <title>EduChamp : Education HTML Template</title>
 
         <!-- MOBILE SPECIFIC ============================================= -->
         <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -54,12 +53,12 @@
         <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/assets2/css/style.css">
         <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/assets2/css/dashboard.css">
         <link class="skin" rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/assets2/css/color/color-1.css">
-
     </head>
 
     <body class="ttr-opened-sidebar ttr-pinned-sidebar">
-        <%@ include file="../CommonItems/Header/dashboardHeader.jsp" %>
-        <%@ include file="../CommonItems/Navbar/adminNavbar.jsp" %>
+        <jsp:include page="../CommonItems/Header/dashboardHeader.jsp" />
+        <jsp:include page="../CommonItems/Navbar/empNavbar.jsp" />
+
     </body>
 
     <script src="${pageContext.request.contextPath}/assets2/js/jquery.min.js"></script>

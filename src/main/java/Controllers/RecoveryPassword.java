@@ -4,7 +4,6 @@
  */
 package Controllers;
 
-import API.EmailUtil;
 import DAL.EmployeeDAO;
 import Models.Employee;
 import java.io.IOException;
@@ -14,9 +13,7 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
-import java.security.SecureRandom;
 import java.sql.SQLException;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -25,7 +22,7 @@ import java.util.logging.Logger;
  *
  * @author hgduy
  */
-public class ForgetPassword extends HttpServlet {
+public class RecoveryPassword extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -44,10 +41,10 @@ public class ForgetPassword extends HttpServlet {
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
-            out.println("<title>Servlet ForgetPassword</title>");
+            out.println("<title>Servlet RecoveryPassword</title>");
             out.println("</head>");
             out.println("<body>");
-            out.println("<h1>Servlet ForgetPassword at " + request.getContextPath() + "</h1>");
+            out.println("<h1>Servlet RecoveryPassword at " + request.getContextPath() + "</h1>");
             out.println("</body>");
             out.println("</html>");
         }
@@ -65,7 +62,18 @@ public class ForgetPassword extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        request.getRequestDispatcher("Views/forgetpassword.jsp").forward(request, response);
+        HttpSession session = request.getSession(false);
+        String token = request.getParameter("token");
+        if (token == null || token.isEmpty() || session == null) {
+            response.sendRedirect("forgetpassword");
+        } else {
+            String tokenReference = (String) session.getAttribute("resetToken");
+            if (!token.equals(tokenReference)) {
+                response.sendRedirect("forgetpassword");
+            } else {
+                request.getRequestDispatcher("Views/recoverypassword.jsp").forward(request, response);
+            }
+        }
     }
 
     /**
@@ -80,39 +88,20 @@ public class ForgetPassword extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         try {
-            String email = request.getParameter("email");
-            EmployeeDAO uDao = new EmployeeDAO();
-            Employee emp = uDao.getEmployeeByEmail(email);
-            HttpSession session = request.getSession();
-            if (emp == null) {
-                request.setAttribute("errorMessage", "Email does not exist");
-                request.getRequestDispatcher("Views/forgetpassword.jsp").forward(request, response);
-            } else {
-                EmailUtil util = new EmailUtil();
-                String tokenGenerate = generateToken();
-                session.setAttribute("resetEmail", email);
-                session.setAttribute("resetToken", tokenGenerate);
-                session.setMaxInactiveInterval(5 * 60);
-                util.sendResetLink(email, tokenGenerate);
-                response.sendRedirect("recovery");
-            }
-        } catch (Exception ex) {
-            Logger.getLogger(ForgetPassword.class.getName()).log(Level.SEVERE, null, ex);
-        }
-    }
-    private static final String CHARACTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-    private static final int PASSWORD_LENGTH = 8;
+            HttpSession session = request.getSession(false);
+            String newPassword = request.getParameter("newPassword");
+            String email = (String) session.getAttribute("resetEmail");
+            session.removeAttribute("resetEmail");
+            session.removeAttribute("resetToken");
+            EmployeeDAO lDao = new EmployeeDAO();
+            Employee emp = lDao.getEmployeeByEmail(email);
+            lDao.updatePassword(emp.getEmpCode(), newPassword);
 
-    public static String generateToken() {
-        SecureRandom random = new SecureRandom();
-        StringBuilder password = new StringBuilder(PASSWORD_LENGTH);
-
-        for (int i = 0; i < PASSWORD_LENGTH; i++) {
-            int index = random.nextInt(CHARACTERS.length());
-            password.append(CHARACTERS.charAt(index));
+            response.sendRedirect("login");
+        } catch (SQLException ex) {
+            Logger.getLogger(RecoveryPassword.class.getName()).log(Level.SEVERE, null, ex);
         }
 
-        return password.toString();
     }
 
     /**

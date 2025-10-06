@@ -1,10 +1,11 @@
 
-<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <!DOCTYPE html>
 <html>
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <head>
         <!-- META ============================================= -->
         <meta charset="utf-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -13,28 +14,21 @@
         <meta name="robots" content="" />
 
         <!-- DESCRIPTION -->
-        <meta name="description" content="EduChamp : Education HTML Template" />
+        <meta name="description" content="EduChamp : Reset Password Page" />
 
         <!-- OG -->
-        <meta property="og:title" content="EduChamp : Education HTML Template" />
-        <meta property="og:description" content="EduChamp : Education HTML Template" />
-        <meta property="og:image" content="" />
-        <meta name="format-detection" content="telephone=no">
+        <meta property="og:title" content="Reset Password" />
+        <meta property="og:description" content="Reset your EduChamp account password" />
 
         <!-- FAVICONS ICON ============================================= -->
         <link rel="icon" href="${pageContext.request.contextPath}/assets1/images/favicon.ico" type="image/x-icon" />
         <link rel="shortcut icon" type="image/x-icon" href="${pageContext.request.contextPath}/assets1/images/favicon.png" />
 
         <!-- PAGE TITLE HERE ============================================= -->
-        <title>EduChamp : Education HTML Template </title>
+        <title>Reset Password | EduChamp</title>
 
         <!-- MOBILE SPECIFIC ============================================= -->
         <meta name="viewport" content="width=device-width, initial-scale=1">
-
-        <!--[if lt IE 9]>
-        <script src="assets/js/html5shiv.min.js"></script>
-        <script src="assets/js/respond.min.js"></script>
-        <![endif]-->
 
         <!-- All PLUGINS CSS ============================================= -->
         <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/assets1/css/assets.css">
@@ -48,43 +42,51 @@
         <!-- STYLESHEETS ============================================= -->
         <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/assets1/css/style.css">
         <link class="skin" rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/assets1/css/color/color-1.css">
-
     </head>
+
     <body id="bg">
         <div class="page-wraper">
             <div id="loading-icon-bx"></div>
+
+            <!-- Content -->
             <div class="account-form">
                 <div class="account-head" style="background-image:url(${pageContext.request.contextPath}/assets1/images/background/bg2.jpg);">
-                    <a href="index.html"><img src="${pageContext.request.contextPath}/assets1/images/logo-white-2.png" alt=""></a>
+                    <a href="${pageContext.request.contextPath}/index.jsp">
+                        <img src="${pageContext.request.contextPath}/assets1/images/logo-white-2.png" alt=""/>
+                    </a>
                 </div>
                 <div class="account-form-inner">
                     <div class="account-container">
                         <div class="heading-bx left">
-                            <h2 class="title-head">Forget <span>Password</span></h2>
-                            <p>Login Your Account <a href="${pageContext.request.contextPath}/login">Click here</a></p>
-                        </div>	
-                        <form class="contact-bx" action="${pageContext.request.contextPath}/forgetpassword" method="post">
-                            <div class="row placeani">
-                                <div class="col-lg-12">
-                                    <div class="form-group">
-                                        <div class="input-group">
-                                            <label>Your Email Address</label>
-                                            <input name="email" type="email" required="" class="form-control">
-                                        </div>
-                                        <c:if test="${requestScope.errorMessage != null}">
-                                            <div style="color: red">${requestScope.errorMessage}</div>
-                                        </c:if>
-                                    </div>
-                                </div>
-                                <div class="col-lg-12 m-b30">
-                                    <button name="submit" type="submit" value="Submit" class="btn button-md">Submit</button>
-                                </div>
+                            <h2 class="title-head">Reset <span>Password</span></h2>
+                            <p>Please enter your new password below.</p>
+                        </div>
+
+                        <form class="contact-bx" id="resetForm" action="${pageContext.request.contextPath}/recovery" method="post">
+                            <div class="form-group">
+                                <label>New Password</label>
+                                <input name="newPassword" id="newPassword" type="password" required class="form-control" placeholder="Enter new password">
+                            </div>
+                            <div class="form-group">
+                                <label>Confirm Password</label>
+                                <input name="confirmPassword" id="confirmPassword" type="password" required class="form-control" placeholder="Re-enter new password">
+                            </div>
+
+                            <div id="message" class="m-b10" style="color:red; display:none;"></div>
+
+                            <div class="form-group text-center">
+                                <button type="submit" class="btn radius-xl" onclick="validateForm()">Reset Password</button>
+                            </div>
+
+                            <div class="form-group text-center">
+                                <a href="${pageContext.request.contextPath}/login" class="text-primary">Back to Login</a>
                             </div>
                         </form>
                     </div>
                 </div>
             </div>
         </div>
+
         <!-- External JavaScripts -->
         <script src="${pageContext.request.contextPath}/assets1/js/jquery.min.js"></script>
         <script src="${pageContext.request.contextPath}/assets1/vendors/bootstrap/js/popper.min.js"></script>
@@ -100,7 +102,35 @@
         <script src="${pageContext.request.contextPath}/assets1/vendors/owl-carousel/owl.carousel.js"></script>
         <script src="${pageContext.request.contextPath}/assets1/js/functions.js"></script>
         <script src="${pageContext.request.contextPath}/assets1/js/contact.js"></script>
-        <script src='${pageContext.request.contextPath}/assets1/vendors/switcher/switcher.js'></script>
-    </body>
+        <script src="${pageContext.request.contextPath}/assets1/vendors/switcher/switcher.js"></script>
 
+
+
+    </body>
+    <!-- Simple Validation JS -->
+    <script>
+                                    function validateForm() {
+                                        const newPass = document.getElementById("newPassword").value.trim();
+                                        const confirmPass = document.getElementById("confirmPassword").value.trim();
+                                        const msg = document.getElementById("message");
+
+                                        if (newPass.length < 6) {
+                                            msg.style.display = "block";
+                                            msg.style.color = "red";
+                                            msg.textContent = "Password must be at least 6 characters long!";
+                                            return;
+                                        }
+
+                                        if (newPass !== confirmPass) {
+                                            msg.style.display = "block";
+                                            msg.style.color = "red";
+                                            msg.textContent = "Passwords do not match!";
+                                            return;
+                                        }
+
+                                        msg.style.display = "block";
+                                        msg.style.color = "green";
+                                        msg.textContent = "✅ Password reset successful (demo only)";
+                                    }
+    </script>
 </html>
