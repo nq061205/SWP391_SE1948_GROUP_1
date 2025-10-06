@@ -231,7 +231,7 @@ public class EmployeeDAO extends DBContext {
         return dept;
     }
 
-    public void updateEmployeeInformation(int emp_id , String fullname, boolean gender, Date dob, String phone, String image) {
+    public void updateEmployeeInformation(int emp_id, String fullname, boolean gender, Date dob, String phone, String image) {
         String sql = "UPDATE Employee SET fullname = ?, gender = ?, dob = ?, phone = ?, image = ? WHERE email = ?";
         try (Connection conn = DBContext.getConnection(); PreparedStatement stm = conn.prepareStatement(sql)) {
 
@@ -251,7 +251,6 @@ public class EmployeeDAO extends DBContext {
 
     public static void main(String[] args) {
         EmployeeDAO dao = new EmployeeDAO();
-//        dao.updateEmployeeInformation("a@example.com", "Nguyen dinh quy", true, Date.valueOf("2005-12-06"), "0337364331", "https://th.bing.com/th/id/R.fc29a4cb6dc14125a65e063ad84ff8d6?rik=uGK52SVvi5jVdA&riu=http%3a%2f%2fimg3.wikia.nocookie.net%2f__cb20140726052228%2fnickplus%2fimages%2fe%2fe8%2fOggy.jpg&ehk=E2VsEVovikRgiB9LreD0KMhFrms05LrB36J%2fGa1fgGQ%3d&risl=&pid=ImgRaw&r=0");
-        System.out.println(dao.getEmployeeByEmpId(1));
+        System.out.println(dao.getEmployeeByEmpId(1).toString());
     }
 }
