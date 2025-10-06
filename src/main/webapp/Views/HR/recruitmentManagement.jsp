@@ -98,75 +98,78 @@
                     </div>
                 </c:if>
                 
-                <!-- Create Post Form -->
-                <div class="row">
-                    <div class="col-lg-12 m-b30">
-                        <div class="widget-box">
-                            <div class="wc-title">
-                                <h4><i class="fa fa-plus-circle"></i> Create New Recruitment Post</h4>
-                            </div>
-                            <div class="widget-inner">
-                                <form action="${pageContext.request.contextPath}/hrrecruitment" method="post" id="createPostForm">
-                                    <input type="hidden" name="action" value="create">
-                                    <div class="row">
-                                        <div class="col-md-6">
-                                            <div class="form-group">
-                                                <label for="title">Title <span class="text-danger">*</span></label>
-                                                <input type="text" class="form-control" id="title" name="title" 
-                                                       placeholder="Enter job title" required maxlength="255">
+                <!-- Create Post Form (shown by default) -->
+                <c:if test="${empty editPost}">
+                    <div class="row">
+                        <div class="col-lg-12 m-b30">
+                            <div class="widget-box">
+                                <div class="wc-title">
+                                    <h4><i class="fa fa-plus-circle"></i> Create New Recruitment Post</h4>
+                                </div>
+                                <div class="widget-inner">
+                                    <form action="${pageContext.request.contextPath}/hrrecruitment" method="post" id="createPostForm">
+                                        <input type="hidden" name="action" value="create">
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <div class="form-group">
+                                                    <label for="title">Title <span class="text-danger">*</span></label>
+                                                    <input type="text" class="form-control" id="title" name="title" 
+                                                           placeholder="Enter job title" required maxlength="255">
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <div class="form-group">
+                                                    <label for="depId">Department <span class="text-danger">*</span></label>
+                                                    <select class="form-control" id="depId" name="depId" required>
+                                                        <option value="">Select Department</option>
+                                                        <c:forEach var="dept" items="${departments}">
+                                                            <option value="${dept.depId}">${dept.depName}</option>
+                                                        </c:forEach>
+                                                    </select>
+                                                    <!-- Debug info -->
+                                                    <small class="text-muted">
+                                                        Debug: Departments count = ${departments.size()}
+                                                        <c:if test="${not empty departments}">
+                                                            | First dept: ${departments[0].depName}
+                                                        </c:if>
+                                                    </small>
+                                                </div>
                                             </div>
                                         </div>
-                                        <div class="col-md-6">
-                                            <div class="form-group">
-                                                <label for="depId">Department <span class="text-danger">*</span></label>
-                                                <select class="form-control" id="depId" name="depId" required>
-                                                    <option value="">Select Department</option>
-                                                    <c:forEach var="dept" items="${departments}">
-                                                        <option value="${dept.depId}">${dept.depName}</option>
-                                                    </c:forEach>
-                                                </select>
-                                                <!-- Debug info -->
-                                                <small class="text-muted">
-                                                    Debug: Departments count = ${departments.size()}
-                                                    <c:if test="${not empty departments}">
-                                                        | First dept: ${departments[0].depName}
-                                                    </c:if>
-                                                </small>
+                                        <div class="row">
+                                            <div class="col-md-12">
+                                                <div class="form-group">
+                                                    <label for="content">Job Description <span class="text-danger">*</span></label>
+                                                    <textarea class="form-control" id="content" name="content" rows="5" 
+                                                              placeholder="Enter detailed job description, requirements, and benefits" required></textarea>
+                                                </div>
                                             </div>
                                         </div>
-                                    </div>
-                                    <div class="row">
-                                        <div class="col-md-12">
-                                            <div class="form-group">
-                                                <label for="content">Job Description <span class="text-danger">*</span></label>
-                                                <textarea class="form-control" id="content" name="content" rows="5" 
-                                                          placeholder="Enter detailed job description, requirements, and benefits" required></textarea>
+                                        <div class="row">
+                                            <div class="col-md-12">
+                                                <button type="submit" class="btn btn-primary">
+                                                    <i class="fa fa-save"></i> Create Post
+                                                </button>
+                                                <button type="reset" class="btn btn-secondary ml-2">
+                                                    <i class="fa fa-undo"></i> Reset
+                                                </button>
                                             </div>
                                         </div>
-                                    </div>
-                                    <div class="row">
-                                        <div class="col-md-12">
-                                            <button type="submit" class="btn btn-primary">
-                                                <i class="fa fa-save"></i> Create Post
-                                            </button>
-                                            <button type="reset" class="btn btn-secondary ml-2">
-                                                <i class="fa fa-undo"></i> Reset
-                                            </button>
-                                        </div>
-                                    </div>
-                                </form>
+                                    </form>
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
+                </c:if>
                 
-                <!-- Edit Post Form (for rejected posts) -->
+                <!-- Edit Post Form (replaces create form when editing) -->
                 <c:if test="${not empty editPost}">
                     <div class="row">
                         <div class="col-lg-12 m-b30">
                             <div class="widget-box">
                                 <div class="wc-title">
                                     <h4><i class="fa fa-edit"></i> Edit Rejected Post</h4>
+                                    <span class="badge badge-warning">Post ID: ${editPost.postId}</span>
                                 </div>
                                 <div class="widget-inner">
                                     <form action="${pageContext.request.contextPath}/hrrecruitment" method="post" id="updatePostForm">
