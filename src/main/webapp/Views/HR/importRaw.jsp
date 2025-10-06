@@ -59,7 +59,7 @@
 
     <body class="ttr-opened-sidebar ttr-pinned-sidebar">
         <%@ include file="../CommonItems/Header/dashboardHeader.jsp" %>
-        <%@ include file="../CommonItems/Navbar/adminNavbar.jsp" %>
+        <%@ include file="../CommonItems/Navbar/hrNavbar.jsp" %>
         <main class="ttr-wrapper">
             <form action="UploadExcelServlet" method="post" enctype="multipart/form-data">
                 <input type="file" name="file" accept=".xlsx" required>
