@@ -87,7 +87,6 @@ public class RecoveryPassword extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        try {
             HttpSession session = request.getSession(false);
             String newPassword = request.getParameter("newPassword");
             String email = (String) session.getAttribute("resetEmail");
@@ -96,11 +95,8 @@ public class RecoveryPassword extends HttpServlet {
             EmployeeDAO lDao = new EmployeeDAO();
             Employee emp = lDao.getEmployeeByEmail(email);
             lDao.updatePassword(emp.getEmpCode(), newPassword);
-
             response.sendRedirect("login");
-        } catch (SQLException ex) {
-            Logger.getLogger(RecoveryPassword.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        
 
     }
 

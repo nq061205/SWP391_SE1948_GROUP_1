@@ -106,7 +106,7 @@ public class EmployeeDAO extends DBContext {
         return null;
     }
 
-    public Employee getEmployeeByUsernamePassword(String username, String pass) throws SQLException {
+    public Employee getEmployeeByUsernamePassword(String username, String pass) {
         String sql = "SELECT * FROM Employee WHERE emp_code = ? AND password = ?";
         try (PreparedStatement stm = connection.prepareStatement(sql)) {
             stm.setString(1, username);
@@ -134,11 +134,13 @@ public class EmployeeDAO extends DBContext {
                     return emp;
                 }
             }
+        }catch (SQLException ex) {
+            ex.printStackTrace();
         }
         return null;
     }
 
-    public Employee getEmployeeByEmail(String email) throws SQLException {
+    public Employee getEmployeeByEmail(String email){
         String sql = "SELECT * FROM Employee WHERE email = ?";
         try (PreparedStatement stm = connection.prepareStatement(sql)) {
             stm.setString(1, email);
@@ -163,18 +165,23 @@ public class EmployeeDAO extends DBContext {
                 emp.setStatus(rs.getBoolean("status"));
                 return emp;
             }
+        }catch (SQLException ex) {
+            ex.printStackTrace();
         }
         return null;
     }
 
-    public boolean updatePassword(String empCode, String newPassword) throws SQLException {
+    public boolean updatePassword(String empCode, String newPassword) {
         String sql = "UPDATE Employee SET password = ? WHERE emp_code = ?";
         try (PreparedStatement stm = connection.prepareStatement(sql)) {
             stm.setString(1, newPassword);
             stm.setString(2, empCode);
             int rows = stm.executeUpdate();
             return rows > 0;
+        }catch (SQLException ex) {
+            ex.printStackTrace();
         }
+        return false;
     }
 
     // =========================================================
