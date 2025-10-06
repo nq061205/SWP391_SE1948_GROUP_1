@@ -77,6 +77,20 @@ public class HRRecruitmentServlet extends HttpServlet {
     private void showApprovedPostsList(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         try {
+            // Check for messages from session
+            String successMessage = (String) request.getSession().getAttribute("successMessage");
+            String errorMessage = (String) request.getSession().getAttribute("errorMessage");
+            
+            if (successMessage != null) {
+                request.setAttribute("successMessage", successMessage);
+                request.getSession().removeAttribute("successMessage");
+            }
+            
+            if (errorMessage != null) {
+                request.setAttribute("errorMessage", errorMessage);
+                request.getSession().removeAttribute("errorMessage");
+            }
+            
             // Get approved posts from database
             List<RecruitmentPost> approvedPosts = recruitmentPostDAO.getApprovedPosts();
             
@@ -170,8 +184,8 @@ public class HRRecruitmentServlet extends HttpServlet {
                 content == null || content.trim().isEmpty() ||
                 depId == null || depId.trim().isEmpty()) {
                 
-                request.setAttribute("errorMessage", "All fields are required.");
-                showApprovedPostsList(request, response);
+                request.getSession().setAttribute("errorMessage", "All fields are required.");
+                response.sendRedirect(request.getContextPath() + "/hrrecruitment");
                 return;
             }
             
@@ -183,20 +197,20 @@ public class HRRecruitmentServlet extends HttpServlet {
             boolean success = recruitmentPostDAO.createPost(title, content, depId, createdBy, approvedBy);
             
             if (success) {
-                request.setAttribute("successMessage", "Post created successfully! It's now pending approval.");
+                request.getSession().setAttribute("successMessage", "Post created successfully! It's now pending approval.");
             } else {
-                request.setAttribute("errorMessage", "Failed to create post. Please try again.");
+                request.getSession().setAttribute("errorMessage", "Failed to create post. Please try again.");
             }
             
-            // Redirect to list
-            showApprovedPostsList(request, response);
+            // Redirect to list (without editPost)
+            response.sendRedirect(request.getContextPath() + "/hrrecruitment");
             
         } catch (Exception e) {
             System.err.println("Error in createPost: " + e.getMessage());
             e.printStackTrace();
             
-            request.setAttribute("errorMessage", "Unable to create post. Please try again.");
-            showApprovedPostsList(request, response);
+            request.getSession().setAttribute("errorMessage", "Unable to create post. Please try again.");
+            response.sendRedirect(request.getContextPath() + "/hrrecruitment");
         }
     }
     
@@ -217,13 +231,22 @@ public class HRRecruitmentServlet extends HttpServlet {
                     // Get departments for dropdown
                     List<Department> departments = recruitmentPostDAO.getDepartments();
                     
+                    // Get approved posts for the main table
+                    List<RecruitmentPost> approvedPosts = recruitmentPostDAO.getApprovedPosts();
+                    
+                    // Get pending and rejected posts for notification table
+                    List<RecruitmentPost> pendingAndRejectedPosts = recruitmentPostDAO.getPendingAndRejectedPosts();
+                    
                     request.setAttribute("editPost", post);
                     request.setAttribute("departments", departments);
+                    request.setAttribute("approvedPosts", approvedPosts);
+                    request.setAttribute("pendingAndRejectedPosts", pendingAndRejectedPosts);
+                    request.setAttribute("totalPosts", approvedPosts.size());
                     request.setAttribute("currentPage", "Recruitment Management");
                     request.setAttribute("pageTitle", "Edit Rejected Post");
                     
-                    // Forward to edit form (we'll add this to the JSP)
-                    showApprovedPostsList(request, response);
+                    // Forward to the same JSP with edit form visible
+                    request.getRequestDispatcher("/Views/HR/recruitmentManagement.jsp").forward(request, response);
                 } else {
                     request.setAttribute("errorMessage", "Post not found or not in rejected status.");
                     showApprovedPostsList(request, response);
@@ -264,8 +287,8 @@ public class HRRecruitmentServlet extends HttpServlet {
                 content == null || content.trim().isEmpty() ||
                 depId == null || depId.trim().isEmpty()) {
                 
-                request.setAttribute("errorMessage", "All fields are required.");
-                showApprovedPostsList(request, response);
+                request.getSession().setAttribute("errorMessage", "All fields are required.");
+                response.sendRedirect(request.getContextPath() + "/hrrecruitment");
                 return;
             }
             
@@ -275,25 +298,25 @@ public class HRRecruitmentServlet extends HttpServlet {
             boolean success = recruitmentPostDAO.updatePost(postId, title, content, depId);
             
             if (success) {
-                request.setAttribute("successMessage", "Post updated successfully! Status changed to pending.");
+                request.getSession().setAttribute("successMessage", "Post updated successfully! Status changed to pending.");
             } else {
-                request.setAttribute("errorMessage", "Failed to update post. Please try again.");
+                request.getSession().setAttribute("errorMessage", "Failed to update post. Please try again.");
             }
             
-            // Redirect to list
-            showApprovedPostsList(request, response);
+            // Redirect to list (without editPost)
+            response.sendRedirect(request.getContextPath() + "/hrrecruitment");
             
         } catch (NumberFormatException e) {
             System.err.println("Invalid post ID format: " + e.getMessage());
-            request.setAttribute("errorMessage", "Invalid post ID format.");
-            showApprovedPostsList(request, response);
+            request.getSession().setAttribute("errorMessage", "Invalid post ID format.");
+            response.sendRedirect(request.getContextPath() + "/hrrecruitment");
             
         } catch (Exception e) {
             System.err.println("Error in updatePost: " + e.getMessage());
             e.printStackTrace();
             
-            request.setAttribute("errorMessage", "Unable to update post. Please try again.");
-            showApprovedPostsList(request, response);
+            request.getSession().setAttribute("errorMessage", "Unable to update post. Please try again.");
+            response.sendRedirect(request.getContextPath() + "/hrrecruitment");
         }
     }
 
