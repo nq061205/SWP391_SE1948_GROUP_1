@@ -63,14 +63,19 @@
                             <h2 class="title-head">Forget <span>Password</span></h2>
                             <p>Login Your Account <a href="${pageContext.request.contextPath}/login">Click here</a></p>
                         </div>	
-                        <form class="contact-bx" action="${pageContext.request.contextPath}/forgetpassword" method="post">
+                        <form id="forget-password" class="contact-bx" action="${pageContext.request.contextPath}/forgetpassword" method="post" onsubmit="return checkCaptcha()">
                             <div class="row placeani">
                                 <div class="col-lg-12">
                                     <div class="form-group">
                                         <div class="input-group">
                                             <label>Your Email Address</label>
                                             <input name="email" type="email" required="" class="form-control">
+                                            <div style="margin-top: 20px" class="g-recaptcha" data-sitekey="6LeMV98rAAAAAIR7RyVdgvHsw_q2WtpVVHpd4crB"></div>
+                                            <div class="error" id="error" style="color: red"></div>
                                         </div>
+
+
+
                                         <c:if test="${requestScope.errorMessage != null}">
                                             <div style="color: red">${requestScope.errorMessage}</div>
                                         </c:if>
@@ -86,6 +91,21 @@
             </div>
         </div>
         <!-- External JavaScripts -->
+        <script type="text/javascript">
+            function checkCaptcha() {
+                var error = document.getElementById("error");
+                const captcha = grecaptcha.getResponse();
+
+                if (captcha.length === 0) {
+                    error.textContent = "Please verify that you are not a robot";
+                    return false; // Ngăn không cho form submit
+                } else {
+                    error.textContent = "";
+                    return true; // Cho phép form submit
+                }
+            }
+        </script>
+
         <script src="${pageContext.request.contextPath}/assets1/js/jquery.min.js"></script>
         <script src="${pageContext.request.contextPath}/assets1/vendors/bootstrap/js/popper.min.js"></script>
         <script src="${pageContext.request.contextPath}/assets1/vendors/bootstrap/js/bootstrap.min.js"></script>
@@ -101,6 +121,7 @@
         <script src="${pageContext.request.contextPath}/assets1/js/functions.js"></script>
         <script src="${pageContext.request.contextPath}/assets1/js/contact.js"></script>
         <script src='${pageContext.request.contextPath}/assets1/vendors/switcher/switcher.js'></script>
-    </body>
+        <script src="https://www.google.com/recaptcha/api.js" async defer></script>
 
+    </body>
 </html>
