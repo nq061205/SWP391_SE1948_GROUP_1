@@ -5,12 +5,8 @@
         <servlet-class>Controllers.HomePageServlet</servlet-class>
     </servlet>
     <servlet>
-        <servlet-name>LoginServlet</servlet-name>
-        <servlet-class>Controllers.LoginServlet</servlet-class>
-    </servlet>
-    <servlet>
-        <servlet-name>ForgetPassword</servlet-name>
-        <servlet-class>Controllers.ForgetPassword</servlet-class>
+        <servlet-name>ChangePassword</servlet-name>
+        <servlet-class>Controllers.ChangePassword</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>UploadExcelServlet</servlet-name>
@@ -20,10 +16,18 @@
         <servlet-name>HomePageServlet</servlet-name>
         <url-pattern>/homepage</url-pattern>
     </servlet-mapping>
+    <servlet>
+        <servlet-name>LoginServlet</servlet-name>
+        <servlet-class>Controllers.LoginServlet</servlet-class>
+    </servlet>
     <servlet-mapping>
         <servlet-name>LoginServlet</servlet-name>
         <url-pattern>/login</url-pattern>
     </servlet-mapping>
+    <servlet>
+        <servlet-name>ForgetPassword</servlet-name>
+        <servlet-class>Controllers.ForgetPassword</servlet-class>
+    </servlet>
     <servlet-mapping>
         <servlet-name>ForgetPassword</servlet-name>
         <url-pattern>/forgetpassword</url-pattern>
@@ -32,10 +36,28 @@
         <servlet-name>UploadExcelServlet</servlet-name>
         <url-pattern>/uploadExcel</url-pattern>
     </servlet-mapping>
+    <servlet>
+        <servlet-name>RecoveryPassword</servlet-name>
+        <servlet-class>Controllers.RecoveryPassword</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>RecoveryPassword</servlet-name>
+        <url-pattern>/recovery</url-pattern>
+    </servlet-mapping>
+    <servlet>
+        <servlet-name>ProfileServlet</servlet-name>
+        <servlet-class>Controllers.ProfileServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>ProfileServlet</servlet-name>
+        <url-pattern>/profile</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>ChangePassword</servlet-name>
+        <url-pattern>/changepassword</url-pattern>
+    </servlet-mapping>
     <session-config>
-        <session-timeout>
-            30
-        </session-timeout>
+        <session-timeout>30</session-timeout>
     </session-config>
     <welcome-file-list>
         <welcome-file>HomePageServlet</welcome-file>
