@@ -1,4 +1,4 @@
-
+﻿
 
 
 /*
@@ -8,6 +8,7 @@
 package Controllers.HR;
 
 import DAL.RecruitmentPostDAO;
+import Models.Department;
 import Models.RecruitmentPost;
 import java.io.IOException;
 import java.util.List;
@@ -55,6 +56,15 @@ public class HRRecruitmentServlet extends HttpServlet {
             case "view":
                 viewPostDetail(request, response);
                 break;
+            case "create":
+                createPost(request, response);
+                break;
+            case "edit":
+                editPost(request, response);
+                break;
+            case "update":
+                updatePost(request, response);
+                break;
             default:
                 showApprovedPostsList(request, response);
                 break;
@@ -70,8 +80,17 @@ public class HRRecruitmentServlet extends HttpServlet {
             // Get approved posts from database
             List<RecruitmentPost> approvedPosts = recruitmentPostDAO.getApprovedPosts();
             
+            // Get pending and rejected posts for notification table
+            List<RecruitmentPost> pendingAndRejectedPosts = recruitmentPostDAO.getPendingAndRejectedPosts();
+            
+            // Get departments for dropdown
+            List<Department> departments = recruitmentPostDAO.getDepartments();
+            System.out.println("Servlet - departments size: " + departments.size());
+            
             // Set attributes for JSP
             request.setAttribute("approvedPosts", approvedPosts);
+            request.setAttribute("pendingAndRejectedPosts", pendingAndRejectedPosts);
+            request.setAttribute("departments", departments);
             request.setAttribute("totalPosts", approvedPosts.size());
             
             // Set current page info
@@ -132,6 +151,148 @@ public class HRRecruitmentServlet extends HttpServlet {
             e.printStackTrace();
             
             request.setAttribute("errorMessage", "Unable to load post detail. Please try again.");
+            showApprovedPostsList(request, response);
+        }
+    }
+    
+    /**
+     * Create new recruitment post
+     */
+    private void createPost(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        try {
+            String title = request.getParameter("title");
+            String content = request.getParameter("content");
+            String depId = request.getParameter("depId");
+            
+            // Validate input
+            if (title == null || title.trim().isEmpty() ||
+                content == null || content.trim().isEmpty() ||
+                depId == null || depId.trim().isEmpty()) {
+                
+                request.setAttribute("errorMessage", "All fields are required.");
+                showApprovedPostsList(request, response);
+                return;
+            }
+            
+            // Default values as specified (created_by = 1, approved_by = 2)
+            int createdBy = 1;
+            int approvedBy = 2;
+            
+            // Create post
+            boolean success = recruitmentPostDAO.createPost(title, content, depId, createdBy, approvedBy);
+            
+            if (success) {
+                request.setAttribute("successMessage", "Post created successfully! It's now pending approval.");
+            } else {
+                request.setAttribute("errorMessage", "Failed to create post. Please try again.");
+            }
+            
+            // Redirect to list
+            showApprovedPostsList(request, response);
+            
+        } catch (Exception e) {
+            System.err.println("Error in createPost: " + e.getMessage());
+            e.printStackTrace();
+            
+            request.setAttribute("errorMessage", "Unable to create post. Please try again.");
+            showApprovedPostsList(request, response);
+        }
+    }
+    
+    /**
+     * Edit post (show edit form for rejected posts)
+     */
+    private void editPost(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        try {
+            String postIdStr = request.getParameter("postId");
+            if (postIdStr != null && !postIdStr.trim().isEmpty()) {
+                int postId = Integer.parseInt(postIdStr);
+                
+                // Get post detail from database
+                RecruitmentPost post = recruitmentPostDAO.getPostById(postId);
+                
+                if (post != null && "Rejected".equals(post.getStatus())) {
+                    // Get departments for dropdown
+                    List<Department> departments = recruitmentPostDAO.getDepartments();
+                    
+                    request.setAttribute("editPost", post);
+                    request.setAttribute("departments", departments);
+                    request.setAttribute("currentPage", "Recruitment Management");
+                    request.setAttribute("pageTitle", "Edit Rejected Post");
+                    
+                    // Forward to edit form (we'll add this to the JSP)
+                    showApprovedPostsList(request, response);
+                } else {
+                    request.setAttribute("errorMessage", "Post not found or not in rejected status.");
+                    showApprovedPostsList(request, response);
+                }
+            } else {
+                request.setAttribute("errorMessage", "Invalid post ID.");
+                showApprovedPostsList(request, response);
+            }
+            
+        } catch (NumberFormatException e) {
+            System.err.println("Invalid post ID format: " + e.getMessage());
+            request.setAttribute("errorMessage", "Invalid post ID format.");
+            showApprovedPostsList(request, response);
+            
+        } catch (Exception e) {
+            System.err.println("Error in editPost: " + e.getMessage());
+            e.printStackTrace();
+            
+            request.setAttribute("errorMessage", "Unable to load post for editing. Please try again.");
+            showApprovedPostsList(request, response);
+        }
+    }
+    
+    /**
+     * Update rejected post (change status back to pending)
+     */
+    private void updatePost(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        try {
+            String postIdStr = request.getParameter("postId");
+            String title = request.getParameter("title");
+            String content = request.getParameter("content");
+            String depId = request.getParameter("depId");
+            
+            // Validate input
+            if (postIdStr == null || postIdStr.trim().isEmpty() ||
+                title == null || title.trim().isEmpty() ||
+                content == null || content.trim().isEmpty() ||
+                depId == null || depId.trim().isEmpty()) {
+                
+                request.setAttribute("errorMessage", "All fields are required.");
+                showApprovedPostsList(request, response);
+                return;
+            }
+            
+            int postId = Integer.parseInt(postIdStr);
+            
+            // Update post
+            boolean success = recruitmentPostDAO.updatePost(postId, title, content, depId);
+            
+            if (success) {
+                request.setAttribute("successMessage", "Post updated successfully! Status changed to pending.");
+            } else {
+                request.setAttribute("errorMessage", "Failed to update post. Please try again.");
+            }
+            
+            // Redirect to list
+            showApprovedPostsList(request, response);
+            
+        } catch (NumberFormatException e) {
+            System.err.println("Invalid post ID format: " + e.getMessage());
+            request.setAttribute("errorMessage", "Invalid post ID format.");
+            showApprovedPostsList(request, response);
+            
+        } catch (Exception e) {
+            System.err.println("Error in updatePost: " + e.getMessage());
+            e.printStackTrace();
+            
+            request.setAttribute("errorMessage", "Unable to update post. Please try again.");
             showApprovedPostsList(request, response);
         }
     }

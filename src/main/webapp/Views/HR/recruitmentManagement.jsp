@@ -78,6 +78,16 @@
                     </ul>
                 </div>	
                 
+                <!-- Display Success Message if any -->
+                <c:if test="${not empty successMessage}">
+                    <div class="alert alert-success alert-dismissible fade show" role="alert">
+                        <strong>Success!</strong> ${successMessage}
+                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                </c:if>
+                
                 <!-- Display Error Message if any -->
                 <c:if test="${not empty errorMessage}">
                     <div class="alert alert-danger alert-dismissible fade show" role="alert">
@@ -88,18 +98,220 @@
                     </div>
                 </c:if>
                 
-                <!-- Main Content -->
+                <!-- Create Post Form -->
                 <div class="row">
                     <div class="col-lg-12 m-b30">
                         <div class="widget-box">
-                            <div class="wc-title d-flex justify-content-between align-items-center">
-                                <h4>Approved Post List</h4>
-                                <div>
-                                    <span class="badge badge-success">Total: ${totalPosts != null ? totalPosts : 0} posts</span>
-                                    <a href="#" class="btn btn-primary btn-sm ml-2">
-                                        <i class="fa fa-plus"></i> Create New Post
-                                    </a>
+                            <div class="wc-title">
+                                <h4><i class="fa fa-plus-circle"></i> Create New Recruitment Post</h4>
+                            </div>
+                            <div class="widget-inner">
+                                <form action="${pageContext.request.contextPath}/hrrecruitment" method="post" id="createPostForm">
+                                    <input type="hidden" name="action" value="create">
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <label for="title">Title <span class="text-danger">*</span></label>
+                                                <input type="text" class="form-control" id="title" name="title" 
+                                                       placeholder="Enter job title" required maxlength="255">
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <label for="depId">Department <span class="text-danger">*</span></label>
+                                                <select class="form-control" id="depId" name="depId" required>
+                                                    <option value="">Select Department</option>
+                                                    <c:forEach var="dept" items="${departments}">
+                                                        <option value="${dept.depId}">${dept.depName}</option>
+                                                    </c:forEach>
+                                                </select>
+                                                <!-- Debug info -->
+                                                <small class="text-muted">
+                                                    Debug: Departments count = ${departments.size()}
+                                                    <c:if test="${not empty departments}">
+                                                        | First dept: ${departments[0].depName}
+                                                    </c:if>
+                                                </small>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <div class="form-group">
+                                                <label for="content">Job Description <span class="text-danger">*</span></label>
+                                                <textarea class="form-control" id="content" name="content" rows="5" 
+                                                          placeholder="Enter detailed job description, requirements, and benefits" required></textarea>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <button type="submit" class="btn btn-primary">
+                                                <i class="fa fa-save"></i> Create Post
+                                            </button>
+                                            <button type="reset" class="btn btn-secondary ml-2">
+                                                <i class="fa fa-undo"></i> Reset
+                                            </button>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Edit Post Form (for rejected posts) -->
+                <c:if test="${not empty editPost}">
+                    <div class="row">
+                        <div class="col-lg-12 m-b30">
+                            <div class="widget-box">
+                                <div class="wc-title">
+                                    <h4><i class="fa fa-edit"></i> Edit Rejected Post</h4>
                                 </div>
+                                <div class="widget-inner">
+                                    <form action="${pageContext.request.contextPath}/hrrecruitment" method="post" id="updatePostForm">
+                                        <input type="hidden" name="action" value="update">
+                                        <input type="hidden" name="postId" value="${editPost.postId}">
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <div class="form-group">
+                                                    <label for="editTitle">Title <span class="text-danger">*</span></label>
+                                                    <input type="text" class="form-control" id="editTitle" name="title" 
+                                                           value="${editPost.title}" required maxlength="255">
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <div class="form-group">
+                                                    <label for="editDepId">Department <span class="text-danger">*</span></label>
+                                                    <select class="form-control" id="editDepId" name="depId" required>
+                                                        <option value="">Select Department</option>
+                                                        <c:forEach var="dept" items="${departments}">
+                                                            <option value="${dept.depId}" 
+                                                                ${editPost.department.depId == dept.depId ? 'selected' : ''}>
+                                                                ${dept.depName}
+                                                            </option>
+                                                        </c:forEach>
+                                                    </select>
+                                                    <!-- Debug info -->
+                                                    <small class="text-muted">
+                                                        Debug: Departments count = ${departments.size()}
+                                                    </small>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-12">
+                                                <div class="form-group">
+                                                    <label for="editContent">Job Description <span class="text-danger">*</span></label>
+                                                    <textarea class="form-control" id="editContent" name="content" rows="5" required>${editPost.content}</textarea>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-12">
+                                                <button type="submit" class="btn btn-success">
+                                                    <i class="fa fa-save"></i> Update Post
+                                                </button>
+                                                <a href="${pageContext.request.contextPath}/hrrecruitment" class="btn btn-secondary ml-2">
+                                                    <i class="fa fa-times"></i> Cancel
+                                                </a>
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </c:if>
+                
+                <!-- Notification Table -->
+                <div class="row">
+                    <div class="col-lg-12 m-b30">
+                        <div class="widget-box">
+                            <div class="wc-title">
+                                <h4><i class="fa fa-bell"></i> Notification: Pending & Rejected Posts</h4>
+                            </div>
+                            <div class="widget-inner">
+                                <c:choose>
+                                    <c:when test="${not empty pendingAndRejectedPosts}">
+                                        <div class="table-responsive">
+                                            <table id="notificationTable" class="table table-striped table-bordered">
+                                                <thead class="thead-warning">
+                                                    <tr>
+                                                        <th width="60">Index</th>
+                                                        <th>Title</th>
+                                                        <th width="100">Status</th>
+                                                        <th width="120">Actions</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <c:forEach var="post" items="${pendingAndRejectedPosts}" varStatus="status">
+                                                        <tr>
+                                                            <td class="text-center">
+                                                                <span class="badge badge-secondary">${status.index + 1}</span>
+                                                            </td>
+                                                            <td>
+                                                                <div class="d-flex flex-column">
+                                                                    <strong class="text-primary">${post.title}</strong>
+                                                                    <small class="text-muted">
+                                                                        ID: ${post.postId} | Department: ${post.department.depName}
+                                                                    </small>
+                                                                </div>
+                                                            </td>
+                                                            <td class="text-center">
+                                                                <c:choose>
+                                                                    <c:when test="${post.status == 'Pending'}">
+                                                                        <span class="badge badge-warning">Pending</span>
+                                                                    </c:when>
+                                                                    <c:when test="${post.status == 'Rejected'}">
+                                                                        <span class="badge badge-danger">Rejected</span>
+                                                                    </c:when>
+                                                                </c:choose>
+                                                            </td>
+                                                            <td class="text-center">
+                                                                <c:choose>
+                                                                    <c:when test="${post.status == 'Pending'}">
+                                                                        <a href="${pageContext.request.contextPath}/hrrecruitment?action=view&postId=${post.postId}" 
+                                                                           class="btn btn-sm btn-info">
+                                                                            <i class="fa fa-eye"></i> View Details
+                                                                        </a>
+                                                                    </c:when>
+                                                                    <c:when test="${post.status == 'Rejected'}">
+                                                                        <a href="${pageContext.request.contextPath}/hrrecruitment?action=edit&postId=${post.postId}" 
+                                                                           class="btn btn-sm btn-warning">
+                                                                            <i class="fa fa-edit"></i> Update
+                                                                        </a>
+                                                                    </c:when>
+                                                                </c:choose>
+                                                            </td>
+                                                        </tr>
+                                                    </c:forEach>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </c:when>
+                                    <c:otherwise>
+                                        <div class="text-center py-4">
+                                            <div class="mb-3">
+                                                <i class="fa fa-check-circle fa-3x text-success"></i>
+                                            </div>
+                                            <h5 class="text-muted">No pending or rejected posts</h5>
+                                            <p class="text-muted">All posts are either approved or not submitted yet.</p>
+                                        </div>
+                                    </c:otherwise>
+                                </c:choose>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Approved Posts List -->
+                <div class="row">
+                    <div class="col-lg-12 m-b30">
+                        <div class="widget-box">
+                            <div class="wc-title">
+                                <h4><i class="fa fa-check-circle"></i> Approved Post List</h4>
+                                <span class="badge badge-success">Total: ${totalPosts != null ? totalPosts : 0} posts</span>
                             </div>
                             <div class="widget-inner">
                                 <c:choose>
@@ -228,7 +440,7 @@
 
         <script>
             $(document).ready(function () {
-                // Initialize DataTable
+                // Initialize DataTable for Approved Posts
                 $('#recruitmentTable').DataTable({
                     "pageLength": 10,
                     "lengthMenu": [[10, 25, 50, 100], [10, 25, 50, 100]],
@@ -249,8 +461,56 @@
                             "next": "Next",
                             "previous": "Previous"
                         }
-                    },
-                    "responsive": true
+                    }
+                });
+                
+                // Initialize DataTable for Notification Table
+                $('#notificationTable').DataTable({
+                    "pageLength": 5,
+                    "lengthMenu": [[5, 10, 25], [5, 10, 25]],
+                    "order": [[0, "asc"]], // Sort by Index column
+                    "columnDefs": [
+                        { "orderable": false, "targets": [3] }, // Disable sorting for Actions column
+                        { "className": "text-center", "targets": [0, 2, 3] } // Center align Index, Status and Actions columns
+                    ],
+                    "language": {
+                        "search": "Search notifications:",
+                        "lengthMenu": "Show _MENU_ items per page",
+                        "info": "Showing _START_ to _END_ of _TOTAL_ notifications",
+                        "infoEmpty": "Showing 0 to 0 of 0 notifications",
+                        "emptyTable": "No pending or rejected posts",
+                        "paginate": {
+                            "first": "First",
+                            "last": "Last",
+                            "next": "Next",
+                            "previous": "Previous"
+                        }
+                    }
+                });
+                
+                // Form validation
+                $('#createPostForm').on('submit', function(e) {
+                    var title = $('#title').val().trim();
+                    var content = $('#content').val().trim();
+                    var depId = $('#depId').val();
+                    
+                    if (!title || !content || !depId) {
+                        e.preventDefault();
+                        alert('Please fill in all required fields.');
+                        return false;
+                    }
+                });
+                
+                $('#updatePostForm').on('submit', function(e) {
+                    var title = $('#editTitle').val().trim();
+                    var content = $('#editContent').val().trim();
+                    var depId = $('#editDepId').val();
+                    
+                    if (!title || !content || !depId) {
+                        e.preventDefault();
+                        alert('Please fill in all required fields.');
+                        return false;
+                    }
                 });
             });
         </script>
