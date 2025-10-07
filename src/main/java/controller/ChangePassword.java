@@ -62,7 +62,7 @@ public class ChangePassword extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         HttpSession session = request.getSession();
-        if (session.getAttribute("employee") == null) {
+        if (session.getAttribute("user") == null) {
             response.sendRedirect("login");
         } else {
             request.getRequestDispatcher("Views/changepassword.jsp").forward(request, response);
@@ -81,7 +81,7 @@ public class ChangePassword extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
             HttpSession session = request.getSession();
-            Employee emp = (Employee) session.getAttribute("employee");
+            Employee emp = (Employee) session.getAttribute("user");
             String currentPass = request.getParameter("currentPassword");
             String newPass = request.getParameter("newPassword");
             String confirmPass = request.getParameter("confirmPassword");
