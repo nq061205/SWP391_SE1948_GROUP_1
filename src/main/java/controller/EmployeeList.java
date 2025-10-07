@@ -18,7 +18,6 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
-
 /**
  *
  * @author Admin
@@ -77,6 +76,7 @@ public class EmployeeList extends HttpServlet {
             empDAO.deleteEmployee(empCode);
         }
 
+
         ses.setAttribute("empList", empList);
         request.getRequestDispatcher("Views/employeeList.jsp").forward(request, response);
     }
@@ -121,6 +121,7 @@ public class EmployeeList extends HttpServlet {
             empDAO.deleteEmployee(empCode);
         }
         request.getRequestDispatcher("Views/employeeList.jsp").forward(request, response);
+
     }
 
     /**
