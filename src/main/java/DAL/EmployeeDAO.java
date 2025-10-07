@@ -238,6 +238,79 @@ public class EmployeeDAO extends DBContext {
         return dept;
     }
 
+    public Employee getEmployeeByEmployeeName(String empName) {
+        Employee emp = new Employee();
+        String sql = "select * from Employee where fullname =? ";
+        try {
+            PreparedStatement ps = connection.prepareStatement(sql);
+            ps.setString(1, empName);
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                emp.setEmpCode(rs.getString("emp_code"));
+                emp.setFullname(rs.getString("fullname"));
+                emp.setEmail(rs.getString("email"));
+                emp.setPassword(rs.getString("password"));
+                emp.setGender(rs.getBoolean("gender"));
+                emp.setDob(rs.getDate("dob"));
+                emp.setPhone(rs.getString("phone"));
+                emp.setPositionTitle(rs.getString("position_title"));
+
+                Department dept = getDepartmentByDeptID(rs.getString("dep_id"));
+                emp.setDept(dept);
+
+                Role role = roleDAO.getRoleByRoleId(rs.getInt("role_id"));
+                emp.setRole(role);
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(EmployeeDAO.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return emp;
+    }
+
+    public void createEmployee(String email, String empCode) {
+        String sql = "INSERT INTO Employee(email,emp_code) values(?,?)";
+        try {
+            PreparedStatement ps = connection.prepareStatement(sql);
+            ps.setString(1, email);
+            ps.setString(2, empCode);
+            ps.executeUpdate();
+        } catch (SQLException ex) {
+            Logger.getLogger(EmployeeDAO.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+    }
+
+    public void deleteEmployee(String empCode) {
+        String sql = "DELETE FROM Employee where emp_code=?";
+        try {
+            PreparedStatement ps = connection.prepareStatement(sql);
+            ps.setString(1, empCode);
+            ps.executeUpdate();
+        } catch (SQLException ex) {
+            Logger.getLogger(EmployeeDAO.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
+    public void updateEmployee(Employee employee) {
+        String sql = "UPDATE Employee SET emp_code=?,fullname=?,email=?,password=?,gender=?,dob=?,phone=?,position_title=?,image=?  WHERE emp_id = ?";
+        try {
+            PreparedStatement ps = connection.prepareStatement(sql);
+            ps.setString(1, employee.getEmpCode());
+            ps.setString(2, employee.getFullname());
+            ps.setString(3, employee.getEmail());
+            ps.setString(4,employee.getPassword());
+            ps.setBoolean(5, employee.isGender());
+            ps.setDate(6, employee.getDob());
+            ps.setString(7, employee.getPhone());
+            ps.setString(8, employee.getPositionTitle());
+            ps.setString(9, employee.getImage());
+            ps.setInt(10, employee.getEmpId());
+            ps.executeUpdate();
+        } catch (SQLException ex) {
+            Logger.getLogger(EmployeeDAO.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
     public void updateEmployeeInformation(int emp_id, String fullname, boolean gender, Date dob, String phone, String image) {
         String sql = "UPDATE Employee SET fullname = ?, gender = ?, dob = ?, phone = ?, image = ? WHERE email = ?";
         try (Connection conn = DBContext.getConnection(); PreparedStatement stm = conn.prepareStatement(sql)) {
