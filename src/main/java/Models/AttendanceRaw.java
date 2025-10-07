@@ -29,6 +29,13 @@ public class AttendanceRaw {
         this.checkType = checkType;
     }
 
+    public AttendanceRaw(Employee employee, Date date, Time checkTime, String checkType) {
+        this.employee = employee;
+        this.date = date;
+        this.checkTime = checkTime;
+        this.checkType = checkType;
+    }
+
     public int getId() {
         return id;
     }
