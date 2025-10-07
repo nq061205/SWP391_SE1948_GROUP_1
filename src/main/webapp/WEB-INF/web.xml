@@ -32,6 +32,10 @@
         <servlet-name>HRManagerRecruitmentServlet</servlet-name>
         <servlet-class>Controllers.HRM.HRManagerRecruitmentServlet</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>EmployeeList</servlet-name>
+        <servlet-class>Controllers.EmployeeList</servlet-class>
+    </servlet>
     <servlet-mapping>
         <servlet-name>HomePageServlet</servlet-name>
         <url-pattern>/homepage</url-pattern>
@@ -95,6 +99,10 @@
     <servlet-mapping>
         <servlet-name>HRManagerRecruitmentServlet</servlet-name>
         <url-pattern>/hrmanagerrecruitment</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>EmployeeList</servlet-name>
+        <url-pattern>/employeelist</url-pattern>
     </servlet-mapping>
     <session-config>
         <session-timeout>30</session-timeout>

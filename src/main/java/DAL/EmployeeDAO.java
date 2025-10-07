@@ -187,15 +187,15 @@ public class EmployeeDAO extends DBContext {
     // =========================================================
     // FROM EmployeeDAO
     // =========================================================
-    public List<Employee> getAllEmployees(int roleId) {
+    public List<Employee> getAllEmployees() {
         empList = new ArrayList<>();
-        String sql = "SELECT * FROM Employee WHERE role_id = ?";
+        String sql = "SELECT * FROM Employee";
         try {
             PreparedStatement ps = connection.prepareStatement(sql);
-            ps.setInt(1, roleId);
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
                 Employee emp = new Employee();
+                emp.setEmpId(rs.getInt("emp_id"));
                 emp.setEmpCode(rs.getString("emp_code"));
                 emp.setFullname(rs.getString("fullname"));
                 emp.setEmail(rs.getString("email"));
@@ -292,19 +292,18 @@ public class EmployeeDAO extends DBContext {
     }
 
     public void updateEmployee(Employee employee) {
-        String sql = "UPDATE Employee SET emp_code=?,fullname=?,email=?,password=?,gender=?,dob=?,phone=?,position_title=?,image=?  WHERE emp_id = ?";
+        String sql = "UPDATE Employee SET fullname=?,email=?,password=?,gender=?,dob=?,phone=?,position_title=?,image=?  WHERE emp_code = ?";
         try {
             PreparedStatement ps = connection.prepareStatement(sql);
-            ps.setString(1, employee.getEmpCode());
-            ps.setString(2, employee.getFullname());
-            ps.setString(3, employee.getEmail());
-            ps.setString(4,employee.getPassword());
-            ps.setBoolean(5, employee.isGender());
-            ps.setDate(6, employee.getDob());
-            ps.setString(7, employee.getPhone());
-            ps.setString(8, employee.getPositionTitle());
-            ps.setString(9, employee.getImage());
-            ps.setInt(10, employee.getEmpId());
+            ps.setString(  1 , employee.getFullname());
+            ps.setString(2, employee.getEmail());
+            ps.setString(3,employee.getPassword());
+            ps.setBoolean(4, employee.isGender());
+            ps.setDate(5, employee.getDob());
+            ps.setString(6, employee.getPhone());
+            ps.setString(7, employee.getPositionTitle());
+            ps.setString(8, employee.getImage());
+            ps.setString(9, employee.getEmpCode());
             ps.executeUpdate();
         } catch (SQLException ex) {
             Logger.getLogger(EmployeeDAO.class.getName()).log(Level.SEVERE, null, ex);
@@ -331,6 +330,7 @@ public class EmployeeDAO extends DBContext {
 
     public static void main(String[] args) {
         EmployeeDAO dao = new EmployeeDAO();
-        System.out.println(dao.getEmployeeByEmpId(1).toString());
+        dao.deleteEmployee("EMP001");
+        System.out.println(dao.getAllEmployees().toString());
     }
 }
