@@ -75,7 +75,7 @@
                     <div class="col-lg-12 m-b30">
                         <div class="widget-box">
                             <div class="wc-title">
-                                <h4>Hồ sơ cá nhân</h4>
+                                <h4>Personal record</h4>
                             </div>
                             <div class="widget-inner">
                                 <form class="edit-profile m-b30" action="${pageContext.request.contextPath}/profile" method="POST">
@@ -94,7 +94,7 @@
                                             <div class="form-group row">
                                                 <label class="col-sm-3 col-form-label">Fullname</label>
                                                 <div class="col-sm-9">
-                                                    <input name="fullName" class="form-control" type="text" value="${sessionScope.user.fullname}"
+                                                    <input name="fullname" class="form-control" type="text" value="${sessionScope.user.fullname}"
                                                            <c:if test="${click != 'save'}"> readonly required </c:if>
                                                                >
                                                     </div>
@@ -110,7 +110,7 @@
                                             <div class="form-group row">
                                                 <label class="col-sm-3 col-form-label">Email</label>
                                                 <div class="col-sm-9">
-                                                    <input class="form-control" type="text" value="${sessionScope.user.email}" readonly>
+                                                    <input name = "email" class="form-control" type="text" value="${sessionScope.user.email}" readonly>
                                                 </div>
                                             </div>
 
@@ -118,7 +118,7 @@
                                                 <label class="col-sm-3 col-form-label">Gender</label>
                                                 <div class="col-sm-9">
                                                     <c:if test="${click != 'save'}">
-                                                        <input class="form-control" type="text"
+                                                        <input class="form-control" name = "gender" type="text"
                                                                value='${sessionScope.user.gender == "true" ? "Male" : "Female"}'
                                                                readonly>
                                                     </c:if>
@@ -148,14 +148,33 @@
                                                         <c:if test="${click != 'save'}"> readonly </c:if>>
                                                     </div>
                                                 </div>
-                                                <div class="form-group row mt-4">
-                                                    <div class="col-sm-9 offset-sm-3">
+
+                                                <div class="form-group row">
+                                                    <label class="col-sm-3 col-form-label"
+                                                    <c:if test="${click != 'save'}">  
+                                                        hidden
+                                                    </c:if>
+                                                    >Image</label>
+                                                <div class="col-sm-9">
+                                                    <c:if test="${click == 'save'}">
+                                                        <input name="image" class="form-control" type="text" value="${sessionScope.user.image}">
+                                                    </c:if>
+                                                    <c:if test="${click != 'save'}">
+                                                        <input type="hidden" name="image" value="${sessionScope.user.image}">
+                                                    </c:if>
+                                                </div>
+                                            </div>
+
+                                            <div class="form-group row mt-4">
+                                                <div class="col-sm-9 offset-sm-3">
                                                     <c:if test="${click != 'save'}">
                                                         <button type="submit" name="click" value=""class="btn btn-primary">Change information</button>
                                                     </c:if>
                                                     <c:if test="${click == 'save'}">
                                                         <button type="reset"class="btn btn-secondary">Cancel</button>
-                                                        <button type="submit" name="click" value="save"class="btn btn-primary">Save</button>
+                                                        <button type="submit" name="click" value="save"class="btn btn-primary"
+                                                                onclick="return confirm('Do you confirm save change?');"
+                                                                >Save</button>
                                                     </c:if>
                                                 </div>
                                             </div>
