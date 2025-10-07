@@ -4,19 +4,27 @@
  */
 package Controllers.HR;
 
-import jakarta.mail.Part;
+import DAL.AttendanceRawDAO;
+import Models.*;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.MultipartConfig;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.InputStream;
+import jakarta.servlet.http.Part;
+import java.util.ArrayList;
+import java.util.List;
+import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.xssf.usermodel.*;
 
 /**
  *
  * @author admin
  */
+@MultipartConfig
 public class UploadExcelServlet extends HttpServlet {
 
     /**
@@ -32,7 +40,6 @@ public class UploadExcelServlet extends HttpServlet {
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
         try (PrintWriter out = response.getWriter()) {
-            /* TODO output your page here. You may use following sample code. */
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
@@ -45,66 +52,62 @@ public class UploadExcelServlet extends HttpServlet {
         }
     }
 
-    // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
-    /**
-     * Handles the HTTP <code>GET</code> method.
-     *
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
-     */
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        request.getRequestDispatcher("Views/HR/importRaw").forward(request, response);
+        request.getRequestDispatcher("Views/HR/importRaw.jsp").forward(request, response);
     }
 
-    /**
-     * Handles the HTTP <code>POST</code> method.
-     *
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
-     */
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         Part filePart = request.getPart("file");
+        if (filePart == null || filePart.getSize() == 0) {
+            request.setAttribute("error", "No file uploaded.");
+            request.getRequestDispatcher("Views/HR/importRaw.jsp").forward(request, response);
+            return;
+        }
         InputStream inputStream = filePart.getInputStream();
+
+        List<AttendanceRaw> list = new ArrayList<>();
 
         try (Workbook workbook = new XSSFWorkbook(inputStream)) {
             Sheet sheet = workbook.getSheetAt(0);
 
-            Connection conn = DBUtils.getConnection(); // Tự viết hàm kết nối DB
-            String sql = "INSERT INTO attendance (employee_id, date, time_in, time_out) VALUES (?, ?, ?, ?)";
-            PreparedStatement ps = conn.prepareStatement(sql);
-
-            for (int i = 1; i <= sheet.getLastRowNum(); i++) { // Bỏ dòng tiêu đề
+            for (int i = 1; i <= sheet.getLastRowNum(); i++) {
                 Row row = sheet.getRow(i);
                 if (row == null) {
                     continue;
                 }
 
-                String empId = row.getCell(0).getStringCellValue();
-                Date date = row.getCell(1).getDateCellValue();
-                String timeIn = row.getCell(2).getStringCellValue();
-                String timeOut = row.getCell(3).getStringCellValue();
+                int empId = (int) row.getCell(0).getNumericCellValue();
+                java.util.Date utilDate = row.getCell(1).getDateCellValue();
+                java.sql.Date sqlDate = new java.sql.Date(utilDate.getTime());
 
-                ps.setString(1, empId);
-                ps.setDate(2, new java.sql.Date(date.getTime()));
-                ps.setString(3, timeIn);
-                ps.setString(4, timeOut);
-                ps.addBatch();
+                java.sql.Time sqlTime;
+                if (row.getCell(2).getCellType() == CellType.STRING) {
+                    sqlTime = java.sql.Time.valueOf(row.getCell(2).getStringCellValue());
+                } else {
+                    java.util.Date d = row.getCell(2).getDateCellValue();
+                    sqlTime = new java.sql.Time(d.getTime());
+                }
+
+                String checkType = row.getCell(3).getStringCellValue();
+
+                Employee e = new Employee();
+                e.setEmpId(empId);
+                list.add(new AttendanceRaw(e, sqlDate, sqlTime, checkType));
             }
 
-            ps.executeBatch();
-            conn.close();
-            response.getWriter().println("Import thành công!");
-        } catch (Exception e) {
-            e.printStackTrace();
-            response.getWriter().println("Lỗi khi import file: " + e.getMessage());
+            AttendanceRawDAO rawDAO = new AttendanceRawDAO();
+            rawDAO.insertRawBatch(list);
+
+            request.setAttribute("success", "Successfully imported " + list.size() + " records!");
+            request.getRequestDispatcher("Views/HR/importRaw.jsp").forward(request, response);
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            request.setAttribute("error", "Error during import: " + ex.getMessage());
+            request.getRequestDispatcher("Views/HR/importRaw.jsp").forward(request, response);
         }
     }
 

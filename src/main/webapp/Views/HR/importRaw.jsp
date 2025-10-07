@@ -61,10 +61,12 @@
         <%@ include file="../CommonItems/Header/dashboardHeader.jsp" %>
         <%@ include file="../CommonItems/Navbar/hrNavbar.jsp" %>
         <main class="ttr-wrapper">
-            <form action="UploadExcelServlet" method="post" enctype="multipart/form-data">
+            <form action="uploadExcel" method="post" enctype="multipart/form-data">
                 <input type="file" name="file" accept=".xlsx" required>
                 <button type="submit">Upload & Import</button>
             </form>
+            <p style="color: green">${success}</p>
+            <p style="color: red">${error}</p>
         </main>
     </body>
 
