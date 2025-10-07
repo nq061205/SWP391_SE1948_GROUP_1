@@ -9,8 +9,20 @@
         <servlet-class>Controllers.ChangePassword</servlet-class>
     </servlet>
     <servlet>
-        <servlet-name>LogOutServlet</servlet-name>
-        <servlet-class>Controllers.LogOutServlet</servlet-class>
+        <servlet-name>ApplicationServlet</servlet-name>
+        <servlet-class>Controllers.ApplicationServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>ComposeApplicationServlet</servlet-name>
+        <servlet-class>Controllers.ComposeApplicationServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>ApplicationDetailServlet</servlet-name>
+        <servlet-class>Controllers.ApplicationDetailServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>DeleteApplicationServlet</servlet-name>
+        <servlet-class>Controllers.DeleteApplicationServlet</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>UploadExcelServlet</servlet-name>
@@ -61,8 +73,20 @@
         <url-pattern>/changepassword</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
-        <servlet-name>LogOutServlet</servlet-name>
-        <url-pattern>/logout</url-pattern>
+        <servlet-name>ApplicationServlet</servlet-name>
+        <url-pattern>/application</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>ComposeApplicationServlet</servlet-name>
+        <url-pattern>/compose</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>ApplicationDetailServlet</servlet-name>
+        <url-pattern>/detail</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>DeleteApplicationServlet</servlet-name>
+        <url-pattern>/deleteapplication</url-pattern>
     </servlet-mapping>
     <session-config>
         <session-timeout>30</session-timeout>
