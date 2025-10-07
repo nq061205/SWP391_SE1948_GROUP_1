@@ -39,26 +39,22 @@ public class ComposeApplicationServlet extends HttpServlet {
         OTRequestDAO OTDAO = new OTRequestDAO();
         String type = request.getParameter("type");
         String email = request.getParameter("email");
-        try {
-            if (empDAO.getEmployeeByEmail(email) == null) {
-                request.setAttribute("message", "Email is not available");
-            } else {
-                if ("LEAVE".equalsIgnoreCase(type)) {
-                    Employee emp = empDAO.getEmployeeByEmail(email);
-                    leaveDAO.composeLeaveRequest(
-                            emp.getEmpId(),
-                            request.getParameter("type_leave"),
-                            request.getParameter("content"),
-                            Date.valueOf(request.getParameter("startdate")),
-                            Date.valueOf(request.getParameter("enddate")),
-                            empDAO.getEmployeeByEmail(email).getEmpId()
-                    );
-                } else if ("OT".equalsIgnoreCase(type)) {
-
-                }
+        if (empDAO.getEmployeeByEmail(email) == null) {
+            request.setAttribute("message", "Email is not available");
+        } else {
+            if ("LEAVE".equalsIgnoreCase(type)) {
+                Employee emp = empDAO.getEmployeeByEmail(email);
+                leaveDAO.composeLeaveRequest(
+                        emp.getEmpId(),
+                        request.getParameter("type_leave"),
+                        request.getParameter("content"),
+                        Date.valueOf(request.getParameter("startdate")),
+                        Date.valueOf(request.getParameter("enddate")),
+                        empDAO.getEmployeeByEmail(email).getEmpId()
+                );
+            } else if ("OT".equalsIgnoreCase(type)) {
+                
             }
-        } catch (SQLException ex) {
-            Logger.getLogger(ComposeApplicationServlet.class.getName()).log(Level.SEVERE, null, ex);
         }
         if ("leave".equalsIgnoreCase(type)) {
             String type_leave = request.getParameter("type_application");
