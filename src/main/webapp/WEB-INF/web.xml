@@ -2,39 +2,39 @@
 <web-app version="6.0" xmlns="https://jakarta.ee/xml/ns/jakartaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="https://jakarta.ee/xml/ns/jakartaee https://jakarta.ee/xml/ns/jakartaee/web-app_6_0.xsd">
     <servlet>
         <servlet-name>HomePageServlet</servlet-name>
-        <servlet-class>Controllers.HomePageServlet</servlet-class>
+        <servlet-class>controller.HomePageServlet</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>ChangePassword</servlet-name>
-        <servlet-class>Controllers.ChangePassword</servlet-class>
+        <servlet-class>controller.ChangePassword</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>ApplicationServlet</servlet-name>
-        <servlet-class>Controllers.ApplicationServlet</servlet-class>
+        <servlet-class>controller.ApplicationServlet</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>ComposeApplicationServlet</servlet-name>
-        <servlet-class>Controllers.ComposeApplicationServlet</servlet-class>
+        <servlet-class>controller.ComposeApplicationServlet</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>ApplicationDetailServlet</servlet-name>
-        <servlet-class>Controllers.ApplicationDetailServlet</servlet-class>
+        <servlet-class>controller.ApplicationDetailServlet</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>DeleteApplicationServlet</servlet-name>
-        <servlet-class>Controllers.DeleteApplicationServlet</servlet-class>
+        <servlet-class>controller.DeleteApplicationServlet</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>UploadExcelServlet</servlet-name>
-        <servlet-class>Controllers.HR.UploadExcelServlet</servlet-class>
+        <servlet-class>controller.UploadExcelServlet</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>HRRecruitmentServlet</servlet-name>
-        <servlet-class>Controllers.HR.HRRecruitmentServlet</servlet-class>
+        <servlet-class>controller.HRRecruitmentServlet</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>HRManagerRecruitmentServlet</servlet-name>
-        <servlet-class>Controllers.HRM.HRManagerRecruitmentServlet</servlet-class>
+        <servlet-class>controller.HRManagerRecruitmentServlet</servlet-class>
     </servlet>
     <servlet-mapping>
         <servlet-name>HomePageServlet</servlet-name>
@@ -42,7 +42,7 @@
     </servlet-mapping>
     <servlet>
         <servlet-name>LoginServlet</servlet-name>
-        <servlet-class>Controllers.LoginServlet</servlet-class>
+        <servlet-class>controller.LoginServlet</servlet-class>
     </servlet>
     <servlet-mapping>
         <servlet-name>LoginServlet</servlet-name>
@@ -50,7 +50,7 @@
     </servlet-mapping>
     <servlet>
         <servlet-name>ForgetPassword</servlet-name>
-        <servlet-class>Controllers.ForgetPassword</servlet-class>
+        <servlet-class>controller.ForgetPassword</servlet-class>
     </servlet>
     <servlet-mapping>
         <servlet-name>ForgetPassword</servlet-name>
@@ -62,7 +62,7 @@
     </servlet-mapping>
     <servlet>
         <servlet-name>RecoveryPassword</servlet-name>
-        <servlet-class>Controllers.RecoveryPassword</servlet-class>
+        <servlet-class>controller.RecoveryPassword</servlet-class>
     </servlet>
     <servlet-mapping>
         <servlet-name>RecoveryPassword</servlet-name>
@@ -70,7 +70,7 @@
     </servlet-mapping>
     <servlet>
         <servlet-name>ProfileServlet</servlet-name>
-        <servlet-class>Controllers.ProfileServlet</servlet-class>
+        <servlet-class>controller.ProfileServlet</servlet-class>
     </servlet>
     <servlet-mapping>
         <servlet-name>ProfileServlet</servlet-name>
