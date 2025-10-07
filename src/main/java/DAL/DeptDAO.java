@@ -11,6 +11,8 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author Nguyen Dinh Quy HE190184
@@ -21,7 +23,7 @@ public class DeptDAO extends DBContext {
 
     public DeptDAO() {
         try {
-            connection = new DBContext().getConnection();
+            connection = DBContext.getConnection();
         } catch (Exception e) {
         }
     }
@@ -64,5 +66,29 @@ public class DeptDAO extends DBContext {
             ex.printStackTrace();
         }
         return department;
+    }
+    
+    /**
+     * Get all departments for dropdown selection
+     * @return List of all Department objects
+     */
+    public List<Department> getAllDepartments() {
+        List<Department> departments = new ArrayList<>();
+        try {
+            String sql = "SELECT dep_id, dep_name, description FROM department WHERE is_delete = FALSE ORDER BY dep_name";
+            PreparedStatement stm = connection.prepareStatement(sql);
+            ResultSet rs = stm.executeQuery();
+            while (rs.next()) {
+                Department department = new Department(
+                        rs.getString("dep_id"),
+                        rs.getString("dep_name"),
+                        rs.getString("description")
+                );
+                departments.add(department);
+            }
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
+        return departments;
     }
 }

@@ -24,6 +24,14 @@
         <servlet-name>DeleteApplicationServlet</servlet-name>
         <servlet-class>Controllers.DeleteApplicationServlet</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>HRRecruitmentServlet</servlet-name>
+        <servlet-class>Controllers.HR.HRRecruitmentServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>HRManagerRecruitmentServlet</servlet-name>
+        <servlet-class>Controllers.HRM.HRManagerRecruitmentServlet</servlet-class>
+    </servlet>
     <servlet-mapping>
         <servlet-name>HomePageServlet</servlet-name>
         <url-pattern>/homepage</url-pattern>
@@ -79,6 +87,14 @@
     <servlet-mapping>
         <servlet-name>DeleteApplicationServlet</servlet-name>
         <url-pattern>/deleteapplication</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>HRRecruitmentServlet</servlet-name>
+        <url-pattern>/hrrecruitment</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>HRManagerRecruitmentServlet</servlet-name>
+        <url-pattern>/hrmanagerrecruitment</url-pattern>
     </servlet-mapping>
     <session-config>
         <session-timeout>30</session-timeout>
