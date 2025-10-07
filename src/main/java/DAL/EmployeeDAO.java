@@ -8,9 +8,11 @@ import Models.Department;
 import Models.Employee;
 import Models.Role;
 import java.sql.Connection;
+import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.time.DayOfWeek;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
@@ -72,35 +74,36 @@ public class EmployeeDAO extends DBContext {
     }
 
     public Employee getEmployeeByEmpId(int emp_id) {
-        Employee employee = null;
-        try {
-            String sql = "SELECT * FROM Employee WHERE emp_id = ?";
-            Department department = deptDAO.getDepartmentByEmpId(emp_id);
-            PreparedStatement stm = connection.prepareStatement(sql);
+        String sql = "SELECT * FROM Employee WHERE emp_id = ?";
+        try (Connection conn = DBContext.getConnection(); PreparedStatement stm = conn.prepareStatement(sql)) {
+
             stm.setInt(1, emp_id);
-            ResultSet rs = stm.executeQuery();
-            if (rs.next()) {
-                employee = new Employee(
-                        rs.getInt("emp_id"),
-                        rs.getString("emp_code"),
-                        rs.getString("fullname"),
-                        rs.getString("email"),
-                        rs.getString("password"),
-                        rs.getBoolean("gender"),
-                        rs.getDate("dob"),
-                        rs.getString("phone"),
-                        rs.getString("position_title"),
-                        rs.getString("image"),
-                        rs.getInt("dependant_count"),
-                        department,
-                        roleDAO.getRoleByEmpId(rs.getInt("emp_id"))
-                );
-                employee.setStatus(rs.getBoolean("status"));
+            try (ResultSet rs = stm.executeQuery()) {
+                if (rs.next()) {
+                    Department department = deptDAO.getDepartmentByEmpId(emp_id);
+                    Employee employee = new Employee(
+                            rs.getInt("emp_id"),
+                            rs.getString("emp_code"),
+                            rs.getString("fullname"),
+                            rs.getString("email"),
+                            rs.getString("password"),
+                            rs.getBoolean("gender"),
+                            rs.getDate("dob"),
+                            rs.getString("phone"),
+                            rs.getString("position_title"),
+                            rs.getString("image"),
+                            rs.getInt("dependant_count"),
+                            department,
+                            roleDAO.getRoleByEmpId(rs.getInt("emp_id"))
+                    );
+                    employee.setStatus(rs.getBoolean("status"));
+                    return employee;
+                }
             }
         } catch (SQLException ex) {
             ex.printStackTrace();
         }
-        return employee;
+        return null;
     }
 
     public Employee getEmployeeByUsernamePassword(String username, String pass) {
@@ -235,8 +238,26 @@ public class EmployeeDAO extends DBContext {
         return dept;
     }
 
+    public void updateEmployeeInformation(int emp_id, String fullname, boolean gender, Date dob, String phone, String image) {
+        String sql = "UPDATE Employee SET fullname = ?, gender = ?, dob = ?, phone = ?, image = ? WHERE email = ?";
+        try (Connection conn = DBContext.getConnection(); PreparedStatement stm = conn.prepareStatement(sql)) {
+
+            stm.setString(1, fullname);
+            stm.setBoolean(2, gender);
+            stm.setDate(3, dob);
+            stm.setString(4, phone);
+            stm.setString(5, image);
+            stm.setInt(6, emp_id);
+
+            int rows = stm.executeUpdate();
+            System.out.println("Updated rows: " + rows);
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
+    }
+
     public static void main(String[] args) {
         EmployeeDAO dao = new EmployeeDAO();
-        System.out.println(dao.getEmployeeByEmpId(1));
+        System.out.println(dao.getEmployeeByEmpId(1).toString());
     }
 }
