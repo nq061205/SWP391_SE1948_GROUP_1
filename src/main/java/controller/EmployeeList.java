@@ -78,6 +78,7 @@ public class EmployeeList extends HttpServlet {
 
 
         ses.setAttribute("empList", empList);
+        //Comment de merge
         request.getRequestDispatcher("Views/employeeList.jsp").forward(request, response);
     }
 
