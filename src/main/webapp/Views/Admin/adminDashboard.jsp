@@ -57,7 +57,7 @@
 
     <body class="ttr-opened-sidebar ttr-pinned-sidebar">
         <jsp:include page="../CommonItems/Header/dashboardHeader.jsp" />
-        <jsp:include page="../CommonItems/Navbar/empNavbar.jsp" />
+        <jsp:include page="../CommonItems/Navbar/adminNavbar.jsp" />
 
     </body>
 
