@@ -26,15 +26,15 @@
     </servlet>
     <servlet>
         <servlet-name>UploadExcelServlet</servlet-name>
-        <servlet-class>controller.UploadExcelServlet</servlet-class>
+        <servlet-class>controller.hr.UploadExcelServlet</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>HRRecruitmentServlet</servlet-name>
-        <servlet-class>controller.HRRecruitmentServlet</servlet-class>
+        <servlet-class>controller.hr.HRRecruitmentServlet</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>HRManagerRecruitmentServlet</servlet-name>
-        <servlet-class>controller.HRManagerRecruitmentServlet</servlet-class>
+        <servlet-class>controller.hrm.HRManagerRecruitmentServlet</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>EmployeeList</servlet-name>
