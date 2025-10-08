@@ -62,17 +62,34 @@ public class UploadExcelServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        String action = request.getParameter("action");
+        if ("cancel".equals(action)) {
+            request.setAttribute("success", "Import cancelled.");
+            request.getRequestDispatcher("Views/HR/importRaw.jsp").forward(request, response);
+            return;
+        }
+        if ("confirm".equals(action)) {
+            List<AttendanceRaw> list = (List<AttendanceRaw>) request.getSession().getAttribute("importList");
+            if (list != null) {
+                new AttendanceRawDAO().insertRawBatch(list);
+                request.getSession().removeAttribute("importList");
+                request.setAttribute("success", "Successfully imported " + list.size() + " records!");
+            }
+            request.getRequestDispatcher("Views/HR/importRaw.jsp").forward(request, response);
+            return;
+        }
+
         Part filePart = request.getPart("file");
         if (filePart == null || filePart.getSize() == 0) {
             request.setAttribute("error", "No file uploaded.");
             request.getRequestDispatcher("Views/HR/importRaw.jsp").forward(request, response);
             return;
         }
-        InputStream inputStream = filePart.getInputStream();
 
         List<AttendanceRaw> list = new ArrayList<>();
 
-        try (Workbook workbook = new XSSFWorkbook(inputStream)) {
+        try (InputStream inputStream = filePart.getInputStream(); Workbook workbook = new XSSFWorkbook(inputStream)) {
+
             Sheet sheet = workbook.getSheetAt(0);
 
             for (int i = 1; i <= sheet.getLastRowNum(); i++) {
@@ -84,7 +101,6 @@ public class UploadExcelServlet extends HttpServlet {
                 int empId = (int) row.getCell(0).getNumericCellValue();
                 java.util.Date utilDate = row.getCell(1).getDateCellValue();
                 java.sql.Date sqlDate = new java.sql.Date(utilDate.getTime());
-
                 java.sql.Time sqlTime;
                 if (row.getCell(2).getCellType() == CellType.STRING) {
                     sqlTime = java.sql.Time.valueOf(row.getCell(2).getStringCellValue());
@@ -92,7 +108,6 @@ public class UploadExcelServlet extends HttpServlet {
                     java.util.Date d = row.getCell(2).getDateCellValue();
                     sqlTime = new java.sql.Time(d.getTime());
                 }
-
                 String checkType = row.getCell(3).getStringCellValue();
 
                 Employee e = new Employee();
@@ -100,16 +115,19 @@ public class UploadExcelServlet extends HttpServlet {
                 list.add(new AttendanceRaw(e, sqlDate, sqlTime, checkType));
             }
 
-            AttendanceRawDAO rawDAO = new AttendanceRawDAO();
-            rawDAO.insertRawBatch(list);
+            request.getSession().setAttribute("importList", list);
 
-            request.setAttribute("success", "Successfully imported " + list.size() + " records!");
+            List<AttendanceRaw> previewList = list.size() > 10 ? list.subList(0, 10) : list;
+            request.setAttribute("preview", previewList);
+            request.setAttribute("success", "File uploaded successfully! Review before import.");
             request.getRequestDispatcher("Views/HR/importRaw.jsp").forward(request, response);
+
         } catch (Exception ex) {
             ex.printStackTrace();
-            request.setAttribute("error", "Error during import: " + ex.getMessage());
+            request.setAttribute("error", "Error reading file: " + ex.getMessage());
             request.getRequestDispatcher("Views/HR/importRaw.jsp").forward(request, response);
         }
+
     }
 
     /**
@@ -117,9 +135,4 @@ public class UploadExcelServlet extends HttpServlet {
      *
      * @return a String containing servlet description
      */
-    @Override
-    public String getServletInfo() {
-        return "Short description";
-    }// </editor-fold>
-
 }

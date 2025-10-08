@@ -27,6 +27,7 @@
     <servlet>
         <servlet-name>UploadExcelServlet</servlet-name>
         <servlet-class>controller.hr.UploadExcelServlet</servlet-class>
+        <servlet-class>controller.hr.UploadExcelServlet</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>HRRecruitmentServlet</servlet-name>
@@ -35,6 +36,10 @@
     <servlet>
         <servlet-name>HRManagerRecruitmentServlet</servlet-name>
         <servlet-class>controller.hrm.HRManagerRecruitmentServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>DownloadRawTemplateServlet</servlet-name>
+        <servlet-class>controller.hr.DownloadRawTemplateServlet</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>AccountList</servlet-name>
@@ -115,6 +120,10 @@
     <servlet-mapping>
         <servlet-name>HRManagerRecruitmentServlet</servlet-name>
         <url-pattern>/hrmanagerrecruitment</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>DownloadRawTemplateServlet</servlet-name>
+        <url-pattern>/downloadtemplate</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>AccountList</servlet-name>
