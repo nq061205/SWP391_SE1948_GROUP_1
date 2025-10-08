@@ -128,6 +128,9 @@
                             </form>
 
                         </div>
+                        <c:if test="${not empty param.searchkey}">
+                            <p>Found <strong>${totalResults}</strong> products with search key is <strong>${searchkey}</strong></p>  
+                        </c:if>
                         <div class="mail-box-list" style="overflow-x: scroll;">
                             <table class="table table-bordered table-hover">
                                 <thead style="background-color: #f5f5f5;">
