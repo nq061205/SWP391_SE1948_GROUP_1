@@ -8,6 +8,7 @@
 <!DOCTYPE html>
 <html>
     <head>
+
         <!-- META ============================================= -->
         <meta charset="utf-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -25,11 +26,11 @@
         <meta name="format-detection" content="telephone=no">
 
         <!-- FAVICONS ICON ============================================= -->
-        <link rel="icon" href="${pageContext.request.contextPath}/assets2/images/favicon.ico" type="image/x-icon" />
+        <link rel="icon" href="../error-404.html" type="image/x-icon" />
         <link rel="shortcut icon" type="image/x-icon" href="${pageContext.request.contextPath}/assets2/images/favicon.png" />
 
         <!-- PAGE TITLE HERE ============================================= -->
-        <title>EduChamp : Education HTML Template</title>
+        <title>Human Tech - Import Attendance Raw</title>
 
         <!-- MOBILE SPECIFIC ============================================= -->
         <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -53,12 +54,20 @@
         <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/assets2/css/style.css">
         <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/assets2/css/dashboard.css">
         <link class="skin" rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/assets2/css/color/color-1.css">
+
     </head>
 
     <body class="ttr-opened-sidebar ttr-pinned-sidebar">
-        <jsp:include page="../CommonItems/Header/dashboardHeader.jsp" />
-        <jsp:include page="../CommonItems/Navbar/adminNavbar.jsp" />
-
+        <%@ include file="../CommonItems/Header/dashboardHeader.jsp" %>
+        <%@ include file="../CommonItems/Navbar/hrNavbar.jsp" %>
+        <main class="ttr-wrapper">
+            <form action="uploadExcel" method="post" enctype="multipart/form-data">
+                <input type="file" name="file" accept=".xlsx" required>
+                <button type="submit">Upload & Import</button>
+            </form>
+            <p style="color: green">${success}</p>
+            <p style="color: red">${error}</p>
+        </main>
     </body>
 
     <script src="${pageContext.request.contextPath}/assets2/js/jquery.min.js"></script>

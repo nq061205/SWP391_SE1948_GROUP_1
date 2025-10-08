@@ -22,39 +22,50 @@
         <!-- sidebar menu start -->
         <nav class="ttr-sidebar-navi">
             <ul>
-                <li>
-                    <a href="${pageContext.request.contextPath}/Views/profile.jsp" class="ttr-material-button">
-                        <span class="ttr-icon"><i class="ti-book"></i></span>
-                        <span class="ttr-label">Profile</span>
+                <li>                   
+                    <a href="index.html" class="ttr-material-button">
+                        <span class="ttr-icon"><i class="ti-home"></i></span>
+                        <span class="ttr-label">Dashboard</span>
                     </a>
                 </li>
                 <li>
-                    <a href="${pageContext.request.contextPath}/Views/listapplication.jsp" class="ttr-material-button">
+                    <a href="courses.html" class="ttr-material-button">
+                        <span class="ttr-icon"><i class="ti-book"></i></span>
+                        <span class="ttr-label">Courses</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="#" class="ttr-material-button">
                         <span class="ttr-icon"><i class="ti-email"></i></span>
-                        <span class="ttr-label">Application</span>
+                        <span class="ttr-label">Mailbox</span>
                         <span class="ttr-arrow-icon"><i class="fa fa-angle-down"></i></span>
                     </a>
                     <ul>
                         <li>
-                            <a href="${pageContext.request.contextPath}/application?typeapplication=leave" class="ttr-material-button"><span class="ttr-label">Leave request</span></a>
+                            <a href="mailbox.html" class="ttr-material-button"><span class="ttr-label">Mail Box</span></a>
                         </li>
                         <li>
-                            <a href="${pageContext.request.contextPath}/application?typeapplication=ot" class="ttr-material-button"><span class="ttr-label">Overtime request</span></a>
+                            <a href="mailbox-compose.html" class="ttr-material-button"><span class="ttr-label">Compose</span></a>
                         </li>
                         <li>
-                            <a href="${pageContext.request.contextPath}/compose?type=LEAVE" class="ttr-material-button"><span class="ttr-label">Send leave application</span></a>
-                        </li>
-                        <li>
-                            <a href="${pageContext.request.contextPath}/compose?type=OT" class="ttr-material-button"><span class="ttr-label">Send overtime application</span></a>
+                            <a href="mailbox-read.html" class="ttr-material-button"><span class="ttr-label">Mail Read</span></a>
                         </li>
                     </ul>
                 </li>
                 <li>
                     <a href="#" class="ttr-material-button">
                         <span class="ttr-icon"><i class="ti-calendar"></i></span>
-                        <span class="ttr-label">Attendance</span>
+                        <span class="ttr-label">Calendar</span>
                         <span class="ttr-arrow-icon"><i class="fa fa-angle-down"></i></span>
                     </a>
+                    <ul>
+                        <li>
+                            <a href="basic-calendar.html" class="ttr-material-button"><span class="ttr-label">Basic Calendar</span></a>
+                        </li>
+                        <li>
+                            <a href="list-view-calendar.html" class="ttr-material-button"><span class="ttr-label">List View</span></a>
+                        </li>
+                    </ul>
                 </li>
                 <li>
                     <a href="bookmark.html" class="ttr-material-button">
@@ -71,8 +82,14 @@
                 <li>
                     <a href="add-listing.html" class="ttr-material-button">
                         <span class="ttr-icon"><i class="ti-layout-accordion-list"></i></span>
-                        <span class="ttr-label">Add listing</span>
+                        <span class="ttr-label">Listing</span>
+                        <span class="ttr-arrow-icon"><i class="fa fa-angle-down"></i></span>
                     </a>
+                    <ul>
+                        <li>
+                            <a href="${pageContext.request.contextPath}/Views/employeeList.jsp" class="ttr-material-button"><span class="ttr-label">Employee List</span></a>
+                        </li>
+                    </ul>
                 </li>
                 <li>
                     <a href="#" class="ttr-material-button">
