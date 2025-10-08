@@ -212,6 +212,7 @@ public class EmployeeDAO extends DBContext {
 
                 Role role = roleDAO.getRoleByRoleId(rs.getInt("role_id"));
                 emp.setRole(role);
+                emp.setStatus(rs.getBoolean("status"));
                 empList.add(emp);
             }
         } catch (SQLException ex) {
@@ -260,6 +261,7 @@ public class EmployeeDAO extends DBContext {
 
                 Role role = roleDAO.getRoleByRoleId(rs.getInt("role_id"));
                 emp.setRole(role);
+                emp.setStatus(rs.getBoolean("status"));
             }
         } catch (SQLException ex) {
             Logger.getLogger(EmployeeDAO.class.getName()).log(Level.SEVERE, null, ex);
@@ -292,7 +294,7 @@ public class EmployeeDAO extends DBContext {
     }
 
     public void updateEmployee(Employee employee) {
-        String sql = "UPDATE Employee SET fullname=?,email=?,password=?,gender=?,dob=?,phone=?,position_title=?,image=?  WHERE emp_code = ?";
+        String sql = "UPDATE Employee SET fullname=?,email=?,password=?,gender=?,dob=?,phone=?,position_title=?,image=?,dep_id=?,role_id=?,status=?  WHERE emp_code = ?";
         try {
             PreparedStatement ps = connection.prepareStatement(sql);
             ps.setString(1, employee.getFullname());
@@ -303,7 +305,10 @@ public class EmployeeDAO extends DBContext {
             ps.setString(6, employee.getPhone());
             ps.setString(7, employee.getPositionTitle());
             ps.setString(8, employee.getImage());
-            ps.setString(9, employee.getEmpCode());
+            ps.setString(9, employee.getDept().getDepId());
+            ps.setInt(10, employee.getRole().getRoleId());
+            ps.setBoolean(11, employee.isStatus());
+            ps.setString(12, employee.getEmpCode());
             ps.executeUpdate();
         } catch (SQLException ex) {
             Logger.getLogger(EmployeeDAO.class.getName()).log(Level.SEVERE, null, ex);
@@ -328,9 +333,120 @@ public class EmployeeDAO extends DBContext {
         }
     }
 
+    public List<Employee> searchEmployee(String searchkey) {
+        empList = new ArrayList<>();
+        String sql = "select * from Employee where emp_code like ? or fullname like ?";
+        try {
+            PreparedStatement ps = connection.prepareStatement(sql);
+            ps.setString(1, "%" + searchkey + "%");
+            ps.setString(2, "%" + searchkey + "%");
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                Employee emp = new Employee();
+                emp.setEmpId(rs.getInt("emp_id"));
+                emp.setEmpCode(rs.getString("emp_code"));
+                emp.setFullname(rs.getString("fullname"));
+                emp.setEmail(rs.getString("email"));
+                emp.setPassword(rs.getString("password"));
+                emp.setGender(rs.getBoolean("gender"));
+                emp.setDob(rs.getDate("dob"));
+                emp.setPhone(rs.getString("phone"));
+                emp.setPositionTitle(rs.getString("position_title"));
+                emp.setImage(rs.getString("image"));
+                emp.setDependantCount(rs.getInt("dependant_count"));
+
+                Department dept = getDepartmentByDeptID(rs.getString("dep_id"));
+                emp.setDept(dept);
+
+                Role role = roleDAO.getRoleByRoleId(rs.getInt("role_id"));
+                emp.setRole(role);
+                emp.setStatus(rs.getBoolean("status"));
+                empList.add(emp);
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(EmployeeDAO.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return empList;
+    }
+
+    public List<Employee> filterEmployees(Boolean status, String[] deptIds, String[] roleIds) {
+        empList = new ArrayList<>();
+        try {
+            StringBuilder sql = new StringBuilder("SELECT * FROM Employee WHERE 1=1");
+
+            if (status != null) {
+                sql.append(" AND status = ?");
+            }
+
+            if (deptIds != null && deptIds.length > 0) {
+                sql.append(" AND dep_id IN (");
+                for (int i = 0; i < deptIds.length; i++) {
+                    sql.append("?");
+                    if (i < deptIds.length - 1) {
+                        sql.append(",");
+                    }
+                }
+                sql.append(")");
+            }
+
+            if (roleIds != null && roleIds.length > 0) {
+                sql.append(" AND role_id IN (");
+                for (int i = 0; i < roleIds.length; i++) {
+                    sql.append("?");
+                    if (i < roleIds.length - 1) {
+                        sql.append(",");
+                    }
+                }
+                sql.append(")");
+            }
+
+            PreparedStatement ps = connection.prepareStatement(sql.toString());
+            int index = 1;
+            if (status != null) {
+                ps.setBoolean(index++, status);
+            }
+
+            if (deptIds != null) {
+                for (String depId : deptIds) {
+                    ps.setString(index++, depId);
+                }
+            }
+            if (roleIds != null) {
+                for (String roleId : roleIds) {
+                    ps.setInt(index++, Integer.parseInt(roleId));
+                }
+            }
+
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                Employee emp = new Employee();
+                emp.setEmpId(rs.getInt("emp_id"));
+                emp.setEmpCode(rs.getString("emp_code"));
+                emp.setFullname(rs.getString("fullname"));
+                emp.setEmail(rs.getString("email"));
+                emp.setPassword(rs.getString("password"));
+                emp.setGender(rs.getBoolean("gender"));
+                emp.setDob(rs.getDate("dob"));
+                emp.setPhone(rs.getString("phone"));
+                emp.setPositionTitle(rs.getString("position_title"));
+                emp.setImage(rs.getString("image"));
+                emp.setDependantCount(rs.getInt("dependant_count"));
+                emp.setStatus(rs.getBoolean("status"));
+                Department dept = getDepartmentByDeptID(rs.getString("dep_id"));
+                emp.setDept(dept);
+                Role role = roleDAO.getRoleByRoleId(rs.getInt("role_id"));
+                emp.setRole(role);
+                empList.add(emp);
+            }
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
+        return empList;
+    }
+
     public static void main(String[] args) {
         EmployeeDAO dao = new EmployeeDAO();
-
-        System.out.println(dao.getEmployeeByEmail("hmduy015@gmail.com"));
+        List<Employee> empList = dao.searchEmployee("A");
+        System.out.println(empList.toString());
     }
 }

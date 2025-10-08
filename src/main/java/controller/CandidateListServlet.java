@@ -66,7 +66,7 @@ public class CandidateListServlet extends HttpServlet {
         HttpSession session = request.getSession();
         List<Candidate> candidateList = (List<Candidate>) session.getAttribute("candidateList");
         if (session.getAttribute("candidateList") == null || (type == null || (!type.equals("name") && !type.equals("appliedat")))) {
-            session.setAttribute("candidateList", candidateList);
+            session.setAttribute("candidateList", cDAO.getAllCandidate());
             candidateList = (List<Candidate>) session.getAttribute("candidateList");
             session.setAttribute("direct", 1);
         } else {
@@ -84,10 +84,10 @@ public class CandidateListServlet extends HttpServlet {
 
                 } else {
                     if (direct == 1) {
-                        session.setAttribute("candidateList", sortByApplie(candidateList, direct));
+                        session.setAttribute("candidateList", sortByApplied(candidateList, direct));
                         session.setAttribute("direct", -1);
                     } else {
-                        session.setAttribute("candidateList", sortByApplie(candidateList, direct));
+                        session.setAttribute("candidateList", sortByApplied(candidateList, direct));
                         session.setAttribute("direct", 1);
                     }
                 }
@@ -106,7 +106,7 @@ public class CandidateListServlet extends HttpServlet {
         return candidateList;
     }
 
-    public List<Candidate> sortByApplie(List<Candidate> candidateList, int direct) {
+    public List<Candidate> sortByApplied(List<Candidate> candidateList, int direct) {
         if (direct == 1) {
             Collections.sort(candidateList, Comparator.comparing(Candidate::getAppliedAt));
         } else {
