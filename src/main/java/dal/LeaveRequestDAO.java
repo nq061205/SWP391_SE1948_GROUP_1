@@ -96,11 +96,10 @@ public class LeaveRequestDAO extends DBContext {
 
     public int composeLeaveRequest(int emp_id, String leave_type, String reason,
             Date startDate, Date endDate, int approvedBy) {
-        String sql = ""+
-        "INSERT INTO hrm.leave_request"+
-        "(emp_id, leave_type, reason, day_requested, start_date, end_date, approved_by, status, created_at, updated_at)"+
-        "VALUES (?, ?, ?, ?, ?, ?, ?, 'Pending', ?, ?)"
-    ;
+        String sql = ""
+                + "INSERT INTO hrm.leave_request"
+                + "(emp_id, leave_type, reason, day_requested, start_date, end_date, approved_by, status, created_at, updated_at)"
+                + "VALUES (?, ?, ?, ?, ?, ?, ?, 'Pending', ?, ?)";
 
         try (PreparedStatement stm = connection.prepareStatement(sql)) {
             long days = (endDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24) + 1;
@@ -122,8 +121,35 @@ public class LeaveRequestDAO extends DBContext {
         return 0;
     }
 
+    public int deleteLeaveRequest(int leaveId) {
+        String sql = "DELETE FROM hrm.leave_request WHERE leave_id= ?";
+        try (PreparedStatement stm = connection.prepareStatement(sql)) {
+            stm.setInt(1, leaveId);
+            return stm.executeUpdate();
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
+        return 0;
+    }
+
+    public int updateLeaveRequest(int id, String leaveType, String content, Date startDate, Date endDate) {
+        String sql = "UPDATE hrm.leave_request SET leave_type=?, reason=?, start_date=?, end_date=?, updated_at=NOW() WHERE leave_id=?";
+        try (PreparedStatement stm = connection.prepareStatement(sql)) {
+            stm.setString(1, leaveType);
+            stm.setString(2, content);
+            stm.setDate(3, startDate);
+            stm.setDate(4, endDate);
+            stm.setInt(5, id);
+            return stm.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return 0;
+    }
+
     public static void main(String[] args) {
         LeaveRequestDAO dao = new LeaveRequestDAO();
-        dao.composeLeaveRequest(1, "Sick", "meme", Date.valueOf("2025-12-12"), Date.valueOf("2025-12-12"), 1);
+        dao.deleteLeaveRequest(51);
     }
+
 }

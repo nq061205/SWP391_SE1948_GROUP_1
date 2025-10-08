@@ -27,7 +27,6 @@
     <servlet>
         <servlet-name>UploadExcelServlet</servlet-name>
         <servlet-class>controller.hr.UploadExcelServlet</servlet-class>
-        <servlet-class>controller.hr.UploadExcelServlet</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>HRRecruitmentServlet</servlet-name>
@@ -48,6 +47,10 @@
     <servlet>
         <servlet-name>LogOutServlet</servlet-name>
         <servlet-class>controller.LogOutServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>EditApplicationServlet</servlet-name>
+        <servlet-class>controller.EditApplicationServlet</servlet-class>
     </servlet>
     <servlet-mapping>
         <servlet-name>HomePageServlet</servlet-name>
@@ -128,6 +131,10 @@
     <servlet-mapping>
         <servlet-name>AccountList</servlet-name>
         <url-pattern>/accountlist</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>EditApplicationServlet</servlet-name>
+        <url-pattern>/editapplication</url-pattern>
     </servlet-mapping>
     <session-config>
         <session-timeout>30</session-timeout>
