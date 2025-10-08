@@ -22,10 +22,10 @@
         <!-- sidebar menu start -->
         <nav class="ttr-sidebar-navi">
             <ul>
-                <li>
+                <li>                   
                     <a href="index.html" class="ttr-material-button">
                         <span class="ttr-icon"><i class="ti-home"></i></span>
-                        <span class="ttr-label">Dashborad</span>
+                        <span class="ttr-label">Dashboard</span>
                     </a>
                 </li>
                 <li>
@@ -82,8 +82,14 @@
                 <li>
                     <a href="add-listing.html" class="ttr-material-button">
                         <span class="ttr-icon"><i class="ti-layout-accordion-list"></i></span>
-                        <span class="ttr-label">Add listing</span>
+                        <span class="ttr-label">Listing</span>
+                        <span class="ttr-arrow-icon"><i class="fa fa-angle-down"></i></span>
                     </a>
+                    <ul>
+                        <li>
+                            <a href="${pageContext.request.contextPath}/Views/accountList.jsp" class="ttr-material-button"><span class="ttr-label">Account List</span></a>
+                        </li>
+                    </ul>
                 </li>
                 <li>
                     <a href="#" class="ttr-material-button">

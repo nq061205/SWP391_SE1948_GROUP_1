@@ -55,7 +55,7 @@ public class LoginServlet extends HttpServlet {
             return;
         }
         HttpSession ses = request.getSession();
-        ses.setAttribute("employee", emp);
+        ses.setAttribute("user", emp);
         response.sendRedirect("homepage");
     }
 
@@ -69,7 +69,7 @@ public class LoginServlet extends HttpServlet {
             HttpSession session = request.getSession();
             Employee employee = lDao.getEmployeeByUsernamePassword(emp_code, password);
             if (employee != null) {
-                session.setAttribute("employee", employee);
+                session.setAttribute("user", employee);
                 if ("on".equals(remember)) {
                     Cookie cookieUser = new Cookie("rememberUser", emp_code);
                     cookieUser.setMaxAge(7 * 24 * 60 * 60);
