@@ -42,7 +42,10 @@
                             <a href="${pageContext.request.contextPath}/application?typeapplication=ot" class="ttr-material-button"><span class="ttr-label">Overtime request</span></a>
                         </li>
                         <li>
-                            <a href="${pageContext.request.contextPath}/Views/composeapplication.jsp" class="ttr-material-button"><span class="ttr-label">Send application</span></a>
+                            <a href="${pageContext.request.contextPath}/compose?type=LEAVE" class="ttr-material-button"><span class="ttr-label">Send leave application</span></a>
+                        </li>
+                        <li>
+                            <a href="${pageContext.request.contextPath}/compose?type=OT" class="ttr-material-button"><span class="ttr-label">Send overtime application</span></a>
                         </li>
                     </ul>
                 </li>
