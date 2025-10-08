@@ -63,25 +63,25 @@
         <main class="ttr-wrapper">
             <div class="container-fluid">
                 <div class="db-breadcrumb">
-                    <h4 class="breadcrumb-title">Employee Listing</h4>
+                    <h4 class="breadcrumb-title">Account Listing</h4>
                     <ul class="db-breadcrumb-list">
-                        <li><a href="${pageContext.request.contextPath}/employeelist"><i class="fa fa-home"></i> Employee List</a></li>
+                        <li><a href="${pageContext.request.contextPath}/accountlist"><i class="fa fa-home"></i> Account List</a></li>
                     </ul>
                 </div>
 
                 <div class="row">
                     <div class="col-md-2">
-                        <form action="${pageContext.request.contextPath}/employeelist" method="get" class="mb-3">
+                        <form action="${pageContext.request.contextPath}/accountlist" method="get" class="mb-3">
                             <div class="mb-3">
                                 <label class="form-label"><strong>Status:</strong></label>
                                 <div class="form-check">
                                     <input class="form-check-input" type="radio" name="status" value="true" 
-                                           ${param.status == 'true' ? 'checked' : ''} id="statusActive" onclick="this.form.submit()">
+                                           ${status == 'true' ? 'checked' : ''} id="statusActive" onclick="this.form.submit()">
                                     <label class="form-check-label" for="statusActive">Active</label>
                                 </div>
                                 <div class="form-check">
                                     <input class="form-check-input" type="radio" name="status" value="false" 
-                                           ${param.status == 'false' ? 'checked' : ''} id="statusInactive" onclick="this.form.submit()">
+                                           ${status == 'false' ? 'checked' : ''} id="statusInactive" onclick="this.form.submit()">
                                     <label class="form-check-label" for="statusInactive">Inactive</label>
                                 </div>
                             </div>
@@ -92,8 +92,8 @@
                                     <div class="form-check">
                                         <input class="form-check-input" type="checkbox" name="deptId" value="${dep.depId}" 
                                                <c:choose>
-                                                   <c:when test="${not empty paramValues.deptId}">
-                                                       <c:forEach var="selectedId" items="${paramValues.deptId}">
+                                                   <c:when test="${not empty deptId}">
+                                                       <c:forEach var="selectedId" items="${deptId}">
                                                            <c:if test="${selectedId eq dep.depId}">checked</c:if>
                                                        </c:forEach>
                                                    </c:when>
@@ -108,8 +108,8 @@
                                     <div class="form-check">
                                         <input class="form-check-input" type="checkbox" name="roleId" value="${rl.roleId}" 
                                                <c:choose>
-                                                   <c:when test="${not empty paramValues.roleId}">
-                                                       <c:forEach var="selectedId" items="${paramValues.roleId}">
+                                                   <c:when test="${not empty roleId}">
+                                                       <c:forEach var="selectedId" items="${roleId}">
                                                            <c:if test="${selectedId eq rl.roleId}">checked</c:if>
                                                        </c:forEach>
                                                    </c:when>
@@ -122,15 +122,43 @@
                     </div>
                     <div class="col-md-10">
                         <div>
-                            <form action="${pageContext.request.contextPath}/employeelist" method="get" class="d-flex mb-3">
+                            <form action="${pageContext.request.contextPath}/accountlist" method="get" class="d-flex mb-3">
                                 <input type="text" name="searchkey" class="form-control me-2" placeholder="Search by code or name" value="${param.searchKey}">
                                 <button type="submit" class="btn btn-primary">Search</button>
                             </form>
 
                         </div>
-                        <c:if test="${not empty param.searchkey}">
-                            <p>Found <strong>${totalResults}</strong> products with search key is <strong>${searchkey}</strong></p>  
-                        </c:if>
+                        <div class="row">
+                            <div class="col-md-5">
+                                <c:if test="${not empty searchkey}">
+                                    <p>Found <strong>${totalResults}</strong> products with search key is <strong>${searchkey}</strong></p>  
+                                </c:if>
+                            </div>
+
+                            <div class="col-md-7" style="display: flex; align-items: center; gap: 15px;">
+                                <p style="margin: 1;">Sort by:</p>
+                                <div style="display: flex; gap: 20px;">
+                                    Code: <div style="display: flex; flex-direction: column; line-height: 1.2;">
+                                        <a href="accountlist?sortBy=emp_code&order=asc">ASC</a>
+                                        <a href="accountlist?sortBy=emp_code&order=desc">DESC</a>
+                                    </div>
+                                    Name: <div style="display: flex; flex-direction: column; line-height: 1.2;">
+                                        <a href="accountlist?sortBy=fullname&order=asc">ASC</a>
+                                        <a href="accountlist?sortBy=fullname&order=desc">DESC</a>
+                                    </div>
+                                    Email: <div style="display: flex; flex-direction: column; line-height: 1.2;">
+                                        <a href="accountlist?sortBy=email&order=asc">ASC</a>
+                                        <a href="accountlist?sortBy=email&order=desc">DESC</a>
+                                    </div>
+                                    Department: <div style="display: flex; flex-direction: column; line-height: 1.2;">
+                                        <a href="accountlist?sortBy=dep_id&order=asc">ASC</a>
+                                        <a href="accountlist?sortBy=dep_id&order=desc">DESC</a>
+                                    </div>
+
+                                    
+                                </div>
+                            </div>
+                        </div>
                         <div class="mail-box-list" style="overflow-x: scroll;">
                             <table class="table table-bordered table-hover">
                                 <thead style="background-color: #f5f5f5;">
@@ -153,7 +181,7 @@
                                         <tr>
                                             <c:choose>
                                                 <c:when test="${editEmp != null && editEmp.empCode eq el.empCode}">
-                                            <form action="${pageContext.request.contextPath}/employeelist" method="post">
+                                            <form action="${pageContext.request.contextPath}/accountlist" method="post">
                                                 <td>${loop.index+1}</td>
                                                 <td><input type="hidden" name="empCode" value="${el.empCode}" />${el.empCode}</td>
                                                 <td>${el.fullname}</td>
@@ -172,7 +200,7 @@
                                                 <td>${el.status ?'Inactive' :'Active'}</td>
                                                 <td>
                                                     <button type="submit" name="action" value="save" class="btn btn-success btn-sm">Save</button>
-                                                    <a href="${pageContext.request.contextPath}/employeelist" class="btn btn-secondary btn-sm">Cancel</a>
+                                                    <a href="${pageContext.request.contextPath}/accountlist" class="btn btn-secondary btn-sm">Cancel</a>
                                                 </td>
                                             </form>
                                         </c:when>
@@ -186,10 +214,10 @@
                                             <td>${el.role.roleName}</td>
                                             <td>${el.status ? 'Active' :'Inactive'}</td>
                                             <td>
-                                                <a href="${pageContext.request.contextPath}/employeelist?type=edit&empCode=${el.empCode}" class="btn btn-sm btn-primary">Edit</a>
+                                                <a href="${pageContext.request.contextPath}/accountlist?type=edit&empCode=${el.empCode}" class="btn btn-sm btn-primary">Edit</a>
                                             </td>
                                             <td>
-                                                <form action="employeelist" method="post">
+                                                <form action="accountlist" method="post">
                                                     <input type="hidden" name="action" value="toggle">
                                                     <input type="hidden" name="empCode" value="${el.empCode}">
                                                     <input type="hidden" name="newstatus" value="${!el.status}">
