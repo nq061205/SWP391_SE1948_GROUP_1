@@ -4,7 +4,10 @@
  */
 package controller;
 
+import dal.DeptDAO;
 import dal.EmployeeDAO;
+import dal.RecruitmentPostDAO;
+import dal.RoleDAO;
 import model.Employee;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -16,7 +19,13 @@ import jakarta.servlet.http.HttpSession;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import model.Department;
+import model.Role;
 
 /**
  *
@@ -64,20 +73,42 @@ public class EmployeeList extends HttpServlet {
             throws ServletException, IOException {
         HttpSession ses = request.getSession();
         EmployeeDAO empDAO = new EmployeeDAO();
+        DeptDAO deptDAO = new DeptDAO();
+        RoleDAO rDAO = new RoleDAO();
+        String searchkey = request.getParameter("searchkey");
+        String statusStr =request.getParameter("status");
+        Boolean status = (statusStr != null) ? Boolean.parseBoolean(statusStr) : null;
+        String[] deptId = request.getParameterValues("deptId");
+        String[] roleId = request.getParameterValues("roleId");
         List<Employee> empList = new ArrayList<>();
-        empList = empDAO.getAllEmployees();
+        if (searchkey != null && !searchkey.trim().isEmpty()) {
+            empList = empDAO.searchEmployee(searchkey);
+        }
+        else if (status != null || (deptId != null && deptId.length > 0) || (roleId != null && roleId.length > 0)) {
+            empList =empDAO.filterEmployees(status, deptId, roleId);
+        }
+        else {
+            empList = empDAO.getAllEmployees();
+        }
+        List<Role> roleList = rDAO.getAllRoles();
+        Map<String, Role> uniqueRolesMap = new LinkedHashMap<>();
+        for (Role r : roleList) {
+            uniqueRolesMap.putIfAbsent(r.getRoleName(), r);
+        }
+
+        List<Role> uniqueRoles = new ArrayList<>(uniqueRolesMap.values());
+        List<Department> deptList = deptDAO.getAllDepartment();
         String type = request.getParameter("type");
         String empCode = request.getParameter("empCode");
 
         if ("edit".equalsIgnoreCase(type) && empCode != null) {
             Employee editEmp = empDAO.getEmployeeByEmpCode(empCode);
             request.setAttribute("editEmp", editEmp);
-        } else if ("delete".equalsIgnoreCase(type) && empCode != null) {
-            empDAO.deleteEmployee(empCode);
         }
 
-
         ses.setAttribute("empList", empList);
+        ses.setAttribute("roleList", uniqueRoles);
+        ses.setAttribute("deptList", deptList);
         //Comment de merge
         request.getRequestDispatcher("Views/employeeList.jsp").forward(request, response);
     }
@@ -95,32 +126,29 @@ public class EmployeeList extends HttpServlet {
             throws ServletException, IOException {
         String action = request.getParameter("action");
         EmployeeDAO empDAO = new EmployeeDAO();
-        if ("save".equalsIgnoreCase(action)) {
-            String empCode = request.getParameter("empCode");
-            String fullname = request.getParameter("fullname");
-            String email = request.getParameter("email");
-            boolean gender = Boolean.parseBoolean(request.getParameter("gender"));
-            String dobStr = request.getParameter("dob");
-            LocalDate localDate = LocalDate.parse(dobStr, DateTimeFormatter.ofPattern("yyyy-MM-dd"));
-            String phone = request.getParameter("phone");
-            String positionTittle = request.getParameter("positionTitle");
-            int dependantCount = Integer.parseInt(request.getParameter("dependantCount"));
+        RoleDAO rDAO = new RoleDAO();
 
+        String empCode = request.getParameter("empCode");
+        if ("save".equalsIgnoreCase(action)) {
+            String email = request.getParameter("email");
+            int roleId = Integer.parseInt(request.getParameter("roleId"));
             Employee emp = empDAO.getEmployeeByEmpCode(empCode);
             if (emp != null) {
-                emp.setFullname(fullname);
                 emp.setEmail(email);
-                emp.setGender(gender);
-                emp.setDob(java.sql.Date.valueOf(localDate));
-                emp.setPhone(phone);
-                emp.setPositionTitle(positionTittle);
-                emp.setDependantCount(dependantCount);
-                empDAO.updateEmployee(emp); // update vào DB
+                Role role = rDAO.getRoleByRoleId(roleId);
+                emp.setRole(role);
+                empDAO.updateEmployee(emp);
             }
-        } else if ("delete".equalsIgnoreCase(action)) {
-            String empCode = request.getParameter("empCode");
-            empDAO.deleteEmployee(empCode);
+        } else if ("toggle".equalsIgnoreCase(action)) {
+            boolean status = Boolean.parseBoolean(request.getParameter("newstatus"));
+            Employee emp = empDAO.getEmployeeByEmpCode(empCode);
+            if (emp != null) {
+                emp.setStatus(status);
+                empDAO.updateEmployee(emp);
+            }
         }
+        List<Employee> empList = empDAO.getAllEmployees();
+        request.getSession().setAttribute("empList", empList);
         request.getRequestDispatcher("Views/employeeList.jsp").forward(request, response);
 
     }
