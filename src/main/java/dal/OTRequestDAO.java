@@ -107,8 +107,32 @@ public class OTRequestDAO extends DBContext {
         return 0;
     }
 
+    public int deleteOTRequest(int otId) {
+        String sql = "DELETE FROM hrm.ot_request WHERE ot_id = ?";
+        try (PreparedStatement stm = connection.prepareStatement(sql)) {
+            stm.setInt(1, otId);
+            return stm.executeUpdate();
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
+        return 0;
+    }
+
+    public int updateOTRequest(int id, Date date, double hours) {
+        String sql = "UPDATE hrm.ot_request SET date=?, ot_hours=?, updated_at=NOW() WHERE ot_id=?";
+        try (PreparedStatement stm = connection.prepareStatement(sql)) {
+            stm.setDate(1, date);
+            stm.setDouble(2, hours);
+            stm.setInt(3, id);
+            return stm.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return 0;
+    }
+
     public static void main(String[] args) {
         OTRequestDAO dao = new OTRequestDAO();
-        dao.composeOTRequest(1, Date.valueOf("2025-12-12"), 1, 1);
+        dao.deleteOTRequest(12);
     }
 }

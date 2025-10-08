@@ -63,30 +63,50 @@
                 <div class="row">
                     <div class="col-lg-8 offset-lg-2">
                         <div class="widget-box p-4 shadow-sm bg-white rounded">
-                            <form class="mail-compose" method="post" action="${pageContext.request.contextPath}/compose">
-                                <input type="hidden" name="type" value="OT"/>
-                                <div class="form-group mb-3">
-                                    <label for="to">Receiver:</label>
-                                    <input type="email" id="to" name="email" class="form-control" placeholder="Email receiver" value="${email}" required>
-                                    <c:if test="${message!=null}">
-                                        <input type="text" class="form-control" value="${message}">
-                                    </c:if>
-                                </div>
+                            <c:choose>
+                                <c:when test="${not empty isEdit}">
+                                    <form class="mail-compose" 
+                                          method="post" 
+                                          action="${pageContext.request.contextPath}/editapplication?type=OT&id=${id}">
+                                    </c:when>
+                                    <c:otherwise>
+                                        <form class="mail-compose" 
+                                              method="post" 
+                                              action="${pageContext.request.contextPath}/compose">
+                                        </c:otherwise>
+                                    </c:choose>
+                                    <input type="hidden" name="type" value="OT"/>
+                                    <div class="form-group mb-3">
+                                        <label for="to">Receiver:</label>
+                                        <input type="email" id="to" name="email" class="form-control" placeholder="Email receiver" value="${email}" required
+                                               <c:if test="${not empty isEdit}">
+                                                   disabled
+                                               </c:if> 
+                                               >
+                                        <c:if test="${message!=null}">
+                                            <input type="text" class="form-control" value="${message}">
+                                        </c:if>
+                                    </div>
 
-                                <div class="form-group mb-3">
-                                    <label for="type">Date:</label>
-                                    <input type="date" name="date" value="${date}" class="form-control" required/>
-                                </div>
+                                    <div class="form-group mb-3">
+                                        <label for="type">Date:</label>
+                                        <input type="date" name="date" value="${date}" class="form-control" required/>
+                                    </div>
 
-                                <div class="form-group mb-3">
-                                    <label for="type">Overtime hours:</label>
-                                    <input type="number" name="othour" value="${othour}" class="form-control" min="0" max="4"/>
-                                </div>
+                                    <div class="form-group mb-3">
+                                        <label for="type">Overtime hours:</label>
+                                        <input type="number" name="othour" value="${othour}" class="form-control" min="0" max="4"/>
+                                    </div>
 
-                                <div class="text-right">
-                                    <button type="submit" class="btn btn-primary btn-lg">Send</button>
-                                </div>
-                            </form>
+                                    <div class="text-right">
+                                        <c:if test="${not empty isEdit}">
+                                            <button type="submit" class="btn btn-primary btn-lg">Update</button>
+                                        </c:if> 
+                                        <c:if test="${empty isEdit}">
+                                            <button type="submit" class="btn btn-primary btn-lg">Send</button>
+                                        </c:if> 
+                                    </div>
+                                </form>
                         </div>
                     </div>
                 </div>
