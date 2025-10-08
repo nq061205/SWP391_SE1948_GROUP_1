@@ -27,56 +27,98 @@ public class ComposeApplicationServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         String type = request.getParameter("type");
-        request.setAttribute("type", type);
-        request.getRequestDispatcher("Views/composeapplication.jsp").forward(request, response);
+        if ("LEAVE".equalsIgnoreCase(type)) {
+            request.getRequestDispatcher("Views/composeleaveapplication.jsp").forward(request, response);
+        } else if ("OT".equalsIgnoreCase(type)) {
+            request.getRequestDispatcher("Views/composeotapplication.jsp").forward(request, response);
+        }
     }
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        String type = request.getParameter("type");
         EmployeeDAO empDAO = new EmployeeDAO();
         LeaveRequestDAO leaveDAO = new LeaveRequestDAO();
-        OTRequestDAO OTDAO = new OTRequestDAO();
-        String type = request.getParameter("type");
-        String email = request.getParameter("email");
-        try {
-            if (empDAO.getEmployeeByEmail(email) == null) {
-                request.setAttribute("message", "Email is not available");
-            } else {
-                if ("LEAVE".equalsIgnoreCase(type)) {
-                    Employee emp = empDAO.getEmployeeByEmail(email);
+        OTRequestDAO otDAO = new OTRequestDAO();
+        String appType = type.trim().toUpperCase();
+        request.setAttribute("type", appType);
+        switch (appType) {
+            case "LEAVE": {
+                String leaveType = request.getParameter("type_leave");
+                String content = request.getParameter("content");
+                String startStr = request.getParameter("startdate");
+                String endStr = request.getParameter("enddate");
+
+                try {
+                    Date startDate = Date.valueOf(startStr);
+                    Date endDate = Date.valueOf(endStr);
+                    String email = request.getParameter("email");
+                    request.setAttribute("type_leave", leaveType);
+                    request.setAttribute("startdate", startDate);
+                    request.setAttribute("enddate", endDate);
+                    request.setAttribute("content", content);
+                    int approvedBy;
+                    if (empDAO.getEmployeeByEmail(email) != null) {
+                        Employee approver = empDAO.getEmployeeByEmail(request.getParameter("email"));
+                        approvedBy = approver.getEmpId();
+                    } else {
+                        request.setAttribute("message", "Email is not available.");
+                        request.getRequestDispatcher("Views/composeleaveapplication.jsp").forward(request, response);
+                        return;
+                    }
                     leaveDAO.composeLeaveRequest(
-                            emp.getEmpId(),
-                            request.getParameter("type_leave"),
-                            request.getParameter("content"),
-                            Date.valueOf(request.getParameter("startdate")),
-                            Date.valueOf(request.getParameter("enddate")),
-                            empDAO.getEmployeeByEmail(email).getEmpId()
+                            1,
+                            leaveType,
+                            content,
+                            startDate,
+                            endDate,
+                            approvedBy
                     );
-                } else if ("OT".equalsIgnoreCase(type)) {
-
+                    request.getRequestDispatcher("Views/applicationsuccess.jsp").forward(request, response);
+                    return;
+                } catch (IllegalArgumentException ex) {
                 }
+                break;
             }
-        } catch (SQLException ex) {
-            Logger.getLogger(ComposeApplicationServlet.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        if ("leave".equalsIgnoreCase(type)) {
-            String type_leave = request.getParameter("type_application");
-            Date startDate = Date.valueOf(request.getParameter("startdate"));
-            Date endDate = Date.valueOf(request.getParameter("enddate"));
-            String content = request.getParameter("content");
-            request.setAttribute("type_leave", type_leave);
-            request.setAttribute("startdate", startDate);
-            request.setAttribute("endDate", endDate);
-            request.setAttribute("content", content);
-            request.getRequestDispatcher("compose?type=LEAVE").forward(request, response);
-        } else if ("ot".equalsIgnoreCase(type)) {
-            Date date = Date.valueOf(request.getParameter("date"));
-            double othour = Integer.parseInt(request.getParameter("othour"));
-            request.setAttribute("date", date);
-            request.setAttribute("othour", othour);
-            request.getRequestDispatcher("compose?type=OT").forward(request, response);
-        }
 
+            case "OT": {
+                String dateStr = request.getParameter("date");
+                String hoursStr = request.getParameter("othour");
+                try {
+                    Date otDate = Date.valueOf(dateStr);
+                    double otHours = Double.parseDouble(hoursStr);
+                    String email = request.getParameter("email");
+
+                    request.setAttribute("email", email);
+                    request.setAttribute("date", otDate);
+                    request.setAttribute("othour", otHours);
+                    int approvedBy;
+                    if (empDAO.getEmployeeByEmail(request.getParameter("email")) != null) {
+                        Employee approver = empDAO.getEmployeeByEmail(request.getParameter("email"));
+                        approvedBy = approver.getEmpId();
+                    } else {
+                        request.setAttribute("message", "Email is not available.");
+                        request.getRequestDispatcher("Views/composeotapplication.jsp").forward(request, response);
+                        return;
+                    }
+                    otDAO.composeOTRequest(
+                            1,
+                            otDate,
+                            otHours,
+                            approvedBy
+                    );
+                    request.getRequestDispatcher("Views/applicationsuccess.jsp").forward(request, response);
+                    return;
+                } catch (IllegalArgumentException ex) {
+                }
+                break;
+            }
+            default: {
+                request.setAttribute("message", "Unsupported application type: " + appType);
+                request.getRequestDispatcher("Views/composeapplication.jsp").forward(request, response);
+            }
+        }
     }
+
 }

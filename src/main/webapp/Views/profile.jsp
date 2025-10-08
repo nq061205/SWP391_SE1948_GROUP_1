@@ -83,10 +83,10 @@
                                         <!-- Avatar -->
                                         <div class="col-md-3 text-center">
                                             <div class="profile-avatar mb-3">
-                                                <img src="${sessionScope.user.image}" alt="Avatar"  width="150" height="150">
+                                                <img src="${sessionScope.employee.image}" alt="Avatar"  width="150" height="150">
                                             </div>
-                                            <h5 class="mt-2">${sessionScope.user.fullname}</h5>
-                                            <p class="text-muted">${sessionScope.user.email}</p>
+                                            <h5 class="mt-2">${sessionScope.employee.fullname}</h5>
+                                            <p class="text-muted">${sessionScope.employee.email}</p>
                                         </div>
 
                                         <!-- Profile form -->
@@ -94,7 +94,7 @@
                                             <div class="form-group row">
                                                 <label class="col-sm-3 col-form-label">Fullname</label>
                                                 <div class="col-sm-9">
-                                                    <input name="fullname" class="form-control" type="text" value="${sessionScope.user.fullname}"
+                                                    <input name="fullname" class="form-control" type="text" value="${sessionScope.employee.fullname}"
                                                            <c:if test="${click != 'save'}"> readonly required </c:if>
                                                                >
                                                     </div>
@@ -103,14 +103,14 @@
                                                 <div class="form-group row">
                                                     <label class="col-sm-3 col-form-label">Position</label>
                                                     <div class="col-sm-9">
-                                                        <input name="position" class="form-control" type="text" value="${sessionScope.user.positionTitle}" readonly>
+                                                        <input name="position" class="form-control" type="text" value="${sessionScope.employee.positionTitle}" readonly>
                                                 </div>
                                             </div>
 
                                             <div class="form-group row">
                                                 <label class="col-sm-3 col-form-label">Email</label>
                                                 <div class="col-sm-9">
-                                                    <input name = "email" class="form-control" type="text" value="${sessionScope.user.email}" readonly>
+                                                    <input name = "email" class="form-control" type="text" value="${sessionScope.employee.email}" readonly>
                                                 </div>
                                             </div>
 
@@ -119,13 +119,13 @@
                                                 <div class="col-sm-9">
                                                     <c:if test="${click != 'save'}">
                                                         <input class="form-control" name = "gender" type="text"
-                                                               value='${sessionScope.user.gender == "true" ? "Male" : "Female"}'
+                                                               value='${sessionScope.employee.gender == "true" ? "Male" : "Female"}'
                                                                readonly>
                                                     </c:if>
                                                     <c:if test="${click == 'save'}">
                                                         <select name="gender" class="form-control">
-                                                            <option value="true" ${sessionScope.user.gender == "true" ? "selected" : ""}>Male</option>
-                                                            <option value="false" ${sessionScope.user.gender == "false" ? "selected" : ""}>Female</option>
+                                                            <option value="true" ${sessionScope.employee.gender == "true" ? "selected" : ""}>Male</option>
+                                                            <option value="false" ${sessionScope.employee.gender == "false" ? "selected" : ""}>Female</option>
                                                         </select>
                                                     </c:if>
                                                 </div>
@@ -134,7 +134,7 @@
                                             <div class="form-group row">
                                                 <label class="col-sm-3 col-form-label">Day of birth</label>
                                                 <div class="col-sm-9">
-                                                    <input name="dob" class="form-control" type="date" value="${sessionScope.user.dob}"
+                                                    <input name="dob" class="form-control" type="date" value="${sessionScope.employee.dob}"
                                                            <c:if test="${click != 'save'}"> readonly </c:if>
                                                                >
                                                     </div>
@@ -144,7 +144,7 @@
                                                     <label class="col-sm-3 col-form-label">Phone</label>
                                                     <div class="col-sm-9">
                                                         <input name="phone" 
-                                                               class="form-control" type="text" value="${sessionScope.user.phone}" pattern="\d{10}" title="Phone must include 10 number" minlength="10" maxlength="10"
+                                                               class="form-control" type="text" value="${sessionScope.employee.phone}" pattern="\d{10}" title="Phone must include 10 number" minlength="10" maxlength="10"
                                                         <c:if test="${click != 'save'}"> readonly </c:if>>
                                                     </div>
                                                 </div>
@@ -157,10 +157,10 @@
                                                     >Image</label>
                                                 <div class="col-sm-9">
                                                     <c:if test="${click == 'save'}">
-                                                        <input name="image" class="form-control" type="text" value="${sessionScope.user.image}">
+                                                        <input name="image" class="form-control" type="text" value="${sessionScope.employee.image}">
                                                     </c:if>
                                                     <c:if test="${click != 'save'}">
-                                                        <input type="hidden" name="image" value="${sessionScope.user.image}">
+                                                        <input type="hidden" name="image" value="${sessionScope.employee.image}">
                                                     </c:if>
                                                 </div>
                                             </div>
