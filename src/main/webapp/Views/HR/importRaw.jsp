@@ -5,6 +5,8 @@
 --%>
 
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+
 <!DOCTYPE html>
 <html>
     <head>
@@ -55,18 +57,94 @@
         <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/assets2/css/dashboard.css">
         <link class="skin" rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/assets2/css/color/color-1.css">
 
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     </head>
 
     <body class="ttr-opened-sidebar ttr-pinned-sidebar">
         <%@ include file="../CommonItems/Header/dashboardHeader.jsp" %>
         <%@ include file="../CommonItems/Navbar/hrNavbar.jsp" %>
         <main class="ttr-wrapper">
-            <form action="uploadExcel" method="post" enctype="multipart/form-data">
-                <input type="file" name="file" accept=".xlsx" required>
-                <button type="submit">Upload & Import</button>
-            </form>
-            <p style="color: green">${success}</p>
-            <p style="color: red">${error}</p>
+            <div class="container-fluid">
+                <div class="db-breadcrumb">
+                    <h4 class="breadcrumb-title">Import Raw Attendance</h4>
+                    <ul class="db-breadcrumb-list">
+                        <li><a href="${pageContext.request.contextPath}/Views/HR/hrDashboard.jsp"><i class="fa fa-home"></i>Home</a></li>
+                        <li>Attendance Management</li>
+                        <li>Import Raw Attendance</li>
+                    </ul>
+                </div>
+
+                <div class="container bg-white shadow-sm p-4 rounded">
+                    <!-- Download Sample Button -->
+                    <form action="downloadtemplate" method="get" class="mb-3 text-center">
+                        <button type="submit" class="btn btn-outline-secondary">
+                            <i class="bi bi-download"></i> Download Sample Template
+                        </button>
+                    </form>
+
+                    <!-- Upload Form -->
+                    <form action="uploadExcel" method="post" enctype="multipart/form-data" class="d-flex justify-content-center align-items-center gap-2 mb-4">
+                        <input type="file" name="file" accept=".xlsx" class="form-control w-50" required>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="bi bi-upload"></i> Upload & Preview
+                        </button>
+                    </form>
+
+                    <!-- Message -->
+                    <c:if test="${not empty success}">
+                        <div class="alert alert-success text-center">${success}</div>
+                    </c:if>
+                    <c:if test="${not empty error}">
+                        <div class="alert alert-danger text-center">${error}</div>
+                    </c:if>
+
+                    <!-- Preview Table -->
+                    <c:if test="${not empty preview}">
+                        <hr class="my-4">
+                        <h4 class="text-secondary mb-3">Preview First ${preview.size()} Records</h4>
+
+                        <div class="table-responsive">
+                            <table class="table table-bordered table-striped align-middle">
+                                <thead class="table-primary text-center">
+                                    <tr>
+                                        <th>Employee ID</th>
+                                        <th>Date</th>
+                                        <th>Check Time</th>
+                                        <th>Check Type</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <c:forEach var="row" items="${preview}">
+                                        <tr>
+                                            <td>${row.emp.empId}</td>
+                                            <td>${row.date}</td>
+                                            <td>${row.checkTime}</td>
+                                            <td>${row.checkType}</td>
+                                        </tr>
+                                    </c:forEach>
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <!-- Confirm Import Button -->
+                        <div class="d-flex justify-content-center gap-3 mt-3">
+                            <form action="uploadExcel" method="post">
+                                <input type="hidden" name="action" value="confirm">
+                                <button type="submit" class="btn btn-success">
+                                    <i class="bi bi-check-circle"></i> Confirm Import
+                                </button>
+                            </form>
+
+                            <form action="uploadExcel" method="post">
+                                <input type="hidden" name="action" value="cancel">
+                                <button type="submit" class="btn btn-secondary">
+                                    <i class="bi bi-x-circle"></i> Cancel Import
+                                </button>
+                            </form>
+                        </div>
+                    </c:if>
+                </div>
+            </div>
         </main>
     </body>
 
