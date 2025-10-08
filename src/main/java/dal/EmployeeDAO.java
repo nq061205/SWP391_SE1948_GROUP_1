@@ -31,7 +31,7 @@ public class EmployeeDAO extends DBContext {
 
     public EmployeeDAO() {
         try {
-            connection = new DBContext().getConnection();
+            this.connection = DBContext.getConnection();
         } catch (Exception e) {
             status = "Connection failed: " + e.getMessage();
             e.printStackTrace();
@@ -134,13 +134,13 @@ public class EmployeeDAO extends DBContext {
                     return emp;
                 }
             }
-        }catch (SQLException ex) {
+        } catch (SQLException ex) {
             ex.printStackTrace();
         }
         return null;
     }
 
-    public Employee getEmployeeByEmail(String email){
+    public Employee getEmployeeByEmail(String email) {
         String sql = "SELECT * FROM Employee WHERE email = ?";
         try (PreparedStatement stm = connection.prepareStatement(sql)) {
             stm.setString(1, email);
@@ -165,7 +165,7 @@ public class EmployeeDAO extends DBContext {
                 emp.setStatus(rs.getBoolean("status"));
                 return emp;
             }
-        }catch (SQLException ex) {
+        } catch (SQLException ex) {
             ex.printStackTrace();
         }
         return null;
@@ -178,7 +178,7 @@ public class EmployeeDAO extends DBContext {
             stm.setString(2, empCode);
             int rows = stm.executeUpdate();
             return rows > 0;
-        }catch (SQLException ex) {
+        } catch (SQLException ex) {
             ex.printStackTrace();
         }
         return false;
@@ -295,9 +295,9 @@ public class EmployeeDAO extends DBContext {
         String sql = "UPDATE Employee SET fullname=?,email=?,password=?,gender=?,dob=?,phone=?,position_title=?,image=?  WHERE emp_code = ?";
         try {
             PreparedStatement ps = connection.prepareStatement(sql);
-            ps.setString(  1 , employee.getFullname());
+            ps.setString(1, employee.getFullname());
             ps.setString(2, employee.getEmail());
-            ps.setString(3,employee.getPassword());
+            ps.setString(3, employee.getPassword());
             ps.setBoolean(4, employee.isGender());
             ps.setDate(5, employee.getDob());
             ps.setString(6, employee.getPhone());
@@ -330,7 +330,7 @@ public class EmployeeDAO extends DBContext {
 
     public static void main(String[] args) {
         EmployeeDAO dao = new EmployeeDAO();
-        dao.deleteEmployee("EMP001");
-        System.out.println(dao.getAllEmployees().toString());
+
+        System.out.println(dao.getEmployeeByEmail("hmduy015@gmail.com"));
     }
 }

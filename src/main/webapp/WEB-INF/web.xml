@@ -40,6 +40,14 @@
         <servlet-name>EmployeeList</servlet-name>
         <servlet-class>controller.EmployeeList</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>CandidateListServlet</servlet-name>
+        <servlet-class>controller.CandidateListServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>CandidateDetailServlet</servlet-name>
+        <servlet-class>controller.CandidateDetailServlet</servlet-class>
+    </servlet>
     <servlet-mapping>
         <servlet-name>HomePageServlet</servlet-name>
         <url-pattern>/homepage</url-pattern>
@@ -111,6 +119,14 @@
     <servlet-mapping>
         <servlet-name>EmployeeList</servlet-name>
         <url-pattern>/employeelist</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>CandidateListServlet</servlet-name>
+        <url-pattern>/candidatelist</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>CandidateDetailServlet</servlet-name>
+        <url-pattern>/candidatedetail</url-pattern>
     </servlet-mapping>
     <session-config>
         <session-timeout>30</session-timeout>
