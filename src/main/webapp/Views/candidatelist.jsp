@@ -34,7 +34,7 @@
 
                 <!-- 🔍 Search Bar -->
                 <div class="search-bar" style="margin-bottom:  20px">
-                    <form action="${pageContext.request.contextPath}/candidatelist" method="get" class="d-flex align-items-center justify-content-between search-form">
+                    <form action="${pageContext.request.contextPath}/candidatelist" method="post" class="d-flex align-items-center justify-content-between search-form">
                         <div class="input-group search-input-group">
                             <span class="input-group-text bg-white border-end-0">
                                 <i class="fa fa-search text-muted"></i>
@@ -53,18 +53,20 @@
                         <thead class="table-primary">
                             <tr>
                                 <th>#</th>
-                                <th>Full Name</th>
+                                <th onclick="window.location.href = '${pageContext.request.contextPath}/candidatelist?type=name'"
+                                    style="cursor:pointer;">Full Name</th>
                                 <th>Email</th>
                                 <th>Phone</th>
-                                <th>Applied At</th>
+                                <th  onclick="window.location.href = '${pageContext.request.contextPath}/candidatelist?type=appliedat'"
+                                     style="cursor:pointer;">Applied At</th>
                             </tr>
                         </thead>
                         <tbody>
                             <c:forEach var="el" items="${sessionScope.candidateList}" varStatus="st">
-                                <tr onclick="window.location.href='${pageContext.request.contextPath}/candidatedetail?id=${el.candidateId}'"
+                                <tr onclick="window.location.href = '${pageContext.request.contextPath}/candidatedetail?id=${el.candidateId}'"
                                     style="cursor:pointer;">
                                     <td>${st.index + 1}</td>
-                                    <td>${el.name}</td>
+                                    <td >${el.name}</td>
                                     <td>${el.email}</td>
                                     <td>${el.phone}</td>
                                     <td>${el.appliedAt}</td>
