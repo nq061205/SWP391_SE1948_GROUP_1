@@ -26,8 +26,7 @@ public class ProfileServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         HttpSession session = request.getSession();
-        Employee user = (Employee) session.getAttribute("user");
-        session.setAttribute("user", user);
+        Employee user = (Employee) session.getAttribute("employee");
         response.sendRedirect("Views/profile.jsp");
     }
 

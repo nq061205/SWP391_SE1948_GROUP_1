@@ -18,15 +18,18 @@ import java.util.ArrayList;
 /**
  * @author Nguyen Dinh Quy HE190184
  */
-public class LeaveRequestDAO {
+public class LeaveRequestDAO extends DBContext {
 
     private Connection connection;
+    private String status = "ok";
     private EmployeeDAO employeeDAO = new EmployeeDAO();
 
     public LeaveRequestDAO() {
         try {
             connection = new DBContext().getConnection();
         } catch (Exception e) {
+            status = "Connection failed: " + e.getMessage();
+            e.printStackTrace();
         }
     }
 
@@ -92,24 +95,28 @@ public class LeaveRequestDAO {
         return null;
     }
 
-    public int composeLeaveRequest(int emp_id, String leave_type, String reason, Date startDate, Date endDate,int approvedBy) {
-        try {
-            String sql = "insert into hrm.leave_request\n"
-                    + "(emp_id, leave_type, reason, day_requested, start_date, end_date,approved_by, status, created_at, updated_at)\n"
-                    + "values\n"
-                    + "(?, ?, ?, ?, ?, ?, ?,'Pending',?, ?)";
-            PreparedStatement stm = connection.prepareStatement(sql);
+    public int composeLeaveRequest(int emp_id, String leave_type, String reason,
+            Date startDate, Date endDate, int approvedBy) {
+        String sql = ""+
+        "INSERT INTO hrm.leave_request"+
+        "(emp_id, leave_type, reason, day_requested, start_date, end_date, approved_by, status, created_at, updated_at)"+
+        "VALUES (?, ?, ?, ?, ?, ?, ?, 'Pending', ?, ?)"
+    ;
+
+        try (PreparedStatement stm = connection.prepareStatement(sql)) {
+            long days = (endDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24) + 1;
+
             stm.setInt(1, emp_id);
             stm.setString(2, leave_type);
             stm.setString(3, reason);
-            stm.setDouble(4, startDate.getTime() - endDate.getTime() + 1);
-            stm.setDate(5, startDate);
-            stm.setDate(6, endDate);
-            stm.setInt(7,approvedBy);
+            stm.setInt(4, (int) days);
+            stm.setDate(5, new java.sql.Date(startDate.getTime()));
+            stm.setDate(6, new java.sql.Date(endDate.getTime()));
+            stm.setInt(7, approvedBy);
             stm.setTimestamp(8, Timestamp.valueOf(LocalDateTime.now()));
             stm.setTimestamp(9, Timestamp.valueOf(LocalDateTime.now()));
-            int rows = stm.executeUpdate();
-                return rows;
+
+            return stm.executeUpdate();
         } catch (SQLException ex) {
             ex.printStackTrace();
         }
@@ -118,6 +125,6 @@ public class LeaveRequestDAO {
 
     public static void main(String[] args) {
         LeaveRequestDAO dao = new LeaveRequestDAO();
-        System.out.println(""+dao.composeLeaveRequest(1, "Sick", "hhoho", Date.valueOf("2025-12-12"), Date.valueOf("2025-12-12"),1));
+        dao.composeLeaveRequest(1, "Sick", "meme", Date.valueOf("2025-12-12"), Date.valueOf("2025-12-12"), 1);
     }
 }

@@ -6,23 +6,29 @@ package DAL;
 
 import Models.*;
 import java.sql.Connection;
+import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 
 /**
  * @author Nguyen Dinh Quy HE190184
  */
-public class OTRequestDAO {
+public class OTRequestDAO extends DBContext {
 
     private Connection connection;
+    private String status = "ok";
     private EmployeeDAO employeeDAO = new EmployeeDAO();
 
     public OTRequestDAO() {
         try {
             connection = new DBContext().getConnection();
         } catch (Exception e) {
+            status = "Connection failed: " + e.getMessage();
+            e.printStackTrace();
         }
     }
 
@@ -80,8 +86,29 @@ public class OTRequestDAO {
         return null;
     }
 
+    public int composeOTRequest(int emp_id, Date date, double otHours, int approvedBy) {
+        String sql = ""
+                + "INSERT INTO hrm.ot_request"
+                + "(emp_id, date, ot_hours, approved_by, status, created_at, updated_at)"
+                + "VALUES (?, ?, ?, ?,'Pending', ?, ?)";
+
+        try (PreparedStatement stm = connection.prepareStatement(sql)) {
+            stm.setInt(1, emp_id);
+            stm.setDate(2, date);
+            stm.setDouble(3, otHours);
+            stm.setInt(4, approvedBy);
+            stm.setTimestamp(5, Timestamp.valueOf(LocalDateTime.now()));
+            stm.setTimestamp(6, Timestamp.valueOf(LocalDateTime.now()));
+
+            return stm.executeUpdate();
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
+        return 0;
+    }
+
     public static void main(String[] args) {
         OTRequestDAO dao = new OTRequestDAO();
-        System.out.println(dao.getOTRequestByEmpId(1).toString());
+        dao.composeOTRequest(1, Date.valueOf("2025-12-12"), 1, 1);
     }
 }

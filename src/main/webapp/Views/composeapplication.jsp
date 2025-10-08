@@ -66,7 +66,7 @@
                     </ul>
                 </div>
                 <c:choose>
-                    <c:when test="${type == null}">
+                    <c:when test="${empty type}">
                         <div class="row">
                             <div class="col-lg-8 offset-lg-2">
                                 <div class="widget-box p-4 shadow-sm bg-white rounded">
@@ -87,44 +87,64 @@
                         </div>
                     </c:when>
 
-                    <c:when test="${type == 'LEAVE'}">            
+                    <c:when test="${type eq 'LEAVE'}">            
                         <div class="row">
                             <div class="col-lg-8 offset-lg-2">
                                 <div class="widget-box p-4 shadow-sm bg-white rounded">
                                     <form class="mail-compose" method="post" action="${pageContext.request.contextPath}/compose">
-                                         <input type="hidden" name="type" value="LEAVE"/>
+                                        <input type="hidden" name="type" value="LEAVE"/>
                                         <div class="form-group mb-3">
                                             <label for="to">Receiver:</label>
-                                            <input type="email" id="to" name="email" class="form-control" placeholder="Email receiver" required>
+                                            <input type="email" id="to" name="email" class="form-control" placeholder="Email receiver" value="${email}" required>
                                             <c:if test="${message!=null}">
-                                                <input type="text" name="message" class="form-control" value="${message}">
+                                                <input type="text" class="form-control" value="${message}">
                                             </c:if>
                                         </div>
                                         <div class="form-group mb-3">
                                             <label for="type">Leave Type:</label>
                                             <select id="type" name="type_leave" class="form-control" required>
                                                 <option value="" selected>Select application type</option>
-                                                <option value="annual">Annual Leave</option>
-                                                <option value="sick">Sick</option>
-                                                <option value="unpaid">Unpaid</option>
-                                                <option value="maternity">Maternity</option>
-                                                <option value="other">Other</option>
+                                                <option value="Annual"
+                                                        <c:if test="${type_value eq 'Annual'}">
+                                                            selected
+                                                        </c:if>
+                                                        >Annual Leave</option>
+                                                <option value="Sick"
+                                                        <c:if test="${type_value eq 'Sick'}">
+                                                            selected
+                                                        </c:if>
+                                                        >Sick</option>
+                                                <option value="Unpaid"
+                                                        <c:if test="${type_value eq 'Unpaid'}">
+                                                            selected
+                                                        </c:if>
+                                                        >Unpaid</option>
+                                                <option value="Maternity"
+                                                        <c:if test="${type_value eq 'Maternity'}">
+                                                            selected
+                                                        </c:if>
+                                                        >Maternity</option>
+                                                <option value="Other"
+                                                        <c:if test="${type_value eq 'Other'}">
+                                                            selected
+                                                        </c:if>
+                                                        >Other</option>
                                             </select>
                                         </div>
 
                                         <div class="form-group mb-3">
                                             <label for="startdate">From:</label>
-                                            <input type="date" name="startdate" value="" class="form-control" required />
+                                            <input type="date" name="startdate" value="${startdate}" class="form-control" required />
                                         </div>
 
                                         <div class="form-group mb-3">
                                             <label for="enddate">To:</label>
-                                            <input type="date" name="enddate" value="" class="form-control" required/>
+                                            <input type="date" name="enddate" value="${enddate}" class="form-control" required/>
                                         </div>
 
                                         <div class="form-group mb-3">
                                             <label for="content">Reason:</label>
-                                            <textarea id="content" name="content" class="form-control" rows="6" placeholder="Typing here..." required></textarea>
+                                            <textarea id="content" name="content" class="form-control" rows="6" placeholder="Typing here..." required>${content}</textarea>
                                         </div>
 
                                         <div class="text-right">
@@ -137,28 +157,28 @@
                     </c:when>
 
 
-                    <c:when test="${type == 'OT'}">            
+                    <c:when test="${type eq 'OT'}">            
                         <div class="row">
                             <div class="col-lg-8 offset-lg-2">
                                 <div class="widget-box p-4 shadow-sm bg-white rounded">
                                     <form class="mail-compose" method="post" action="${pageContext.request.contextPath}/compose">
-                                         <input type="hidden" name="type" value="OT"/>
+                                        <input type="hidden" name="type" value="OT"/>
                                         <div class="form-group mb-3">
                                             <label for="to">Receiver:</label>
-                                            <input type="email" id="to" name="email" class="form-control" placeholder="Email receiver" required>
+                                            <input type="email" id="to" name="email" class="form-control" placeholder="Email receiver" value="${email}" required>
                                             <c:if test="${message!=null}">
-                                                <input type="text" name="message" class="form-control" value="${message}">
+                                                <input type="text" class="form-control" value="${message}">
                                             </c:if>
                                         </div>
 
                                         <div class="form-group mb-3">
                                             <label for="type">Date:</label>
-                                            <input type="date" name="date" value="" class="form-control" required/>
+                                            <input type="date" name="date" value="${date}" class="form-control" required/>
                                         </div>
 
                                         <div class="form-group mb-3">
                                             <label for="type">Overtime hours:</label>
-                                            <input type="number" name="othour" value="" class="form-control" min="0" max="4"/>
+                                            <input type="number" name="othour" value="${othour}" class="form-control" min="0" max="4"/>
                                         </div>
 
                                         <div class="text-right">
