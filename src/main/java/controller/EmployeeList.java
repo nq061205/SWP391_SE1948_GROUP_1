@@ -76,20 +76,20 @@ public class EmployeeList extends HttpServlet {
         DeptDAO deptDAO = new DeptDAO();
         RoleDAO rDAO = new RoleDAO();
         String searchkey = request.getParameter("searchkey");
-        String statusStr =request.getParameter("status");
+        String statusStr = request.getParameter("status");
         Boolean status = (statusStr != null) ? Boolean.parseBoolean(statusStr) : null;
         String[] deptId = request.getParameterValues("deptId");
         String[] roleId = request.getParameterValues("roleId");
         List<Employee> empList = new ArrayList<>();
         if (searchkey != null && !searchkey.trim().isEmpty()) {
             empList = empDAO.searchEmployee(searchkey);
-        }
-        else if (status != null || (deptId != null && deptId.length > 0) || (roleId != null && roleId.length > 0)) {
-            empList =empDAO.filterEmployees(status, deptId, roleId);
-        }
-        else {
+        } else if (status != null || (deptId != null && deptId.length > 0) || (roleId != null && roleId.length > 0)) {
+            empList = empDAO.filterEmployees(status, deptId, roleId);
+        } else {
             empList = empDAO.getAllEmployees();
         }
+        int totalResults = empList.size();
+        
         List<Role> roleList = rDAO.getAllRoles();
         Map<String, Role> uniqueRolesMap = new LinkedHashMap<>();
         for (Role r : roleList) {
@@ -105,7 +105,8 @@ public class EmployeeList extends HttpServlet {
             Employee editEmp = empDAO.getEmployeeByEmpCode(empCode);
             request.setAttribute("editEmp", editEmp);
         }
-
+        request.setAttribute("totalResults", totalResults);
+        request.setAttribute("searchkey", searchkey);
         ses.setAttribute("empList", empList);
         ses.setAttribute("roleList", uniqueRoles);
         ses.setAttribute("deptList", deptList);
