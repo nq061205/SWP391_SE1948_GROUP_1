@@ -58,6 +58,11 @@
         <%@ include file="CommonItems/Header/dashboardHeader.jsp" %>
         <%@ include file="CommonItems/Navbar/empNavbar.jsp" %>
         <input type="hidden" name="typeApplication" value="leaverequest" />
+        <c:if test="${param.issuccess eq 'true'}">
+            <script>
+                alert("Update successfully!");
+            </script>
+        </c:if>
         <main class="ttr-wrapper">
             <div class="container-fluid">
                 <div class="db-breadcrumb">
@@ -100,9 +105,12 @@
                                     </div>
 
                                     <ul class="mailbox-toolbar">
-                                        <form action="${pageContext.request.contextPath}/deleteApplications" method="post" style="display:inline;">
+                                        <a href="${pageContext.request.contextPath}/editapplication?type=OT&id=${application.otId}" class="icon-circle" data-toggle="tooltip" title="Edit">
+                                            <i class="fa fa-pencil"></i>
+                                        </a>
+                                        <form action="${pageContext.request.contextPath}/deleteapplication?type=OT&id=${application.otId}"" method="post" style="display:inline;">
                                             <input type="hidden" name="OTRequestId" value="${application.otId}" />
-                                            <button type="submit" class="icon-circle" data-toggle="tooltip" title="Delete">
+                                            <button type="submit" class="icon-circle" data-toggle="tooltip" title="Delete" onclick="return confirm('Do you confirm delete this application');">
                                                 <i class="fa fa-trash-o"></i>
                                             </button>
                                         </form>
@@ -139,9 +147,9 @@
         <script src="${pageContext.request.contextPath}/assets2/js/admin.js"></script>
         <script src='${pageContext.request.contextPath}/assets2/vendors/switcher/switcher.js'></script>
         <script>
-            $(document).ready(function () {
-                $('[data-toggle="tooltip"]').tooltip();
-            });
+                                                $(document).ready(function () {
+                                                    $('[data-toggle="tooltip"]').tooltip();
+                                                });
         </script>
         <style>
             .icon-circle {
