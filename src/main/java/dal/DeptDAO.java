@@ -27,6 +27,25 @@ public class DeptDAO extends DBContext {
         } catch (Exception e) {
         }
     }
+    public Department getDepartmentByDepartmentId(String depId) {
+        Department department = new Department();
+        try {
+            String sql = "select * from department where dep_id =?";
+            PreparedStatement stm = connection.prepareStatement(sql);
+            stm.setString(1, depId);
+            ResultSet rs = stm.executeQuery();
+            if (rs.next()) {
+                department = new Department(
+                        rs.getString("dep_id"),
+                        rs.getString("dep_name"),
+                        rs.getString("description")
+                );
+            }
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
+        return department;
+    } 
 
      public Department getDepartmentByEmpCode(String emp_code) {
         Department department = new Department();
@@ -76,6 +95,25 @@ public class DeptDAO extends DBContext {
         List<Department> departments = new ArrayList<>();
         try {
             String sql = "SELECT dep_id, dep_name, description FROM department WHERE is_delete = FALSE ORDER BY dep_name";
+            PreparedStatement stm = connection.prepareStatement(sql);
+            ResultSet rs = stm.executeQuery();
+            while (rs.next()) {
+                Department department = new Department(
+                        rs.getString("dep_id"),
+                        rs.getString("dep_name"),
+                        rs.getString("description")
+                );
+                departments.add(department);
+            }
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
+        return departments;
+    }
+    public List<Department> getAllDepartment() {
+        List<Department> departments = new ArrayList<>();
+        try {
+            String sql = "SELECT dep_id, dep_name, description FROM department ORDER BY dep_name";
             PreparedStatement stm = connection.prepareStatement(sql);
             ResultSet rs = stm.executeQuery();
             while (rs.next()) {
