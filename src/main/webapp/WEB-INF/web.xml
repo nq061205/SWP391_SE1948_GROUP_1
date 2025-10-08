@@ -27,6 +27,7 @@
     <servlet>
         <servlet-name>UploadExcelServlet</servlet-name>
         <servlet-class>controller.hr.UploadExcelServlet</servlet-class>
+        <servlet-class>controller.hr.UploadExcelServlet</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>HRRecruitmentServlet</servlet-name>
@@ -39,6 +40,14 @@
     <servlet>
         <servlet-name>DownloadRawTemplateServlet</servlet-name>
         <servlet-class>controller.hr.DownloadRawTemplateServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>AccountList</servlet-name>
+        <servlet-class>controller.AccountList</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>LogOutServlet</servlet-name>
+        <servlet-class>controller.LogOutServlet</servlet-class>
     </servlet>
     <servlet-mapping>
         <servlet-name>HomePageServlet</servlet-name>
@@ -85,6 +94,10 @@
         <url-pattern>/changepassword</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
+        <servlet-name>LogOutServlet</servlet-name>
+        <url-pattern>/logout</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
         <servlet-name>ApplicationServlet</servlet-name>
         <url-pattern>/application</url-pattern>
     </servlet-mapping>
@@ -111,6 +124,10 @@
     <servlet-mapping>
         <servlet-name>DownloadRawTemplateServlet</servlet-name>
         <url-pattern>/downloadtemplate</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>AccountList</servlet-name>
+        <url-pattern>/accountlist</url-pattern>
     </servlet-mapping>
     <session-config>
         <session-timeout>30</session-timeout>
