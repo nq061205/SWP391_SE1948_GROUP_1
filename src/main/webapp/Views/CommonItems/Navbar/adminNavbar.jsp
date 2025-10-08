@@ -87,7 +87,7 @@
                     </a>
                     <ul>
                         <li>
-                            <a href="${pageContext.request.contextPath}/Views/employeeList.jsp" class="ttr-material-button"><span class="ttr-label">Employee List</span></a>
+                            <a href="${pageContext.request.contextPath}/Views/accountList.jsp" class="ttr-material-button"><span class="ttr-label">Account List</span></a>
                         </li>
                     </ul>
                 </li>

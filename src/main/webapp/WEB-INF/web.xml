@@ -37,6 +37,7 @@
     <servlet>
         <servlet-name>UploadExcelServlet</servlet-name>
         <servlet-class>controller.hr.UploadExcelServlet</servlet-class>
+        <servlet-class>controller.hr.UploadExcelServlet</servlet-class>
     </servlet>
 
     <servlet>
@@ -50,8 +51,12 @@
     </servlet>
 
     <servlet>
-        <servlet-name>EmployeeList</servlet-name>
-        <servlet-class>controller.EmployeeList</servlet-class>
+        <servlet-name>DownloadRawTemplateServlet</servlet-name>
+        <servlet-class>controller.hr.DownloadRawTemplateServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>AccountList</servlet-name>
+        <servlet-class>controller.AccountList</servlet-class>
     </servlet>
 
     <servlet>
@@ -161,8 +166,12 @@
     </servlet-mapping>
 
     <servlet-mapping>
-        <servlet-name>EmployeeList</servlet-name>
-        <url-pattern>/employeelist</url-pattern>
+        <servlet-name>DownloadRawTemplateServlet</servlet-name>
+        <url-pattern>/downloadtemplate</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>AccountList</servlet-name>
+        <url-pattern>/accountlist</url-pattern>
     </servlet-mapping>
 
     <servlet-mapping>
