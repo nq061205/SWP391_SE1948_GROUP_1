@@ -80,12 +80,18 @@ public class EmployeeList extends HttpServlet {
         Boolean status = (statusStr != null) ? Boolean.parseBoolean(statusStr) : null;
         String[] deptId = request.getParameterValues("deptId");
         String[] roleId = request.getParameterValues("roleId");
+        String sortBy = request.getParameter("sortBy");
+        String order= request.getParameter("order");
         List<Employee> empList = new ArrayList<>();
         if (searchkey != null && !searchkey.trim().isEmpty()) {
             empList = empDAO.searchEmployee(searchkey);
         } else if (status != null || (deptId != null && deptId.length > 0) || (roleId != null && roleId.length > 0)) {
             empList = empDAO.filterEmployees(status, deptId, roleId);
-        } else {
+        }
+        else if (sortBy != null ) {
+            empList=empDAO.getSortedEmployee(sortBy, order);
+        }
+        else {
             empList = empDAO.getAllEmployees();
         }
         int totalResults = empList.size();
@@ -107,6 +113,9 @@ public class EmployeeList extends HttpServlet {
         }
         request.setAttribute("totalResults", totalResults);
         request.setAttribute("searchkey", searchkey);
+        request.setAttribute("roleId", roleId);
+        request.setAttribute("deptId", deptId);
+        request.setAttribute("status", status);
         ses.setAttribute("empList", empList);
         ses.setAttribute("roleList", uniqueRoles);
         ses.setAttribute("deptList", deptList);
