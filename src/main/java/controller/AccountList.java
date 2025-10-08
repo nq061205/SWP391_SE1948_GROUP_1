@@ -120,7 +120,7 @@ public class AccountList extends HttpServlet {
         ses.setAttribute("roleList", uniqueRoles);
         ses.setAttribute("deptList", deptList);
         //Comment de merge
-        request.getRequestDispatcher("Views/employeeList.jsp").forward(request, response);
+        request.getRequestDispatcher("Views/accountList.jsp").forward(request, response);
     }
 
     /**
@@ -159,7 +159,7 @@ public class AccountList extends HttpServlet {
         }
         List<Employee> empList = empDAO.getAllEmployees();
         request.getSession().setAttribute("empList", empList);
-        request.getRequestDispatcher("Views/employeeList.jsp").forward(request, response);
+        request.getRequestDispatcher("Views/accountList.jsp").forward(request, response);
 
     }
 
