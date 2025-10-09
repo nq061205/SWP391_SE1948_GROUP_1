@@ -12,7 +12,6 @@ import dal.EmployeeDAO;
 import dal.LeaveRequestDAO;
 import dal.OTRequestDAO;
 import java.io.IOException;
-import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;

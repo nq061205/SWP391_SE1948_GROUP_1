@@ -107,7 +107,7 @@ public class EmployeeDAO extends DBContext {
     }
 
     public Employee getEmployeeByUsernamePassword(String username, String pass) {
-        String sql = "SELECT * FROM Employee WHERE emp_code = ? AND password = ?";
+        String sql = "SELECT * FROM Employee WHERE binary emp_code = ? AND binary password = ? and status = true";
         try (PreparedStatement stm = connection.prepareStatement(sql)) {
             stm.setString(1, username);
             stm.setString(2, pass);
@@ -141,7 +141,7 @@ public class EmployeeDAO extends DBContext {
     }
 
     public Employee getEmployeeByEmail(String email) {
-        String sql = "SELECT * FROM Employee WHERE email = ?";
+        String sql = "SELECT * FROM Employee WHERE email = ? && status = true";
         try (PreparedStatement stm = connection.prepareStatement(sql)) {
             stm.setString(1, email);
             ResultSet rs = stm.executeQuery();

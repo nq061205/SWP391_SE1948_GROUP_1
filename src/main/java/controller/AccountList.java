@@ -6,7 +6,6 @@ package controller;
 
 import dal.DeptDAO;
 import dal.EmployeeDAO;
-import dal.RecruitmentPostDAO;
 import dal.RoleDAO;
 import model.Employee;
 import java.io.IOException;
@@ -16,14 +15,10 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import model.Department;
 import model.Role;
 
