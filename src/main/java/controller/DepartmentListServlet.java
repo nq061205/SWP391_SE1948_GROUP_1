@@ -70,26 +70,8 @@ public class DepartmentListServlet extends HttpServlet {
         EmployeeDAO empDAO = new EmployeeDAO();
         DeptDAO deptDAO = new DeptDAO();
         RoleDAO rDAO = new RoleDAO();
-        String searchkey = request.getParameter("searchkey");
-        String statusStr = request.getParameter("status");
-        Boolean status = (statusStr != null) ? Boolean.parseBoolean(statusStr) : null;
-        String[] deptId = request.getParameterValues("deptId");
-        String[] roleId = request.getParameterValues("roleId");
-        String sortBy = request.getParameter("sortBy");
-        String order= request.getParameter("order");
-        List<Department> deptList = new ArrayList<>();
-        if (searchkey != null && !searchkey.trim().isEmpty()) {
-            
-        } else if (status != null || (deptId != null && deptId.length > 0) || (roleId != null && roleId.length > 0)) {
-            
-        }
-        else if (sortBy != null ) {
-            
-        }
-        else {
-            deptList = deptDAO.getAllDepartment();
-        }
-        int totalResults = deptList.size();
+        List<Department> deptList;
+        deptList = deptDAO.getAllDepartment();
         String type = request.getParameter("type");
         String depId = request.getParameter("depId");
 
@@ -97,11 +79,6 @@ public class DepartmentListServlet extends HttpServlet {
             Department editDept = deptDAO.getDepartmentByDepartmentId(depId);
             request.setAttribute("editDept", editDept);
         }
-        request.setAttribute("totalResults", totalResults);
-        request.setAttribute("searchkey", searchkey);
-        request.setAttribute("roleId", roleId);
-        request.setAttribute("deptId", deptId);
-        request.setAttribute("status", status);
         ses.setAttribute("deptList", deptList);
         //Comment de merge
         request.getRequestDispatcher("Views/departmentlist.jsp").forward(request, response);

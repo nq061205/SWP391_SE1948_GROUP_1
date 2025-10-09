@@ -2,7 +2,6 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-
 package dal;
 
 import model.Department;
@@ -20,7 +19,7 @@ import java.util.logging.Logger;
  * @author Nguyen Dinh Quy HE190184
  */
 public class DeptDAO extends DBContext {
-    
+
     private Connection connection;
 
     public DeptDAO() {
@@ -29,6 +28,7 @@ public class DeptDAO extends DBContext {
         } catch (Exception e) {
         }
     }
+
     public Department getDepartmentByDepartmentId(String depId) {
         Department department = new Department();
         try {
@@ -47,9 +47,9 @@ public class DeptDAO extends DBContext {
             ex.printStackTrace();
         }
         return department;
-    } 
+    }
 
-     public Department getDepartmentByEmpCode(String emp_code) {
+    public Department getDepartmentByEmpCode(String emp_code) {
         Department department = new Department();
         try {
             String sql = "select * from department join employee on department.dep_id = employee.dep_id where emp_code = ?";
@@ -68,8 +68,8 @@ public class DeptDAO extends DBContext {
         }
         return department;
     }
-     
-     public Department getDepartmentByEmpId(int emp_id) {
+
+    public Department getDepartmentByEmpId(int emp_id) {
         Department department = new Department();
         try {
             String sql = "select * from department join employee on department.dep_id = employee.dep_id where emp_id = ?";
@@ -88,9 +88,10 @@ public class DeptDAO extends DBContext {
         }
         return department;
     }
-    
+
     /**
      * Get all departments for dropdown selection
+     *
      * @return List of all Department objects
      */
     public List<Department> getAllDepartments() {
@@ -112,6 +113,7 @@ public class DeptDAO extends DBContext {
         }
         return departments;
     }
+
     public List<Department> getAllDepartment() {
         List<Department> departments = new ArrayList<>();
         try {
@@ -131,19 +133,43 @@ public class DeptDAO extends DBContext {
         }
         return departments;
     }
-    public void updateDepartment(Department department) {
-        String sql ="UPDATE department SET dep_name=?,description=? where dep_id=?";
+    public void createDepartment(Department department) {
+        String sql = "INSERT INTO department VALUES(?,?,?)";
         try {
             PreparedStatement ps = connection.prepareStatement(sql);
-            ps.setString(1, department.getDepName());
-            ps.setString(2,department.getDescription());
-            ps.setString(3,department.getDepId());
+            ps.setString(1, department.getDepId());
+            ps.setString(2, department.getDepName());
+            ps.setString(3, department.getDescription());
             ps.executeUpdate();
         } catch (SQLException ex) {
             Logger.getLogger(DeptDAO.class.getName()).log(Level.SEVERE, null, ex);
         }
         
     }
+    public void updateDepartment(Department department) {
+        String sql = "UPDATE department SET dep_name=?,description=? where dep_id=?";
+        try {
+            PreparedStatement ps = connection.prepareStatement(sql);
+            ps.setString(1, department.getDepName());
+            ps.setString(2, department.getDescription());
+            ps.setString(3, department.getDepId());
+            ps.executeUpdate();
+        } catch (SQLException ex) {
+            Logger.getLogger(DeptDAO.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+    }
+
+    public void close() {
+        try {
+            if (connection != null && !connection.isClosed()) {
+                connection.close();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
     public static void main(String[] args) {
         DeptDAO dao = new DeptDAO();
         Department dep = new Department();
