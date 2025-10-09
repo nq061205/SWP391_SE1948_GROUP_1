@@ -58,6 +58,11 @@
         <%@ include file="CommonItems/Header/dashboardHeader.jsp" %>
         <%@ include file="CommonItems/Navbar/empNavbar.jsp" %>
         <input type="hidden" name="typeApplication" value="leaverequest" />
+       <c:if test="${param.issuccess eq 'true'}">
+            <script>
+                alert("Update successfully!");
+            </script>
+        </c:if>
         <main class="ttr-wrapper">
             <div class="container-fluid">
                 <div class="db-breadcrumb">
@@ -71,14 +76,9 @@
                         <div class="mail-box-list">
                             <c:forEach var="application" items="${listapplication}">
                                 <div class="mail-list-info ${empty application.approvedBy ? '' : 'unread'}">
-
                                     <div class="mail-list-title">
                                         <h6>${user.fullname}</h6>
                                     </div>
-
-<!--                                    <div class="mail-list-title-info">
-
-                                    </div>-->
                                     <div class="mail-list-title-info">
                                         <p>   </p>
                                         <p>
@@ -101,9 +101,11 @@
                                     </div>
 
                                     <ul class="mailbox-toolbar">
-                                        <form action="${pageContext.request.contextPath}/deleteApplications" method="post" style="display:inline;">
-                                            <input type="hidden" name="leaveRequestId" value="${application.leaveId}" />
-                                            <button type="submit" class="icon-circle" data-toggle="tooltip" title="Delete">
+                                        <a href="${pageContext.request.contextPath}/editapplication?type=LEAVE&id=${application.leaveId}" class="icon-circle" data-toggle="tooltip" title="Edit">
+                                            <i class="fa fa-pencil"></i>
+                                        </a>
+                                        <form action="${pageContext.request.contextPath}/deleteapplication?type=LEAVE&id=${application.leaveId}" method="post" style="display:inline;">
+                                            <button type="submit" class="icon-circle" data-toggle="tooltip" title="Delete" onclick="return confirm('Do you confirm delete this application');">
                                                 <i class="fa fa-trash-o"></i>
                                             </button>
                                         </form>
@@ -114,8 +116,6 @@
                                 </div>
                             </c:forEach>
                         </div>
-
-
                     </div>
                 </div>
             </div>
@@ -139,9 +139,9 @@
         <script src="${pageContext.request.contextPath}/assets2/js/admin.js"></script>
         <script src='${pageContext.request.contextPath}/assets2/vendors/switcher/switcher.js'></script>
         <script>
-            $(document).ready(function () {
-                $('[data-toggle="tooltip"]').tooltip();
-            });
+                                                $(document).ready(function () {
+                                                    $('[data-toggle="tooltip"]').tooltip();
+                                                });
         </script>
         <style>
             .icon-circle {
@@ -155,10 +155,10 @@
                 color: #333;
                 text-decoration: none;
                 transition: 0.3s;
-                border: none;         
-                background: none;      
-                padding: 0;             
-                cursor: pointer;      
+                border: none;
+                background: none;
+                padding: 0;
+                cursor: pointer;
                 color: inherit;
             }
 
