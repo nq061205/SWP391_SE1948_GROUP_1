@@ -67,94 +67,89 @@
                         <li><a href="${pageContext.request.contextPath}/departmentlistservlet"><i class="fa fa-home"></i> Department List</a></li>
                     </ul>
                 </div>
-                        <div>
-                            <form action="${pageContext.request.contextPath}/accountlist" method="get" class="d-flex mb-3">
-                                <input type="text" name="searchkey" class="form-control me-2" placeholder="Search by code or name" value="${searchkey}">
-                                <button type="submit" class="btn btn-primary">Search</button>
+                <button class="btn btn-primary mb-3" data-bs-toggle="modal" data-bs-target="#addModal">
+                    + Add Department
+                </button>
+                <div class="modal fade" id="addModal">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+
+                            <form action="departmentlist" method="post">
+                                <div class="modal-header">
+                                    <h5 class="modal-title">Add New Department</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                </div>
+
+                                <div class="modal-body">
+                                    <label class="form-label">Department ID</label>
+                                    <input type="text" name="depId" class="form-control" required>
+
+                                    <label class="form-label mt-2">Department Name</label>
+                                    <input type="text" name="depName" class="form-control" required>
+
+                                    <label class="form-label mt-2">Department Name</label>
+                                    <input type="textarea" name="description" class="form-control" required>
+                                </div>
+
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                                    <button type="submit" class="btn btn-success">Save</button>
+                                </div>
                             </form>
 
                         </div>
-                        <div class="row">
-                            <div class="col-md-5">
-                                <c:if test="${not empty searchkey}">
-                                    <p>Found <strong>${totalResults}</strong> products with search key is <strong>${searchkey}</strong></p>  
-                                </c:if>
-                            </div>
-
-                            <div class="col-md-7" style="display: flex; align-items: center; gap: 15px;">
-                                <p style="margin: 1%;">Sort by:</p>
-                                <div style="display: flex; gap: 20px;">
-                                    Code: <div style="display: flex; flex-direction: column; line-height: 1.2;">
-                                        <a href="accountlist?sortBy=emp_code&order=asc">ASC</a>
-                                        <a href="accountlist?sortBy=emp_code&order=desc">DESC</a>
-                                    </div>
-                                    Name: <div style="display: flex; flex-direction: column; line-height: 1.2;">
-                                        <a href="accountlist?sortBy=fullname&order=asc">ASC</a>
-                                        <a href="accountlist?sortBy=fullname&order=desc">DESC</a>
-                                    </div>
-                                    Email: <div style="display: flex; flex-direction: column; line-height: 1.2;">
-                                        <a href="accountlist?sortBy=email&order=asc">ASC</a>
-                                        <a href="accountlist?sortBy=email&order=desc">DESC</a>
-                                    </div>
-                                    Department: <div style="display: flex; flex-direction: column; line-height: 1.2;">
-                                        <a href="accountlist?sortBy=dep_id&order=asc">ASC</a>
-                                        <a href="accountlist?sortBy=dep_id&order=desc">DESC</a>
-                                    </div>
-
-
-                                </div>
-                            </div>
-                        </div>
-                        <div class="mail-box-list" style="overflow-x: scroll;">
-                            <table class="table table-bordered table-hover">
-                                <thead style="background-color: #f5f5f5;">
-                                    <tr style="text-align: center">
-                                        <th>ID</th>
-                                        <th>DepartmentID</th>
-                                        <th>Department Name</th>
-                                        <th>Description</th>
-                                        <th>Action</th>
-                                    </tr>                                 
-                                </thead>
-                                <tbody>
-
-                                    <c:forEach var="el" items="${sessionScope.deptList}" varStatus ="loop">
-                                        <tr style="text-align:center">
-                                            <c:choose>
-                                                <c:when test="${editDept != null && editDept.depId eq el.depId}">
-                                            <form action="${pageContext.request.contextPath}/departmentlistservlet" method="post">
-                                                <td>${loop.index+1}</td>
-                                                <td>${el.depId}</td>
-                                                <td><input type="text" name="depName" value="${el.depName}" /></td>
-                                                <td><input type="text" name="description" value="${el.description}" /></td>
-                                                <td>
-                                                    <button type="submit" name="action" value="save" class="btn btn-success btn-sm">Save</button>
-                                                    <a href="${pageContext.request.contextPath}/departmentlistservlet" class="btn btn-secondary btn-sm">Cancel</a>
-                                                </td>
-                                            </form>
-                                        </c:when>
-                                        <c:otherwise>
-                                            <td>${loop.index+1}</td>
-                                            <td>${el.depId}</td>
-                                            <td>${el.depName}</td>
-                                            <td>${el.description}</td>                                           
-                                            <td>
-                                                <div style="display: flex;gap: 30px">
-                                                <a style="width: 50%" href="${pageContext.request.contextPath}/departmentlistservlet?type=edit&depId=${el.depId}" class="btn btn-sm btn-primary">Edit</a>
-                                                <a style="width:50%"href="${pageContext.request.contextPath}/accountlist?deptId=${el.depId}" class="btn btn-sm btn-primary">View</a>
-                                                </div>
-                                            </td>                                                   
-                                        </c:otherwise>
-                                    </c:choose>
-                                    </tr>
-                                </c:forEach>
-                                </tbody>
-                            </table>
-                        </div>
                     </div>
+                </div>
+                <div class="mail-box-list" style="overflow-x: scroll;">
+                    <table class="table table-bordered table-hover">
+                        <thead style="background-color: #f5f5f5;">
+                            <tr style="text-align: center">
+                                <th>ID</th>
+                                <th>DepartmentID</th>
+                                <th>Department Name</th>
+                                <th>Description</th>
+                                <th>Action</th>
+                            </tr>                                 
+                        </thead>
+                        <tbody>
+
+                            <c:forEach var="el" items="${sessionScope.deptList}" varStatus ="loop">
+                                <tr style="text-align:center">
+                                    <c:choose>
+                                        <c:when test="${editDept != null && editDept.depId eq el.depId}">
+                                    <form action="${pageContext.request.contextPath}/departmentlistservlet" method="post">
+                                        <td>${loop.index+1}</td>
+                                        <td><input type="hidden" name="depId" value="${el.depId}">${el.depId}</td>
+                                        <td><input type="text" name="depName" value="${el.depName}" /></td>
+                                        <td><input type="text" name="description" value="${el.description}" /></td>
+                                        <td>
+                                            <button type="submit" name="action" value="save" class="btn btn-success btn-sm">Save</button>
+                                            <a href="${pageContext.request.contextPath}/departmentlistservlet" class="btn btn-secondary btn-sm">Cancel</a>
+                                        </td>
+                                    </form>
+                                </c:when>
+                                <c:otherwise>
+                                    <td>${loop.index+1}</td>
+                                    <td>${el.depId}</td>
+                                    <td>${el.depName}</td>
+                                    <td>${el.description}</td>                                           
+                                    <td>
+                                        <div style="display: flex;gap: 30px">
+                                            <a style="width: 50%" href="${pageContext.request.contextPath}/departmentlistservlet?type=edit&depId=${el.depId}" class="btn btn-sm btn-primary">Edit</a>
+                                            <a style="width:50%"href="${pageContext.request.contextPath}/accountlist?deptId=${el.depId}" class="btn btn-sm btn-primary">View</a>
+                                        </div>
+                                    </td>                                                   
+                                </c:otherwise>
+                            </c:choose>
+                            </tr>
+                        </c:forEach>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
         </main>
 
-
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
         <script src="${pageContext.request.contextPath}/assets2/js/jquery.min.js"></script>
         <script src="${pageContext.request.contextPath}/assets2/vendors/bootstrap/js/popper.min.js"></script>
         <script src="${pageContext.request.contextPath}/assets2/vendors/bootstrap/js/bootstrap.min.js"></script>
