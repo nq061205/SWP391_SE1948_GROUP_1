@@ -37,7 +37,6 @@
     <servlet>
         <servlet-name>UploadExcelServlet</servlet-name>
         <servlet-class>controller.hr.UploadExcelServlet</servlet-class>
-        <servlet-class>controller.hr.UploadExcelServlet</servlet-class>
     </servlet>
 
     <servlet>
