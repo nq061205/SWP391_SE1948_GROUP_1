@@ -26,7 +26,7 @@ import model.Role;
  *
  * @author Admin
  */
-public class AccountList extends HttpServlet {
+public class DepartmentListServlet extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -45,10 +45,10 @@ public class AccountList extends HttpServlet {
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
-            out.println("<title>Servlet EmployeeList</title>");
+            out.println("<title>Servlet DepartmentListServlet</title>");
             out.println("</head>");
             out.println("<body>");
-            out.println("<h1>Servlet EmployeeList at " + request.getContextPath() + "</h1>");
+            out.println("<h1>Servlet DepartmentListServlet at " + request.getContextPath() + "</h1>");
             out.println("</body>");
             out.println("</html>");
         }
@@ -76,55 +76,35 @@ public class AccountList extends HttpServlet {
         String[] deptId = request.getParameterValues("deptId");
         String[] roleId = request.getParameterValues("roleId");
         String sortBy = request.getParameter("sortBy");
-        String order = request.getParameter("order");
-        int currentPage =1;
-        String currentPageStr = request.getParameter("page");
-        if (currentPageStr != null) {
-            currentPage = Integer.parseInt(currentPageStr);
-        }
-        int quantityOfPage = 3;
-        List<Employee> empList;
+        String order= request.getParameter("order");
+        List<Department> deptList = new ArrayList<>();
         if (searchkey != null && !searchkey.trim().isEmpty()) {
-            empList = empDAO.searchEmployee(searchkey);
+            
         } else if (status != null || (deptId != null && deptId.length > 0) || (roleId != null && roleId.length > 0)) {
-            empList = empDAO.filterEmployees(status, deptId, roleId);
-        } else if (sortBy != null) {
-            empList = empDAO.getSortedEmployee(sortBy, order);
-        } else if (currentPageStr != null) {
-            empList = empDAO.getEmployeeByPage(currentPage, quantityOfPage);
-        } else {
-            empList = empDAO.getAllEmployees();
+            
         }
-        int totalResults = empDAO.countRecordOfEmployee();
-        int totalPages = (int) Math.ceil((double) totalResults / quantityOfPage);
-
-        List<Role> roleList = rDAO.getAllRoles();
-        Map<String, Role> uniqueRolesMap = new LinkedHashMap<>();
-        for (Role r : roleList) {
-            uniqueRolesMap.putIfAbsent(r.getRoleName(), r);
+        else if (sortBy != null ) {
+            
         }
-
-        List<Role> uniqueRoles = new ArrayList<>(uniqueRolesMap.values());
-        List<Department> deptList = deptDAO.getAllDepartment();
+        else {
+            deptList = deptDAO.getAllDepartment();
+        }
+        int totalResults = deptList.size();
         String type = request.getParameter("type");
-        String empCode = request.getParameter("empCode");
+        String depId = request.getParameter("depId");
 
-        if ("edit".equalsIgnoreCase(type) && empCode != null) {
-            Employee editEmp = empDAO.getEmployeeByEmpCode(empCode);
-            request.setAttribute("editEmp", editEmp);
+        if ("edit".equalsIgnoreCase(type) && depId != null) {
+            Department editDept = deptDAO.getDepartmentByDepartmentId(depId);
+            request.setAttribute("editDept", editDept);
         }
         request.setAttribute("totalResults", totalResults);
         request.setAttribute("searchkey", searchkey);
         request.setAttribute("roleId", roleId);
         request.setAttribute("deptId", deptId);
         request.setAttribute("status", status);
-        request.setAttribute("totalPages", totalPages);
-        request.setAttribute("page", currentPage);
-        ses.setAttribute("empList", empList);
-        ses.setAttribute("roleList", uniqueRoles);
         ses.setAttribute("deptList", deptList);
         //Comment de merge
-        request.getRequestDispatcher("Views/accountList.jsp").forward(request, response);
+        request.getRequestDispatcher("Views/departmentlist.jsp").forward(request, response);
     }
 
     /**
@@ -139,31 +119,21 @@ public class AccountList extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         String action = request.getParameter("action");
-        EmployeeDAO empDAO = new EmployeeDAO();
-        RoleDAO rDAO = new RoleDAO();
-
-        String empCode = request.getParameter("empCode");
+        String depId = request.getParameter("depId");
+        DeptDAO depDAO = new DeptDAO();
         if ("save".equalsIgnoreCase(action)) {
-            String email = request.getParameter("email");
-            int roleId = Integer.parseInt(request.getParameter("roleId"));
-            Employee emp = empDAO.getEmployeeByEmpCode(empCode);
-            if (emp != null) {
-                emp.setEmail(email);
-                Role role = rDAO.getRoleByRoleId(roleId);
-                emp.setRole(role);
-                empDAO.updateEmployee(emp);
-            }
-        } else if ("toggle".equalsIgnoreCase(action)) {
-            boolean status = Boolean.parseBoolean(request.getParameter("newstatus"));
-            Employee emp = empDAO.getEmployeeByEmpCode(empCode);
-            if (emp != null) {
-                emp.setStatus(status);
-                empDAO.updateEmployee(emp);
+            String depName = request.getParameter("depName");
+            String description = request.getParameter("description");
+            Department dept = depDAO.getDepartmentByDepartmentId(depId);
+            if (dept != null) {
+                dept.setDepName(depName);
+                dept.setDescription(description);
+                depDAO.updateDepartment(dept);
             }
         }
-        List<Employee> empList = empDAO.getAllEmployees();
-        request.getSession().setAttribute("empList", empList);
-        request.getRequestDispatcher("Views/accountList.jsp").forward(request, response);
+        List<Department> departmentList = depDAO.getAllDepartment();
+        request.getSession().setAttribute("deptList", departmentList);
+        request.getRequestDispatcher("Views/departmentlist.jsp").forward(request, response);
 
     }
 
