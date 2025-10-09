@@ -44,6 +44,10 @@
         <servlet-name>LogOutServlet</servlet-name>
         <servlet-class>controller.LogOutServlet</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>DepartmentListServlet</servlet-name>
+        <servlet-class>controller.DepartmentListServlet</servlet-class>
+    </servlet>
     <servlet-mapping>
         <servlet-name>HomePageServlet</servlet-name>
         <url-pattern>/homepage</url-pattern>
@@ -119,6 +123,10 @@
     <servlet-mapping>
         <servlet-name>AccountList</servlet-name>
         <url-pattern>/accountlist</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>DepartmentListServlet</servlet-name>
+        <url-pattern>/departmentlistservlet</url-pattern>
     </servlet-mapping>
     <session-config>
         <session-timeout>30</session-timeout>
