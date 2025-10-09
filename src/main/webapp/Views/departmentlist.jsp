@@ -3,7 +3,6 @@
     Created on : Oct 5, 2025, 10:46:57 PM
     Author     : Lenovo
 --%>
-<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ page contentType="text/html" pageEncoding="UTF-8"%>
 <!DOCTYPE html>
@@ -63,64 +62,11 @@
         <main class="ttr-wrapper">
             <div class="container-fluid">
                 <div class="db-breadcrumb">
-                    <h4 class="breadcrumb-title">Account Listing</h4>
+                    <h4 class="breadcrumb-title">Department Listing</h4>
                     <ul class="db-breadcrumb-list">
-                        <li><a href="${pageContext.request.contextPath}/accountlist"><i class="fa fa-home"></i> Account List</a></li>
+                        <li><a href="${pageContext.request.contextPath}/departmentlistservlet"><i class="fa fa-home"></i> Department List</a></li>
                     </ul>
                 </div>
-
-                <div class="row">
-                    <div class="col-md-2">
-                        <form action="${pageContext.request.contextPath}/accountlist" method="get" class="mb-3">
-                            <div class="mb-3">
-                                <label class="form-label"><strong>Status:</strong></label>
-                                <div class="form-check">
-                                    <input class="form-check-input" type="radio" name="status" value="true" 
-                                           ${status == 'true' ? 'checked' : ''} id="statusActive" onclick="this.form.submit()">
-                                    <label class="form-check-label" for="statusActive">Active</label>
-                                </div>
-                                <div class="form-check">
-                                    <input class="form-check-input" type="radio" name="status" value="false" 
-                                           ${status == 'false' ? 'checked' : ''} id="statusInactive" onclick="this.form.submit()">
-                                    <label class="form-check-label" for="statusInactive">Inactive</label>
-                                </div>
-                            </div>
-
-                            <div class="mb-3">
-                                <label class="form-label"><strong>Department:</strong></label>
-                                <c:forEach var="dep" items="${sessionScope.deptList}">
-                                    <div class="form-check">
-                                        <input class="form-check-input" type="checkbox" name="deptId" value="${dep.depId}" 
-                                               <c:choose>
-                                                   <c:when test="${not empty deptId}">
-                                                       <c:forEach var="selectedId" items="${deptId}">
-                                                           <c:if test="${selectedId eq dep.depId}">checked</c:if>
-                                                       </c:forEach>
-                                                   </c:when>
-                                               </c:choose> onclick="this.form.submit()">
-                                        <label class="form-check-label" for="dep${dep.depId}">${dep.depName}</label>
-                                    </div>
-                                </c:forEach>
-                            </div>
-                            <div class="mb-3">
-                                <label class="form-label"><strong>Role:</strong></label>
-                                <c:forEach var="rl" items="${sessionScope.roleList}">
-                                    <div class="form-check">
-                                        <input class="form-check-input" type="checkbox" name="roleId" value="${rl.roleId}" 
-                                               <c:choose>
-                                                   <c:when test="${not empty roleId}">
-                                                       <c:forEach var="selectedId" items="${roleId}">
-                                                           <c:if test="${selectedId eq rl.roleId}">checked</c:if>
-                                                       </c:forEach>
-                                                   </c:when>
-                                               </c:choose> id="rl${rl.roleId}" onclick="this.form.submit()">
-                                        <label class="form-check-label" for="rl${rl.roleId}">${rl.roleName}</label>
-                                    </div>
-                                </c:forEach>
-                            </div>
-                        </form>
-                    </div>
-                    <div class="col-md-10">
                         <div>
                             <form action="${pageContext.request.contextPath}/accountlist" method="get" class="d-flex mb-3">
                                 <input type="text" name="searchkey" class="form-control me-2" placeholder="Search by code or name" value="${searchkey}">
@@ -162,72 +108,42 @@
                         <div class="mail-box-list" style="overflow-x: scroll;">
                             <table class="table table-bordered table-hover">
                                 <thead style="background-color: #f5f5f5;">
-                                    <tr>
+                                    <tr style="text-align: center">
                                         <th>ID</th>
-                                        <th>Employee Code</th>
-                                        <th>Full Name</th>
-                                        <th>Email</th>
-                                        <th>Image</th>
-                                        <th>Department</th>
-                                        <th>Role</th>
-                                        <th>Status</th>
-                                        <th>Edit</th>
+                                        <th>DepartmentID</th>
+                                        <th>Department Name</th>
+                                        <th>Description</th>
                                         <th>Action</th>
                                     </tr>                                 
                                 </thead>
                                 <tbody>
 
-                                    <c:forEach var="el" items="${sessionScope.empList}" varStatus ="loop">
-                                        <tr>
+                                    <c:forEach var="el" items="${sessionScope.deptList}" varStatus ="loop">
+                                        <tr style="text-align:center">
                                             <c:choose>
-                                                <c:when test="${editEmp != null && editEmp.empCode eq el.empCode}">
-                                            <form action="${pageContext.request.contextPath}/accountlist" method="post">
+                                                <c:when test="${editDept != null && editDept.depId eq el.depId}">
+                                            <form action="${pageContext.request.contextPath}/departmentlistservlet" method="post">
                                                 <td>${loop.index+1}</td>
-                                                <td><input type="hidden" name="empCode" value="${el.empCode}" />${el.empCode}</td>
-                                                <td>${el.fullname}</td>
-                                                <td><input type="text" name="email" value="${el.email}" /></td>
-                                                <td>${el.image}</td>
-                                                <td>
-                                                    ${el.dept.depName}
-                                                </td>
-                                                <td>
-                                                    <select name="roleId">
-                                                        <c:forEach var="r" items="${sessionScope.roleList}">
-                                                            <option value="${r.roleId}">${r.roleName}</option>
-                                                        </c:forEach>
-                                                    </select>
-                                                </td>
-                                                <td>${el.status ?'Inactive' :'Active'}</td>
+                                                <td>${el.depId}</td>
+                                                <td><input type="text" name="depName" value="${el.depName}" /></td>
+                                                <td><input type="text" name="description" value="${el.description}" /></td>
                                                 <td>
                                                     <button type="submit" name="action" value="save" class="btn btn-success btn-sm">Save</button>
-                                                    <a href="${pageContext.request.contextPath}/accountlist" class="btn btn-secondary btn-sm">Cancel</a>
+                                                    <a href="${pageContext.request.contextPath}/departmentlistservlet" class="btn btn-secondary btn-sm">Cancel</a>
                                                 </td>
                                             </form>
                                         </c:when>
                                         <c:otherwise>
                                             <td>${loop.index+1}</td>
-                                            <td>${el.empCode}</td>
-                                            <td>${el.fullname}</td>
-                                            <td>${el.email}</td>
-                                            <td>${el.image}</td>
-                                            <td>${el.dept.depName}</td>
-                                            <td>${el.role.roleName}</td>
-                                            <td>${el.status ? 'Active' :'Inactive'}</td>
+                                            <td>${el.depId}</td>
+                                            <td>${el.depName}</td>
+                                            <td>${el.description}</td>                                           
                                             <td>
-                                                <a href="${pageContext.request.contextPath}/accountlist?type=edit&empCode=${el.empCode}" class="btn btn-sm btn-primary">Edit</a>
-                                            </td>
-                                            <td>
-                                                <form action="accountlist" method="post">
-                                                    <input type="hidden" name="action" value="toggle">
-                                                    <input type="hidden" name="empCode" value="${el.empCode}">
-                                                    <input type="hidden" name="newstatus" value="${!el.status}">
-
-                                                    <button type="submit"
-                                                            class="btn ${el.status ? 'btn-danger' : 'btn-success'}">
-                                                        ${el.status ? 'Deactivate' : 'Activate'}
-                                                    </button>
-                                                </form>
-                                            </td>                                            
+                                                <div style="display: flex;gap: 30px">
+                                                <a style="width: 50%" href="${pageContext.request.contextPath}/departmentlistservlet?type=edit&depId=${el.depId}" class="btn btn-sm btn-primary">Edit</a>
+                                                <a style="width:50%"href="${pageContext.request.contextPath}/accountlist?deptId=${el.depId}" class="btn btn-sm btn-primary">View</a>
+                                                </div>
+                                            </td>                                                   
                                         </c:otherwise>
                                     </c:choose>
                                     </tr>
@@ -235,14 +151,7 @@
                                 </tbody>
                             </table>
                         </div>
-                        <div>
-                            <c:forEach var="i" begin="1" end="${totalPages}">
-                                <a href="accountlist?page=${i}">${i}</a>
-                            </c:forEach>
-                        </div>
                     </div>
-                </div>
-            </div>
         </main>
 
 
@@ -331,4 +240,6 @@
 
         </style>
     </body>
+</html>
+
 </html>
