@@ -4,9 +4,15 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="https://jakarta.ee/xml/ns/jakartaee https://jakarta.ee/xml/ns/jakartaee/web-app_6_0.xsd">
 
+    <!-- ===== SERVLETS ===== -->
     <servlet>
         <servlet-name>HomePageServlet</servlet-name>
         <servlet-class>controller.HomePageServlet</servlet-class>
+    </servlet>
+
+    <servlet>
+        <servlet-name>LoginServlet</servlet-name>
+        <servlet-class>controller.LoginServlet</servlet-class>
     </servlet>
 
     <servlet>
@@ -22,6 +28,11 @@
     <servlet>
         <servlet-name>ComposeApplicationServlet</servlet-name>
         <servlet-class>controller.ComposeApplicationServlet</servlet-class>
+    </servlet>
+
+    <servlet>
+        <servlet-name>EditApplicationServlet</servlet-name>
+        <servlet-class>controller.EditApplicationServlet</servlet-class>
     </servlet>
 
     <servlet>
@@ -53,9 +64,15 @@
         <servlet-name>DownloadRawTemplateServlet</servlet-name>
         <servlet-class>controller.hr.DownloadRawTemplateServlet</servlet-class>
     </servlet>
+
     <servlet>
         <servlet-name>AccountList</servlet-name>
         <servlet-class>controller.AccountList</servlet-class>
+    </servlet>
+
+    <servlet>
+        <servlet-name>DepartmentListServlet</servlet-name>
+        <servlet-class>controller.DepartmentListServlet</servlet-class>
     </servlet>
 
     <servlet>
@@ -71,11 +88,6 @@
     <servlet>
         <servlet-name>LogOutServlet</servlet-name>
         <servlet-class>controller.LogOutServlet</servlet-class>
-    </servlet>
-
-    <servlet>
-        <servlet-name>LoginServlet</servlet-name>
-        <servlet-class>controller.LoginServlet</servlet-class>
     </servlet>
 
     <servlet>
@@ -140,6 +152,11 @@
     </servlet-mapping>
 
     <servlet-mapping>
+        <servlet-name>EditApplicationServlet</servlet-name>
+        <url-pattern>/editapplication</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
         <servlet-name>ApplicationDetailServlet</servlet-name>
         <url-pattern>/detail</url-pattern>
     </servlet-mapping>
@@ -168,9 +185,15 @@
         <servlet-name>DownloadRawTemplateServlet</servlet-name>
         <url-pattern>/downloadtemplate</url-pattern>
     </servlet-mapping>
+
     <servlet-mapping>
         <servlet-name>AccountList</servlet-name>
         <url-pattern>/accountlist</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>DepartmentListServlet</servlet-name>
+        <url-pattern>/departmentlistservlet</url-pattern>
     </servlet-mapping>
 
     <servlet-mapping>
@@ -183,6 +206,7 @@
         <url-pattern>/candidatedetail</url-pattern>
     </servlet-mapping>
 
+    <!-- ===== SESSION CONFIG & WELCOME FILE ===== -->
     <session-config>
         <session-timeout>30</session-timeout>
     </session-config>
