@@ -64,66 +64,91 @@
                 <div class="row">
                     <div class="col-lg-8 offset-lg-2">
                         <div class="widget-box p-4 shadow-sm bg-white rounded">
-                            <form class="mail-compose" method="post" action="${pageContext.request.contextPath}/compose">
-                                <input type="hidden" name="type" value="LEAVE"/>
-                                <div class="form-group mb-3">
-                                    <label for="to">Receiver:</label>
-                                    <input type="email" id="to" name="email" class="form-control" placeholder="Email receiver" value="${email}" required>
-                                    <c:if test="${message!=null}">
-                                        <input type="text" class="form-control" value="${message}">
-                                    </c:if>
-                                </div>
-                                <div class="form-group mb-3">
-                                    <label for="type">Leave Type:</label>
-                                    <select id="type" name="type_leave" class="form-control" required>
-                                        <option value="" selected>Select application type</option>
-                                        <option value="Annual"
-                                                <c:if test="${type_value eq 'Annual'}">
-                                            selected
-                                            </c:if>
-                                            >Annual Leave</option>
-                                        <option value="Sick"
-                                                <c:if test="${type_value eq 'Sick'}">
-                                            selected
-                                            </c:if>
-                                            >Sick</option>
-                                        <option value="Unpaid"
-                                                <c:if test="${type_value eq 'Unpaid'}">
-                                            selected
-                                            </c:if>
-                                            >Unpaid</option>
-                                        <option value="Maternity"
-                                                <c:if test="${type_value eq 'Maternity'}">
-                                            selected
-                                            </c:if>
-                                            >Maternity</option>
-                                        <option value="Other"
-                                                <c:if test="${type_value eq 'Other'}">
-                                            selected
-                                            </c:if>
-                                            >Other</option>
-                                    </select>
-                                </div>
+                            <c:choose>
+                                <c:when test="${not empty isEdit}">
+                                    <form class="mail-compose" 
+                                          method="post" 
+                                          action="${pageContext.request.contextPath}/editapplication?type=LEAVE&id=${id}">
+                                    </c:when>
+                                    <c:otherwise>
+                                        <form class="mail-compose" 
+                                              method="post" 
+                                              action="${pageContext.request.contextPath}/compose">
+                                        </c:otherwise>
+                                    </c:choose>
+                                    <input type="hidden" name="type" value="LEAVE"/>
+                                    <div class="form-group mb-3">
+                                        <label for="to">Receiver:</label>
+                                        <input type="email" id="to" name="email" class="form-control" placeholder="Email receiver" value="${email}" required
+                                               <c:if test="${not empty isEdit}">
+                                                   disabled
+                                               </c:if> 
+                                               >
+                                        <c:if test="${message!=null}">
+                                            <input type="text" class="form-control" value="${message}">
+                                        </c:if>
+                                    </div>
+                                    <div class="form-group mb-3">
+                                        <label for="type">Leave Type:</label>
+                                        <select id="type" name="type_leave" class="form-control" required>
+                                            <option value="" selected>Select application type</option>
+                                            <option value="Annual"
+                                                    <c:if test="${type_leave eq 'Annual'}">
+                                                        selected
+                                                    </c:if>
+                                                    >Annual Leave</option>
+                                            <option value="Sick"
+                                                    <c:if test="${type_leave eq 'Sick'}">
+                                                        selected 
+                                                    </c:if>
+                                                    >Sick</option>
+                                            <option value="Unpaid"
+                                                    <c:if test="${type_leave eq 'Unpaid'}">
+                                                        selected
+                                                    </c:if>
+                                                    >Unpaid</option>
+                                            <option value="Maternity"
+                                                    <c:if test="${type_leave eq 'Maternity'}">
+                                                        selected
+                                                    </c:if>
+                                                    >Maternity</option>
+                                            <option value="Other"
+                                                    <c:if test="${type_leave eq 'Other'}">
+                                                        selected
+                                                    </c:if>
+                                                    >Other</option>
+                                        </select>
+                                    </div>
 
-                                <div class="form-group mb-3">
-                                    <label for="startdate">From:</label>
-                                    <input type="date" name="startdate" value="${startdate}" class="form-control" required />
-                                </div>
+                                    <div class="form-group mb-3">
+                                        <label for="startdate">From:</label>
+                                        <input type="date" name="startdate" value="${startdate}" class="form-control" required />
+                                    </div>
 
-                                <div class="form-group mb-3">
-                                    <label for="enddate">To:</label>
-                                    <input type="date" name="enddate" value="${enddate}" class="form-control" required/>
-                                </div>
+                                    <div class="form-group mb-3">
+                                        <label for="enddate">To:</label>
+                                        <input type="date" name="enddate" value="${enddate}" class="form-control" required/>
+                                    </div>
 
-                                <div class="form-group mb-3">
-                                    <label for="content">Reason:</label>
-                                    <textarea id="content" name="content" class="form-control" rows="6" placeholder="Typing here..." required>${content}</textarea>
-                                </div>
+                                    <div class="form-group mb-3">
+                                        <label for="content">Reason:</label>
+                                        <textarea id="content" name="content" class="form-control" rows="6" placeholder="Typing here..." required>${content}</textarea>
+                                    </div>
 
-                                <div class="text-right">
-                                    <button type="submit" class="btn btn-primary btn-lg">Send</button>
-                                </div>
-                            </form>
+                                    <div class="text-right">
+                                        <c:if test="${not empty isEdit}">
+                                            <button type="submit" class="btn btn-primary btn-lg">Update</button>
+                                            <c:if test="${not empty isSuccess}">
+                                                <script>
+                                                    alert("Update successfully!");
+                                                </script>
+                                            </c:if>
+                                        </c:if> 
+                                        <c:if test="${empty isEdit}">
+                                            <button type="submit" class="btn btn-primary btn-lg">Send</button>
+                                        </c:if> 
+                                    </div>
+                                </form>
                         </div>
                     </div>
                 </div>
@@ -148,14 +173,14 @@
                 <script src='${pageContext.request.contextPath}/assets2/vendors/switcher/switcher.js'></script>
                 <!-- include plugin -->
                 <script>
-                    $(document).ready(function () {
-                        $('.summernote').summernote({
-                            height: 300,
-                            tabsize: 2
-                        });
+                                                    $(document).ready(function () {
+                                                        $('.summernote').summernote({
+                                                            height: 300,
+                                                            tabsize: 2
+                                                        });
 
-                        $('input[type="file"]').imageuploadify();
-                    });
+                                                        $('input[type="file"]').imageuploadify();
+                                                    });
                 </script>
 
                 </body>
