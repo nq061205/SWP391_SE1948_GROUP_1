@@ -182,6 +182,7 @@
                                             <c:choose>
                                                 <c:when test="${editEmp != null && editEmp.empCode eq el.empCode}">
                                             <form action="${pageContext.request.contextPath}/accountlist" method="post">
+                                                <td><input type="hidden" name="page" value="${page}"></td>
                                                 <td>${loop.index+1}</td>
                                                 <td><input type="hidden" name="empCode" value="${el.empCode}" />${el.empCode}</td>
                                                 <td>${el.fullname}</td>
@@ -214,14 +215,14 @@
                                             <td>${el.role.roleName}</td>
                                             <td>${el.status ? 'Active' :'Inactive'}</td>
                                             <td>
-                                                <a href="${pageContext.request.contextPath}/accountlist?type=edit&empCode=${el.empCode}" class="btn btn-sm btn-primary">Edit</a>
+                                                <a href="${pageContext.request.contextPath}/accountlist?type=edit&empCode=${el.empCode}&page=${page}" class="btn btn-sm btn-primary">Edit</a>
                                             </td>
                                             <td>
                                                 <form action="accountlist" method="post">
                                                     <input type="hidden" name="action" value="toggle">
                                                     <input type="hidden" name="empCode" value="${el.empCode}">
                                                     <input type="hidden" name="newstatus" value="${!el.status}">
-
+                                                    <input type="hidden" name="page" value="${page}">
                                                     <button type="submit"
                                                             class="btn ${el.status ? 'btn-danger' : 'btn-success'}">
                                                         ${el.status ? 'Deactivate' : 'Activate'}

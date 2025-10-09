@@ -2,7 +2,6 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-
 package dal;
 
 import model.Role;
@@ -19,34 +18,36 @@ import java.util.logging.Logger;
  * @author Nguyen Dinh Quy HE190184
  */
 public class RoleDAO extends DBContext {
-    
+
     private Connection connection;
     private List<Role> roleList;
+
     public RoleDAO() {
         try {
             connection = new DBContext().getConnection();
         } catch (Exception e) {
         }
     }
-    public List<Role> getAllRoles()  {
-       roleList = new ArrayList<>();
-       String sql = "select * from Role";
+
+    public List<Role> getAllRoles() {
+        roleList = new ArrayList<>();
+        String sql = "select * from Role";
         try {
             PreparedStatement ps = connection.prepareStatement(sql);
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
-               Role role = new Role();
-               role.setRoleId(rs.getInt("role_id"));
-               role.setRoleName(rs.getString("role_name"));
-               roleList.add(role);
+                Role role = new Role();
+                role.setRoleId(rs.getInt("role_id"));
+                role.setRoleName(rs.getString("role_name"));
+                roleList.add(role);
             }
         } catch (SQLException ex) {
             Logger.getLogger(RoleDAO.class.getName()).log(Level.SEVERE, null, ex);
         }
-       return roleList;
+        return roleList;
     }
 
-     public Role getRoleByEmpId(int emp_id) {
+    public Role getRoleByEmpId(int emp_id) {
         Role role = new Role();
         try {
             String sql = "select * from role join employee on role.role_id = employee.role_id where emp_id = ?";
@@ -65,7 +66,8 @@ public class RoleDAO extends DBContext {
         }
         return null;
     }
-      public Role getRoleByRoleId(int roleId) {
+
+    public Role getRoleByRoleId(int roleId) {
         Role role = new Role();
         try {
             String sql = "select * from role where role_id = ?";
@@ -85,7 +87,17 @@ public class RoleDAO extends DBContext {
         return null;
     }
 
-     public static void main(String[] args) {
+    public void close() {
+        try {
+            if (connection != null && !connection.isClosed()) {
+                connection.close();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void main(String[] args) {
         RoleDAO dao = new RoleDAO();
         System.out.println(dao.getRoleByRoleId(1).toString());
     }
