@@ -13,6 +13,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * @author Nguyen Dinh Quy HE190184
@@ -113,7 +115,7 @@ public class DeptDAO extends DBContext {
     public List<Department> getAllDepartment() {
         List<Department> departments = new ArrayList<>();
         try {
-            String sql = "SELECT dep_id, dep_name, description FROM department ORDER BY dep_name";
+            String sql = "SELECT dep_id, dep_name, description FROM department";
             PreparedStatement stm = connection.prepareStatement(sql);
             ResultSet rs = stm.executeQuery();
             while (rs.next()) {
@@ -128,5 +130,25 @@ public class DeptDAO extends DBContext {
             ex.printStackTrace();
         }
         return departments;
+    }
+    public void updateDepartment(Department department) {
+        String sql ="UPDATE department SET dep_name=?,description=? where dep_id=?";
+        try {
+            PreparedStatement ps = connection.prepareStatement(sql);
+            ps.setString(1, department.getDepName());
+            ps.setString(2,department.getDescription());
+            ps.setString(3,department.getDepId());
+            ps.executeUpdate();
+        } catch (SQLException ex) {
+            Logger.getLogger(DeptDAO.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+    }
+    public static void main(String[] args) {
+        DeptDAO dao = new DeptDAO();
+        Department dep = new Department();
+        dep.setDescription("Quản lí tài chín");
+        dao.updateDepartment(dep);
+        System.out.println(dao.getAllDepartment());
     }
 }
