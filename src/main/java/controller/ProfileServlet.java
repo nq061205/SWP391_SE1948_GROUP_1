@@ -28,7 +28,7 @@ public class ProfileServlet extends HttpServlet {
         HttpSession session = request.getSession();
         Employee user = (Employee) session.getAttribute("user");
         session.setAttribute("user", user);
-        response.sendRedirect("Views/profile.jsp");
+        request.getRequestDispatcher("Views/profile.jsp").forward(request, response);
     }
 
     @Override
