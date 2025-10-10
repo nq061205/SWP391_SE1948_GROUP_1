@@ -83,10 +83,8 @@
                                         <!-- Avatar -->
                                         <div class="col-md-3 text-center">
                                             <div class="profile-avatar mb-3">
-                                                <img src="${sessionScope.user.image}" alt="Avatar"  width="150" height="150">
+                                                <img src="${sessionScope.user.image}" alt="Avatar"  width="225" height="300">
                                             </div>
-                                            <h5 class="mt-2">${sessionScope.user.fullname}</h5>
-                                            <p class="text-muted">${sessionScope.user.email}</p>
                                         </div>
 
                                         <!-- Profile form -->
@@ -124,8 +122,8 @@
                                                     </c:if>
                                                     <c:if test="${click == 'save'}">
                                                         <select name="gender" class="form-control">
-                                                            <option value="true" ${sessionScope.user.gender == "true" ? "selected" : ""}>Male</option>
-                                                            <option value="false" ${sessionScope.user.gender == "false" ? "selected" : ""}>Female</option>
+                                                            <option value="Male" ${sessionScope.user.gender == "true" ? "selected" : ""}>Male</option>
+                                                            <option value="Female" ${sessionScope.user.gender == "false" ? "selected" : ""}>Female</option>
                                                         </select>
                                                     </c:if>
                                                 </div>

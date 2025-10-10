@@ -83,7 +83,7 @@
 
                                     <div class="mail-list-title-info">
                                         <p>
-                                            OT Request — ${application.otHours}
+                                            overtime request — ${application.otHours} hours
                                             (
                                             Status:
                                             <span style="font-weight: bold;
@@ -105,9 +105,11 @@
                                     </div>
 
                                     <ul class="mailbox-toolbar">
-                                        <a href="${pageContext.request.contextPath}/editapplication?type=OT&id=${application.otId}" class="icon-circle" data-toggle="tooltip" title="Edit">
-                                            <i class="fa fa-pencil"></i>
-                                        </a>
+                                        <c:if test="${application.status eq 'Pending'}">
+                                            <a href="${pageContext.request.contextPath}/editapplication?type=OT&id=${application.otId}" class="icon-circle" data-toggle="tooltip" title="Edit">
+                                                <i class="fa fa-pencil"></i>
+                                            </a>
+                                        </c:if>
                                         <form action="${pageContext.request.contextPath}/deleteapplication?type=OT&id=${application.otId}"" method="post" style="display:inline;">
                                             <input type="hidden" name="OTRequestId" value="${application.otId}" />
                                             <button type="submit" class="icon-circle" data-toggle="tooltip" title="Delete" onclick="return confirm('Do you confirm delete this application');">
@@ -127,6 +129,23 @@
                     </div>
                 </div>
             </div>
+            <nav class="mt-3">
+                <ul class="pagination justify-content-center">
+                    <li class="page-item ${page <= 1 ? 'disabled' : ''}">
+                        <a class="page-link" href="?typeapplication=OT&page=${page-1}&size=${size}">Prev</a>
+                    </li>
+
+                    <c:forEach var="p" begin="1" end="${totalPages}">
+                        <li class="page-item ${p == page ? 'active' : ''}">
+                            <a class="page-link" href="?typeapplication=OT&page=${p}&size=${size}">${p}</a>
+                        </li>
+                    </c:forEach>
+
+                    <li class="page-item ${page >= totalPages ? 'disabled' : ''}">
+                        <a class="page-link" href="?typeapplication=OT&page=${page+1}&size=${size}">Next</a>
+                    </li>
+                </ul>
+            </nav>
         </main>
 
         <script src="${pageContext.request.contextPath}/assets2/js/jquery.min.js"></script>
