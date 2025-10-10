@@ -11,6 +11,7 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Comparator;
@@ -27,10 +28,29 @@ public class CandidateListServlet extends HttpServlet {
             throws ServletException, IOException {
         CandidateDAO cDAO = new CandidateDAO();
         String type = request.getParameter("type");
+        String page = request.getParameter("page");
+        int pageNum = 1;
+        if (page != null) {
+            pageNum = Integer.parseInt(page);
+        }
         HttpSession session = request.getSession();
+
+        List<Candidate> fullList = (List<Candidate>) session.getAttribute("candidateListFull");
+
+        if (fullList == null) {
+            fullList = cDAO.getAllCandidate();
+            session.setAttribute("candidateListFull", fullList);
+        }
+
         List<Candidate> candidateList = (List<Candidate>) session.getAttribute("candidateList");
-        if (session.getAttribute("candidateList") == null || (type == null || (!type.equals("name") && !type.equals("appliedat")))) {
-            session.setAttribute("candidateList", cDAO.getAllCandidate());
+        if (session.getAttribute("candidateList") == null
+                || (type == null || (!type.equals("name") && !type.equals("appliedat")))) {
+
+            session.setAttribute("candidateList", cDAO.getCandidateByPage(fullList, pageNum, 5));
+            session.setAttribute("pages", pageNum);
+
+            int totalPage = (int) Math.ceil((double) fullList.size() / 5);
+            session.setAttribute("total", totalPage);
             candidateList = (List<Candidate>) session.getAttribute("candidateList");
             session.setAttribute("direct", 1);
         } else {
@@ -45,7 +65,6 @@ public class CandidateListServlet extends HttpServlet {
                         session.setAttribute("candidateList", sortByName(candidateList, direct));
                         session.setAttribute("direct", 1);
                     }
-
                 } else {
                     if (direct == 1) {
                         session.setAttribute("candidateList", sortByApplied(candidateList, direct));
@@ -79,17 +98,25 @@ public class CandidateListServlet extends HttpServlet {
         return candidateList;
     }
 
-
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         String keyword = request.getParameter("keyword");
         CandidateDAO cDAO = new CandidateDAO();
         HttpSession ses = request.getSession();
-        ses.setAttribute("candidateList", cDAO.getAllCandidateByKeyWord(keyword));
+
+        List<Candidate> searchResult = cDAO.getAllCandidateByKeyWord(keyword);
+        int totalPage = (int) Math.ceil((double) searchResult.size() / 5);
+        List<Candidate> pagedList = cDAO.getCandidateByPage(searchResult, 1, 5);
+
+        ses.setAttribute("candidateListFull", searchResult);
+        ses.setAttribute("candidateList", pagedList);
+        ses.setAttribute("pages", 1);
+        ses.setAttribute("total", totalPage);
+        ses.setAttribute("keyword", keyword);
+
         request.getRequestDispatcher("Views/candidatelist.jsp").forward(request, response);
     }
-
 
     @Override
     public String getServletInfo() {
