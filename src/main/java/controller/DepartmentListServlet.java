@@ -95,21 +95,32 @@ public class DepartmentListServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        HttpSession ses = request.getSession();
         String action = request.getParameter("action");
-        String depId = request.getParameter("depId");
+        String editDepId = request.getParameter("depId");
+        String addDepId = request.getParameter("deptID");
+        String addDepName = request.getParameter("deptName");
+        String addDescription = request.getParameter("description");
         DeptDAO depDAO = new DeptDAO();
         if ("save".equalsIgnoreCase(action)) {
             String depName = request.getParameter("depName");
             String description = request.getParameter("description");
-            Department dept = depDAO.getDepartmentByDepartmentId(depId);
+            Department dept = depDAO.getDepartmentByDepartmentId(editDepId);
             if (dept != null) {
                 dept.setDepName(depName);
                 dept.setDescription(description);
                 depDAO.updateDepartment(dept);
             }
         }
+        else if ("add".equalsIgnoreCase(action)) {
+            Department dept = new Department();
+            dept.setDepId(addDepId);
+            dept.setDepName(addDepName);
+            dept.setDescription(addDescription);
+            depDAO.createDepartment(dept);
+        }
         List<Department> departmentList = depDAO.getAllDepartment();
-        request.getSession().setAttribute("deptList", departmentList);
+        ses.setAttribute("deptList", departmentList);
         request.getRequestDispatcher("Views/departmentlist.jsp").forward(request, response);
 
     }
