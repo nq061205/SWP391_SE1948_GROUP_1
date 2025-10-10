@@ -14,9 +14,7 @@ public class CandidateDAO extends DBContext {
     public List<Candidate> getAllCandidate() {
         List<Candidate> candidateList = new ArrayList<>();
         String sql = "SELECT * FROM candidate";
-        try (Connection conn = DBContext.getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql);
-             ResultSet rs = ps.executeQuery()) {
+        try (Connection conn = DBContext.getConnection(); PreparedStatement ps = conn.prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
 
             while (rs.next()) {
                 Candidate candidate = new Candidate();
@@ -45,9 +43,7 @@ public class CandidateDAO extends DBContext {
             direct = "asc";
         }
         String sql = "SELECT * FROM candidate ORDER BY " + order + " " + direct;
-        try (Connection conn = DBContext.getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql);
-             ResultSet rs = ps.executeQuery()) {
+        try (Connection conn = DBContext.getConnection(); PreparedStatement ps = conn.prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
 
             while (rs.next()) {
                 Candidate candidate = new Candidate();
@@ -73,8 +69,7 @@ public class CandidateDAO extends DBContext {
             return getAllCandidate();
         }
         String sql = "SELECT * FROM candidate WHERE name LIKE ? OR email LIKE ? OR phone LIKE ?";
-        try (Connection conn = DBContext.getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql)) {
+        try (Connection conn = DBContext.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
 
             String pattern = "%" + key + "%";
             ps.setString(1, pattern);
@@ -104,8 +99,7 @@ public class CandidateDAO extends DBContext {
     public List<Candidate> getAllPassedCandidates(boolean result) {
         List<Candidate> candidateList = new ArrayList<>();
         String sql = "SELECT * FROM candidate WHERE result = ?";
-        try (Connection conn = DBContext.getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql)) {
+        try (Connection conn = DBContext.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
 
             ps.setBoolean(1, result);
             try (ResultSet rs = ps.executeQuery()) {
@@ -127,11 +121,29 @@ public class CandidateDAO extends DBContext {
         return candidateList;
     }
 
+    public List<Candidate> getCandidateByPage(List<Candidate> fullList, int page, int quantityPerPage) {
+        List<Candidate> pagedList = new ArrayList<>();
+
+        if (fullList == null || fullList.isEmpty()) {
+            return pagedList;
+        }
+
+        int start = (page - 1) * quantityPerPage;
+        int end = Math.min(start + quantityPerPage, fullList.size());
+
+        if (start >= fullList.size() || start < 0) {
+            return pagedList; 
+        }
+
+        // Cắt phần dữ liệu cần hiển thị
+        pagedList = fullList.subList(start, end);
+        return new ArrayList<>(pagedList); 
+    }
+
     public static void main(String[] args) {
         CandidateDAO dao = new CandidateDAO();
-        for (Candidate c : dao.getAllCandidateByKeyWord("81")) {
+        for (Candidate c : dao.getCandidateByPage(dao.getAllCandidate(),2, 5)) {
             System.out.println(c);
         }
-        System.out.println("Passed Candidates: " + dao.getAllPassedCandidates(true).size());
     }
 }
