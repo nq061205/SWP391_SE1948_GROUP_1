@@ -47,7 +47,7 @@ public class EditApplicationServlet extends HttpServlet {
                 request.getRequestDispatcher("Views/composeleaveapplication.jsp").forward(request, response);
                 break;
             case "OT":
-                OTRequest otRequest = otRequestDAO.getOTRequestByOTId(id, user.getEmpId());
+                OTRequest otRequest = otRequestDAO.getOTRequestByOTId(id);
                 request.setAttribute("email", otRequest.getApprovedBy().getEmail());
                 request.setAttribute("date", otRequest.getDate());
                 request.setAttribute("othour", otRequest.getOtHours());

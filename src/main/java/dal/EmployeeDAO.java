@@ -315,8 +315,8 @@ public class EmployeeDAO extends DBContext {
         }
     }
 
-    public void updateEmployeeInformation(int emp_id, String fullname, boolean gender, Date dob, String phone, String image) {
-        String sql = "UPDATE Employee SET fullname = ?, gender = ?, dob = ?, phone = ?, image = ? WHERE email = ?";
+    public int updateEmployeeInformation(int emp_id, String fullname, boolean gender, Date dob, String phone, String image) {
+        String sql = "UPDATE Employee SET fullname = ?, gender = ?, dob = ?, phone = ?, image = ? WHERE emp_id = ?";
         try (Connection conn = DBContext.getConnection(); PreparedStatement stm = conn.prepareStatement(sql)) {
 
             stm.setString(1, fullname);
@@ -327,10 +327,11 @@ public class EmployeeDAO extends DBContext {
             stm.setInt(6, emp_id);
 
             int rows = stm.executeUpdate();
-            System.out.println("Updated rows: " + rows);
+            return rows;
         } catch (SQLException ex) {
             ex.printStackTrace();
         }
+        return 0;
     }
 
     public List<Employee> searchEmployee(String searchkey) {
@@ -546,7 +547,9 @@ public class EmployeeDAO extends DBContext {
 
     public static void main(String[] args) {
         EmployeeDAO dao = new EmployeeDAO();
-        int count = dao.countRecordOfEmployee();
-        System.out.println(count);
+        String sortBy ="emp_code";
+        String order="DESC";
+        
+        System.out.println(dao.updateEmployeeInformation(1, "Nguyễn Đình Quý", true, Date.valueOf("2005-12-06"), "0337364331", ""));
     }
 }
