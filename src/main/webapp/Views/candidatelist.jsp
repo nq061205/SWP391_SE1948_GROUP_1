@@ -78,14 +78,14 @@
                                         <th>#</th>
                                         <!-- Gọi lại servlet /candidatelist?type=name để sắp xếp -->
                                         <th style="cursor:pointer;" 
-                                            onclick="window.location='${pageContext.request.contextPath}/candidatelist?type=name'">
+                                            onclick="window.location = '${pageContext.request.contextPath}/candidatelist?type=name'">
                                             Full Name <i class="fa fa-sort"></i>
                                         </th>
                                         <th>Email</th>
                                         <th>Phone</th>
                                         <!-- Gọi lại servlet /candidatelist?type=appliedat để sắp xếp -->
                                         <th style="cursor:pointer;"
-                                            onclick="window.location='${pageContext.request.contextPath}/candidatelist?type=appliedat'">
+                                            onclick="window.location = '${pageContext.request.contextPath}/candidatelist?type=appliedat'">
                                             Applied At <i class="fa fa-sort"></i>
                                         </th>
                                         <th>Action</th>
@@ -125,6 +125,56 @@
                                     </c:if>
                                 </tbody>
                             </table>
+                            <!-- ✅ Pagination UI -->
+                            <div class="d-flex justify-content-between align-items-center mt-4">
+
+                                <!-- Hiển thị tổng số bản ghi (tuỳ chọn) -->
+                                <div class="text-muted">
+                                    Showing <strong>1</strong> to <strong>10</strong> of <strong>50</strong> entries
+                                </div>
+
+                                <!-- Thanh phân trang -->
+                                <nav aria-label="Candidate pagination">
+                                    <ul class="pagination mb-0">
+                                        <li class="page-item ${sessionScope.pages == 1 ? 'disabled' : ''}">
+                                            <c:choose>
+                                                <c:when test="${sessionScope.pages > 1}">
+                                                    <a class="page-link" 
+                                                       href="${pageContext.request.contextPath}/candidatelist?page=${sessionScope.pages - 1}">
+                                                        <i class="fa fa-chevron-left"></i> Previous
+                                                    </a>
+                                                </c:when>
+                                                <c:otherwise>
+                                                    <a class="page-link" tabindex="-1">
+                                                        <i class="fa fa-chevron-left"></i> Previous
+                                                    </a>
+                                                </c:otherwise>
+                                            </c:choose>
+                                        </li>
+
+                                        <li class="page-item active">
+                                            <a class="page-link">${sessionScope.pages}</a>
+                                        </li>
+                                        <li class="page-item ${sessionScope.pages >= sessionScope.total ? 'disabled' : ''}">
+                                            <c:choose>
+                                                <c:when test="${sessionScope.pages < sessionScope.total}">
+                                                    <a class="page-link" 
+                                                       href="${pageContext.request.contextPath}/candidatelist?page=${sessionScope.pages + 1}">
+                                                        Next <i class="fa fa-chevron-right"></i>
+                                                    </a>
+                                                </c:when>
+                                                <c:otherwise>
+                                                    <a class="page-link" tabindex="-1">
+                                                        Next <i class="fa fa-chevron-right"></i>
+                                                    </a>
+                                                </c:otherwise>
+                                            </c:choose>
+                                        </li>
+
+                                    </ul>
+                                </nav>
+                            </div>
+
                         </div>
 
                     </div>
