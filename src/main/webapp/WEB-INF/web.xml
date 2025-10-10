@@ -49,6 +49,10 @@
         <servlet-class>controller.LogOutServlet</servlet-class>
     </servlet>
     <servlet>
+        <servlet-name>DepartmentListServlet</servlet-name>
+        <servlet-class>controller.DepartmentListServlet</servlet-class>
+    </servlet>
+    <servlet>
         <servlet-name>EditApplicationServlet</servlet-name>
         <servlet-class>controller.EditApplicationServlet</servlet-class>
     </servlet>
@@ -131,6 +135,10 @@
     <servlet-mapping>
         <servlet-name>AccountList</servlet-name>
         <url-pattern>/accountlist</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>DepartmentListServlet</servlet-name>
+        <url-pattern>/departmentlistservlet</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>EditApplicationServlet</servlet-name>

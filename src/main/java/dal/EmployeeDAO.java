@@ -440,7 +440,7 @@ public class EmployeeDAO extends DBContext {
                 empList.add(emp);
             }
         } catch (SQLException ex) {
-            ex.printStackTrace();
+            Logger.getLogger(EmployeeDAO.class.getName()).log(Level.SEVERE, null, ex);
         }
         return empList;
     }
@@ -448,8 +448,8 @@ public class EmployeeDAO extends DBContext {
     public List<Employee> getSortedEmployee(String sortBy, String order) {
         empList = new ArrayList<>();
         String sql = "SELECT * FROM Employee order by ";
-        if (sortBy != null ) {
-            sql+=sortBy;
+        if (sortBy != null) {
+            sql += sortBy;
         }
         if (order != null && order.equalsIgnoreCase("desc")) {
             sql += " DESC";
@@ -482,9 +482,67 @@ public class EmployeeDAO extends DBContext {
         } catch (SQLException ex) {
             Logger.getLogger(EmployeeDAO.class.getName()).log(Level.SEVERE, null, ex);
         }
-        
 
         return empList;
+    }
+
+    public List<Employee> getEmployeeByPage(int page, int quantityOfPage) {
+        empList = new ArrayList<>();
+        String sql = "Select * from Employee limit ? offset ?";
+        try {
+            PreparedStatement ps = connection.prepareStatement(sql);
+            ps.setInt(1, quantityOfPage);
+            ps.setInt(2, (page - 1) * quantityOfPage);
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                Employee emp = new Employee();
+                emp.setEmpId(rs.getInt("emp_id"));
+                emp.setEmpCode(rs.getString("emp_code"));
+                emp.setFullname(rs.getString("fullname"));
+                emp.setEmail(rs.getString("email"));
+                emp.setPassword(rs.getString("password"));
+                emp.setGender(rs.getBoolean("gender"));
+                emp.setDob(rs.getDate("dob"));
+                emp.setPhone(rs.getString("phone"));
+                emp.setPositionTitle(rs.getString("position_title"));
+                emp.setImage(rs.getString("image"));
+                emp.setDependantCount(rs.getInt("dependant_count"));
+                emp.setStatus(rs.getBoolean("status"));
+                Department dept = getDepartmentByDeptID(rs.getString("dep_id"));
+                emp.setDept(dept);
+                Role role = roleDAO.getRoleByRoleId(rs.getInt("role_id"));
+                emp.setRole(role);
+                empList.add(emp);
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(EmployeeDAO.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return empList;
+    }
+
+    public int countRecordOfEmployee() {
+        String sql = "Select count(*) from Employee";
+        try {
+            PreparedStatement ps = connection.prepareStatement(sql);
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                return rs.getInt(1);
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(EmployeeDAO.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+        return 0;
+    }
+
+    public void close() {
+        try {
+            if (connection != null && !connection.isClosed()) {
+                connection.close(); 
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     public static void main(String[] args) {
