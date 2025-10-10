@@ -74,7 +74,7 @@
                     <div class="modal-dialog">
                         <div class="modal-content">
 
-                            <form action="departmentlist" method="post">
+                            <form action="departmentlistservlet" method="post">
                                 <div class="modal-header">
                                     <h5 class="modal-title">Add New Department</h5>
                                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
@@ -82,18 +82,18 @@
 
                                 <div class="modal-body">
                                     <label class="form-label">Department ID</label>
-                                    <input type="text" name="depId" class="form-control" required>
+                                    <input type="text" name="deptID" class="form-control" required>
 
                                     <label class="form-label mt-2">Department Name</label>
-                                    <input type="text" name="depName" class="form-control" required>
+                                    <input type="text" name="deptName" class="form-control" required>
 
-                                    <label class="form-label mt-2">Department Name</label>
+                                    <label class="form-label mt-2">Description</label>
                                     <input type="textarea" name="description" class="form-control" required>
                                 </div>
 
                                 <div class="modal-footer">
                                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                                    <button type="submit" class="btn btn-success">Save</button>
+                                    <button type="submit" name="action" value="add" class="btn btn-success">Add</button>
                                 </div>
                             </form>
 
