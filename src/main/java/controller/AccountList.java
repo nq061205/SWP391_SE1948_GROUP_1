@@ -6,7 +6,6 @@ package controller;
 
 import dal.DeptDAO;
 import dal.EmployeeDAO;
-import dal.RecruitmentPostDAO;
 import dal.RoleDAO;
 import model.Employee;
 import java.io.IOException;
@@ -16,14 +15,10 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import model.Department;
 import model.Role;
 
@@ -81,21 +76,40 @@ public class AccountList extends HttpServlet {
         String[] deptId = request.getParameterValues("deptId");
         String[] roleId = request.getParameterValues("roleId");
         String sortBy = request.getParameter("sortBy");
-        String order= request.getParameter("order");
-        List<Employee> empList = new ArrayList<>();
+        String order = request.getParameter("order");
+        String type = request.getParameter("type");
+        String empCode = request.getParameter("empCode");
+        int quantityOfPage = 3;
+        int currentPage = 1;
+        String currentPageStr = request.getParameter("page");
+        if (currentPageStr != null && !currentPageStr.trim().isEmpty()) {
+            try {
+                currentPage = Integer.parseInt(currentPageStr);
+            } catch (NumberFormatException e) {
+            }
+        }
+        List<Employee> empList;
         if (searchkey != null && !searchkey.trim().isEmpty()) {
             empList = empDAO.searchEmployee(searchkey);
+            currentPage = 1;
         } else if (status != null || (deptId != null && deptId.length > 0) || (roleId != null && roleId.length > 0)) {
             empList = empDAO.filterEmployees(status, deptId, roleId);
+            currentPage = 1;
+        } else if (sortBy != null) {
+            empList = empDAO.getSortedEmployee(sortBy, order);
+            currentPage = 1;
+        } else {
+            empList = empDAO.getEmployeeByPage(currentPage, quantityOfPage);
         }
-        else if (sortBy != null ) {
-            empList=empDAO.getSortedEmployee(sortBy, order);
+
+        int totalResults = empDAO.countRecordOfEmployee();
+        int totalPages = (int) Math.ceil((double) totalResults / quantityOfPage);
+
+        if ("edit".equalsIgnoreCase(type) && empCode != null) {
+            Employee editEmp = empDAO.getEmployeeByEmpCode(empCode);
+            request.setAttribute("editEmp", editEmp);
         }
-        else {
-            empList = empDAO.getAllEmployees();
-        }
-        int totalResults = empList.size();
-        
+
         List<Role> roleList = rDAO.getAllRoles();
         Map<String, Role> uniqueRolesMap = new LinkedHashMap<>();
         for (Role r : roleList) {
@@ -103,23 +117,25 @@ public class AccountList extends HttpServlet {
         }
 
         List<Role> uniqueRoles = new ArrayList<>(uniqueRolesMap.values());
-        List<Department> deptList = deptDAO.getAllDepartment();
-        String type = request.getParameter("type");
-        String empCode = request.getParameter("empCode");
 
-        if ("edit".equalsIgnoreCase(type) && empCode != null) {
-            Employee editEmp = empDAO.getEmployeeByEmpCode(empCode);
-            request.setAttribute("editEmp", editEmp);
-        }
         request.setAttribute("totalResults", totalResults);
         request.setAttribute("searchkey", searchkey);
         request.setAttribute("roleId", roleId);
         request.setAttribute("deptId", deptId);
         request.setAttribute("status", status);
+        request.setAttribute("sortBy", sortBy);
+        request.setAttribute("order", order);
+        request.setAttribute("totalPages", totalPages);
+        request.setAttribute("page", currentPage);
+
         ses.setAttribute("empList", empList);
         ses.setAttribute("roleList", uniqueRoles);
-        ses.setAttribute("deptList", deptList);
-        //Comment de merge
+        ses.setAttribute("deptList", deptDAO.getAllDepartment());
+
+        empDAO.close();
+        deptDAO.close();
+        rDAO.close();
+
         request.getRequestDispatcher("Views/accountList.jsp").forward(request, response);
     }
 
@@ -134,6 +150,7 @@ public class AccountList extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        HttpSession ses = request.getSession();
         String action = request.getParameter("action");
         EmployeeDAO empDAO = new EmployeeDAO();
         RoleDAO rDAO = new RoleDAO();
@@ -157,9 +174,24 @@ public class AccountList extends HttpServlet {
                 empDAO.updateEmployee(emp);
             }
         }
-        List<Employee> empList = empDAO.getAllEmployees();
-        request.getSession().setAttribute("empList", empList);
-        request.getRequestDispatcher("Views/accountList.jsp").forward(request, response);
+        int quantityOfPage = 3;
+        int currentPage = 1;
+        String currentPageStr = request.getParameter("page");
+        if (currentPageStr != null && !currentPageStr.trim().isEmpty()) {
+            try {
+                currentPage = Integer.parseInt(currentPageStr);
+            } catch (NumberFormatException e) {
+            }
+        }
+        List<Employee> empList = empDAO.getEmployeeByPage(currentPage, quantityOfPage);
+        ses.setAttribute("empList", empList);
+        int totalResults = empDAO.countRecordOfEmployee();
+        int totalPages = (int) Math.ceil((double) totalResults / quantityOfPage);
+        request.setAttribute("page", currentPage);
+        request.setAttribute("totalPages", totalPages);
+        empDAO.close();
+        rDAO.close();
+        response.sendRedirect("accountlist?page=" + currentPage);
 
     }
 

@@ -123,7 +123,7 @@
                     <div class="col-md-10">
                         <div>
                             <form action="${pageContext.request.contextPath}/accountlist" method="get" class="d-flex mb-3">
-                                <input type="text" name="searchkey" class="form-control me-2" placeholder="Search by code or name" value="${param.searchKey}">
+                                <input type="text" name="searchkey" class="form-control me-2" placeholder="Search by code or name" value="${searchkey}">
                                 <button type="submit" class="btn btn-primary">Search</button>
                             </form>
 
@@ -136,7 +136,7 @@
                             </div>
 
                             <div class="col-md-7" style="display: flex; align-items: center; gap: 15px;">
-                                <p style="margin: 1;">Sort by:</p>
+                                <p style="margin: 1%;">Sort by:</p>
                                 <div style="display: flex; gap: 20px;">
                                     Code: <div style="display: flex; flex-direction: column; line-height: 1.2;">
                                         <a href="accountlist?sortBy=emp_code&order=asc">ASC</a>
@@ -155,7 +155,7 @@
                                         <a href="accountlist?sortBy=dep_id&order=desc">DESC</a>
                                     </div>
 
-                                    
+
                                 </div>
                             </div>
                         </div>
@@ -182,6 +182,7 @@
                                             <c:choose>
                                                 <c:when test="${editEmp != null && editEmp.empCode eq el.empCode}">
                                             <form action="${pageContext.request.contextPath}/accountlist" method="post">
+                                                <td><input type="hidden" name="page" value="${page}"></td>
                                                 <td>${loop.index+1}</td>
                                                 <td><input type="hidden" name="empCode" value="${el.empCode}" />${el.empCode}</td>
                                                 <td>${el.fullname}</td>
@@ -214,14 +215,14 @@
                                             <td>${el.role.roleName}</td>
                                             <td>${el.status ? 'Active' :'Inactive'}</td>
                                             <td>
-                                                <a href="${pageContext.request.contextPath}/accountlist?type=edit&empCode=${el.empCode}" class="btn btn-sm btn-primary">Edit</a>
+                                                <a href="${pageContext.request.contextPath}/accountlist?type=edit&empCode=${el.empCode}&page=${page}" class="btn btn-sm btn-primary">Edit</a>
                                             </td>
                                             <td>
                                                 <form action="accountlist" method="post">
                                                     <input type="hidden" name="action" value="toggle">
                                                     <input type="hidden" name="empCode" value="${el.empCode}">
                                                     <input type="hidden" name="newstatus" value="${!el.status}">
-
+                                                    <input type="hidden" name="page" value="${page}">
                                                     <button type="submit"
                                                             class="btn ${el.status ? 'btn-danger' : 'btn-success'}">
                                                         ${el.status ? 'Deactivate' : 'Activate'}
@@ -234,6 +235,11 @@
                                 </c:forEach>
                                 </tbody>
                             </table>
+                        </div>
+                        <div>
+                            <c:forEach var="i" begin="1" end="${totalPages}">
+                                <a href="accountlist?page=${i}">${i}</a>
+                            </c:forEach>
                         </div>
                     </div>
                 </div>
@@ -258,27 +264,6 @@
         <script src="${pageContext.request.contextPath}/assets2/vendors/chart/chart.min.js"></script>
         <script src="${pageContext.request.contextPath}/assets2/js/admin.js"></script>
         <script src='${pageContext.request.contextPath}/assets2/vendors/switcher/switcher.js'></script>
-        <script>
-                                                   $(document).ready(function () {
-                                                       $('[data-toggle="tooltip"]').tooltip();
-                                                   });
-                                                   function openCandidateModal() {
-                                                       document.getElementById("candidateModal").style.display = "block";
-                                                   }
-
-                                                   function closeCandidateModal() {
-                                                       document.getElementById("candidateModal").style.display = "none";
-                                                   }
-
-                                                   function selectCandidate(code, name, email, phone) {
-                                                       document.getElementById("candidateCode").value = code;
-                                                       document.getElementById("fullname").value = name;
-                                                       document.getElementById("email").value = email;
-                                                       document.getElementById("phone").value = phone;
-                                                       closeCandidateModal();
-                                                       document.getElementById("addEmployeeForm").style.display = "block";
-                                                   }
-        </script>
         <style>
             .icon-circle {
                 display: inline-flex;

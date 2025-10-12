@@ -13,6 +13,7 @@ import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author Nguyen Dinh Quy HE190184
@@ -147,9 +148,63 @@ public class LeaveRequestDAO extends DBContext {
         return 0;
     }
 
-    public static void main(String[] args) {
-        LeaveRequestDAO dao = new LeaveRequestDAO();
-        dao.deleteLeaveRequest(51);
+    public List<LeaveRequest> findLeaveByEmpPaged(int empId, int offset, int limit) {
+        String sql = ""
+                + "SELECT * "
+                + "FROM hrm.leave_request "
+                + "WHERE emp_id = ? "
+                + "ORDER BY created_at DESC "
+                + "LIMIT ? OFFSET ? ";
+        List<LeaveRequest> list = new ArrayList<>();
+        try (Connection cn = DBContext.getConnection(); PreparedStatement ps = cn.prepareStatement(sql)) {
+            ps.setInt(1, empId);
+            ps.setInt(2, limit);
+            ps.setInt(3, offset);
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    list.add(new LeaveRequest(
+                            rs.getInt("leave_id"),
+                            employeeDAO.getEmployeeByEmpId(rs.getInt("emp_id")),
+                            rs.getString("leave_type"),
+                            rs.getString("status"),
+                            rs.getDouble("day_requested"),
+                            rs.getDate("start_date"),
+                            rs.getDate("end_date"),
+                            employeeDAO.getEmployeeByEmpId(rs.getInt("approved_by")),
+                            rs.getTimestamp("approved_at"),
+                            rs.getString("status"),
+                            rs.getString("note"),
+                            rs.getTimestamp("created_at"),
+                            rs.getTimestamp("updated_at")
+                    ));
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return list;
     }
 
+    public int countLeaveByEmp(int empId) {
+        String sql = "SELECT COUNT(*) FROM hrm.leave_request WHERE emp_id = ?";
+        try (Connection cn = DBContext.getConnection(); PreparedStatement ps = cn.prepareStatement(sql)) {
+            ps.setInt(1, empId);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt(1);
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return 0;
+    }
+
+    public static void main(String[] args) {
+        LeaveRequestDAO dao = new LeaveRequestDAO();
+        dao.countLeaveByEmp(1);
+        for (LeaveRequest x : dao.findLeaveByEmpPaged(1, 0, 10)) {
+            System.out.println(x.toString());
+        }
+    }
 }

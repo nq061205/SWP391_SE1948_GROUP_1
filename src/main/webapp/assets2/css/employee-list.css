@@ -1,0 +1,179 @@
+/* employee-list.css */
+
+/* Tổng thể */
+body {
+    font-family: "Segoe UI", sans-serif;
+    background-color: #f1f5f9; /* xanh nhạt dịu */
+    color: #333;
+}
+
+/* Breadcrumb */
+.db-breadcrumb h4 {
+    color: #2563eb;
+    font-weight: 600;
+}
+
+/* Container bảng */
+.table-container {
+    background: #ffffff;
+    border-radius: 10px;
+    padding: 20px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+    overflow-x: auto;
+}
+
+/* Bảng */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+}
+
+thead {
+    background-color: #f5f5f5; /* Giữ nguyên header xám nhạt */
+    color: #333;
+    font-weight: 600;
+    text-align: center;
+}
+
+th, td {
+    padding: 10px 14px;
+    text-align: center;
+    border-bottom: 1px solid #e2e8f0;
+}
+
+tr:nth-child(even) {
+    background-color: #e0f2fe; /* xanh nhạt dịu */
+}
+
+tr:hover {
+    background-color: #bfdbfe; /* xanh nhạt khi hover */
+}
+
+/* Input & Select */
+input[type="text"], input[type="date"], input[type="number"], select {
+    width: 100%;
+    border: 1px solid #cbd5e1;
+    border-radius: 6px;
+    padding: 5px;
+}
+
+/* Nút */
+.btn {
+    border-radius: 6px;
+    padding: 5px 10px;
+    font-size: 13px;
+}
+
+.btn-primary {
+    background-color: #3b82f6;
+    color: white;
+    border: none;
+}
+
+.btn-primary:hover {
+    background-color: #2563eb;
+}
+
+.btn-success {
+    background-color: #22c55e;
+    color: white;
+    border: none;
+}
+
+.btn-success:hover {
+    background-color: #16a34a;
+}
+
+.btn-danger {
+    background-color: #ef4444;
+    color: white;
+    border: none;
+}
+
+.btn-danger:hover {
+    background-color: #dc2626;
+}
+
+.btn-secondary {
+    background-color: #94a3b8;
+    color: white;
+    border: none;
+}
+
+.btn-secondary:hover {
+    background-color: #64748b;
+}
+
+.badge.bg-success {
+    background-color: #16a34a;
+    color: white;
+    padding: 4px 8px;
+    border-radius: 6px;
+}
+
+.badge.bg-danger {
+    background-color: #dc2626;
+    color: white;
+    padding: 4px 8px;
+    border-radius: 6px;
+}
+/* =============================
+     SEARCH BAR STYLING
+     ============================= */
+.search-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #f9fafc;
+    border-radius: 12px;
+    padding: 15px 20px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    margin-bottom: 25px;
+}
+
+.search-input-group {
+    flex-grow: 1;
+    border-radius: 30px;
+    overflow: hidden;
+    border: 1px solid #ddd;
+    transition: 0.3s;
+    background-color: #fff;
+}
+
+.search-input-group:focus-within {
+    box-shadow: 0 0 0 3px rgba(13, 110, 253, 0.25);
+    border-color: #0d6efd;
+}
+
+.search-input-group input {
+    border: none;
+    outline: none;
+    box-shadow: none !important;
+    padding-left: 10px;
+    font-size: 15px;
+}
+
+.search-input-group .input-group-text {
+    border: none;
+    background: none;
+    padding-left: 15px;
+    font-size: 16px;
+}
+
+.search-form .btn {
+    border-radius: 25px;
+    padding: 8px 18px;
+    transition: all 0.3s ease;
+}
+
+.search-form .btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 3px 8px rgba(13, 110, 253, 0.3);
+}
+
+/* Table hover & animation */
+.table-hover tbody tr:hover {
+    background-color: #f1f5ff;
+    transition: background 0.2s ease;
+}

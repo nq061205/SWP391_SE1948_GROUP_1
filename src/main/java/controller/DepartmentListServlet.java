@@ -4,7 +4,9 @@
  */
 package controller;
 
+import dal.DeptDAO;
 import dal.EmployeeDAO;
+import dal.RoleDAO;
 import model.Employee;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -13,12 +15,18 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import model.Department;
+import model.Role;
 
 /**
  *
- * @author hgduy
+ * @author Admin
  */
-public class ChangePassword extends HttpServlet {
+public class DepartmentListServlet extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -33,13 +41,14 @@ public class ChangePassword extends HttpServlet {
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
         try (PrintWriter out = response.getWriter()) {
+            /* TODO output your page here. You may use following sample code. */
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
-            out.println("<title>Servlet ChangePassword</title>");
+            out.println("<title>Servlet DepartmentListServlet</title>");
             out.println("</head>");
             out.println("<body>");
-            out.println("<h1>Servlet ChangePassword at " + request.getContextPath() + "</h1>");
+            out.println("<h1>Servlet DepartmentListServlet at " + request.getContextPath() + "</h1>");
             out.println("</body>");
             out.println("</html>");
         }
@@ -57,12 +66,22 @@ public class ChangePassword extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        HttpSession session = request.getSession();
-        if (session.getAttribute("user") == null) {
-            response.sendRedirect("login");
-        } else {
-            request.getRequestDispatcher("Views/changepassword.jsp").forward(request, response);
+        HttpSession ses = request.getSession();
+        EmployeeDAO empDAO = new EmployeeDAO();
+        DeptDAO deptDAO = new DeptDAO();
+        RoleDAO rDAO = new RoleDAO();
+        List<Department> deptList;
+        deptList = deptDAO.getAllDepartment();
+        String type = request.getParameter("type");
+        String depId = request.getParameter("depId");
+
+        if ("edit".equalsIgnoreCase(type) && depId != null) {
+            Department editDept = deptDAO.getDepartmentByDepartmentId(depId);
+            request.setAttribute("editDept", editDept);
         }
+        ses.setAttribute("deptList", deptList);
+        //Comment de merge
+        request.getRequestDispatcher("Views/departmentlist.jsp").forward(request, response);
     }
 
     /**
@@ -76,28 +95,33 @@ public class ChangePassword extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-            HttpSession session = request.getSession();
-            Employee emp = (Employee) session.getAttribute("user");
-            String currentPass = request.getParameter("currentPassword");
-            String newPass = request.getParameter("newPassword");
-            String confirmPass = request.getParameter("confirmPassword");
-            if (!currentPass.equals(emp.getPassword())) {
-                request.setAttribute("errorMessage", "password is incorect");
-                request.getRequestDispatcher("Views/changepassword.jsp").forward(request, response);
-                return;
+        HttpSession ses = request.getSession();
+        String action = request.getParameter("action");
+        String editDepId = request.getParameter("depId");
+        String addDepId = request.getParameter("deptID");
+        String addDepName = request.getParameter("deptName");
+        String addDescription = request.getParameter("description");
+        DeptDAO depDAO = new DeptDAO();
+        if ("save".equalsIgnoreCase(action)) {
+            String depName = request.getParameter("depName");
+            String description = request.getParameter("description");
+            Department dept = depDAO.getDepartmentByDepartmentId(editDepId);
+            if (dept != null) {
+                dept.setDepName(depName);
+                dept.setDescription(description);
+                depDAO.updateDepartment(dept);
             }
-            if (!newPass.equals(confirmPass)) {
-                request.setAttribute("errorMessage", "New password and confirm password is not match");
-                request.getRequestDispatcher("Views/changepassword.jsp").forward(request, response);
-                return;
-            }
-
-            EmployeeDAO eDao = new EmployeeDAO();
-            eDao.updatePassword(emp.getEmpCode(), newPass);
-            request.setAttribute("successMessage", "New password has been updated");
-            request.getRequestDispatcher("Views/changepassword.jsp").forward(request, response);
-
-
+        }
+        else if ("add".equalsIgnoreCase(action)) {
+            Department dept = new Department();
+            dept.setDepId(addDepId);
+            dept.setDepName(addDepName);
+            dept.setDescription(addDescription);
+            depDAO.createDepartment(dept);
+        }
+        List<Department> departmentList = depDAO.getAllDepartment();
+        ses.setAttribute("deptList", departmentList);
+        request.getRequestDispatcher("Views/departmentlist.jsp").forward(request, response);
 
     }
 
