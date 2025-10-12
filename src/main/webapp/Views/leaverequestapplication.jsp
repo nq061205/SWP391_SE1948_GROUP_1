@@ -58,7 +58,7 @@
         <%@ include file="CommonItems/Header/dashboardHeader.jsp" %>
         <%@ include file="CommonItems/Navbar/empNavbar.jsp" %>
         <input type="hidden" name="typeApplication" value="leaverequest" />
-       <c:if test="${param.issuccess eq 'true'}">
+        <c:if test="${param.issuccess eq 'true'}">
             <script>
                 alert("Update successfully!");
             </script>
@@ -101,9 +101,11 @@
                                     </div>
 
                                     <ul class="mailbox-toolbar">
-                                        <a href="${pageContext.request.contextPath}/editapplication?type=LEAVE&id=${application.leaveId}" class="icon-circle" data-toggle="tooltip" title="Edit">
-                                            <i class="fa fa-pencil"></i>
-                                        </a>
+                                        <c:if test="${application.status eq 'Pending'}">
+                                            <a href="${pageContext.request.contextPath}/editapplication?type=LEAVE&id=${application.leaveId}" class="icon-circle" data-toggle="tooltip" title="Edit">
+                                                <i class="fa fa-pencil"></i>
+                                            </a>
+                                        </c:if>
                                         <form action="${pageContext.request.contextPath}/deleteapplication?type=LEAVE&id=${application.leaveId}" method="post" style="display:inline;">
                                             <button type="submit" class="icon-circle" data-toggle="tooltip" title="Delete" onclick="return confirm('Do you confirm delete this application');">
                                                 <i class="fa fa-trash-o"></i>
@@ -119,6 +121,23 @@
                     </div>
                 </div>
             </div>
+            <nav class="mt-3">
+                <ul class="pagination justify-content-center">
+                    <li class="page-item ${page <= 1 ? 'disabled' : ''}">
+                        <a class="page-link" href="?typeapplication=LEAVE&page=${page-1}&size=${size}">Prev</a>
+                    </li>
+
+                    <c:forEach var="p" begin="1" end="${totalPages}">
+                        <li class="page-item ${p == page ? 'active' : ''}">
+                            <a class="page-link" href="?typeapplication=LEAVE&page=${p}&size=${size}">${p}</a>
+                        </li>
+                    </c:forEach>
+
+                    <li class="page-item ${page >= totalPages ? 'disabled' : ''}">
+                        <a class="page-link" href="?typeapplication=LEAVE&page=${page+1}&size=${size}">Next</a>
+                    </li>
+                </ul>
+            </nav>
         </main>
 
         <script src="${pageContext.request.contextPath}/assets2/js/jquery.min.js"></script>
