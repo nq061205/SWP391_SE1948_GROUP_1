@@ -7,6 +7,7 @@ package controller.hr;
 import model.Employee;
 import model.AttendanceRaw;
 import dal.AttendanceRawDAO;
+import dal.DailyAttendanceDAO;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
@@ -18,6 +19,7 @@ import java.io.InputStream;
 import jakarta.servlet.http.Part;
 import java.util.ArrayList;
 import java.util.List;
+import model.DailyAttendance;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.*;
 
@@ -56,7 +58,7 @@ public class UploadExcelServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        request.getRequestDispatcher("Views/HR/importRaw.jsp").forward(request, response);
+        processRequest(request, response);
     }
 
     @Override
@@ -65,7 +67,7 @@ public class UploadExcelServlet extends HttpServlet {
         String action = request.getParameter("action");
         if ("cancel".equals(action)) {
             request.setAttribute("success", "Import cancelled.");
-            request.getRequestDispatcher("Views/HR/importRaw.jsp").forward(request, response);
+            request.getRequestDispatcher("Views/HR/rawAttendance.jsp").forward(request, response);
             return;
         }
         if ("confirm".equals(action)) {
@@ -75,14 +77,14 @@ public class UploadExcelServlet extends HttpServlet {
                 request.getSession().removeAttribute("importList");
                 request.setAttribute("success", "Successfully imported " + list.size() + " records!");
             }
-            request.getRequestDispatcher("Views/HR/importRaw.jsp").forward(request, response);
+            request.getRequestDispatcher("Views/HR/rawAttendance.jsp").forward(request, response);
             return;
         }
 
         Part filePart = request.getPart("file");
         if (filePart == null || filePart.getSize() == 0) {
             request.setAttribute("error", "No file uploaded.");
-            request.getRequestDispatcher("Views/HR/importRaw.jsp").forward(request, response);
+            request.getRequestDispatcher("Views/HR/rawAttendance.jsp").forward(request, response);
             return;
         }
 
@@ -120,12 +122,12 @@ public class UploadExcelServlet extends HttpServlet {
             List<AttendanceRaw> previewList = list.size() > 10 ? list.subList(0, 10) : list;
             request.setAttribute("preview", previewList);
             request.setAttribute("success", "File uploaded successfully! Review before import.");
-            request.getRequestDispatcher("Views/HR/importRaw.jsp").forward(request, response);
+            request.getRequestDispatcher("Views/HR/rawAttendance.jsp").forward(request, response);
 
         } catch (Exception ex) {
             ex.printStackTrace();
             request.setAttribute("error", "Error reading file: " + ex.getMessage());
-            request.getRequestDispatcher("Views/HR/importRaw.jsp").forward(request, response);
+            request.getRequestDispatcher("Views/HR/rawAttendance.jsp").forward(request, response);
         }
 
     }

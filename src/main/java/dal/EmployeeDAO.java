@@ -488,10 +488,7 @@ public class EmployeeDAO extends DBContext {
 
     public static void main(String[] args) {
         EmployeeDAO dao = new EmployeeDAO();
-        String sortBy ="emp_code";
-        String order="DESC";
-        
-        List<Employee> empList = dao.getSortedEmployee(sortBy, order);
-        System.out.println(empList.toString());
+        Employee e = dao.getEmployeeByEmpId(1);
+        System.out.println(e);
     }
 }
