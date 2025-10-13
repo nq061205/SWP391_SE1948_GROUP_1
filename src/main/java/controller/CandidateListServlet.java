@@ -37,10 +37,9 @@ public class CandidateListServlet extends HttpServlet {
 
         List<Candidate> fullList = (List<Candidate>) session.getAttribute("candidateListFull");
 
-        if (fullList == null) {
-            fullList = cDAO.getAllCandidate();
+            fullList = cDAO.getAllCandidate("pending");
             session.setAttribute("candidateListFull", fullList);
-        }
+        
 
         List<Candidate> candidateList = (List<Candidate>) session.getAttribute("candidateList");
         if (session.getAttribute("candidateList") == null
@@ -105,7 +104,7 @@ public class CandidateListServlet extends HttpServlet {
         CandidateDAO cDAO = new CandidateDAO();
         HttpSession ses = request.getSession();
 
-        List<Candidate> searchResult = cDAO.getAllCandidateByKeyWord(keyword);
+        List<Candidate> searchResult = cDAO.getAllCandidateByKeyWord(keyword,"pending");
         int totalPage = (int) Math.ceil((double) searchResult.size() / 5);
         List<Candidate> pagedList = cDAO.getCandidateByPage(searchResult, 1, 5);
 
