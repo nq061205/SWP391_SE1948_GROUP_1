@@ -13,6 +13,7 @@ import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author Nguyen Dinh Quy HE190184
@@ -59,17 +60,16 @@ public class OTRequestDAO extends DBContext {
         return list;
     }
 
-    public OTRequest getOTRequestByOTId(int ot_id, int emp_id) {
+    public OTRequest getOTRequestByOTId(int ot_id) {
         try {
             String sql = "SELECT * FROM hrm.ot_request where ot_id = ?";
             PreparedStatement stm = connection.prepareStatement(sql);
             stm.setInt(1, ot_id);
             ResultSet rs = stm.executeQuery();
-            Employee employee = employeeDAO.getEmployeeByEmpId(emp_id);
             if (rs.next()) {
                 OTRequest OTRequest = new OTRequest(
                         rs.getInt("ot_id"),
-                        employee,
+                        employeeDAO.getEmployeeByEmpId(rs.getInt("emp_id")),
                         rs.getDate("date"),
                         rs.getDouble("ot_hours"),
                         employeeDAO.getEmployeeByEmpId(rs.getInt("approved_by")),
@@ -107,8 +107,170 @@ public class OTRequestDAO extends DBContext {
         return 0;
     }
 
+    public int deleteOTRequest(int otId) {
+        String sql = "DELETE FROM hrm.ot_request WHERE ot_id = ?";
+        try (PreparedStatement stm = connection.prepareStatement(sql)) {
+            stm.setInt(1, otId);
+            return stm.executeUpdate();
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
+        return 0;
+    }
+
+    public int updateOTRequest(int id, Date date, double hours) {
+        String sql = "UPDATE hrm.ot_request SET date=?, ot_hours=?, updated_at=NOW() WHERE ot_id=?";
+        try (PreparedStatement stm = connection.prepareStatement(sql)) {
+            stm.setDate(1, date);
+            stm.setDouble(2, hours);
+            stm.setInt(3, id);
+            return stm.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return 0;
+    }
+
+    public int countOTByEmpFiltered(int empId, String search, String status, Date startDate, Date endDate) {
+        StringBuilder sql = new StringBuilder("SELECT COUNT(*) FROM hrm.ot_request WHERE emp_id = ?");
+        List<Object> params = new ArrayList<>();
+        params.add(empId);
+
+        if (status != null && !status.trim().isEmpty()) {
+            sql.append(" AND status = ?");
+            params.add(status.trim());
+        }
+
+        if (search != null && !search.trim().isEmpty()) {
+            String keyword = "%" + search.trim() + "%";
+            sql.append(" AND (CAST(ot_hours AS CHAR) LIKE ? OR status LIKE ? OR CAST(date AS CHAR) LIKE ?)");
+            params.add(keyword);
+            params.add(keyword);
+            params.add(keyword);
+        }
+
+        if (startDate != null) {
+            sql.append(" AND date >= ?");
+            params.add(startDate);
+        }
+        if (endDate != null) {
+            sql.append(" AND date <= ?");
+            params.add(endDate);
+        }
+
+        try (Connection cn = DBContext.getConnection(); PreparedStatement ps = cn.prepareStatement(sql.toString())) {
+
+            int index = 1;
+            for (Object p : params) {
+                if (p instanceof Integer) {
+                    ps.setInt(index++, (Integer) p);
+                } else if (p instanceof String) {
+                    ps.setString(index++, (String) p);
+                } else if (p instanceof java.sql.Date) {
+                    ps.setDate(index++, (java.sql.Date) p);
+                }
+            }
+
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt(1);
+                }
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return 0;
+    }
+
+    public List<OTRequest> findOTByEmpPaged(int empId, int offset, int size, String search, String status, Date startDate, Date endDate) {
+        StringBuilder sql = new StringBuilder(
+                "SELECT ot.* "
+                + "FROM hrm.ot_request ot "
+                + "WHERE ot.emp_id = ? "
+        );
+
+        List<Object> params = new ArrayList<>();
+        params.add(empId);
+
+        if (status != null && !status.trim().isEmpty()) {
+            sql.append(" AND ot.status = ? ");
+            params.add(status.trim());
+        }
+
+        if (search != null && !search.trim().isEmpty()) {
+            String kw = "%" + search.trim() + "%";
+            sql.append(" AND (CAST(ot.ot_hours AS CHAR) LIKE ? "
+                    + "  OR ot.status LIKE ? "
+                    + "  OR CAST(ot.date AS CHAR) LIKE ?) ");
+            params.add(kw);
+            params.add(kw);
+            params.add(kw);
+        }
+
+        if (startDate != null) {
+            sql.append(" AND ot.created_at >= ? ");
+            params.add(startDate);
+        }
+        if (endDate != null) {
+            sql.append(" AND ot.created_at <= ? ");
+            params.add(endDate);
+        }
+
+        sql.append(" ORDER BY ot.created_at DESC LIMIT ? OFFSET ? ");
+
+        List<OTRequest> list = new ArrayList<>();
+
+        try (Connection cn = DBContext.getConnection(); PreparedStatement ps = cn.prepareStatement(sql.toString())) {
+
+            int idx = 1;
+
+            for (Object p : params) {
+                if (p instanceof Integer) {
+                    ps.setInt(idx++, (Integer) p);
+                } else if (p instanceof String) {
+                    ps.setString(idx++, (String) p);
+                } else if (p instanceof java.sql.Date) {
+                    ps.setDate(idx++, (java.sql.Date) p);
+                } else if (p instanceof java.sql.Timestamp) {
+                    ps.setTimestamp(idx++, (java.sql.Timestamp) p);
+                } else {
+                    throw new SQLException("Unsupported param type: " + p.getClass());
+                }
+            }
+
+            ps.setInt(idx++, size);
+            ps.setInt(idx, offset);
+
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    list.add(new OTRequest(
+                            rs.getInt("ot_id"),
+                            employeeDAO.getEmployeeByEmpId(rs.getInt("emp_id")),
+                            rs.getDate("date"),
+                            rs.getDouble("ot_hours"),
+                            employeeDAO.getEmployeeByEmpId(rs.getInt("approved_by")),
+                            rs.getTimestamp("approved_at"),
+                            rs.getString("status"),
+                            rs.getTimestamp("created_at"),
+                            rs.getTimestamp("updated_at")
+                    ));
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return list;
+    }
+
     public static void main(String[] args) {
         OTRequestDAO dao = new OTRequestDAO();
-        dao.composeOTRequest(1, Date.valueOf("2025-12-12"), 1, 1);
+        List<OTRequest> list = new ArrayList<>();
+        System.out.println(dao.countOTByEmpFiltered(1, null, "Pending",null ,null));
+        list = dao.findOTByEmpPaged(1, 0, 10, null, "Pending",null ,null );
+        for (OTRequest x : list) {
+            System.out.println(x.toString());
+        }
     }
 }

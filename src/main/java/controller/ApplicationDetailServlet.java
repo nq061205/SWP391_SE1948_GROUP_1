@@ -1,4 +1,4 @@
-/*
+    /*
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Servlet.java to edit this template
  */
@@ -34,7 +34,7 @@ public class ApplicationDetailServlet extends HttpServlet {
         String OTId = request.getParameter("OTId");
         Employee employee = employeeDAO.getEmployeeByEmpId(1);
         if(OTId != null && !OTId.isEmpty()){
-            OTRequest ot = OTDAO.getOTRequestByOTId(Integer.parseInt(OTId), employee.getEmpId());
+            OTRequest ot = OTDAO.getOTRequestByOTId(Integer.parseInt(OTId));
             request.setAttribute("type", "ot");
             request.setAttribute("ot", ot);
             

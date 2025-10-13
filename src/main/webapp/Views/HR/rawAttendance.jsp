@@ -260,7 +260,7 @@
                                                 <label for="search">Employee Code</label>
                                                 <input type="text" name="search" value="${search}" 
                                                        class="form-control" id="search"
-                                                       placeholder="Search by Employee ID...">
+                                                       placeholder="Search by Employee Code...">
                                             </div>
                                         </div>
                                         <div class="col-md-1"></div>
@@ -309,11 +309,11 @@
                                         <div class="col-md-3">
                                             <div class="form-group">
                                                 <label for="pageSize">Records per page</label>
-                                                <select name="pageSize" class="form-control" id="pageSize" onchange="this.form.submit()">
-                                                    <option value="5" ${pageSize == '5' ? 'selected' : ''}>5</option>
-                                                    <option value="10" ${pageSize == '10' || empty pageSize ? 'selected' : ''}>10</option>
-                                                    <option value="15" ${pageSize == '15' ? 'selected' : ''}>15</option>
-                                                    <option value="20" ${pageSize == '25' ? 'selected' : ''}>20</option>
+                                                <select name="pageSize" class="form-control" id="pageSize" onchange="resetPageAndSubmit()">
+                                                    <option value="5" ${pageSize == 5 ? 'selected' : ''}>5</option>
+                                                    <option value="10" ${pageSize == 10 ? 'selected' : ''}>10</option>
+                                                    <option value="15" ${pageSize == 15 ? 'selected' : ''}>15</option>
+                                                    <option value="20" ${pageSize == 20 ? 'selected' : ''}>20</option>
                                                 </select>
                                             </div>
                                         </div>
@@ -332,7 +332,7 @@
                                                     <tr>
                                                         <th width="50">Index</th>
                                                         <th width="200">Employee ID</th>
-                                                        <th width="200">Date</th>
+                                                        <th width="200">Date (yyyy-MM-dd)</th>
                                                         <th>Check Time</th>
                                                         <th width="200">Check Type</th>
                                                     </tr>
@@ -347,7 +347,16 @@
                                                             </td>
                                                             <td>
                                                                 <div class="d-flex flex-column">
-                                                                    <strong class="text-primary">${record.emp.empId}</strong>
+                                                                    <strong class="text-primary">
+                                                                        <c:choose>
+                                                                            <c:when test="${not empty record.emp and not empty record.emp.empId}">
+                                                                                ${record.emp.empId}
+                                                                            </c:when>
+                                                                            <c:otherwise>
+                                                                                <span class="text-muted">N/A</span>
+                                                                            </c:otherwise>
+                                                                        </c:choose>
+                                                                    </strong>
                                                                 </div>
                                                             </td>
                                                             <td>
@@ -378,9 +387,16 @@
                                                 <ul class="pagination justify-content-center">
                                                     <!-- Previous Button -->
                                                     <li class="page-item ${currentPage <= 1 ? 'disabled' : ''}">
-                                                        <a class="page-link" href="raw-attendance?page=${currentPage - 1}&pageSize=${pageSize}&search=${search}&fromDate=${fromDate}&toDate=${toDate}&filterType=${filterType}">
-                                                            <i class="fa fa-chevron-left"></i> Previous
-                                                        </a>
+                                                        <c:choose>
+                                                            <c:when test="${currentPage <= 1}">
+                                                                <span class="page-link"><i class="fa fa-chevron-left"></i> Previous</span>
+                                                            </c:when>
+                                                            <c:otherwise>
+                                                                <a class="page-link" href="raw-attendance?page=${currentPage - 1}&pageSize=${pageSize}&search=${search}&fromDate=${fromDate}&toDate=${toDate}&filterType=${filterType}">
+                                                                    <i class="fa fa-chevron-left"></i> Previous
+                                                                </a>
+                                                            </c:otherwise>
+                                                        </c:choose>
                                                     </li>
 
                                                     <!-- Page Numbers -->
@@ -437,9 +453,16 @@
 
                                                     <!-- Next Button -->
                                                     <li class="page-item ${currentPage >= totalPages ? 'disabled' : ''}">
-                                                        <a class="page-link" href="raw-attendance?page=${currentPage + 1}&pageSize=${pageSize}&search=${search}&fromDate=${fromDate}&toDate=${toDate}&filterType=${filterType}">
-                                                            Next <i class="fa fa-chevron-right"></i>
-                                                        </a>
+                                                        <c:choose>
+                                                            <c:when test="${currentPage >= totalPages}">
+                                                                <span class="page-link">Next <i class="fa fa-chevron-right"></i></span>
+                                                                </c:when>
+                                                                <c:otherwise>
+                                                                <a class="page-link" href="raw-attendance?page=${currentPage + 1}&pageSize=${pageSize}&search=${search}&fromDate=${fromDate}&toDate=${toDate}&filterType=${filterType}">
+                                                                    Next <i class="fa fa-chevron-right"></i>
+                                                                </a>
+                                                            </c:otherwise>
+                                                        </c:choose>
                                                     </li>
                                                 </ul>
                                             </nav>
@@ -462,30 +485,32 @@
                         </div>
                     </div>
                 </div>
-        </main>
-    </body>
+                <input type="hidden" name="page" value="1">
 
-    <script src="${pageContext.request.contextPath}/assets2/js/jquery.min.js"></script>
-    <script src="${pageContext.request.contextPath}/assets2/vendors/bootstrap/js/popper.min.js"></script>
-    <script src="${pageContext.request.contextPath}/assets2/vendors/bootstrap/js/bootstrap.min.js"></script>
-    <script src="${pageContext.request.contextPath}/assets2/vendors/bootstrap-select/bootstrap-select.min.js"></script>
-    <script src="${pageContext.request.contextPath}/assets2/vendors/bootstrap-touchspin/jquery.bootstrap-touchspin.js"></script>
-    <script src="${pageContext.request.contextPath}/assets2/vendors/magnific-popup/magnific-popup.js"></script>
-    <script src="${pageContext.request.contextPath}/assets2/vendors/counter/waypoints-min.js"></script>
-    <script src="${pageContext.request.contextPath}/assets2/vendors/counter/counterup.min.js"></script>
-    <script src="${pageContext.request.contextPath}/assets2/vendors/imagesloaded/imagesloaded.js"></script>
-    <script src="${pageContext.request.contextPath}/assets2/vendors/masonry/masonry.js"></script>
-    <script src="${pageContext.request.contextPath}/assets2/vendors/masonry/filter.js"></script>
-    <script src="${pageContext.request.contextPath}/assets2/vendors/owl-carousel/owl.carousel.js"></script>
-    <script src="${pageContext.request.contextPath}/assets2/vendors/scroll/scrollbar.min.js"></script>
-    <script src="${pageContext.request.contextPath}/assets2/js/functions.js"></script>
-    <script src="${pageContext.request.contextPath}/assets2/vendors/chart/chart.min.js"></script>
-    <script src="${pageContext.request.contextPath}/assets2/js/admin.js"></script>
-    <script src="${pageContext.request.contextPath}/assets2/vendors/calendar/moment.min.js"></script>
-    <script src="${pageContext.request.contextPath}/assets2/vendors/calendar/fullcalendar.js"></script>
-    <script src="${pageContext.request.contextPath}/assets2/vendors/switcher/switcher.js"></script>
+                </main>
+                </body>
 
-    <script>
+                <script src="${pageContext.request.contextPath}/assets2/js/jquery.min.js"></script>
+                <script src="${pageContext.request.contextPath}/assets2/vendors/bootstrap/js/popper.min.js"></script>
+                <script src="${pageContext.request.contextPath}/assets2/vendors/bootstrap/js/bootstrap.min.js"></script>
+                <script src="${pageContext.request.contextPath}/assets2/vendors/bootstrap-select/bootstrap-select.min.js"></script>
+                <script src="${pageContext.request.contextPath}/assets2/vendors/bootstrap-touchspin/jquery.bootstrap-touchspin.js"></script>
+                <script src="${pageContext.request.contextPath}/assets2/vendors/magnific-popup/magnific-popup.js"></script>
+                <script src="${pageContext.request.contextPath}/assets2/vendors/counter/waypoints-min.js"></script>
+                <script src="${pageContext.request.contextPath}/assets2/vendors/counter/counterup.min.js"></script>
+                <script src="${pageContext.request.contextPath}/assets2/vendors/imagesloaded/imagesloaded.js"></script>
+                <script src="${pageContext.request.contextPath}/assets2/vendors/masonry/masonry.js"></script>
+                <script src="${pageContext.request.contextPath}/assets2/vendors/masonry/filter.js"></script>
+                <script src="${pageContext.request.contextPath}/assets2/vendors/owl-carousel/owl.carousel.js"></script>
+                <script src="${pageContext.request.contextPath}/assets2/vendors/scroll/scrollbar.min.js"></script>
+                <script src="${pageContext.request.contextPath}/assets2/js/functions.js"></script>
+                <script src="${pageContext.request.contextPath}/assets2/vendors/chart/chart.min.js"></script>
+                <script src="${pageContext.request.contextPath}/assets2/js/admin.js"></script>
+                <script src="${pageContext.request.contextPath}/assets2/vendors/calendar/moment.min.js"></script>
+                <script src="${pageContext.request.contextPath}/assets2/vendors/calendar/fullcalendar.js"></script>
+                <script src="${pageContext.request.contextPath}/assets2/vendors/switcher/switcher.js"></script>
+
+                <script>
                                                     $(document).ready(function () {
 
                                                         $('#calendar').fullCalendar({
@@ -562,5 +587,12 @@
                                                         });
 
                                                     });
-    </script>
-</html>
+                </script>
+                <script>
+                    function resetPageAndSubmit() {
+                        // Reset page về 1 khi thay đổi pageSize
+                        document.querySelector('input[name="page"]').value = '1';
+                        document.querySelector('form').submit();
+                    }
+                </script>
+                </html>
