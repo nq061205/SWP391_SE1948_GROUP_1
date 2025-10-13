@@ -58,7 +58,7 @@
                     <div class="wc-title">
                         <h4><i class="fa fa-users"></i> Candidate List</h4>
                         <span class="badge badge-primary">
-                            Total: ${sessionScope.candidateList != null ? sessionScope.candidateList.size() : 0}
+                            Total: ${sessionScope.candidateListFull != null ? sessionScope.candidateListFull.size() : 0}
                         </span>
                     </div>
 
@@ -128,7 +128,7 @@
                                 <tbody>
                                     <c:forEach var="el" items="${sessionScope.candidateList}" varStatus="st">
                                         <tr>
-                                            <td>${st.index + 1}</td>
+                                            <td>${(sessionScope.pages - 1) * 5 + st.index + 1}</td>
                                             <td class="text-left">
                                                 <strong class="text-primary">${el.name}</strong><br>
                                                 <small class="text-muted">ID: ${el.candidateId}</small>
