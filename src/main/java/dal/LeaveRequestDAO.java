@@ -148,25 +148,151 @@ public class LeaveRequestDAO extends DBContext {
         return 0;
     }
 
-    public List<LeaveRequest> findLeaveByEmpPaged(int empId, int offset, int limit) {
-        String sql = ""
-                + "SELECT * "
-                + "FROM hrm.leave_request "
-                + "WHERE emp_id = ? "
-                + "ORDER BY created_at DESC "
-                + "LIMIT ? OFFSET ? ";
+    public int countLeaveByEmpFiltered(
+            int empId, String search, String status, String type,
+            Date startDate, Date endDate) {
+
+        StringBuilder sql = new StringBuilder(
+                "SELECT COUNT(*) "
+                + "FROM hrm.leave_request lr "
+                + "WHERE lr.emp_id = ?"
+        );
+
+        List<Object> params = new ArrayList<>();
+        params.add(empId);
+
+        if (status != null && !status.trim().isEmpty()) {
+            sql.append(" AND lr.status = ?");
+            params.add(status.trim());
+        }
+
+        if (type != null && !type.trim().isEmpty()) {
+            sql.append(" AND lr.leave_type = ?");
+            params.add(type.trim());
+        }
+        
+        if (search != null && !search.trim().isEmpty()) {
+            String kw = "%" + search.trim() + "%";
+            sql.append(" AND (lr.status LIKE ? "
+                    + "  OR lr.leave_type LIKE ? "
+                    + "  OR lr.reason LIKE ? "
+                    + "  OR CAST(lr.start_date AS CHAR) LIKE ? "
+                    + "  OR CAST(lr.end_date AS CHAR) LIKE ?)");
+            params.add(kw);
+            params.add(kw);
+            params.add(kw);
+            params.add(kw);
+            params.add(kw);
+        }
+
+        if (startDate != null) {
+            sql.append(" AND lr.created_at >= ?");
+            params.add(java.sql.Timestamp.valueOf(startDate.toLocalDate().atStartOfDay()));
+        }
+        if (endDate != null) {
+            sql.append(" AND lr.created_at <= ?");
+            params.add(java.sql.Timestamp.valueOf(endDate.toLocalDate().plusDays(1).atStartOfDay()));
+        }
+
+        try (Connection cn = DBContext.getConnection(); PreparedStatement ps = cn.prepareStatement(sql.toString())) {
+
+            int i = 1;
+            for (Object p : params) {
+                if (p instanceof Integer) {
+                    ps.setInt(i++, (Integer) p);
+                } else if (p instanceof String) {
+                    ps.setString(i++, (String) p);
+                } else if (p instanceof java.sql.Date) {
+                    ps.setDate(i++, (java.sql.Date) p);     // nếu dùng DATE ở range
+                } else if (p instanceof java.sql.Timestamp) {
+                    ps.setTimestamp(i++, (java.sql.Timestamp) p);
+                }
+            }
+
+            try (ResultSet rs = ps.executeQuery()) {
+                return rs.next() ? rs.getInt(1) : 0;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return 0;
+        }
+    }
+
+    public List<LeaveRequest> findLeaveByEmpFilteredPaged(
+            int empId, String search, String status, String type,
+            Date startDate, Date endDate,
+            int offset, int size) {
+
+        StringBuilder sql = new StringBuilder(
+                "SELECT lr.* "
+                + "FROM hrm.leave_request lr "
+                + "WHERE lr.emp_id = ?"
+        );
+
+        List<Object> params = new ArrayList<>();
+        params.add(empId);
+
+        if (status != null && !status.trim().isEmpty()) {
+            sql.append(" AND lr.status = ?");
+            params.add(status.trim());
+        }
+
+        if (type != null && !type.trim().isEmpty()) {
+            sql.append(" AND lr.leave_type = ?");
+            params.add(type.trim());
+        }
+
+        if (search != null && !search.trim().isEmpty()) {
+            String kw = "%" + search.trim() + "%";
+            sql.append(" AND (lr.status LIKE ? "
+                    + "  OR lr.leave_type LIKE ? "
+                    + "  OR lr.reason LIKE ? "
+                    + "  OR CAST(lr.start_date AS CHAR) LIKE ? "
+                    + "  OR CAST(lr.end_date   AS CHAR) LIKE ?)");
+            params.add(kw);
+            params.add(kw);
+            params.add(kw);
+            params.add(kw);
+            params.add(kw);
+        }
+
+        if (startDate != null) {
+            sql.append(" AND lr.created_at >= ?");
+            params.add(java.sql.Timestamp.valueOf(startDate.toLocalDate().atStartOfDay()));
+        }
+        if (endDate != null) {
+            sql.append(" AND lr.created_at <= ?");
+            params.add(java.sql.Timestamp.valueOf(endDate.toLocalDate().plusDays(1).atStartOfDay()));
+        }
+
+        sql.append(" ORDER BY lr.created_at DESC LIMIT ? OFFSET ?");
+        params.add(size);
+        params.add(offset);
+
         List<LeaveRequest> list = new ArrayList<>();
-        try (Connection cn = DBContext.getConnection(); PreparedStatement ps = cn.prepareStatement(sql)) {
-            ps.setInt(1, empId);
-            ps.setInt(2, limit);
-            ps.setInt(3, offset);
+
+        try (Connection cn = DBContext.getConnection(); PreparedStatement ps = cn.prepareStatement(sql.toString())) {
+
+            int i = 1;
+            for (Object p : params) {
+                if (p instanceof Integer) {
+                    ps.setInt(i++, (Integer) p);
+                } else if (p instanceof String) {
+                    ps.setString(i++, (String) p);
+                } else if (p instanceof java.sql.Date) {
+                    ps.setDate(i++, (java.sql.Date) p);
+                } else if (p instanceof java.sql.Timestamp) {
+                    ps.setTimestamp(i++, (java.sql.Timestamp) p);
+                }
+            }
+
             try (ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {
                     list.add(new LeaveRequest(
                             rs.getInt("leave_id"),
                             employeeDAO.getEmployeeByEmpId(rs.getInt("emp_id")),
                             rs.getString("leave_type"),
-                            rs.getString("status"),
+                            rs.getString("reason"),
                             rs.getDouble("day_requested"),
                             rs.getDate("start_date"),
                             rs.getDate("end_date"),
@@ -182,29 +308,11 @@ public class LeaveRequestDAO extends DBContext {
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        return list;
-    }
 
-    public int countLeaveByEmp(int empId) {
-        String sql = "SELECT COUNT(*) FROM hrm.leave_request WHERE emp_id = ?";
-        try (Connection cn = DBContext.getConnection(); PreparedStatement ps = cn.prepareStatement(sql)) {
-            ps.setInt(1, empId);
-            try (ResultSet rs = ps.executeQuery()) {
-                if (rs.next()) {
-                    return rs.getInt(1);
-                }
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return 0;
+        return list;
     }
 
     public static void main(String[] args) {
         LeaveRequestDAO dao = new LeaveRequestDAO();
-        dao.countLeaveByEmp(1);
-        for (LeaveRequest x : dao.findLeaveByEmpPaged(1, 0, 10)) {
-            System.out.println(x.toString());
-        }
     }
 }
