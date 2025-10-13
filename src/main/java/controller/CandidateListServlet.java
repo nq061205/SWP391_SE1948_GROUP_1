@@ -29,6 +29,7 @@ public class CandidateListServlet extends HttpServlet {
         CandidateDAO cDAO = new CandidateDAO();
         String type = request.getParameter("type");
         String page = request.getParameter("page");
+        String tab = (request.getParameter("tab") != null) ? request.getParameter("tab") : "pending";
         int pageNum = 1;
         if (page != null) {
             pageNum = Integer.parseInt(page);
@@ -36,12 +37,15 @@ public class CandidateListServlet extends HttpServlet {
         HttpSession session = request.getSession();
 
         List<Candidate> fullList = (List<Candidate>) session.getAttribute("candidateListFull");
-
-        if (fullList == null) {
-            fullList = cDAO.getAllCandidate();
-            session.setAttribute("candidateListFull", fullList);
+        if ("approve".equals(tab)) {
+            fullList = cDAO.getAllCandidate("approve");
+        } else if ("reject".equals(tab)) {
+            fullList = cDAO.getAllCandidate("reject");
+        } else {
+            fullList = cDAO.getAllCandidate("pending");
         }
-
+        session.setAttribute("tab", tab);
+        session.setAttribute("candidateListFull", fullList);
         List<Candidate> candidateList = (List<Candidate>) session.getAttribute("candidateList");
         if (session.getAttribute("candidateList") == null
                 || (type == null || (!type.equals("name") && !type.equals("appliedat")))) {
@@ -104,8 +108,15 @@ public class CandidateListServlet extends HttpServlet {
         String keyword = request.getParameter("keyword");
         CandidateDAO cDAO = new CandidateDAO();
         HttpSession ses = request.getSession();
-
-        List<Candidate> searchResult = cDAO.getAllCandidateByKeyWord(keyword);
+        String tab = request.getParameter("tab");
+        List<Candidate> searchResult;
+        if ("approve".equals(tab)) {
+            searchResult = cDAO.getAllCandidateByKeyWord(keyword, "approve");
+        } else if ("reject".equals(tab)) {
+            searchResult = cDAO.getAllCandidateByKeyWord(keyword, "reject");
+        } else {
+            searchResult = cDAO.getAllCandidateByKeyWord(keyword, "pending");
+        }
         int totalPage = (int) Math.ceil((double) searchResult.size() / 5);
         List<Candidate> pagedList = cDAO.getCandidateByPage(searchResult, 1, 5);
 
