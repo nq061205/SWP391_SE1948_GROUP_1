@@ -23,7 +23,7 @@ public class CandidateDAO extends DBContext {
             case "pending":
                 sql += " WHERE result IS NULL";
                 break;
-            case "pass":
+            case "approve":
                 sql += " WHERE result = 1";
                 break;
             case "reject":
@@ -98,7 +98,7 @@ public class CandidateDAO extends DBContext {
         if (result.equals("pending")) {
             sql = "SELECT * FROM candidate WHERE (name LIKE ? OR email LIKE ? OR phone LIKE ?) AND result IS NULL";
         }
-        if (result.equals("pass")) {
+        if (result.equals("approve")) {
             sql = "SELECT * FROM candidate WHERE (name LIKE ? OR email LIKE ? OR phone LIKE ?) AND result = 1";
 
         }
@@ -225,7 +225,8 @@ public class CandidateDAO extends DBContext {
 
     public static void main(String[] args) {
         CandidateDAO dao = new CandidateDAO();
-        for (Candidate c : dao.getAllCandidate("pending")) {
+        for (Candidate c : dao.getAllCandidate("approve")) {
+            System.out.println(c);
         }
     }
 }
