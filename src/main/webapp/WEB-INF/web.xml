@@ -86,6 +86,14 @@
         <servlet-name>CandidateActionServlet</servlet-name>
         <servlet-class>controller.CandidateActionServlet</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>RawAttendanceServlet</servlet-name>
+        <servlet-class>controller.hr.RawAttendanceServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>DailyAttendance</servlet-name>
+        <servlet-class>controller.hr.DailyAttendance</servlet-class>
+    </servlet>
     <servlet-mapping>
         <servlet-name>HomePageServlet</servlet-name>
         <url-pattern>/homepage</url-pattern>
@@ -98,6 +106,14 @@
         <servlet-name>ForgetPassword</servlet-name>
         <url-pattern>/forgetpassword</url-pattern>
     </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>UploadExcelServlet</servlet-name>
+        <url-pattern>/upload-excel</url-pattern>
+    </servlet-mapping>
+    <servlet>
+        <servlet-name>RecoveryPassword</servlet-name>
+        <servlet-class>controller.RecoveryPassword</servlet-class>
+    </servlet>
     <servlet-mapping>
         <servlet-name>RecoveryPassword</servlet-name>
         <url-pattern>/recovery</url-pattern>
@@ -148,7 +164,7 @@
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>DownloadRawTemplateServlet</servlet-name>
-        <url-pattern>/downloadtemplate</url-pattern>
+        <url-pattern>/download-template</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>AccountList</servlet-name>
@@ -170,6 +186,14 @@
     <servlet-mapping>
         <servlet-name>CandidateActionServlet</servlet-name>
         <url-pattern>/candidateaction</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>RawAttendanceServlet</servlet-name>
+        <url-pattern>/raw-attendance</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>DailyAttendance</servlet-name>
+        <url-pattern>/daily</url-pattern>
     </servlet-mapping>
     <session-config>
         <session-timeout>30</session-timeout>
