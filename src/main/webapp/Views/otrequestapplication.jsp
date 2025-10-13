@@ -6,6 +6,7 @@
 
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ page contentType="text/html" pageEncoding="UTF-8"%>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <!DOCTYPE html>
 <html lang="en">
     <head>
@@ -57,7 +58,7 @@
         <!-- HEADER + NAVBAR -->
         <%@ include file="CommonItems/Header/dashboardHeader.jsp" %>
         <%@ include file="CommonItems/Navbar/empNavbar.jsp" %>
-        <input type="hidden" name="typeApplication" value="leaverequest" />
+        <input type="hidden" name="typeApplication" value="otrequest" />
         <c:if test="${param.issuccess eq 'true'}">
             <script>
                 alert("Update successfully!");
@@ -73,6 +74,30 @@
                 </div>
                 <div class="row">
                     <div class="col-lg-12">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <form action="${pageContext.request.contextPath}/application" method="get" class="form-inline">
+                                <input type="hidden" name="typeapplication" value="OT"/>
+                                <div class="input-group mr-2">
+                                    <input type="text" name="search" value="${fn:escapeXml(param.search)}"
+                                           class="form-control" placeholder="Search by date, hours, status..." style="width:260px;">
+                                    <div class="input-group-append">
+                                        <button class="btn btn-primary" type="submit"><i class="fa fa-search"></i></button>
+                                    </div>
+                                </div>
+                                <select name="status" class="form-control mr-2" onchange="this.form.submit()">
+                                    <option value="">All Status</option>
+                                    <option value="Pending"  ${param.status == 'Pending'  ? 'selected' : ''}>Pending</option>
+                                    <option value="Approved" ${param.status == 'Approved' ? 'selected' : ''}>Approved</option>
+                                    <option value="Rejected" ${param.status == 'Rejected' ? 'selected' : ''}>Rejected</option>
+                                </select>
+                                <input type="date" name="startDate" value="${param.startDate}" class="form-control mr-2" />
+                                <span class="mr-2">to</span>
+                                <input type="date" name="endDate"   value="${param.endDate}"   class="form-control mr-2" />
+                                <button type="submit" class="btn btn-outline-secondary mr-2">Apply</button>
+                                <a class="btn btn-light"
+                                   href="${pageContext.request.contextPath}/application?typeapplication=OT">Clear</a>
+                            </form>
+                        </div>
                         <div class="mail-box-list">
                             <c:forEach var="application" items="${listapplication}">
                                 <div class="mail-list-info ${empty application.approvedBy ? '' : 'unread'}">
@@ -129,20 +154,37 @@
                     </div>
                 </div>
             </div>
+            <c:url var="baseUrl" value="/application">
+                <c:param name="typeapplication" value="OT"/>
+                <c:param name="size" value="${size}"/>
+
+                <c:if test="${not empty param.search}">
+                    <c:param name="search" value="${param.search}"/>
+                </c:if>
+                <c:if test="${not empty param.status}">
+                    <c:param name="status" value="${param.status}"/>
+                </c:if>
+                <c:if test="${not empty param.startDate}">
+                    <c:param name="startDate" value="${param.startDate}"/>
+                </c:if>
+                <c:if test="${not empty param.endDate}">
+                    <c:param name="endDate" value="${param.endDate}"/>
+                </c:if>
+            </c:url>
             <nav class="mt-3">
                 <ul class="pagination justify-content-center">
                     <li class="page-item ${page <= 1 ? 'disabled' : ''}">
-                        <a class="page-link" href="?typeapplication=OT&page=${page-1}&size=${size}">Prev</a>
+                        <a class="page-link" href="${baseUrl}&page=${page-1}">Prev</a>
                     </li>
 
                     <c:forEach var="p" begin="1" end="${totalPages}">
                         <li class="page-item ${p == page ? 'active' : ''}">
-                            <a class="page-link" href="?typeapplication=OT&page=${p}&size=${size}">${p}</a>
+                            <a class="page-link" href="${baseUrl}&page=${p}">${p}</a>
                         </li>
                     </c:forEach>
 
                     <li class="page-item ${page >= totalPages ? 'disabled' : ''}">
-                        <a class="page-link" href="?typeapplication=OT&page=${page+1}&size=${size}">Next</a>
+                        <a class="page-link" href="${baseUrl}&page=${page+1}">Next</a>
                     </li>
                 </ul>
             </nav>

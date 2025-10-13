@@ -21,6 +21,18 @@
         <link rel="stylesheet" href="${pageContext.request.contextPath}/assets2/css/style.css">
         <link rel="stylesheet" href="${pageContext.request.contextPath}/assets2/css/dashboard.css">
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+        <!-- Custom tab highlight -->
+        <style>
+            .nav-tabs .nav-link.active {
+                background-color: #007bff !important; /* xanh dương */
+                color: #fff !important;
+                border-color: #007bff #007bff #fff;
+            }
+            .nav-tabs .nav-link:hover {
+                background-color: #e9f2ff;
+            }
+        </style>
     </head>
 
     <body class="ttr-opened-sidebar ttr-pinned-sidebar">
@@ -41,20 +53,21 @@
                     </ul>
                 </div>
 
-                <!-- ✅ Search Bar -->
+                <!-- ✅ Widget Box -->
                 <div class="widget-box">
                     <div class="wc-title">
                         <h4><i class="fa fa-users"></i> Candidate List</h4>
                         <span class="badge badge-primary">
-                            Total: ${sessionScope.candidateList != null ? sessionScope.candidateList.size() : 0}
+                            Total: ${sessionScope.candidateListFull != null ? sessionScope.candidateListFull.size() : 0}
                         </span>
                     </div>
 
                     <div class="widget-inner">
 
-                        <!-- Search Form (POST → Servlet) -->
-                        <form action="${pageContext.request.contextPath}/candidatelist" method="post" 
+                        <!-- ✅ Search Form -->
+                        <form action="${pageContext.request.contextPath}/candidatelist" method="post"
                               class="d-flex align-items-center justify-content-between mb-4">
+                            <input type="hidden" name="tab" value="${sessionScope.tab}">
                             <div class="input-group" style="max-width: 400px;">
                                 <span class="input-group-text bg-white border-end-0">
                                     <i class="fa fa-search text-muted"></i>
@@ -70,20 +83,40 @@
                             </div>
                         </form>
 
-                        <!-- ✅ Table (click để sắp xếp qua Servlet) -->
+                        <!-- ✅ Tabs: Pending / Approved / Rejected -->
+                        <ul class="nav nav-tabs mb-4" id="candidateTabs" role="tablist">
+                            <li class="nav-item" role="presentation">
+                                <a class="nav-link ${sessionScope.tab eq 'pending' ? 'active bg-primary text-white' : ''}" 
+                                   href="${pageContext.request.contextPath}/candidatelist?tab=pending" role="tab">
+                                    <i class="fa fa-list"></i> Pending
+                                </a>
+                            </li>
+                            <li class="nav-item" role="presentation">
+                                <a class="nav-link ${sessionScope.tab eq 'approve' ? 'active bg-primary text-white' : ''}" 
+                                   href="${pageContext.request.contextPath}/candidatelist?tab=approve" role="tab">
+                                    <i class="fa fa-check-circle text-success"></i> Approved
+                                </a>
+                            </li>
+                            <li class="nav-item" role="presentation">
+                                <a class="nav-link ${sessionScope.tab eq 'reject' ? 'active bg-primary text-white' : ''}" 
+                                   href="${pageContext.request.contextPath}/candidatelist?tab=reject" role="tab">
+                                    <i class="fa fa-times-circle text-danger"></i> Rejected
+                                </a>
+                            </li>
+                        </ul>
+
+                        <!-- ✅ Candidate Table -->
                         <div class="table-responsive">
                             <table class="table table-striped table-bordered table-hover align-middle text-center">
                                 <thead class="thead-dark">
                                     <tr>
                                         <th>#</th>
-                                        <!-- Gọi lại servlet /candidatelist?type=name để sắp xếp -->
-                                        <th style="cursor:pointer;" 
+                                        <th style="cursor:pointer;"
                                             onclick="window.location = '${pageContext.request.contextPath}/candidatelist?type=name'">
                                             Full Name <i class="fa fa-sort"></i>
                                         </th>
                                         <th>Email</th>
                                         <th>Phone</th>
-                                        <!-- Gọi lại servlet /candidatelist?type=appliedat để sắp xếp -->
                                         <th style="cursor:pointer;"
                                             onclick="window.location = '${pageContext.request.contextPath}/candidatelist?type=appliedat'">
                                             Applied At <i class="fa fa-sort"></i>
@@ -95,7 +128,7 @@
                                 <tbody>
                                     <c:forEach var="el" items="${sessionScope.candidateList}" varStatus="st">
                                         <tr>
-                                            <td>${st.index + 1}</td>
+                                            <td>${(sessionScope.pages - 1) * 5 + st.index + 1}</td>
                                             <td class="text-left">
                                                 <strong class="text-primary">${el.name}</strong><br>
                                                 <small class="text-muted">ID: ${el.candidateId}</small>
@@ -114,7 +147,6 @@
                                         </tr>
                                     </c:forEach>
 
-                                    <!-- Nếu rỗng -->
                                     <c:if test="${empty sessionScope.candidateList}">
                                         <tr>
                                             <td colspan="6" class="text-muted text-center py-3">
@@ -125,56 +157,34 @@
                                     </c:if>
                                 </tbody>
                             </table>
-                            <!-- ✅ Pagination UI -->
+
+                            <!-- ✅ Pagination -->
                             <div class="d-flex justify-content-between align-items-center mt-4">
-
-                                <!-- Hiển thị tổng số bản ghi (tuỳ chọn) -->
                                 <div class="text-muted">
-                                    Showing <strong>1</strong> to <strong>10</strong> of <strong>50</strong> entries
+                                    Page <strong>${sessionScope.pages}</strong> of <strong>${sessionScope.total}</strong>
                                 </div>
-
-                                <!-- Thanh phân trang -->
                                 <nav aria-label="Candidate pagination">
                                     <ul class="pagination mb-0">
                                         <li class="page-item ${sessionScope.pages == 1 ? 'disabled' : ''}">
-                                            <c:choose>
-                                                <c:when test="${sessionScope.pages > 1}">
-                                                    <a class="page-link" 
-                                                       href="${pageContext.request.contextPath}/candidatelist?page=${sessionScope.pages - 1}">
-                                                        <i class="fa fa-chevron-left"></i> Previous
-                                                    </a>
-                                                </c:when>
-                                                <c:otherwise>
-                                                    <a class="page-link" tabindex="-1">
-                                                        <i class="fa fa-chevron-left"></i> Previous
-                                                    </a>
-                                                </c:otherwise>
-                                            </c:choose>
+                                            <a class="page-link"
+                                               href="${pageContext.request.contextPath}/candidatelist?page=${sessionScope.pages - 1}&tab=${sessionScope.tab}">
+                                                <i class="fa fa-chevron-left"></i> Previous
+                                            </a>
                                         </li>
 
                                         <li class="page-item active">
                                             <a class="page-link">${sessionScope.pages}</a>
                                         </li>
-                                        <li class="page-item ${sessionScope.pages >= sessionScope.total ? 'disabled' : ''}">
-                                            <c:choose>
-                                                <c:when test="${sessionScope.pages < sessionScope.total}">
-                                                    <a class="page-link" 
-                                                       href="${pageContext.request.contextPath}/candidatelist?page=${sessionScope.pages + 1}">
-                                                        Next <i class="fa fa-chevron-right"></i>
-                                                    </a>
-                                                </c:when>
-                                                <c:otherwise>
-                                                    <a class="page-link" tabindex="-1">
-                                                        Next <i class="fa fa-chevron-right"></i>
-                                                    </a>
-                                                </c:otherwise>
-                                            </c:choose>
-                                        </li>
 
+                                        <li class="page-item ${sessionScope.pages >= sessionScope.total ? 'disabled' : ''}">
+                                            <a class="page-link"
+                                               href="${pageContext.request.contextPath}/candidatelist?page=${sessionScope.pages + 1}&tab=${sessionScope.tab}">
+                                                Next <i class="fa fa-chevron-right"></i>
+                                            </a>
+                                        </li>
                                     </ul>
                                 </nav>
                             </div>
-
                         </div>
 
                     </div>

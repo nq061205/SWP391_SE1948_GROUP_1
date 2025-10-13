@@ -3,7 +3,9 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
 package model;
+
 import java.sql.Timestamp;
+
 /**
  *
  * @author admin
@@ -17,12 +19,12 @@ public class Candidate {
     private String cv;
     private RecruitmentPost post;
     private Timestamp appliedAt;
-    private boolean result;
+    private Boolean result;
 
     public Candidate() {
     }
 
-    public Candidate(int candidateId, String name, String email, String phone, String cv, RecruitmentPost post, Timestamp appliedAt, boolean result) {
+    public Candidate(int candidateId, String name, String email, String phone, String cv, RecruitmentPost post, Timestamp appliedAt, Boolean result) {
         this.candidateId = candidateId;
         this.name = name;
         this.email = email;
@@ -33,15 +35,13 @@ public class Candidate {
         this.result = result;
     }
 
-    public boolean isResult() {
+    public Boolean getResult() {
         return result;
     }
 
-    public void setResult(boolean result) {
+    public void setResult(Boolean result) {
         this.result = result;
     }
-
-    
 
     public int getCandidateId() {
         return candidateId;
@@ -104,6 +104,4 @@ public class Candidate {
         return "Candidate{" + "candidateId=" + candidateId + ", name=" + name + ", email=" + email + ", phone=" + phone + ", cv=" + cv + ", post=" + post + ", appliedAt=" + appliedAt + ", result=" + result + '}';
     }
 
-    
-    
 }
