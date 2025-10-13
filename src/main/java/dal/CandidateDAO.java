@@ -11,11 +11,30 @@ public class CandidateDAO extends DBContext {
 
     private final RecruitmentPostDAO rpDAO = new RecruitmentPostDAO();
 
-    public List<Candidate> getAllCandidate() {
+    public List<Candidate> getAllCandidate(String result) {
         List<Candidate> candidateList = new ArrayList<>();
-        String sql = "SELECT * FROM candidate";
-        try (Connection conn = DBContext.getConnection(); PreparedStatement ps = conn.prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
 
+        if (result == null) {
+            result = "all";
+        }
+
+        String sql = "SELECT * FROM candidate";
+        switch (result.toLowerCase()) {
+            case "pending":
+                sql += " WHERE result IS NULL";
+                break;
+            case "approve":
+                sql += " WHERE result = 1";
+                break;
+            case "reject":
+                sql += " WHERE result = 0";
+                break;
+            case "all":
+            default:
+                break;
+        }
+
+        try (Connection conn = DBContext.getConnection(); PreparedStatement ps = conn.prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
             while (rs.next()) {
                 Candidate candidate = new Candidate();
                 candidate.setCandidateId(rs.getInt("candidate_id"));
@@ -25,12 +44,19 @@ public class CandidateDAO extends DBContext {
                 candidate.setCv(rs.getString("cv"));
                 candidate.setPost(rpDAO.getPostById(rs.getInt("post_id")));
                 candidate.setAppliedAt(rs.getTimestamp("applied_at"));
-                candidate.setResult(rs.getBoolean("result"));
+                Object resultObj = rs.getObject("result");
+                if (resultObj == null) {
+                    candidate.setResult(null);
+                } else {
+                    candidate.setResult(rs.getBoolean("result"));
+                }
+
                 candidateList.add(candidate);
             }
         } catch (SQLException ex) {
             Logger.getLogger(CandidateDAO.class.getName()).log(Level.SEVERE, null, ex);
         }
+
         return candidateList;
     }
 
@@ -63,12 +89,25 @@ public class CandidateDAO extends DBContext {
         return candidateList;
     }
 
-    public List<Candidate> getAllCandidateByKeyWord(String key) {
+    public List<Candidate> getAllCandidateByKeyWord(String key, String result) {
         List<Candidate> candidateList = new ArrayList<>();
         if (key == null || key.trim().isEmpty()) {
-            return getAllCandidate();
+            return getAllCandidate("alls");
         }
-        String sql = "SELECT * FROM candidate WHERE name LIKE ? OR email LIKE ? OR phone LIKE ?";
+        String sql = "";
+        if (result.equals("pending")) {
+            sql = "SELECT * FROM candidate WHERE (name LIKE ? OR email LIKE ? OR phone LIKE ?) AND result IS NULL";
+        }
+        if (result.equals("approve")) {
+            sql = "SELECT * FROM candidate WHERE (name LIKE ? OR email LIKE ? OR phone LIKE ?) AND result = 1";
+
+        }
+        if (result.equals("reject")) {
+            sql = "SELECT * FROM candidate WHERE (name LIKE ? OR email LIKE ? OR phone LIKE ?) AND result = 0";
+        }
+        if (result.equals("all")) {
+            sql = "SELECT * FROM candidate WHERE (name LIKE ? OR email LIKE ? OR phone LIKE ?)";
+        }
         try (Connection conn = DBContext.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
 
             String pattern = "%" + key + "%";
@@ -132,17 +171,61 @@ public class CandidateDAO extends DBContext {
         int end = Math.min(start + quantityPerPage, fullList.size());
 
         if (start >= fullList.size() || start < 0) {
-            return pagedList; 
+            return pagedList;
+        }
+        pagedList = fullList.subList(start, end);
+        return new ArrayList<>(pagedList);
+    }
+
+    public Candidate getCandidateById(int emp_id) {
+        String sql = "SELECT * FROM Candidate WHERE candidate_id = ?";
+        try (Connection conn = DBContext.getConnection(); PreparedStatement stm = conn.prepareStatement(sql)) {
+
+            stm.setInt(1, emp_id);
+            try (ResultSet rs = stm.executeQuery()) {
+                if (rs.next()) {
+                    Candidate candidate = new Candidate(
+                            rs.getInt("candidate_id"),
+                            rs.getString("name"),
+                            rs.getString("email"),
+                            rs.getString("phone"),
+                            rs.getString("CV"),
+                            rpDAO.getPostById(rs.getInt("post_id")),
+                            rs.getTimestamp("applied_at"),
+                            rs.getObject("result") == null ? null : rs.getBoolean("result")
+                    );
+                    return candidate;
+                }
+            }
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
+        return null;
+    }
+
+    public boolean updateResultCandidate(int result, int id) {
+        String sql = "UPDATE Candidate "
+                + "SET result = ? "
+                + "WHERE candidate_id = ?";
+
+        try (Connection conn = DBContext.getConnection(); PreparedStatement stm = conn.prepareStatement(sql)) {
+
+            stm.setInt(1, result);
+            stm.setInt(2, id);   
+
+            int rows = stm.executeUpdate();
+            return rows > 0; 
+
+        } catch (SQLException ex) {
+            ex.printStackTrace();
         }
 
-        // Cắt phần dữ liệu cần hiển thị
-        pagedList = fullList.subList(start, end);
-        return new ArrayList<>(pagedList); 
+        return false;
     }
 
     public static void main(String[] args) {
         CandidateDAO dao = new CandidateDAO();
-        for (Candidate c : dao.getCandidateByPage(dao.getAllCandidate(),2, 5)) {
+        for (Candidate c : dao.getAllCandidate("approve")) {
             System.out.println(c);
         }
     }
