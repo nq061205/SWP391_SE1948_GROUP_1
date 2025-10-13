@@ -67,13 +67,21 @@ public class RawAttendanceServlet extends HttpServlet {
 
         int page = 1;
         int pageSize = 10;
+        boolean pageSizeChanged = false;
 
         try {
             if (pageParam != null && !pageParam.trim().isEmpty()) {
                 page = Integer.parseInt(pageParam);
             }
             if (pageSizeParam != null && !pageSizeParam.trim().isEmpty()) {
-                pageSize = Integer.parseInt(pageSizeParam);
+                int newPageSize = Integer.parseInt(pageSizeParam);
+                if (newPageSize != pageSize) {
+                    pageSizeChanged = true;
+                    pageSize = newPageSize;
+                    page = 1; 
+                } else {
+                    pageSize = newPageSize;
+                }
             }
         } catch (NumberFormatException e) {
             page = 1;
@@ -87,34 +95,21 @@ public class RawAttendanceServlet extends HttpServlet {
             pageSize = 10;
         }
 
-        search = (search != null) ? search.trim() : null;
-        fromDate = (fromDate != null) ? fromDate.trim() : null;
-        toDate = (toDate != null) ? toDate.trim() : null;
-        filterType = (filterType != null) ? filterType.trim() : null;
-
-        if (search != null && search.isEmpty()) {
-            search = null;
-        }
-        if (fromDate != null && fromDate.isEmpty()) {
-            fromDate = null;
-        }
-        if (toDate != null && toDate.isEmpty()) {
-            toDate = null;
-        }
-        if (filterType != null && filterType.isEmpty()) {
-            filterType = null;
-        }
-
-        int offset = (page - 1) * pageSize;
+        search = (search != null && !search.trim().isEmpty()) ? search.trim() : null;
+        fromDate = (fromDate != null && !fromDate.trim().isEmpty()) ? fromDate.trim() : null;
+        toDate = (toDate != null && !toDate.trim().isEmpty()) ? toDate.trim() : null;
+        filterType = (filterType != null && !filterType.trim().isEmpty()) ? filterType.trim() : null;
 
         AttendanceRawDAO rawDAO = new AttendanceRawDAO();
         try {
             long totalRecords = rawDAO.countRawRecords(search, fromDate, toDate, filterType);
-            int totalPages = (totalRecords > 0) ? (int) Math.ceil((double) totalRecords / pageSize) : 0;
+            int totalPages = (totalRecords > 0) ? (int) Math.ceil((double) totalRecords / pageSize) : 1;
+
             if (page > totalPages && totalPages > 0) {
                 page = totalPages;
-                offset = (page - 1) * pageSize;
             }
+
+            int offset = (page - 1) * pageSize;
 
             List<AttendanceRaw> rawList = rawDAO.getRawRecords(offset, pageSize, search, fromDate, toDate, filterType);
 
@@ -123,11 +118,10 @@ public class RawAttendanceServlet extends HttpServlet {
             request.setAttribute("pageSize", pageSize);
             request.setAttribute("totalPages", totalPages);
             request.setAttribute("totalRecords", totalRecords);
-
-            request.setAttribute("searchParam", search);
-            request.setAttribute("fromDateParam", fromDate);
-            request.setAttribute("toDateParam", toDate);
-            request.setAttribute("filterTypeParam", filterType);
+            request.setAttribute("search", search != null ? search : "");
+            request.setAttribute("fromDate", fromDate != null ? fromDate : "");
+            request.setAttribute("toDate", toDate != null ? toDate : "");
+            request.setAttribute("filterType", filterType != null ? filterType : "");
 
             request.getRequestDispatcher("Views/HR/rawAttendance.jsp").forward(request, response);
         } catch (Exception e) {

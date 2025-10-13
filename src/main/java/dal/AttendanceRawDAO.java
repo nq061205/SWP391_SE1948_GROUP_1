@@ -106,6 +106,12 @@ public class AttendanceRawDAO extends DBContext {
     }
 
     public List<AttendanceRaw> getRawRecords(int offset, int pageSize, String search, String fromDate, String toDate, String filterType) {
+        if (offset < 0) {
+            offset = 0;
+        }
+        if (pageSize <= 0) {
+            pageSize = 10;
+        }
         StringBuilder sql = new StringBuilder("SELECT emp_id, date, check_time, check_type FROM attendance_raw WHERE 1=1");
         List<Object> params = new ArrayList<>();
         if (search != null) {
