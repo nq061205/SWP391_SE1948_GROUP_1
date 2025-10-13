@@ -126,13 +126,6 @@
                                                             <option value="${dept.depId}">${dept.depName}</option>
                                                         </c:forEach>
                                                     </select>
-                                                    <!-- Debug info -->
-                                                    <small class="text-muted">
-                                                        Debug: Departments count = ${departments.size()}
-                                                        <c:if test="${not empty departments}">
-                                                            | First dept: ${departments[0].depName}
-                                                        </c:if>
-                                                    </small>
                                                 </div>
                                             </div>
                                         </div>
@@ -195,10 +188,6 @@
                                                             </option>
                                                         </c:forEach>
                                                     </select>
-                                                    <!-- Debug info -->
-                                                    <small class="text-muted">
-                                                        Debug: Departments count = ${departments.size()}
-                                                    </small>
                                                 </div>
                                             </div>
                                         </div>
@@ -236,7 +225,7 @@
                             </div>
                             <div class="widget-inner">
                                 <c:choose>
-                                    <c:when test="${not empty pendingAndRejectedPosts}">
+                                    <c:when test="${hasPendingOrRejected}">
                                         <div class="table-responsive">
                                             <table id="notificationTable" class="table table-striped table-bordered">
                                                 <thead class="thead-warning">
@@ -314,11 +303,11 @@
                         <div class="widget-box">
                             <div class="wc-title">
                                 <h4><i class="fa fa-check-circle"></i> Approved Post List</h4>
-                                <span class="badge badge-success">Total: ${totalPosts != null ? totalPosts : 0} posts</span>
+                                <span class="badge badge-success">Total: ${totalPosts} posts</span>
                             </div>
                             <div class="widget-inner">
                                 <c:choose>
-                                    <c:when test="${not empty approvedPosts}">
+                                    <c:when test="${hasApprovedPosts}">
                                         <div class="table-responsive">
                                             <table id="recruitmentTable" class="table table-striped table-bordered">
                                                 <thead class="thead-dark">
@@ -488,31 +477,6 @@
                             "next": "Next",
                             "previous": "Previous"
                         }
-                    }
-                });
-                
-                // Form validation
-                $('#createPostForm').on('submit', function(e) {
-                    var title = $('#title').val().trim();
-                    var content = $('#content').val().trim();
-                    var depId = $('#depId').val();
-                    
-                    if (!title || !content || !depId) {
-                        e.preventDefault();
-                        alert('Please fill in all required fields.');
-                        return false;
-                    }
-                });
-                
-                $('#updatePostForm').on('submit', function(e) {
-                    var title = $('#editTitle').val().trim();
-                    var content = $('#editContent').val().trim();
-                    var depId = $('#editDepId').val();
-                    
-                    if (!title || !content || !depId) {
-                        e.preventDefault();
-                        alert('Please fill in all required fields.');
-                        return false;
                     }
                 });
             });

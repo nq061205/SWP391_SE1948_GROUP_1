@@ -96,7 +96,7 @@
                         </div>
                         
                         <c:choose>
-                            <c:when test="${not empty post}">
+                            <c:when test="${hasPost}">
                                 <div class="widget-box">
                                     <div class="widget-inner">
                                         <!-- Post Header -->
@@ -110,7 +110,7 @@
                                                     <span class="badge badge-info mr-2 mb-2">
                                                         <i class="fa fa-hashtag"></i> ID: ${post.postId}
                                                     </span>
-                                                    <c:if test="${not empty post.department}">
+                                                    <c:if test="${hasDepartment}">
                                                         <span class="badge badge-primary mr-2 mb-2">
                                                             <i class="fa fa-building"></i> ${post.department.depName}
                                                         </span>
@@ -118,7 +118,7 @@
                                                 </div>
                                             </div>
                                             <div class="col-lg-4 text-right">
-                                                <c:if test="${not empty post.approvedAt}">
+                                                <c:if test="${hasApprovedAt}">
                                                     <div class="text-muted">
                                                         <small>Approved on</small><br>
                                                         <fmt:formatDate value="${post.approvedAt}" pattern="MMM dd, yyyy 'at' HH:mm" />
@@ -158,7 +158,7 @@
                                                             <div class="col-sm-5"><strong>Department:</strong></div>
                                                             <div class="col-sm-7">
                                                                 <c:choose>
-                                                                    <c:when test="${not empty post.department}">
+                                                                    <c:when test="${hasDepartment}">
                                                                         ${post.department.depName}
                                                                         <br><small class="text-muted">${post.department.depId}</small>
                                                                     </c:when>
@@ -172,7 +172,7 @@
                                                         <div class="row">
                                                             <div class="col-sm-5"><strong>Created:</strong></div>
                                                             <div class="col-sm-7">
-                                                                <c:if test="${not empty post.createdAt}">
+                                                                <c:if test="${hasCreatedAt}">
                                                                     <fmt:formatDate value="${post.createdAt}" pattern="MMM dd, yyyy 'at' HH:mm" />
                                                                 </c:if>
                                                             </div>
@@ -193,7 +193,7 @@
                                                             <div class="col-sm-5"><strong>Created by:</strong></div>
                                                             <div class="col-sm-7">
                                                                 <c:choose>
-                                                                    <c:when test="${not empty post.createdBy}">
+                                                                    <c:when test="${hasCreatedBy}">
                                                                         ${post.createdBy.fullname}
                                                                         <br><small class="text-muted">${post.createdBy.positionTitle}</small>
                                                                         <br><small class="text-muted">${post.createdBy.email}</small>
@@ -209,7 +209,7 @@
                                                             <div class="col-sm-5"><strong>Approved by:</strong></div>
                                                             <div class="col-sm-7">
                                                                 <c:choose>
-                                                                    <c:when test="${not empty post.approvedBy}">
+                                                                    <c:when test="${hasApprovedBy}">
                                                                         ${post.approvedBy.fullname}
                                                                         <br><small class="text-muted">${post.approvedBy.positionTitle}</small>
                                                                         <br><small class="text-muted">${post.approvedBy.email}</small>
@@ -225,7 +225,7 @@
                                                             <div class="col-sm-5"><strong>Approved on:</strong></div>
                                                             <div class="col-sm-7">
                                                                 <c:choose>
-                                                                    <c:when test="${not empty post.approvedAt}">
+                                                                    <c:when test="${hasApprovedAt}">
                                                                         <fmt:formatDate value="${post.approvedAt}" pattern="MMM dd, yyyy 'at' HH:mm" />
                                                                     </c:when>
                                                                     <c:otherwise>
@@ -238,7 +238,7 @@
                                                         <div class="row">
                                                             <div class="col-sm-5"><strong>Last Updated:</strong></div>
                                                             <div class="col-sm-7">
-                                                                <c:if test="${not empty post.updatedAt}">
+                                                                <c:if test="${hasUpdatedAt}">
                                                                     <fmt:formatDate value="${post.updatedAt}" pattern="MMM dd, yyyy 'at' HH:mm" />
                                                                 </c:if>
                                                             </div>
@@ -259,7 +259,7 @@
                                                     </div>
                                                     <div class="card-body">
                                                         <c:choose>
-                                                            <c:when test="${not empty post.content}">
+                                                            <c:when test="${hasContent}">
                                                                 <div class="content-display">
                                                                     ${post.content}
                                                                 </div>

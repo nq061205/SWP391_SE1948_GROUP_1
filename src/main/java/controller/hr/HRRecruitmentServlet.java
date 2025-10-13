@@ -94,11 +94,25 @@ public class HRRecruitmentServlet extends HttpServlet {
             List<Department> departments = recruitmentPostDAO.getDepartments();
             System.out.println("Servlet - departments size: " + departments.size());
             
+            // Business logic: Process data before sending to view
+            // Calculate total posts (handle null safely)
+            int totalPosts = (approvedPosts != null) ? approvedPosts.size() : 0;
+            
+            // Check if lists are empty and set flags for view
+            boolean hasApprovedPosts = (approvedPosts != null && !approvedPosts.isEmpty());
+            boolean hasPendingOrRejected = (pendingAndRejectedPosts != null && !pendingAndRejectedPosts.isEmpty());
+            boolean hasDepartments = (departments != null && !departments.isEmpty());
+            
             // Set attributes for JSP
             request.setAttribute("approvedPosts", approvedPosts);
             request.setAttribute("pendingAndRejectedPosts", pendingAndRejectedPosts);
             request.setAttribute("departments", departments);
-            request.setAttribute("totalPosts", approvedPosts.size());
+            request.setAttribute("totalPosts", totalPosts);
+            
+            // Set flags for conditional rendering
+            request.setAttribute("hasApprovedPosts", hasApprovedPosts);
+            request.setAttribute("hasPendingOrRejected", hasPendingOrRejected);
+            request.setAttribute("hasDepartments", hasDepartments);
             
             // Set current page info
             request.setAttribute("currentPage", "Recruitment Management");
@@ -125,13 +139,31 @@ public class HRRecruitmentServlet extends HttpServlet {
         try {
             String postIdStr = request.getParameter("postId");
             if (postIdStr != null && !postIdStr.trim().isEmpty()) {
-                int postId = Integer.parseInt(postIdStr);
+                int postId = Integer.parseInt(postIdStr.trim());
                 
                 // Get post detail from database
                 RecruitmentPost post = recruitmentPostDAO.getPostById(postId);
                 
                 if (post != null) {
+                    // Business logic: Set flags for view
+                    boolean hasPost = true;
+                    boolean hasContent = (post.getContent() != null && !post.getContent().trim().isEmpty());
+                    boolean hasDepartment = (post.getDepartment() != null);
+                    boolean hasCreatedBy = (post.getCreatedBy() != null);
+                    boolean hasApprovedBy = (post.getApprovedBy() != null);
+                    boolean hasCreatedAt = (post.getCreatedAt() != null);
+                    boolean hasApprovedAt = (post.getApprovedAt() != null);
+                    boolean hasUpdatedAt = (post.getUpdatedAt() != null);
+                    
                     request.setAttribute("post", post);
+                    request.setAttribute("hasPost", hasPost);
+                    request.setAttribute("hasContent", hasContent);
+                    request.setAttribute("hasDepartment", hasDepartment);
+                    request.setAttribute("hasCreatedBy", hasCreatedBy);
+                    request.setAttribute("hasApprovedBy", hasApprovedBy);
+                    request.setAttribute("hasCreatedAt", hasCreatedAt);
+                    request.setAttribute("hasApprovedAt", hasApprovedAt);
+                    request.setAttribute("hasUpdatedAt", hasUpdatedAt);
                     request.setAttribute("currentPage", "Recruitment Management");
                     request.setAttribute("pageTitle", "Post Detail");
                     
@@ -172,12 +204,26 @@ public class HRRecruitmentServlet extends HttpServlet {
             String content = request.getParameter("content");
             String depId = request.getParameter("depId");
             
-            // Validate input
-            if (title == null || title.trim().isEmpty() ||
-                content == null || content.trim().isEmpty() ||
-                depId == null || depId.trim().isEmpty()) {
-                
-                request.getSession().setAttribute("errorMessage", "All fields are required.");
+            // Server-side validation - Business logic
+            StringBuilder validationErrors = new StringBuilder();
+            
+            if (title == null || title.trim().isEmpty()) {
+                validationErrors.append("Title is required. ");
+            } else if (title.trim().length() > 255) {
+                validationErrors.append("Title must not exceed 255 characters. ");
+            }
+            
+            if (content == null || content.trim().isEmpty()) {
+                validationErrors.append("Job description is required. ");
+            }
+            
+            if (depId == null || depId.trim().isEmpty()) {
+                validationErrors.append("Department is required. ");
+            }
+            
+            // If validation fails, redirect with error message
+            if (validationErrors.length() > 0) {
+                request.getSession().setAttribute("errorMessage", validationErrors.toString().trim());
                 response.sendRedirect(request.getContextPath() + "/hrrecruitment");
                 return;
             }
@@ -187,7 +233,7 @@ public class HRRecruitmentServlet extends HttpServlet {
             int approvedBy = 2;
             
             // Create post
-            boolean success = recruitmentPostDAO.createPost(title, content, depId, createdBy, approvedBy);
+            boolean success = recruitmentPostDAO.createPost(title.trim(), content.trim(), depId.trim(), createdBy, approvedBy);
             
             if (success) {
                 request.getSession().setAttribute("successMessage", "Post created successfully! It's now pending approval.");
@@ -215,7 +261,7 @@ public class HRRecruitmentServlet extends HttpServlet {
         try {
             String postIdStr = request.getParameter("postId");
             if (postIdStr != null && !postIdStr.trim().isEmpty()) {
-                int postId = Integer.parseInt(postIdStr);
+                int postId = Integer.parseInt(postIdStr.trim());
                 
                 // Get post detail from database
                 RecruitmentPost post = recruitmentPostDAO.getPostById(postId);
@@ -230,11 +276,20 @@ public class HRRecruitmentServlet extends HttpServlet {
                     // Get pending and rejected posts for notification table
                     List<RecruitmentPost> pendingAndRejectedPosts = recruitmentPostDAO.getPendingAndRejectedPosts();
                     
+                    // Business logic: Calculate statistics and flags
+                    int totalPosts = (approvedPosts != null) ? approvedPosts.size() : 0;
+                    boolean hasApprovedPosts = (approvedPosts != null && !approvedPosts.isEmpty());
+                    boolean hasPendingOrRejected = (pendingAndRejectedPosts != null && !pendingAndRejectedPosts.isEmpty());
+                    boolean hasDepartments = (departments != null && !departments.isEmpty());
+                    
                     request.setAttribute("editPost", post);
                     request.setAttribute("departments", departments);
                     request.setAttribute("approvedPosts", approvedPosts);
                     request.setAttribute("pendingAndRejectedPosts", pendingAndRejectedPosts);
-                    request.setAttribute("totalPosts", approvedPosts.size());
+                    request.setAttribute("totalPosts", totalPosts);
+                    request.setAttribute("hasApprovedPosts", hasApprovedPosts);
+                    request.setAttribute("hasPendingOrRejected", hasPendingOrRejected);
+                    request.setAttribute("hasDepartments", hasDepartments);
                     request.setAttribute("currentPage", "Recruitment Management");
                     request.setAttribute("pageTitle", "Edit Rejected Post");
                     
@@ -274,21 +329,38 @@ public class HRRecruitmentServlet extends HttpServlet {
             String content = request.getParameter("content");
             String depId = request.getParameter("depId");
             
-            // Validate input
-            if (postIdStr == null || postIdStr.trim().isEmpty() ||
-                title == null || title.trim().isEmpty() ||
-                content == null || content.trim().isEmpty() ||
-                depId == null || depId.trim().isEmpty()) {
-                
-                request.getSession().setAttribute("errorMessage", "All fields are required.");
+            // Server-side validation - Business logic
+            StringBuilder validationErrors = new StringBuilder();
+            
+            if (postIdStr == null || postIdStr.trim().isEmpty()) {
+                validationErrors.append("Post ID is required. ");
+            }
+            
+            if (title == null || title.trim().isEmpty()) {
+                validationErrors.append("Title is required. ");
+            } else if (title.trim().length() > 255) {
+                validationErrors.append("Title must not exceed 255 characters. ");
+            }
+            
+            if (content == null || content.trim().isEmpty()) {
+                validationErrors.append("Job description is required. ");
+            }
+            
+            if (depId == null || depId.trim().isEmpty()) {
+                validationErrors.append("Department is required. ");
+            }
+            
+            // If validation fails, redirect with error message
+            if (validationErrors.length() > 0) {
+                request.getSession().setAttribute("errorMessage", validationErrors.toString().trim());
                 response.sendRedirect(request.getContextPath() + "/hrrecruitment");
                 return;
             }
             
-            int postId = Integer.parseInt(postIdStr);
+            int postId = Integer.parseInt(postIdStr.trim());
             
             // Update post
-            boolean success = recruitmentPostDAO.updatePost(postId, title, content, depId);
+            boolean success = recruitmentPostDAO.updatePost(postId, title.trim(), content.trim(), depId.trim());
             
             if (success) {
                 request.getSession().setAttribute("successMessage", "Post updated successfully! Status changed to pending.");
