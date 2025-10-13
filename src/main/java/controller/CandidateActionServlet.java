@@ -1,0 +1,92 @@
+/*
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+ * Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Servlet.java to edit this template
+ */
+package controller;
+
+import dal.CandidateDAO;
+import java.io.IOException;
+import java.io.PrintWriter;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
+import java.util.List;
+import model.Candidate;
+
+/**
+ *
+ * @author hgduy
+ */
+public class CandidateActionServlet extends HttpServlet {
+
+  
+    @Override
+    protected void doGet(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        CandidateDAO cDAO = new CandidateDAO();
+        HttpSession ses = request.getSession();
+        String id = request.getParameter("id");
+        String action = request.getParameter("action");
+        if (id == null || action == null) {
+            response.sendRedirect("candidatelist");
+            return;
+        }
+        try {
+            int candidateid = Integer.parseInt(id);
+            
+            Candidate candidate = getNextCandidate(candidateid, cDAO.getAllCandidate("pending"));
+            if("approve".equals(action)){
+                cDAO.updateResultCandidate(1, candidateid);
+            }
+            else{
+                cDAO.updateResultCandidate(0, candidateid);
+            }
+            if(candidate == null){
+                response.sendRedirect("candidatelist");
+            }
+            response.sendRedirect("candidatedetail?id="+candidate.getCandidateId());
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+    }
+    
+    public Candidate getNextCandidate(int canId, List<Candidate> candidates) {
+    for (int i = 0; i < candidates.size(); i++) {
+        if (candidates.get(i).getCandidateId() == canId) {
+            if (i + 1 < candidates.size()) {
+                return candidates.get(i + 1);
+            } else {
+                return null;
+            }
+        }
+    }
+    return null; // not found
+}
+
+
+    /**
+     * Handles the HTTP <code>POST</code> method.
+     *
+     * @param request servlet request
+     * @param response servlet response
+     * @throws ServletException if a servlet-specific error occurs
+     * @throws IOException if an I/O error occurs
+     */
+    @Override
+    protected void doPost(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+    }
+
+    /**
+     * Returns a short description of the servlet.
+     *
+     * @return a String containing servlet description
+     */
+    @Override
+    public String getServletInfo() {
+        return "Short description";
+    }// </editor-fold>
+
+}

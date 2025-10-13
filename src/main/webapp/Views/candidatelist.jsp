@@ -41,7 +41,7 @@
                     </ul>
                 </div>
 
-                <!-- ✅ Search Bar -->
+                <!-- ✅ Widget Box -->
                 <div class="widget-box">
                     <div class="wc-title">
                         <h4><i class="fa fa-users"></i> Candidate List</h4>
@@ -52,8 +52,8 @@
 
                     <div class="widget-inner">
 
-                        <!-- Search Form (POST → Servlet) -->
-                        <form action="${pageContext.request.contextPath}/candidatelist" method="post" 
+                        <!-- ✅ Search Form -->
+                        <form action="${pageContext.request.contextPath}/candidatelist" method="post"
                               class="d-flex align-items-center justify-content-between mb-4">
                             <div class="input-group" style="max-width: 400px;">
                                 <span class="input-group-text bg-white border-end-0">
@@ -70,113 +70,220 @@
                             </div>
                         </form>
 
-                        <!-- ✅ Table (click để sắp xếp qua Servlet) -->
-                        <div class="table-responsive">
-                            <table class="table table-striped table-bordered table-hover align-middle text-center">
-                                <thead class="thead-dark">
-                                    <tr>
-                                        <th>#</th>
-                                        <!-- Gọi lại servlet /candidatelist?type=name để sắp xếp -->
-                                        <th style="cursor:pointer;" 
-                                            onclick="window.location = '${pageContext.request.contextPath}/candidatelist?type=name'">
-                                            Full Name <i class="fa fa-sort"></i>
-                                        </th>
-                                        <th>Email</th>
-                                        <th>Phone</th>
-                                        <!-- Gọi lại servlet /candidatelist?type=appliedat để sắp xếp -->
-                                        <th style="cursor:pointer;"
-                                            onclick="window.location = '${pageContext.request.contextPath}/candidatelist?type=appliedat'">
-                                            Applied At <i class="fa fa-sort"></i>
-                                        </th>
-                                        <th>Action</th>
-                                    </tr>
-                                </thead>
+                        <!-- ✅ Tabs: All / Approved / Rejected -->
+                        <ul class="nav nav-tabs mb-4" id="candidateTabs" role="tablist">
+                            <li class="nav-item" role="presentation">
+                                <a class="nav-link active" id="all-tab" data-bs-toggle="tab" href="#all" role="tab"
+                                   aria-controls="all" aria-selected="true">
+                                    <i class="fa fa-list"></i> Pending
+                                </a>
+                            </li>
+                            <li class="nav-item" role="presentation">
+                                <a class="nav-link" id="approved-tab" data-bs-toggle="tab" href="${pageContext.request.contextPath}/candidatelist?tab=approve" role="tab"
+                                   aria-controls="approved" aria-selected="false">
+                                    <i class="fa fa-check-circle text-success"></i> Approved
+                                </a>
+                            </li>
+                            <li class="nav-item" role="presentation">
+                                <a class="nav-link" id="rejected-tab" data-bs-toggle="tab" href="${pageContext.request.contextPath}/candidatelist?tab=reject" role="tab"
+                                   aria-controls="rejected" aria-selected="false">
+                                    <i class="fa fa-times-circle text-danger"></i> Rejected
+                                </a>
+                            </li>
+                        </ul>
 
-                                <tbody>
-                                    <c:forEach var="el" items="${sessionScope.candidateList}" varStatus="st">
-                                        <tr>
-                                            <td>${st.index + 1}</td>
-                                            <td class="text-left">
-                                                <strong class="text-primary">${el.name}</strong><br>
-                                                <small class="text-muted">ID: ${el.candidateId}</small>
-                                            </td>
-                                            <td>${el.email}</td>
-                                            <td>${el.phone}</td>
-                                            <td>
-                                                <fmt:formatDate value="${el.appliedAt}" pattern="MMM dd, yyyy HH:mm" />
-                                            </td>
-                                            <td>
-                                                <a href="${pageContext.request.contextPath}/candidatedetail?id=${el.candidateId}"
-                                                   class="btn btn-sm btn-info" title="View Detail">
-                                                    <i class="fa fa-eye"></i> View
-                                                </a>
-                                            </td>
-                                        </tr>
-                                    </c:forEach>
+                        <div class="tab-content" id="candidateTabsContent">
 
-                                    <!-- Nếu rỗng -->
-                                    <c:if test="${empty sessionScope.candidateList}">
-                                        <tr>
-                                            <td colspan="6" class="text-muted text-center py-3">
-                                                <i class="fa fa-inbox fa-2x mb-2"></i><br>
-                                                No candidates found.
-                                            </td>
-                                        </tr>
-                                    </c:if>
-                                </tbody>
-                            </table>
-                            <!-- ✅ Pagination UI -->
-                            <div class="d-flex justify-content-between align-items-center mt-4">
+                            <!-- TAB 1: All Candidates -->
+                            <div class="tab-pane fade show active" id="all" role="tabpanel" aria-labelledby="all-tab">
+                                <div class="table-responsive">
+                                    <table class="table table-striped table-bordered table-hover align-middle text-center">
+                                        <thead class="thead-dark">
+                                            <tr>
+                                                <th>#</th>
+                                                <th style="cursor:pointer;"
+                                                    onclick="window.location = '${pageContext.request.contextPath}/candidatelist?type=name'">
+                                                    Full Name <i class="fa fa-sort"></i>
+                                                </th>
+                                                <th>Email</th>
+                                                <th>Phone</th>
+                                                <th style="cursor:pointer;"
+                                                    onclick="window.location = '${pageContext.request.contextPath}/candidatelist?type=appliedat'">
+                                                    Applied At <i class="fa fa-sort"></i>
+                                                </th>
+                                                <th>Action</th>
+                                            </tr>
+                                        </thead>
 
-                                <!-- Hiển thị tổng số bản ghi (tuỳ chọn) -->
-                                <div class="text-muted">
-                                    Showing <strong>1</strong> to <strong>10</strong> of <strong>50</strong> entries
+                                        <tbody>
+                                            <c:forEach var="el" items="${sessionScope.candidateList}" varStatus="st">
+                                                <tr>
+                                                    <td>${st.index + 1}</td>
+                                                    <td class="text-left">
+                                                        <strong class="text-primary">${el.name}</strong><br>
+                                                        <small class="text-muted">ID: ${el.candidateId}</small>
+                                                    </td>
+                                                    <td>${el.email}</td>
+                                                    <td>${el.phone}</td>
+                                                    <td>
+                                                        <fmt:formatDate value="${el.appliedAt}" pattern="MMM dd, yyyy HH:mm" />
+                                                    </td>
+                                                    <td>
+                                                        <a href="${pageContext.request.contextPath}/candidatedetail?id=${el.candidateId}"
+                                                           class="btn btn-sm btn-info" title="View Detail">
+                                                            <i class="fa fa-eye"></i> View
+                                                        </a>
+                                                    </td>
+                                                </tr>
+                                            </c:forEach>
+
+                                            <c:if test="${empty sessionScope.candidateList}">
+                                                <tr>
+                                                    <td colspan="6" class="text-muted text-center py-3">
+                                                        <i class="fa fa-inbox fa-2x mb-2"></i><br>
+                                                        No candidates found.
+                                                    </td>
+                                                </tr>
+                                            </c:if>
+                                        </tbody>
+                                    </table>
+
+                                    <!-- ✅ Pagination -->
+                                    <div class="d-flex justify-content-between align-items-center mt-4">
+                                        <div class="text-muted">
+                                            Showing <strong>1</strong> to <strong>10</strong> of <strong>50</strong> entries
+                                        </div>
+                                        <nav aria-label="Candidate pagination">
+                                            <ul class="pagination mb-0">
+                                                <li class="page-item ${sessionScope.pages == 1 ? 'disabled' : ''}">
+                                                    <c:choose>
+                                                        <c:when test="${sessionScope.pages > 1}">
+                                                            <a class="page-link"
+                                                               href="${pageContext.request.contextPath}/candidatelist?page=${sessionScope.pages - 1}">
+                                                                <i class="fa fa-chevron-left"></i> Previous
+                                                            </a>
+                                                        </c:when>
+                                                        <c:otherwise>
+                                                            <a class="page-link" tabindex="-1">
+                                                                <i class="fa fa-chevron-left"></i> Previous
+                                                            </a>
+                                                        </c:otherwise>
+                                                    </c:choose>
+                                                </li>
+
+                                                <li class="page-item active">
+                                                    <a class="page-link">${sessionScope.pages}</a>
+                                                </li>
+
+                                                <li class="page-item ${sessionScope.pages >= sessionScope.total ? 'disabled' : ''}">
+                                                    <c:choose>
+                                                        <c:when test="${sessionScope.pages < sessionScope.total}">
+                                                            <a class="page-link"
+                                                               href="${pageContext.request.contextPath}/candidatelist?page=${sessionScope.pages + 1}">
+                                                                Next <i class="fa fa-chevron-right"></i>
+                                                            </a>
+                                                        </c:when>
+                                                        <c:otherwise>
+                                                            <a class="page-link" tabindex="-1">
+                                                                Next <i class="fa fa-chevron-right"></i>
+                                                            </a>
+                                                        </c:otherwise>
+                                                    </c:choose>
+                                                </li>
+                                            </ul>
+                                        </nav>
+                                    </div>
                                 </div>
+                            </div>
 
-                                <!-- Thanh phân trang -->
-                                <nav aria-label="Candidate pagination">
-                                    <ul class="pagination mb-0">
-                                        <li class="page-item ${sessionScope.pages == 1 ? 'disabled' : ''}">
-                                            <c:choose>
-                                                <c:when test="${sessionScope.pages > 1}">
-                                                    <a class="page-link" 
-                                                       href="${pageContext.request.contextPath}/candidatelist?page=${sessionScope.pages - 1}">
-                                                        <i class="fa fa-chevron-left"></i> Previous
-                                                    </a>
-                                                </c:when>
-                                                <c:otherwise>
-                                                    <a class="page-link" tabindex="-1">
-                                                        <i class="fa fa-chevron-left"></i> Previous
-                                                    </a>
-                                                </c:otherwise>
-                                            </c:choose>
-                                        </li>
+                            <!-- TAB 2: Approved Candidates -->
+                            <div class="tab-pane fade" id="approved" role="tabpanel" aria-labelledby="approved-tab">
+                                <div class="table-responsive">
+                                    <table class="table table-striped table-bordered table-hover align-middle text-center">
+                                        <thead class="thead-dark">
+                                            <tr>
+                                                <th>#</th>
+                                                <th>Full Name</th>
+                                                <th>Email</th>
+                                                <th>Phone</th>
+                                                <th>Approved Date</th>
+                                                <th>Action</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <c:forEach var="el" items="${sessionScope.approvedCandidates}" varStatus="st">
+                                                <tr>
+                                                    <td>${st.index + 1}</td>
+                                                    <td class="text-left">
+                                                        <strong class="text-success">${el.name}</strong><br>
+                                                        <small class="text-muted">ID: ${el.candidateId}</small>
+                                                    </td>
+                                                    <td>${el.email}</td>
+                                                    <td>${el.phone}</td>
+                                                    <td><fmt:formatDate value="${el.approvedAt}" pattern="MMM dd, yyyy HH:mm" /></td>
+                                                    <td>
+                                                        <a href="${pageContext.request.contextPath}/candidatedetail?id=${el.candidateId}"
+                                                           class="btn btn-sm btn-info" title="View Detail">
+                                                            <i class="fa fa-eye"></i> View
+                                                        </a>
+                                                    </td>
+                                                </tr>
+                                            </c:forEach>
+                                            <c:if test="${empty sessionScope.approvedCandidates}">
+                                                <tr>
+                                                    <td colspan="6" class="text-muted text-center py-3">
+                                                        <i class="fa fa-inbox fa-2x mb-2"></i><br>
+                                                        No approved candidates.
+                                                    </td>
+                                                </tr>
+                                            </c:if>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
 
-                                        <li class="page-item active">
-                                            <a class="page-link">${sessionScope.pages}</a>
-                                        </li>
-                                        <li class="page-item ${sessionScope.pages >= sessionScope.total ? 'disabled' : ''}">
-                                            <c:choose>
-                                                <c:when test="${sessionScope.pages < sessionScope.total}">
-                                                    <a class="page-link" 
-                                                       href="${pageContext.request.contextPath}/candidatelist?page=${sessionScope.pages + 1}">
-                                                        Next <i class="fa fa-chevron-right"></i>
-                                                    </a>
-                                                </c:when>
-                                                <c:otherwise>
-                                                    <a class="page-link" tabindex="-1">
-                                                        Next <i class="fa fa-chevron-right"></i>
-                                                    </a>
-                                                </c:otherwise>
-                                            </c:choose>
-                                        </li>
-
-                                    </ul>
-                                </nav>
+                            <!-- TAB 3: Rejected Candidates -->
+                            <div class="tab-pane fade" id="rejected" role="tabpanel" aria-labelledby="rejected-tab">
+                                <div class="table-responsive">
+                                    <table class="table table-striped table-bordered table-hover align-middle text-center">
+                                        <thead class="thead-dark">
+                                            <tr>
+                                                <th>#</th>
+                                                <th>Full Name</th>
+                                                <th>Email</th>
+                                                <th>Phone</th>
+                                                <th>Rejected Date</th>
+                                                <th>Reason</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <c:forEach var="el" items="${sessionScope.rejectedCandidates}" varStatus="st">
+                                                <tr>
+                                                    <td>${st.index + 1}</td>
+                                                    <td class="text-left">
+                                                        <strong class="text-danger">${el.name}</strong><br>
+                                                        <small class="text-muted">ID: ${el.candidateId}</small>
+                                                    </td>
+                                                    <td>${el.email}</td>
+                                                    <td>${el.phone}</td>
+                                                    <td><fmt:formatDate value="${el.rejectedAt}" pattern="MMM dd, yyyy HH:mm" /></td>
+                                                    <td>${el.rejectionReason}</td>
+                                                </tr>
+                                            </c:forEach>
+                                            <c:if test="${empty sessionScope.rejectedCandidates}">
+                                                <tr>
+                                                    <td colspan="6" class="text-muted text-center py-3">
+                                                        <i class="fa fa-inbox fa-2x mb-2"></i><br>
+                                                        No rejected candidates.
+                                                    </td>
+                                                </tr>
+                                            </c:if>
+                                        </tbody>
+                                    </table>
+                                </div>
                             </div>
 
                         </div>
-
                     </div>
                 </div>
             </div>
