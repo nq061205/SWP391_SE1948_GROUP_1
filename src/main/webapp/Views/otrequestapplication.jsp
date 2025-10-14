@@ -74,25 +74,25 @@
                 </div>
                 <div class="row">
                     <div class="col-lg-12">
-                        <div class="d-flex justify-content-between align-items-center mb-3">
-                            <form action="${pageContext.request.contextPath}/application" method="get" class="form-inline">
+                        <div class="filter-row mb-3">
+                            <form action="${pageContext.request.contextPath}/application" method="get" class="d-flex align-items-center flex-nowrap w-100" style="gap:12px;">
                                 <input type="hidden" name="typeapplication" value="OT"/>
-                                <div class="input-group mr-2">
+                                <div class="input-group">
                                     <input type="text" name="search" value="${fn:escapeXml(param.search)}"
                                            class="form-control" placeholder="Search by date, hours, status..." style="width:260px;">
                                     <div class="input-group-append">
                                         <button class="btn btn-primary" type="submit"><i class="fa fa-search"></i></button>
                                     </div>
                                 </div>
-                                <select name="status" class="form-control mr-2" onchange="this.form.submit()">
+                                <select name="status" class="form-control filter-h" onchange="this.form.submit()">
                                     <option value="">All Status</option>
                                     <option value="Pending"  ${param.status == 'Pending'  ? 'selected' : ''}>Pending</option>
                                     <option value="Approved" ${param.status == 'Approved' ? 'selected' : ''}>Approved</option>
                                     <option value="Rejected" ${param.status == 'Rejected' ? 'selected' : ''}>Rejected</option>
                                 </select>
-                                <input type="date" name="startDate" value="${param.startDate}" class="form-control mr-2" />
+                                <input type="date" name="startDate" value="${param.startDate}" class="form-control filter-h" style="width:170px;" />
                                 <span class="mr-2">to</span>
-                                <input type="date" name="endDate"   value="${param.endDate}"   class="form-control mr-2" />
+                                <input type="date" name="endDate"   value="${param.endDate}"   class="form-control filter-h" style="width:170px;" />
                                 <button type="submit" class="btn btn-outline-secondary mr-2">Apply</button>
                                 <a class="btn btn-light"
                                    href="${pageContext.request.contextPath}/application?typeapplication=OT">Clear</a>
@@ -172,12 +172,28 @@
                 </c:if>
             </c:url>
             <nav class="mt-3">
+                <c:set var="startPage" value="${page - 1}" />
+                <c:set var="endPage" value="${page + 1}" />
+
+                <c:if test="${startPage < 1}">
+                    <c:set var="endPage" value="${endPage + (1 - startPage)}" />
+                    <c:set var="startPage" value="1" />
+                </c:if>
+
+                <c:if test="${endPage > totalPages}">
+                    <c:set var="startPage" value="${startPage - (endPage - totalPages)}" />
+                    <c:set var="endPage" value="${totalPages}" />
+                </c:if>
+
+                <c:if test="${startPage < 1}">
+                    <c:set var="startPage" value="1" />
+                </c:if>
                 <ul class="pagination justify-content-center">
                     <li class="page-item ${page <= 1 ? 'disabled' : ''}">
                         <a class="page-link" href="${baseUrl}&page=${page-1}">Prev</a>
                     </li>
 
-                    <c:forEach var="p" begin="1" end="${totalPages}">
+                    <c:forEach var="p" begin="${startPage}" end="${endPage}">
                         <li class="page-item ${p == page ? 'active' : ''}">
                             <a class="page-link" href="${baseUrl}&page=${p}">${p}</a>
                         </li>
