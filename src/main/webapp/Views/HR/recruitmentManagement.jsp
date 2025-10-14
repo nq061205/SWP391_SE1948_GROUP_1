@@ -1,39 +1,22 @@
-<%-- 
-    Document   : recruitmentManagement
-    Created on : Oct 7, 2025, 2:30:00 PM
-    Author     : Dat Tran
---%>
-
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
 <!DOCTYPE html>
 <html>
     <head>
-        <!-- META ============================================= -->
         <meta charset="utf-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta name="keywords" content="" />
         <meta name="author" content="" />
         <meta name="robots" content="" />
-
-        <!-- DESCRIPTION -->
         <meta name="description" content="HR Recruitment Management" />
-
-        <!-- OG -->
         <meta property="og:title" content="Recruitment Management - HRM System" />
         <meta property="og:description" content="Human Resources Recruitment Management" />
         <meta property="og:image" content="" />
         <meta name="format-detection" content="telephone=no">
-
-        <!-- FAVICONS ICON ============================================= -->
         <link rel="icon" href="${pageContext.request.contextPath}/assets2/images/favicon.ico" type="image/x-icon" />
         <link rel="shortcut icon" type="image/x-icon" href="${pageContext.request.contextPath}/assets2/images/favicon.png" />
-
-        <!-- PAGE TITLE HERE ============================================= -->
         <title>Recruitment Management - HRM System</title>
-
-        <!-- MOBILE SPECIFIC ============================================= -->
         <meta name="viewport" content="width=device-width, initial-scale=1">
 
         <!--[if lt IE 9]>
@@ -41,21 +24,12 @@
         <script src="${pageContext.request.contextPath}/assets2/js/respond.min.js"></script>
         <![endif]-->
 
-        <!-- All PLUGINS CSS ============================================= -->
         <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/assets2/css/assets.css">
-
-        <!-- TYPOGRAPHY ============================================= -->
         <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/assets2/css/typography.css">
-
-        <!-- SHORTCODES ============================================= -->
         <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/assets2/css/shortcodes/shortcodes.css">
-
-        <!-- STYLESHEETS ============================================= -->
         <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/assets2/css/style.css">
         <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/assets2/css/dashboard.css">
         <link class="skin" rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/assets2/css/color/color-1.css">
-        
-        <!-- DataTables CSS -->
         <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.11.5/css/dataTables.bootstrap4.min.css">
     </head>
 
@@ -78,7 +52,6 @@
                     </ul>
                 </div>	
                 
-                <!-- Display Success Message if any -->
                 <c:if test="${not empty successMessage}">
                     <div class="alert alert-success alert-dismissible fade show" role="alert">
                         <strong>Success!</strong> ${successMessage}
@@ -88,7 +61,6 @@
                     </div>
                 </c:if>
                 
-                <!-- Display Error Message if any -->
                 <c:if test="${not empty errorMessage}">
                     <div class="alert alert-danger alert-dismissible fade show" role="alert">
                         <strong>Error!</strong> ${errorMessage}
@@ -98,7 +70,6 @@
                     </div>
                 </c:if>
                 
-                <!-- Create Post Form (shown by default) -->
                 <c:if test="${empty editPost}">
                     <div class="row">
                         <div class="col-lg-12 m-b30">
@@ -126,13 +97,6 @@
                                                             <option value="${dept.depId}">${dept.depName}</option>
                                                         </c:forEach>
                                                     </select>
-                                                    <!-- Debug info -->
-                                                    <small class="text-muted">
-                                                        Debug: Departments count = ${departments.size()}
-                                                        <c:if test="${not empty departments}">
-                                                            | First dept: ${departments[0].depName}
-                                                        </c:if>
-                                                    </small>
                                                 </div>
                                             </div>
                                         </div>
@@ -195,10 +159,6 @@
                                                             </option>
                                                         </c:forEach>
                                                     </select>
-                                                    <!-- Debug info -->
-                                                    <small class="text-muted">
-                                                        Debug: Departments count = ${departments.size()}
-                                                    </small>
                                                 </div>
                                             </div>
                                         </div>
@@ -227,7 +187,6 @@
                     </div>
                 </c:if>
                 
-                <!-- Notification Table -->
                 <div class="row">
                     <div class="col-lg-12 m-b30">
                         <div class="widget-box">
@@ -236,7 +195,7 @@
                             </div>
                             <div class="widget-inner">
                                 <c:choose>
-                                    <c:when test="${not empty pendingAndRejectedPosts}">
+                                    <c:when test="${hasPendingOrRejected}">
                                         <div class="table-responsive">
                                             <table id="notificationTable" class="table table-striped table-bordered">
                                                 <thead class="thead-warning">
@@ -308,17 +267,16 @@
                     </div>
                 </div>
                 
-                <!-- Approved Posts List -->
                 <div class="row">
                     <div class="col-lg-12 m-b30">
                         <div class="widget-box">
                             <div class="wc-title">
                                 <h4><i class="fa fa-check-circle"></i> Approved Post List</h4>
-                                <span class="badge badge-success">Total: ${totalPosts != null ? totalPosts : 0} posts</span>
+                                <span class="badge badge-success">Total: ${totalPosts} posts</span>
                             </div>
                             <div class="widget-inner">
                                 <c:choose>
-                                    <c:when test="${not empty approvedPosts}">
+                                    <c:when test="${hasApprovedPosts}">
                                         <div class="table-responsive">
                                             <table id="recruitmentTable" class="table table-striped table-bordered">
                                                 <thead class="thead-dark">
@@ -417,9 +375,7 @@
                 </div>
             </div>
         </main>
-        <!--Main container end -->
 
-        <!-- External JavaScripts -->
         <script src="${pageContext.request.contextPath}/assets2/js/jquery.min.js"></script>
         <script src="${pageContext.request.contextPath}/assets2/vendors/bootstrap/js/popper.min.js"></script>
         <script src="${pageContext.request.contextPath}/assets2/vendors/bootstrap/js/bootstrap.min.js"></script>
@@ -436,21 +392,18 @@
         <script src="${pageContext.request.contextPath}/assets2/js/functions.js"></script>
         <script src="${pageContext.request.contextPath}/assets2/vendors/chart/chart.min.js"></script>
         <script src="${pageContext.request.contextPath}/assets2/js/admin.js"></script>
-        
-        <!-- DataTables JS -->
         <script type="text/javascript" src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
         <script type="text/javascript" src="https://cdn.datatables.net/1.11.5/js/dataTables.bootstrap4.min.js"></script>
 
         <script>
             $(document).ready(function () {
-                // Initialize DataTable for Approved Posts
                 $('#recruitmentTable').DataTable({
                     "pageLength": 10,
                     "lengthMenu": [[10, 25, 50, 100], [10, 25, 50, 100]],
-                    "order": [[4, "desc"]], // Sort by Time column (newest first)
+                    "order": [[4, "desc"]],
                     "columnDefs": [
-                        { "orderable": false, "targets": [5] }, // Disable sorting for Actions column
-                        { "className": "text-center", "targets": [0, 5] } // Center align Index and Actions columns
+                        { "orderable": false, "targets": [5] },
+                        { "className": "text-center", "targets": [0, 5] }
                     ],
                     "language": {
                         "search": "Search posts:",
@@ -467,14 +420,13 @@
                     }
                 });
                 
-                // Initialize DataTable for Notification Table
                 $('#notificationTable').DataTable({
                     "pageLength": 5,
                     "lengthMenu": [[5, 10, 25], [5, 10, 25]],
-                    "order": [[0, "asc"]], // Sort by Index column
+                    "order": [[0, "asc"]],
                     "columnDefs": [
-                        { "orderable": false, "targets": [3] }, // Disable sorting for Actions column
-                        { "className": "text-center", "targets": [0, 2, 3] } // Center align Index, Status and Actions columns
+                        { "orderable": false, "targets": [3] },
+                        { "className": "text-center", "targets": [0, 2, 3] }
                     ],
                     "language": {
                         "search": "Search notifications:",
@@ -488,31 +440,6 @@
                             "next": "Next",
                             "previous": "Previous"
                         }
-                    }
-                });
-                
-                // Form validation
-                $('#createPostForm').on('submit', function(e) {
-                    var title = $('#title').val().trim();
-                    var content = $('#content').val().trim();
-                    var depId = $('#depId').val();
-                    
-                    if (!title || !content || !depId) {
-                        e.preventDefault();
-                        alert('Please fill in all required fields.');
-                        return false;
-                    }
-                });
-                
-                $('#updatePostForm').on('submit', function(e) {
-                    var title = $('#editTitle').val().trim();
-                    var content = $('#editContent').val().trim();
-                    var depId = $('#editDepId').val();
-                    
-                    if (!title || !content || !depId) {
-                        e.preventDefault();
-                        alert('Please fill in all required fields.');
-                        return false;
                     }
                 });
             });

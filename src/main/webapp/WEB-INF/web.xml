@@ -163,6 +163,10 @@
         <url-pattern>/hrmanagerrecruitment</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
+        <servlet-name>HRManagerRecruitmentServlet</servlet-name>
+        <url-pattern>/postreview</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
         <servlet-name>DownloadRawTemplateServlet</servlet-name>
         <url-pattern>/download-template</url-pattern>
     </servlet-mapping>
