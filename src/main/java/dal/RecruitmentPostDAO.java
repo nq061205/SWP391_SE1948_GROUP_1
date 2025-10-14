@@ -1,7 +1,3 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package dal;
 
 import model.Department;
@@ -14,16 +10,8 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- *
- * @author Dat Tran
- */
 public class RecruitmentPostDAO {
     
-    /**
-     * Get all approved recruitment posts with department and employee information
-     * @return List of approved RecruitmentPost objects
-     */
     public List<RecruitmentPost> getApprovedPosts() {
         List<RecruitmentPost> approvedPosts = new ArrayList<>();
         String sql = "SELECT " +
@@ -62,13 +50,11 @@ public class RecruitmentPostDAO {
              ResultSet rs = ps.executeQuery()) {
             
             while (rs.next()) {
-                // Create Department object
                 Department department = new Department();
                 department.setDepId(rs.getString("dep_id"));
                 department.setDepName(rs.getString("dep_name"));
                 department.setDescription(rs.getString("dep_description"));
                 
-                // Create Created By Employee object
                 Employee createdBy = new Employee();
                 createdBy.setEmpId(rs.getInt("created_emp_id"));
                 createdBy.setEmpCode(rs.getString("created_emp_code"));
@@ -76,7 +62,6 @@ public class RecruitmentPostDAO {
                 createdBy.setEmail(rs.getString("created_email"));
                 createdBy.setPositionTitle(rs.getString("created_position"));
                 
-                // Create Approved By Employee object (might be null)
                 Employee approvedBy = null;
                 if (rs.getInt("approved_emp_id") != 0) {
                     approvedBy = new Employee();
@@ -87,7 +72,6 @@ public class RecruitmentPostDAO {
                     approvedBy.setPositionTitle(rs.getString("approved_position"));
                 }
                 
-                // Create RecruitmentPost object
                 RecruitmentPost post = new RecruitmentPost();
                 post.setPostId(rs.getInt("post_id"));
                 post.setTitle(rs.getString("title"));
@@ -112,10 +96,6 @@ public class RecruitmentPostDAO {
         return approvedPosts;
     }
     
-    /**
-     * Get all recruitment posts (including pending, approved, rejected)
-     * @return List of all RecruitmentPost objects
-     */
     public List<RecruitmentPost> getAllPosts() {
         List<RecruitmentPost> allPosts = new ArrayList<>();
         String sql = "SELECT " +
@@ -154,13 +134,11 @@ public class RecruitmentPostDAO {
              ResultSet rs = ps.executeQuery()) {
             
             while (rs.next()) {
-                // Create Department object
                 Department department = new Department();
                 department.setDepId(rs.getString("dep_id"));
                 department.setDepName(rs.getString("dep_name"));
                 department.setDescription(rs.getString("dep_description"));
                 
-                // Create Created By Employee object
                 Employee createdBy = new Employee();
                 createdBy.setEmpId(rs.getInt("created_emp_id"));
                 createdBy.setEmpCode(rs.getString("created_emp_code"));
@@ -168,7 +146,6 @@ public class RecruitmentPostDAO {
                 createdBy.setEmail(rs.getString("created_email"));
                 createdBy.setPositionTitle(rs.getString("created_position"));
                 
-                // Create Approved By Employee object (might be null)
                 Employee approvedBy = null;
                 if (rs.getInt("approved_emp_id") != 0) {
                     approvedBy = new Employee();
@@ -179,7 +156,6 @@ public class RecruitmentPostDAO {
                     approvedBy.setPositionTitle(rs.getString("approved_position"));
                 }
                 
-                // Create RecruitmentPost object
                 RecruitmentPost post = new RecruitmentPost();
                 post.setPostId(rs.getInt("post_id"));
                 post.setTitle(rs.getString("title"));
@@ -204,11 +180,6 @@ public class RecruitmentPostDAO {
         return allPosts;
     }
     
-    /**
-     * Get recruitment post by ID
-     * @param postId
-     * @return RecruitmentPost object or null if not found
-     */
     public RecruitmentPost getPostById(int postId) {
         String sql = "SELECT " +
                      "rp.post_id, " +
@@ -246,13 +217,11 @@ public class RecruitmentPostDAO {
             ps.setInt(1, postId);
             try (ResultSet rs = ps.executeQuery()) {
                 if (rs.next()) {
-                    // Create Department object
                     Department department = new Department();
                     department.setDepId(rs.getString("dep_id"));
                     department.setDepName(rs.getString("dep_name"));
                     department.setDescription(rs.getString("dep_description"));
                     
-                    // Create Created By Employee object
                     Employee createdBy = new Employee();
                     createdBy.setEmpId(rs.getInt("created_emp_id"));
                     createdBy.setEmpCode(rs.getString("created_emp_code"));
@@ -260,7 +229,6 @@ public class RecruitmentPostDAO {
                     createdBy.setEmail(rs.getString("created_email"));
                     createdBy.setPositionTitle(rs.getString("created_position"));
                     
-                    // Create Approved By Employee object (might be null)
                     Employee approvedBy = null;
                     if (rs.getInt("approved_emp_id") != 0) {
                         approvedBy = new Employee();
@@ -271,7 +239,6 @@ public class RecruitmentPostDAO {
                         approvedBy.setPositionTitle(rs.getString("approved_position"));
                     }
                     
-                    // Create RecruitmentPost object
                     RecruitmentPost post = new RecruitmentPost();
                     post.setPostId(rs.getInt("post_id"));
                     post.setTitle(rs.getString("title"));
@@ -297,10 +264,6 @@ public class RecruitmentPostDAO {
         return null;
     }
     
-    /**
-     * Get pending and rejected recruitment posts for notification table
-     * @return List of pending and rejected RecruitmentPost objects
-     */
     public List<RecruitmentPost> getPendingAndRejectedPosts() {
         List<RecruitmentPost> posts = new ArrayList<>();
         String sql = "SELECT " +
@@ -333,13 +296,11 @@ public class RecruitmentPostDAO {
              ResultSet rs = ps.executeQuery()) {
             
             while (rs.next()) {
-                // Create Department object
                 Department department = new Department();
                 department.setDepId(rs.getString("dep_id"));
                 department.setDepName(rs.getString("dep_name"));
                 department.setDescription(rs.getString("dep_description"));
                 
-                // Create Created By Employee object
                 Employee createdBy = new Employee();
                 createdBy.setEmpId(rs.getInt("created_emp_id"));
                 createdBy.setEmpCode(rs.getString("created_emp_code"));
@@ -347,7 +308,6 @@ public class RecruitmentPostDAO {
                 createdBy.setEmail(rs.getString("created_email"));
                 createdBy.setPositionTitle(rs.getString("created_position"));
                 
-                // Create RecruitmentPost object
                 RecruitmentPost post = new RecruitmentPost();
                 post.setPostId(rs.getInt("post_id"));
                 post.setTitle(rs.getString("title"));
@@ -371,15 +331,6 @@ public class RecruitmentPostDAO {
         return posts;
     }
     
-    /**
-     * Create a new recruitment post
-     * @param title
-     * @param content
-     * @param depId
-     * @param createdBy
-     * @param approvedBy
-     * @return true if successful, false otherwise
-     */
     public boolean createPost(String title, String content, String depId, int createdBy, int approvedBy) {
         String sql = "INSERT INTO RecruitmentPost (title, content, dep_id, status, is_delete, created_by, approved_by, created_at, updated_at) " +
                      "VALUES (?, ?, ?, 'Pending', FALSE, ?, ?, NOW(), NOW())";
@@ -403,14 +354,6 @@ public class RecruitmentPostDAO {
         }
     }
     
-    /**
-     * Update recruitment post (for rejected posts being updated)
-     * @param postId
-     * @param title
-     * @param content
-     * @param depId
-     * @return true if successful, false otherwise
-     */
     public boolean updatePost(int postId, String title, String content, String depId) {
         String sql = "UPDATE RecruitmentPost SET title = ?, content = ?, dep_id = ?, status = 'Pending', updated_at = NOW() " +
                      "WHERE post_id = ? AND is_delete = FALSE";
@@ -433,10 +376,6 @@ public class RecruitmentPostDAO {
         }
     }
     
-    /**
-     * Get all departments for dropdown
-     * @return List of Department objects
-     */
     public List<Department> getDepartments() {
         List<Department> departments = new ArrayList<>();
         String sql = "SELECT dep_id, dep_name, description FROM Department ORDER BY dep_name";
@@ -451,10 +390,7 @@ public class RecruitmentPostDAO {
                 department.setDepName(rs.getString("dep_name"));
                 department.setDescription(rs.getString("description"));
                 departments.add(department);
-                System.out.println("Loaded department: " + department.getDepId() + " - " + department.getDepName());
             }
-            
-            System.out.println("Total departments loaded: " + departments.size());
             
         } catch (SQLException e) {
             System.err.println("Error getting departments: " + e.getMessage());
@@ -462,5 +398,45 @@ public class RecruitmentPostDAO {
         }
         
         return departments;
+    }
+    
+    public boolean approvePost(int postId, int approvedBy, String note) {
+        String sql = "UPDATE RecruitmentPost SET status = 'Approved', approved_by = ?, approved_at = NOW(), updated_at = NOW() " +
+                     "WHERE post_id = ? AND status = 'Pending' AND is_delete = FALSE";
+        
+        try (Connection conn = DBContext.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            
+            ps.setInt(1, approvedBy);
+            ps.setInt(2, postId);
+            
+            int rowsAffected = ps.executeUpdate();
+            return rowsAffected > 0;
+            
+        } catch (SQLException e) {
+            System.err.println("Error approving recruitment post: " + e.getMessage());
+            e.printStackTrace();
+            return false;
+        }
+    }
+    
+    public boolean rejectPost(int postId, int rejectedBy) {
+        String sql = "UPDATE RecruitmentPost SET status = 'Rejected', approved_by = ?, approved_at = NOW(), updated_at = NOW() " +
+                     "WHERE post_id = ? AND status = 'Pending' AND is_delete = FALSE";
+        
+        try (Connection conn = DBContext.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            
+            ps.setInt(1, rejectedBy);
+            ps.setInt(2, postId);
+            
+            int rowsAffected = ps.executeUpdate();
+            return rowsAffected > 0;
+            
+        } catch (SQLException e) {
+            System.err.println("Error rejecting recruitment post: " + e.getMessage());
+            e.printStackTrace();
+            return false;
+        }
     }
 }
