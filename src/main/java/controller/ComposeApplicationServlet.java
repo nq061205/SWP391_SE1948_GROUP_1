@@ -14,6 +14,7 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 import java.sql.Date;
 import java.sql.SQLException;
 import java.util.logging.Level;
@@ -45,6 +46,8 @@ public class ComposeApplicationServlet extends HttpServlet {
         OTRequestDAO otDAO = new OTRequestDAO();
         String appType = type.trim().toUpperCase();
         request.setAttribute("type", appType);
+        HttpSession session = request.getSession();
+        Employee user = (Employee)session.getAttribute("user");
         switch (appType) {
             case "LEAVE": {
                 String leaveType = request.getParameter("type_leave");
@@ -70,7 +73,7 @@ public class ComposeApplicationServlet extends HttpServlet {
                         return;
                     }
                     leaveDAO.composeLeaveRequest(
-                            1,
+                            user.getEmpId(),
                             leaveType,
                             content,
                             startDate,
@@ -105,7 +108,7 @@ public class ComposeApplicationServlet extends HttpServlet {
                         return;
                     }
                     otDAO.composeOTRequest(
-                            1,
+                            user.getEmpId(),
                             otDate,
                             otHours,
                             approvedBy
