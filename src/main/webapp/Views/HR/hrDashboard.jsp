@@ -1,38 +1,21 @@
-<%-- 
-    Document   : hrDashboard
-    Created on : Oct 6, 2025, 11:57:36 PM
-    Author     : Dat Tran
---%>
-
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <!DOCTYPE html>
 <html>
     <head>
-        <!-- META ============================================= -->
         <meta charset="utf-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta name="keywords" content="" />
         <meta name="author" content="" />
         <meta name="robots" content="" />
-
-        <!-- DESCRIPTION -->
         <meta name="description" content="HR Management System" />
-
-        <!-- OG -->
         <meta property="og:title" content="HR Dashboard - HRM System" />
         <meta property="og:description" content="Human Resources Management Dashboard" />
         <meta property="og:image" content="" />
         <meta name="format-detection" content="telephone=no">
-
-        <!-- FAVICONS ICON ============================================= -->
         <link rel="icon" href="${pageContext.request.contextPath}/assets2/images/favicon.ico" type="image/x-icon" />
         <link rel="shortcut icon" type="image/x-icon" href="${pageContext.request.contextPath}/assets2/images/favicon.png" />
-
-        <!-- PAGE TITLE HERE ============================================= -->
         <title>HR Dashboard - HRM System</title>
-
-        <!-- MOBILE SPECIFIC ============================================= -->
         <meta name="viewport" content="width=device-width, initial-scale=1">
 
         <!--[if lt IE 9]>
@@ -40,24 +23,16 @@
         <script src="${pageContext.request.contextPath}/assets2/js/respond.min.js"></script>
         <![endif]-->
 
-        <!-- All PLUGINS CSS ============================================= -->
         <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/assets2/css/assets.css">
         <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/assets2/vendors/calendar/fullcalendar.css">
-
-        <!-- TYPOGRAPHY ============================================= -->
         <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/assets2/css/typography.css">
-
-        <!-- SHORTCODES ============================================= -->
         <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/assets2/css/shortcodes/shortcodes.css">
-
-        <!-- STYLESHEETS ============================================= -->
         <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/assets2/css/style.css">
         <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/assets2/css/dashboard.css">
         <link class="skin" rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/assets2/css/color/color-1.css">
     </head>
 
     <body class="ttr-opened-sidebar ttr-pinned-sidebar">
-        <!-- Include Header -->
         <jsp:include page="../CommonItems/Header/dashboardHeader.jsp" />
         
         <!-- Include Navbar -->
@@ -74,9 +49,6 @@
                     </ul>
                 </div>	
                 
-
-                
-                <!-- Quick Actions Row -->
                 <div class="row">
                     <div class="col-lg-12 m-b30">
                         <div class="widget-box">
@@ -158,9 +130,7 @@
                 </div>
             </div>
         </main>
-        <!--Main container end -->
 
-        <!-- External JavaScripts -->
         <script src="${pageContext.request.contextPath}/assets2/js/jquery.min.js"></script>
         <script src="${pageContext.request.contextPath}/assets2/vendors/bootstrap/js/popper.min.js"></script>
         <script src="${pageContext.request.contextPath}/assets2/vendors/bootstrap/js/bootstrap.min.js"></script>
@@ -183,7 +153,6 @@
 
         <script>
             $(document).ready(function () {
-                // Any additional JavaScript can go here
             });
         </script>
     </body>
