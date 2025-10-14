@@ -366,16 +366,15 @@ public class EmployeeDAO extends DBContext {
             sql.append(")");
         }
 
-        // Sort (nếu không truyền thì mặc định theo emp_id)
-        sql.append(" ORDER BY ");
         if (sortBy != null && !sortBy.isEmpty()) {
-            sql.append(sortBy);
+            sql.append("ORDER BY ").append(sortBy);
+            if (order != null && order.equalsIgnoreCase("desc")) {
+                sql.append(" DESC");
+            } else {
+                sql.append(" ASC");
+            }
         }
-        if (order != null && order.equalsIgnoreCase("desc")) {
-            sql.append(" DESC");
-        } else {
-            sql.append(" ASC");
-        }
+
         sql.append(" LIMIT ? OFFSET ?");
         try {
             PreparedStatement ps = connection.prepareStatement(sql.toString());
@@ -710,9 +709,27 @@ public class EmployeeDAO extends DBContext {
 
     public static void main(String[] args) {
         EmployeeDAO dao = new EmployeeDAO();
-        String sortBy = "emp_code";
-        String order = "DESC";
 
-        System.out.println(dao.updateEmployeeInformation(1, "Nguyễn Đình Quý", true, Date.valueOf("2005-12-06"), "0337364331", ""));
+        // Tham số test
+        String searchkey = "Nguyen";
+        int page = 1;
+        int quantityPerPage = 3;
+        Boolean status = true;          // không lọc theo status
+        String[] deptIds = {"HR"};        // không lọc theo phòng ban
+        String[] roleIds = null;        // không lọc theo role
+        String sortBy = "emp_code";           // không sắp xếp
+        String order = "asc";            // không sắp xếp        
+
+        List<Employee> empList = dao.searchEmployeeWithPaging(
+                searchkey, page, quantityPerPage,
+                status, deptIds, roleIds,
+                sortBy, order
+        );
+
+        // In kết quả
+        System.out.println("Total found: " + empList.size());
+        for (Employee e : empList) {
+            System.out.println(e.getEmpCode() + " | " + e.getFullname() + " | " + e.getDept().getDepName() + " | " + e.getRole().getRoleName() + " | ");
+        }
     }
 }
