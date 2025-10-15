@@ -5,7 +5,6 @@
 package dal;
 
 import model.Department;
-import model.Employee;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;

@@ -3250,3 +3250,20 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#391800', end
 		padding: 15px 15px 0 15px;
 	}
 }
+/*Account List*/
+.sort-link {
+    display: inline-block;
+    padding: 6px 12px;
+    margin: 2px;
+    background-color: #4CAF50; /* màu nền */
+    color: white; /* màu chữ */
+    text-decoration: none; /* bỏ gạch chân */
+    border-radius: 5px; /* bo tròn góc */
+    font-weight: bold;
+    transition: background-color 0.3s, transform 0.2s;
+}
+
+.sort-link:hover {
+    background-color: #45a049; /* màu khi hover */
+    transform: scale(1.05); /* phóng to nhẹ khi hover */
+}
