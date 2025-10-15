@@ -201,7 +201,7 @@
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>DailyAttendance</servlet-name>
-        <url-pattern>/daily</url-pattern>
+        <url-pattern>/daily-attendance</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>EmployeeListServlet</servlet-name>
