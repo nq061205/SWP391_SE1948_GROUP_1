@@ -127,7 +127,7 @@
 
                                     <div class="form-group mb-3">
                                         <p>
-                                            Leave Request — ${leave.startDate}
+                                            Leave Request — ${leave.createdAt}
                                             (
                                             Status:
                                             <span style="font-weight: bold;
@@ -172,6 +172,24 @@
                                         <input type="number" name="othour" value="${ot.otHours}" class="form-control" disabled/>
                                     </div>
 
+                                      <div class="form-group mb-3">
+                                        <p>
+                                            Overtime Request — ${ot.createdAt}
+                                            (
+                                            Status:
+                                            <span style="font-weight: bold;
+                                                  color:
+                                                  <c:choose>
+                                                      <c:when test="${ot.status eq 'Approved'}">green</c:when>
+                                                      <c:when test="${ot.status eq 'Rejected'}">red</c:when>
+                                                      <c:otherwise>goldenrod</c:otherwise>
+                                                  </c:choose>;
+                                                  ">
+                                                ${ot.status}
+                                            </span>
+                                            )
+                                        </p>
+                                    </div>
                                     <div class="text-right">
                                         <a href="${pageContext.request.contextPath}/application?typeapplication=ot" class="ttr-material-button">
                                             <span class="btn btn-primary btn-lg">Return</span></a>
