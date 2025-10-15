@@ -7,7 +7,6 @@ package controller;
 import dal.DeptDAO;
 import dal.EmployeeDAO;
 import dal.RoleDAO;
-import model.Employee;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
@@ -15,12 +14,8 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
 import model.Department;
-import model.Role;
 
 /**
  *
@@ -67,9 +62,7 @@ public class DepartmentListServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         HttpSession ses = request.getSession();
-        EmployeeDAO empDAO = new EmployeeDAO();
         DeptDAO deptDAO = new DeptDAO();
-        RoleDAO rDAO = new RoleDAO();
         List<Department> deptList;
         deptList = deptDAO.getAllDepartment();
         String type = request.getParameter("type");
@@ -80,6 +73,7 @@ public class DepartmentListServlet extends HttpServlet {
             request.setAttribute("editDept", editDept);
         }
         ses.setAttribute("deptList", deptList);
+        deptDAO.close();
         //Comment de merge
         request.getRequestDispatcher("Views/departmentlist.jsp").forward(request, response);
     }

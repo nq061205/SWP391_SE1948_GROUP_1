@@ -94,6 +94,10 @@
         <servlet-name>DailyAttendance</servlet-name>
         <servlet-class>controller.hr.DailyAttendance</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>EmployeeListServlet</servlet-name>
+        <servlet-class>controller.EmployeeListServlet</servlet-class>
+    </servlet>
     <servlet-mapping>
         <servlet-name>HomePageServlet</servlet-name>
         <url-pattern>/homepage</url-pattern>
@@ -198,6 +202,10 @@
     <servlet-mapping>
         <servlet-name>DailyAttendance</servlet-name>
         <url-pattern>/daily</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>EmployeeListServlet</servlet-name>
+        <url-pattern>/employeelistservlet</url-pattern>
     </servlet-mapping>
     <session-config>
         <session-timeout>30</session-timeout>
