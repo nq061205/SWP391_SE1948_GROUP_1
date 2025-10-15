@@ -94,6 +94,10 @@
         <servlet-name>DailyAttendance</servlet-name>
         <servlet-class>controller.hr.DailyAttendanceServlet</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>EmployeeListServlet</servlet-name>
+        <servlet-class>controller.EmployeeListServlet</servlet-class>
+    </servlet>
     <servlet-mapping>
         <servlet-name>HomePageServlet</servlet-name>
         <url-pattern>/homepage</url-pattern>
@@ -163,6 +167,10 @@
         <url-pattern>/hrmanagerrecruitment</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
+        <servlet-name>HRManagerRecruitmentServlet</servlet-name>
+        <url-pattern>/postreview</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
         <servlet-name>DownloadRawTemplateServlet</servlet-name>
         <url-pattern>/download-template</url-pattern>
     </servlet-mapping>
@@ -194,6 +202,10 @@
     <servlet-mapping>
         <servlet-name>DailyAttendance</servlet-name>
         <url-pattern>/daily</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>EmployeeListServlet</servlet-name>
+        <url-pattern>/employeelistservlet</url-pattern>
     </servlet-mapping>
     <session-config>
         <session-timeout>30</session-timeout>

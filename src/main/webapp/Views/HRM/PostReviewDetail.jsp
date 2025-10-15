@@ -9,21 +9,15 @@
         <meta name="keywords" content="" />
         <meta name="author" content="" />
         <meta name="robots" content="" />
-        <meta name="description" content="Recruitment Post Detail" />
-        <meta property="og:title" content="Post Detail - HRM System" />
-        <meta property="og:description" content="Recruitment Post Detail View" />
+        <meta name="description" content="Recruitment Post Review Detail" />
+        <meta property="og:title" content="Post Review Detail - HRM System" />
+        <meta property="og:description" content="Recruitment Post Review Detail View" />
         <meta property="og:image" content="" />
         <meta name="format-detection" content="telephone=no">
         <link rel="icon" href="${pageContext.request.contextPath}/assets2/images/favicon.ico" type="image/x-icon" />
         <link rel="shortcut icon" type="image/x-icon" href="${pageContext.request.contextPath}/assets2/images/favicon.png" />
-        <title>Post Detail - HRM System</title>
+        <title>Post Review Detail - HRM System</title>
         <meta name="viewport" content="width=device-width, initial-scale=1">
-
-        <!--[if lt IE 9]>
-        <script src="${pageContext.request.contextPath}/assets2/js/html5shiv.min.js"></script>
-        <script src="${pageContext.request.contextPath}/assets2/js/respond.min.js"></script>
-        <![endif]-->
-
         <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/assets2/css/assets.css">
         <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/assets2/css/typography.css">
         <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/assets2/css/shortcodes/shortcodes.css">
@@ -34,25 +28,22 @@
 
     <body class="ttr-opened-sidebar ttr-pinned-sidebar">
         <jsp:include page="../CommonItems/Header/dashboardHeader.jsp" />
-        
-        <!-- Include Navbar -->
-        <jsp:include page="../CommonItems/Navbar/empNavbar.jsp" />
+        <jsp:include page="../CommonItems/Navbar/adminNavbar.jsp" />
 
-        <!--Main container start -->
         <main class="ttr-wrapper">
             <div class="container-fluid">
                 <div class="db-breadcrumb">
-                    <h4 class="breadcrumb-title">Recruitment Post Detail</h4>
+                    <h4 class="breadcrumb-title">Recruitment Post Review Detail</h4>
                     <ul class="db-breadcrumb-list">
-                        <li><a href="${pageContext.request.contextPath}/Views/HR/hrDashboard.jsp"><i class="fa fa-home"></i>Home</a></li>
-                        <li><a href="${pageContext.request.contextPath}/hrrecruitment">Recruitment</a></li>
-                        <li>Post Detail</li>
+                        <li><a href="${pageContext.request.contextPath}/Views/Admin/adminDashboard.jsp"><i class="fa fa-home"></i>Home</a></li>
+                        <li><a href="${pageContext.request.contextPath}/postreview">Post Review</a></li>
+                        <li>Detail</li>
                     </ul>
-                </div>	
+                </div>
                 
                 <c:if test="${not empty errorMessage}">
                     <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                        <strong>Error!</strong> ${errorMessage}
+                        <strong><i class="fa fa-exclamation-triangle"></i> Error!</strong> ${errorMessage}
                         <button type="button" class="close" data-dismiss="alert" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                         </button>
@@ -62,8 +53,8 @@
                 <div class="row">
                     <div class="col-lg-12 m-b30">
                         <div class="mb-3">
-                            <a href="${pageContext.request.contextPath}/hrrecruitment" class="btn btn-secondary">
-                                <i class="fa fa-arrow-left"></i> Back to List
+                            <a href="${pageContext.request.contextPath}/postreview" class="btn btn-secondary">
+                                <i class="fa fa-arrow-left"></i> Back to Review List
                             </a>
                         </div>
                         
@@ -75,9 +66,23 @@
                                             <div class="col-lg-8">
                                                 <h2 class="text-primary mb-2">${post.title}</h2>
                                                 <div class="d-flex flex-wrap">
-                                                    <span class="badge badge-success mr-2 mb-2">
-                                                        <i class="fa fa-check-circle"></i> ${post.status}
-                                                    </span>
+                                                    <c:choose>
+                                                        <c:when test="${post.status == 'Pending'}">
+                                                            <span class="badge badge-warning mr-2 mb-2">
+                                                                <i class="fa fa-clock"></i> ${post.status}
+                                                            </span>
+                                                        </c:when>
+                                                        <c:when test="${post.status == 'Rejected'}">
+                                                            <span class="badge badge-danger mr-2 mb-2">
+                                                                <i class="fa fa-times-circle"></i> ${post.status}
+                                                            </span>
+                                                        </c:when>
+                                                        <c:when test="${post.status == 'Approved'}">
+                                                            <span class="badge badge-success mr-2 mb-2">
+                                                                <i class="fa fa-check-circle"></i> ${post.status}
+                                                            </span>
+                                                        </c:when>
+                                                    </c:choose>
                                                     <span class="badge badge-info mr-2 mb-2">
                                                         <i class="fa fa-hashtag"></i> ID: ${post.postId}
                                                     </span>
@@ -89,10 +94,10 @@
                                                 </div>
                                             </div>
                                             <div class="col-lg-4 text-right">
-                                                <c:if test="${hasApprovedAt}">
+                                                <c:if test="${hasCreatedAt}">
                                                     <div class="text-muted">
-                                                        <small>Approved on</small><br>
-                                                        <fmt:formatDate value="${post.approvedAt}" pattern="MMM dd, yyyy 'at' HH:mm" />
+                                                        <small>Created on</small><br>
+                                                        <fmt:formatDate value="${post.createdAt}" pattern="MMM dd, yyyy 'at' HH:mm" />
                                                     </div>
                                                 </c:if>
                                             </div>
@@ -120,7 +125,17 @@
                                                         <div class="row">
                                                             <div class="col-sm-5"><strong>Status:</strong></div>
                                                             <div class="col-sm-7">
-                                                                <span class="badge badge-success">${post.status}</span>
+                                                                <c:choose>
+                                                                    <c:when test="${post.status == 'Pending'}">
+                                                                        <span class="badge badge-warning">${post.status}</span>
+                                                                    </c:when>
+                                                                    <c:when test="${post.status == 'Rejected'}">
+                                                                        <span class="badge badge-danger">${post.status}</span>
+                                                                    </c:when>
+                                                                    <c:when test="${post.status == 'Approved'}">
+                                                                        <span class="badge badge-success">${post.status}</span>
+                                                                    </c:when>
+                                                                </c:choose>
                                                             </div>
                                                         </div>
                                                         <hr>
@@ -147,6 +162,15 @@
                                                                 </c:if>
                                                             </div>
                                                         </div>
+                                                        <c:if test="${hasUpdatedAt}">
+                                                            <hr>
+                                                            <div class="row">
+                                                                <div class="col-sm-5"><strong>Last Updated:</strong></div>
+                                                                <div class="col-sm-7">
+                                                                    <fmt:formatDate value="${post.updatedAt}" pattern="MMM dd, yyyy 'at' HH:mm" />
+                                                                </div>
+                                                            </div>
+                                                        </c:if>
                                                     </div>
                                                 </div>
                                             </div>
@@ -155,7 +179,7 @@
                                                 <div class="card">
                                                     <div class="card-header bg-light">
                                                         <h5 class="card-title mb-0">
-                                                            <i class="fa fa-users text-success"></i> Approval Information
+                                                            <i class="fa fa-users text-success"></i> People Information
                                                         </h5>
                                                     </div>
                                                     <div class="card-body">
@@ -166,7 +190,7 @@
                                                                     <c:when test="${hasCreatedBy}">
                                                                         ${post.createdBy.fullname}
                                                                         <br><small class="text-muted">${post.createdBy.positionTitle}</small>
-                                                                        <br><small class="text-muted">${post.createdBy.email}</small>
+                                                                        <br><small class="text-muted"><i class="fa fa-envelope"></i> ${post.createdBy.email}</small>
                                                                     </c:when>
                                                                     <c:otherwise>
                                                                         <span class="text-muted">N/A</span>
@@ -174,45 +198,33 @@
                                                                 </c:choose>
                                                             </div>
                                                         </div>
-                                                        <hr>
-                                                        <div class="row">
-                                                            <div class="col-sm-5"><strong>Approved by:</strong></div>
-                                                            <div class="col-sm-7">
-                                                                <c:choose>
-                                                                    <c:when test="${hasApprovedBy}">
-                                                                        ${post.approvedBy.fullname}
-                                                                        <br><small class="text-muted">${post.approvedBy.positionTitle}</small>
-                                                                        <br><small class="text-muted">${post.approvedBy.email}</small>
-                                                                    </c:when>
-                                                                    <c:otherwise>
-                                                                        <span class="text-muted">N/A</span>
-                                                                    </c:otherwise>
-                                                                </c:choose>
+                                                        <c:if test="${hasApprovedBy || hasApprovedAt}">
+                                                            <hr>
+                                                            <div class="row">
+                                                                <div class="col-sm-5"><strong>Reviewed by:</strong></div>
+                                                                <div class="col-sm-7">
+                                                                    <c:choose>
+                                                                        <c:when test="${hasApprovedBy}">
+                                                                            ${post.approvedBy.fullname}
+                                                                            <br><small class="text-muted">${post.approvedBy.positionTitle}</small>
+                                                                            <br><small class="text-muted"><i class="fa fa-envelope"></i> ${post.approvedBy.email}</small>
+                                                                        </c:when>
+                                                                        <c:otherwise>
+                                                                            <span class="text-muted">Not reviewed yet</span>
+                                                                        </c:otherwise>
+                                                                    </c:choose>
+                                                                </div>
                                                             </div>
-                                                        </div>
-                                                        <hr>
-                                                        <div class="row">
-                                                            <div class="col-sm-5"><strong>Approved on:</strong></div>
-                                                            <div class="col-sm-7">
-                                                                <c:choose>
-                                                                    <c:when test="${hasApprovedAt}">
-                                                                        <fmt:formatDate value="${post.approvedAt}" pattern="MMM dd, yyyy 'at' HH:mm" />
-                                                                    </c:when>
-                                                                    <c:otherwise>
-                                                                        <span class="text-muted">N/A</span>
-                                                                    </c:otherwise>
-                                                                </c:choose>
+                                                        </c:if>
+                                                        <c:if test="${hasApprovedAt}">
+                                                            <hr>
+                                                            <div class="row">
+                                                                <div class="col-sm-5"><strong>Reviewed on:</strong></div>
+                                                                <div class="col-sm-7">
+                                                                    <fmt:formatDate value="${post.approvedAt}" pattern="MMM dd, yyyy 'at' HH:mm" />
+                                                                </div>
                                                             </div>
-                                                        </div>
-                                                        <hr>
-                                                        <div class="row">
-                                                            <div class="col-sm-5"><strong>Last Updated:</strong></div>
-                                                            <div class="col-sm-7">
-                                                                <c:if test="${hasUpdatedAt}">
-                                                                    <fmt:formatDate value="${post.updatedAt}" pattern="MMM dd, yyyy 'at' HH:mm" />
-                                                                </c:if>
-                                                            </div>
-                                                        </div>
+                                                        </c:if>
                                                     </div>
                                                 </div>
                                             </div>
@@ -246,10 +258,30 @@
                                         </div>
                                         
                                         <div class="row mt-4">
-                                            <div class="col-lg-12 text-center">
-                                                <a href="${pageContext.request.contextPath}/hrrecruitment" class="btn btn-secondary">
-                                                    <i class="fa fa-arrow-left"></i> Back to List
-                                                </a>
+                                            <div class="col-lg-12">
+                                                <div class="text-center">
+                                                    <a href="${pageContext.request.contextPath}/postreview" class="btn btn-secondary btn-lg">
+                                                        <i class="fa fa-arrow-left"></i> Back to Review List
+                                                    </a>
+                                                    <c:if test="${isPending}">
+                                                        <form action="${pageContext.request.contextPath}/postreview" method="post" style="display:inline;" 
+                                                              onsubmit="return confirm('Are you sure you want to approve this post: ${post.title}?');">
+                                                            <input type="hidden" name="action" value="approve">
+                                                            <input type="hidden" name="postId" value="${post.postId}">
+                                                            <button type="submit" class="btn btn-success btn-lg">
+                                                                <i class="fa fa-check"></i> Approve Post
+                                                            </button>
+                                                        </form>
+                                                        <form action="${pageContext.request.contextPath}/postreview" method="post" style="display:inline;" 
+                                                              onsubmit="return confirm('Are you sure you want to reject this post: ${post.title}?');">
+                                                            <input type="hidden" name="action" value="reject">
+                                                            <input type="hidden" name="postId" value="${post.postId}">
+                                                            <button type="submit" class="btn btn-danger btn-lg">
+                                                                <i class="fa fa-times"></i> Reject Post
+                                                            </button>
+                                                        </form>
+                                                    </c:if>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
@@ -263,15 +295,15 @@
                                         </div>
                                         <h4 class="text-muted">Post Not Found</h4>
                                         <p class="text-muted">The recruitment post you're looking for could not be found.</p>
-                                        <a href="${pageContext.request.contextPath}/hrrecruitment" class="btn btn-primary">
-                                            <i class="fa fa-arrow-left"></i> Back to List
+                                        <a href="${pageContext.request.contextPath}/postreview" class="btn btn-primary">
+                                            <i class="fa fa-arrow-left"></i> Back to Review List
                                         </a>
                                     </div>
                                 </div>
                             </c:otherwise>
                         </c:choose>
                     </div>
-                </div>
+                
             </div>
         </main>
 
@@ -294,8 +326,11 @@
 
         <style>
             .content-display {
-                line-height: 1.6;
+                line-height: 1.8;
                 font-size: 14px;
+                padding: 15px;
+                background-color: #f8f9fa;
+                border-radius: 5px;
             }
             
             .content-display p {
@@ -311,20 +346,29 @@
             
             .content-display ul, .content-display ol {
                 margin-bottom: 15px;
-                padding-left: 20px;
+                padding-left: 25px;
             }
             
             .content-display li {
-                margin-bottom: 5px;
+                margin-bottom: 8px;
             }
             
             .card-header {
-                border-bottom: 1px solid #dee2e6;
+                border-bottom: 2px solid #dee2e6;
             }
             
             .card-body hr {
-                margin: 0.5rem 0;
+                margin: 0.75rem 0;
                 border-color: #e9ecef;
+            }
+            
+            .alert {
+                border-width: 2px;
+            }
+            
+            .btn-lg {
+                padding: 0.75rem 1.5rem;
+                font-size: 1rem;
             }
         </style>
     </body>
