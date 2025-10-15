@@ -92,7 +92,7 @@
     </servlet>
     <servlet>
         <servlet-name>DailyAttendance</servlet-name>
-        <servlet-class>controller.hr.DailyAttendance</servlet-class>
+        <servlet-class>controller.hr.DailyAttendanceServlet</servlet-class>
     </servlet>
     <servlet-mapping>
         <servlet-name>HomePageServlet</servlet-name>
