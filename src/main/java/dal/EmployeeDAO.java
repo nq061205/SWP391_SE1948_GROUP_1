@@ -401,7 +401,7 @@ public class EmployeeDAO extends DBContext {
                 }
             }
             ps.setInt(index++, quantityOfPage);
-            ps.setInt(index, (page - 1) * quantityOfPage);
+            ps.setInt(index++, (page - 1) * quantityOfPage);
 
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
@@ -677,15 +677,12 @@ public class EmployeeDAO extends DBContext {
 
     public static void main(String[] args) {
         EmployeeDAO dao = new EmployeeDAO();
-        String username = dao.generateUserName();
-        String password = dao.generatePassword();
-        CandidateDAO canDAO = new CandidateDAO();
-        Candidate can = canDAO.getCandidateById(1);
-        String email = can.getEmail();
-        String fullname=can.getName();
-        String phone =can.getPhone();
-        dao.createEmployee(username, password, fullname, email, true, phone);
-       
+        String sortBy = "emp_code";
+        String order="desc";
+        int page =1;
+        int quantityofpage =5;
+        List<Employee> empList = dao.ManageEmployeeWithPaging(null, page, quantityofpage, null, null, null, sortBy, order);
+        System.out.println(empList);
     }
 
 }
