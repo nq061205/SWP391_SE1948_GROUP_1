@@ -65,7 +65,7 @@
                 <div class="db-breadcrumb">
                     <h4 class="breadcrumb-title">Account Listing</h4>
                     <ul class="db-breadcrumb-list">
-                        <li><a href="${pageContext.request.contextPath}/accountlist"><i class="fa fa-home"></i> Account List</a></li>
+                        <li><a href="${pageContext.request.contextPath}/Views/Admin/adminDashboard.jsp"><i class="fa fa-home"></i>Home</a></li>
                     </ul>
                 </div>
                 <c:url var="baseUrl" value="accountlist">
@@ -286,12 +286,44 @@
                                 </tbody>
                             </table>
                         </div>
-                        <div class="pagination">
-                            <c:forEach var="i" begin="1" end="${totalPages}">
-                                <a href="${urlPrefix}page=${i}<c:if test='${not empty sortBy}'>&sortBy=${sortBy}&order=${order}</c:if>">
-                                    ${i}
-                                </a>
+                        <c:set var="maxPagesToShow" value="3" />
+                        <c:set var="halfPagesToShow" value="${(maxPagesToShow-1) / 2}" />
+
+                        <c:set var="startPage" value="${page - halfPagesToShow}" />
+                        <c:set var="endPage" value="${page + halfPagesToShow}" />
+
+                        <c:if test="${startPage < 1}"><c:set var="startPage" value="1" /></c:if>
+                        <c:if test="${endPage > totalPages}"><c:set var="endPage" value="${totalPages}" /></c:if>
+
+                            <div class="pagination">
+
+                            <c:if test="${page > 1}">
+                                <a href="${urlPrefix}page=${page - 1}<c:if test='${not empty sortBy}'>&sortBy=${sortBy}&order=${order}</c:if>">&laquo;Prev</a>
+                            </c:if>
+
+                            <c:if test="${startPage > 1}">
+                                <a href="${urlPrefix}page=1<c:if test='${not empty sortBy}'>&sortBy=${sortBy}&order=${order}</c:if>">1</a>
+                                    <span>...</span>
+                            </c:if>
+
+                            <c:forEach var="i" begin="${startPage}" end="${endPage}">
+                                <c:choose>
+                                    <c:when test="${i == page}">
+                                        <span class="current">${i}</span>
+                                    </c:when>
+                                    <c:otherwise>
+                                        <a href="${urlPrefix}page=${i}<c:if test='${not empty sortBy}'>&sortBy=${sortBy}&order=${order}</c:if>">${i}</a>
+                                    </c:otherwise>
+                                </c:choose>
                             </c:forEach>
+
+                            <c:if test="${endPage < totalPages}">
+                                <span>...</span>
+                                <a href="${urlPrefix}page=${totalPages}<c:if test='${not empty sortBy}'>&sortBy=${sortBy}&order=${order}</c:if>">${totalPages}</a>
+                            </c:if>
+                            <c:if test="${page < totalPages}">
+                                <a href="${urlPrefix}page=${page + 1}<c:if test='${not empty sortBy}'>&sortBy=${sortBy}&order=${order}</c:if>">Next &raquo;</a>
+                            </c:if>
                         </div>
                     </div>
                 </div>
@@ -333,6 +365,23 @@
                 padding: 0;             /* bỏ khoảng cách bên trong */
                 cursor: pointer;        /* hiện con trỏ tay khi hover */
                 color: inherit;
+            }
+            .pagination a {
+                padding: 5px 10px;
+                margin: 2px;
+                border: 1px solid #ccc;
+                text-decoration: none;
+                color: #333;
+            }
+            .pagination a:hover {
+                background-color: #eee;
+            }
+            .pagination span.current {
+                padding: 5px 10px;
+                margin: 2px;
+                font-weight: bold;
+                background-color: #333;
+                color: white;
             }
 
             .icon-circle:hover {
