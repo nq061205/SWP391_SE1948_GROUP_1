@@ -64,7 +64,7 @@
                 <div class="db-breadcrumb">
                     <h4 class="breadcrumb-title">Department Listing</h4>
                     <ul class="db-breadcrumb-list">
-                        <li><a href="${pageContext.request.contextPath}/departmentlistservlet"><i class="fa fa-home"></i> Department List</a></li>
+                        <li><a href="${pageContext.request.contextPath}/Views/Admin/adminDashboard.jsp"><i class="fa fa-home"></i>Home</a></li>
                     </ul>
                 </div>
                 <button class="btn btn-primary mb-3" data-bs-toggle="modal" data-bs-target="#addModal">

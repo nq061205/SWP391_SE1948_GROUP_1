@@ -78,7 +78,8 @@ public class EmployeeListServlet extends HttpServlet {
         String ageRange = request.getParameter("ageRange");
         String genderStr = request.getParameter("gender");
         CandidateDAO canDAO = new CandidateDAO();
-        List<Candidate> canList =canDAO.getAllCandidate("approve");
+        List<Integer> idList =canDAO.getAllPassCandidateID("Pass");
+        List<Candidate> canList = canDAO.getAllPassedCandidates(idList);
         for (int i =0;i<canList.size();i++) {
             Candidate can = canList.get(i);
             String username=empDAO.generateUserName();
