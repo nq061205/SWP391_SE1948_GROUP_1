@@ -65,7 +65,7 @@
                 <div class="db-breadcrumb">
                     <h4 class="breadcrumb-title">Employee Listing</h4>
                     <ul class="db-breadcrumb-list">
-                        <li><a href="${pageContext.request.contextPath}/employeelistservlet"><i class="fa fa-home"></i> Employee List</a></li>
+                        <li><a href="${pageContext.request.contextPath}/Views/HR/hrDashboard.jsp"><i class="fa fa-home"></i> Home</a></li>
                     </ul>
                 </div>
                 <c:url var="baseUrl" value="employeelistservlet">
@@ -266,7 +266,7 @@
                                             <td>
                                                 <a href="${pageContext.request.contextPath}/employeelistservlet?type=edit&empCode=${el.empCode}&page=${page}" class="btn btn-sm btn-primary">Edit</a>
                                             </td>
-                                                                                    
+
                                         </c:otherwise>
                                     </c:choose>
                                     </tr>
@@ -274,151 +274,184 @@
                                 </tbody>
                             </table>
                         </div>
-                        <div class="pagination">
-                            <c:forEach var="i" begin="1" end="${totalPages}">
-                                <a href="${urlPrefix}page=${i}<c:if test='${not empty sortBy}'>&sortBy=${sortBy}&order=${order}</c:if>">
-                                    ${i}
-                                </a>
+                        <c:set var="maxPagesToShow" value="3" />
+                        <c:set var="halfPagesToShow" value="${(maxPagesToShow-1) / 2}" />
+
+                        <c:set var="startPage" value="${page - halfPagesToShow}" />
+                        <c:set var="endPage" value="${page + halfPagesToShow}" />
+
+                        <c:if test="${startPage < 1}"><c:set var="startPage" value="1" /></c:if>
+                        <c:if test="${endPage > totalPages}"><c:set var="endPage" value="${totalPages}" /></c:if>
+
+                            <div class="pagination">
+
+                            <c:if test="${page > 1}">
+                                <a href="${urlPrefix}page=${page - 1}<c:if test='${not empty sortBy}'>&sortBy=${sortBy}&order=${order}</c:if>">&laquo;Prev</a>
+                            </c:if>
+
+                            <c:if test="${startPage > 1}">
+                                <a href="${urlPrefix}page=1<c:if test='${not empty sortBy}'>&sortBy=${sortBy}&order=${order}</c:if>">1</a>
+                                    <span>...</span>
+                            </c:if>
+
+                            <c:forEach var="i" begin="${startPage}" end="${endPage}">
+                                <c:choose>
+                                    <c:when test="${i == page}">
+                                        <span class="current">${i}</span>
+                                    </c:when>
+                                    <c:otherwise>
+                                        <a href="${urlPrefix}page=${i}<c:if test='${not empty sortBy}'>&sortBy=${sortBy}&order=${order}</c:if>">${i}</a>
+                                    </c:otherwise>
+                                </c:choose>
                             </c:forEach>
+
+                            <c:if test="${endPage < totalPages}">
+                                <span>...</span>
+                                <a href="${urlPrefix}page=${totalPages}<c:if test='${not empty sortBy}'>&sortBy=${sortBy}&order=${order}</c:if>">${totalPages}</a>
+                            </c:if>
+                            <c:if test="${page < totalPages}">
+                                <a href="${urlPrefix}page=${page + 1}<c:if test='${not empty sortBy}'>&sortBy=${sortBy}&order=${order}</c:if>">Next &raquo;</a>
+                            </c:if>
                         </div>
                     </div>
                 </div>
             </div>
-        </main>
+        </div>
+    </main>
 
 
-        <script src="${pageContext.request.contextPath}/assets2/js/jquery.min.js"></script>
-        <script src="${pageContext.request.contextPath}/assets2/vendors/bootstrap/js/popper.min.js"></script>
-        <script src="${pageContext.request.contextPath}/assets2/vendors/bootstrap/js/bootstrap.min.js"></script>
-        <script src="${pageContext.request.contextPath}/assets2/vendors/bootstrap-select/bootstrap-select.min.js"></script>
-        <script src="${pageContext.request.contextPath}/assets2/vendors/bootstrap-touchspin/jquery.bootstrap-touchspin.js"></script>
-        <script src="${pageContext.request.contextPath}/assets2/vendors/magnific-popup/magnific-popup.js"></script>
-        <script src="${pageContext.request.contextPath}/assets2/vendors/counter/waypoints-min.js"></script>
-        <script src="${pageContext.request.contextPath}/assets2/vendors/counter/counterup.min.js"></script>
-        <script src="${pageContext.request.contextPath}/assets2/vendors/imagesloaded/imagesloaded.js"></script>
-        <script src="${pageContext.request.contextPath}/assets2/vendors/masonry/masonry.js"></script>
-        <script src="${pageContext.request.contextPath}/assets2/vendors/masonry/filter.js"></script>
-        <script src="${pageContext.request.contextPath}/assets2/vendors/owl-carousel/owl.carousel.js"></script>
-        <script src='${pageContext.request.contextPath}/assets2/vendors/scroll/scrollbar.min.js'></script>
-        <script src="${pageContext.request.contextPath}/assets2/js/functions.js"></script>
-        <script src="${pageContext.request.contextPath}/assets2/vendors/chart/chart.min.js"></script>
-        <script src="${pageContext.request.contextPath}/assets2/js/admin.js"></script>
-        <script src='${pageContext.request.contextPath}/assets2/vendors/switcher/switcher.js'></script>
-        <style>
-            .icon-circle {
-                display: inline-flex;
-                justify-content: center;
-                align-items: center;
-                width: 40px;
-                height: 40px;
-                border-radius: 50%;
-                background-color: #e0e0e0;
-                color: #333;
-                text-decoration: none;
-                transition: 0.3s;
-                border: none;           /* bỏ viền mặc định */
-                background: none;       /* bỏ nền mặc định */
-                padding: 0;             /* bỏ khoảng cách bên trong */
-                cursor: pointer;        /* hiện con trỏ tay khi hover */
-                color: inherit;
-            }
+    <script src="${pageContext.request.contextPath}/assets2/js/jquery.min.js"></script>
+    <script src="${pageContext.request.contextPath}/assets2/vendors/bootstrap/js/popper.min.js"></script>
+    <script src="${pageContext.request.contextPath}/assets2/vendors/bootstrap/js/bootstrap.min.js"></script>
+    <script src="${pageContext.request.contextPath}/assets2/vendors/bootstrap-select/bootstrap-select.min.js"></script>
+    <script src="${pageContext.request.contextPath}/assets2/vendors/bootstrap-touchspin/jquery.bootstrap-touchspin.js"></script>
+    <script src="${pageContext.request.contextPath}/assets2/vendors/magnific-popup/magnific-popup.js"></script>
+    <script src="${pageContext.request.contextPath}/assets2/vendors/counter/waypoints-min.js"></script>
+    <script src="${pageContext.request.contextPath}/assets2/vendors/counter/counterup.min.js"></script>
+    <script src="${pageContext.request.contextPath}/assets2/vendors/imagesloaded/imagesloaded.js"></script>
+    <script src="${pageContext.request.contextPath}/assets2/vendors/masonry/masonry.js"></script>
+    <script src="${pageContext.request.contextPath}/assets2/vendors/masonry/filter.js"></script>
+    <script src="${pageContext.request.contextPath}/assets2/vendors/owl-carousel/owl.carousel.js"></script>
+    <script src='${pageContext.request.contextPath}/assets2/vendors/scroll/scrollbar.min.js'></script>
+    <script src="${pageContext.request.contextPath}/assets2/js/functions.js"></script>
+    <script src="${pageContext.request.contextPath}/assets2/vendors/chart/chart.min.js"></script>
+    <script src="${pageContext.request.contextPath}/assets2/js/admin.js"></script>
+    <script src='${pageContext.request.contextPath}/assets2/vendors/switcher/switcher.js'></script>
+    <style>
+        .icon-circle {
+            display: inline-flex;
+            justify-content: center;
+            align-items: center;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: #e0e0e0;
+            color: #333;
+            text-decoration: none;
+            transition: 0.3s;
+            border: none;           /* bỏ viền mặc định */
+            background: none;       /* bỏ nền mặc định */
+            padding: 0;             /* bỏ khoảng cách bên trong */
+            cursor: pointer;        /* hiện con trỏ tay khi hover */
+            color: inherit;
+        }
 
-            .icon-circle:hover {
-                background-color: #d5d5d5; /* xám đậm hơn khi hover */
-                color: #000;
-            }
-            #candidateModal {
-                display: none;
-                position: relative; /* giữ vị trí ngay dưới button */
-                margin-top: 15px; /* khoảng cách với nút Add Employee */
-                z-index: 1;
-            }
+        .icon-circle:hover {
+            background-color: #d5d5d5; /* xám đậm hơn khi hover */
+            color: #000;
+        }
+        #candidateModal {
+            display: none;
+            position: relative; /* giữ vị trí ngay dưới button */
+            margin-top: 15px; /* khoảng cách với nút Add Employee */
+            z-index: 1;
+        }
 
-            #candidateModal .modal-content {
-                background-color: #ffffff;
-                border: 1px solid #ccc;
-                border-radius: 10px;
-                padding: 20px;
-                box-shadow: 0 3px 10px rgba(0,0,0,0.1);
-            }
+        #candidateModal .modal-content {
+            background-color: #ffffff;
+            border: 1px solid #ccc;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+        }
 
 
-            #candidateModal .close {
-                color: #555;
-                float: right;
-                font-size: 20px;
-                font-weight: bold;
-                cursor: pointer;
-            }
+        #candidateModal .close {
+            color: #555;
+            float: right;
+            font-size: 20px;
+            font-weight: bold;
+            cursor: pointer;
+        }
 
-            #candidateModal .close:hover {
-                color: #000;
-            }
+        #candidateModal .close:hover {
+            color: #000;
+        }
 
-            #candidateModal table {
-                margin-top: 10px;
-            }
+        #candidateModal table {
+            margin-top: 10px;
+        }
 
-            #candidateModal table thead {
-                background-color: #007bff;
-                color: #fff;
-            }
+        #candidateModal table thead {
+            background-color: #007bff;
+            color: #fff;
+        }
 
-            #candidateModal table td,
-            #candidateModal table th {
-                text-align: center;
-                vertical-align: middle;
-            }
-            .sort-link {
-                display: inline-block;
-                padding: 6px 12px;
-                margin: 2px;
-                background-color: #4CAF50; /* màu nền */
-                color: white; /* màu chữ */
-                text-decoration: none; /* bỏ gạch chân */
-                border-radius: 5px; /* bo tròn góc */
-                font-weight: bold;
-                transition: background-color 0.3s, transform 0.2s;
-            }
+        #candidateModal table td,
+        #candidateModal table th {
+            text-align: center;
+            vertical-align: middle;
+        }
+        .sort-link {
+            display: inline-block;
+            padding: 6px 12px;
+            margin: 2px;
+            background-color: #4CAF50; /* màu nền */
+            color: white; /* màu chữ */
+            text-decoration: none; /* bỏ gạch chân */
+            border-radius: 5px; /* bo tròn góc */
+            font-weight: bold;
+            transition: background-color 0.3s, transform 0.2s;
+        }
 
-            .sort-link:hover {
-                background-color: #45a049; /* màu khi hover */
-                transform: scale(1.05); /* phóng to nhẹ khi hover */
-            }
-            .pagination {
-                display: flex;
-                gap: 8px;
-                margin-top: 20px;
-                justify-content: center;
-                align-items: center;
-                font-family: Arial, sans-serif;
-            }
+        .sort-link:hover {
+            background-color: #45a049; /* màu khi hover */
+            transform: scale(1.05); /* phóng to nhẹ khi hover */
+        }
+        .pagination {
+            display: flex;
+            gap: 8px;
+            margin-top: 20px;
+            justify-content: center;
+            align-items: center;
+            font-family: Arial, sans-serif;
+        }
 
-            .pagination a {
-                display: inline-block;
-                padding: 6px 12px;
-                text-decoration: none;
-                color: #007bff;
-                border: 1px solid #dee2e6;
-                border-radius: 5px;
-                transition: 0.2s;
-                font-size: 14px;
-            }
+        .pagination a {
+            display: inline-block;
+            padding: 6px 12px;
+            text-decoration: none;
+            color: #007bff;
+            border: 1px solid #dee2e6;
+            border-radius: 5px;
+            transition: 0.2s;
+            font-size: 14px;
+        }
 
-            .pagination a:hover {
-                background-color: #007bff;
-                color: white;
-                border-color: #007bff;
-            }
+        .pagination a:hover {
+            background-color: #007bff;
+            color: white;
+            border-color: #007bff;
+        }
 
-            .pagination a.active {
-                background-color: #007bff;
-                color: white;
-                border-color: #007bff;
-                font-weight: bold;
-                cursor: default;
-            }
+        .pagination a.active {
+            background-color: #007bff;
+            color: white;
+            border-color: #007bff;
+            font-weight: bold;
+            cursor: default;
+        }
 
-        </style>
-    </body>
+    </style>
+</body>
 </html>
