@@ -43,6 +43,16 @@ public class DailyAttendance {
         this.updatedAt = updatedAt;
     }
 
+    public DailyAttendance(Employee employee, Date date, double workDay, Time checkInTime, Time checkOutTime, double otHours, String status) {
+        this.employee = employee;
+        this.date = date;
+        this.workDay = workDay;
+        this.checkInTime = checkInTime;
+        this.checkOutTime = checkOutTime;
+        this.otHours = otHours;
+        this.status = status;
+    }
+
     public Employee getEmployee() {
         return employee;
     }
