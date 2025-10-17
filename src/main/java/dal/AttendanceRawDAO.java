@@ -21,16 +21,6 @@ import model.Employee;
 public class AttendanceRawDAO extends DBContext {
 
     private Connection con;
-    private String status = "ok";
-
-    public AttendanceRawDAO() {
-        try {
-            con = new DBContext().getConnection();
-        } catch (Exception e) {
-            status = "Connection failed: " + e.getMessage();
-            e.printStackTrace();
-        }
-    }
 
     public void insertRawBatch(List<AttendanceRaw> list) {
         String sql = "INSERT INTO attendance_raw (emp_id, date, check_time, check_type) VALUES (?, ?, ?, ?)";

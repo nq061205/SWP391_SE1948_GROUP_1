@@ -46,6 +46,7 @@ public class LeaveRequest {
         this.updatedAt = updatedAt;
     }
 
+    
     public int getLeaveId() {
         return leaveId;
     }

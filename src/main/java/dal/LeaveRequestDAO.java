@@ -170,7 +170,7 @@ public class LeaveRequestDAO extends DBContext {
             sql.append(" AND lr.leave_type = ?");
             params.add(type.trim());
         }
-        
+
         if (search != null && !search.trim().isEmpty()) {
             String kw = "%" + search.trim() + "%";
             sql.append(" AND (lr.status LIKE ? "
@@ -312,7 +312,37 @@ public class LeaveRequestDAO extends DBContext {
         return list;
     }
 
+    public List<LeaveRequest> getApprovedLeaves() {
+        List<LeaveRequest> list = new ArrayList<>();
+        String sql = "SELECT * FROM leave_request WHERE status = 'Approved'";
+        try (PreparedStatement st = connection.prepareStatement(sql); ResultSet rs = st.executeQuery()) {
+            while (rs.next()) {
+                Employee e = employeeDAO.getEmployeeByEmpId(rs.getInt("emp_id"));
+                Employee a = employeeDAO.getEmployeeByEmpId(rs.getInt("approved_by"));
+                LeaveRequest l = new LeaveRequest(
+                        rs.getInt("leave_id"), e,
+                        rs.getString("leave_type"),
+                        rs.getString("reason"),
+                        rs.getDouble("day_requested"),
+                        rs.getDate("start_date"),
+                        rs.getDate("end_date"), a,
+                        rs.getTimestamp("approved_at"),
+                        rs.getString("status"),
+                        rs.getString("note"),
+                        rs.getTimestamp("created_at"),
+                        rs.getTimestamp("updated_at")
+                );
+                list.add(l);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return list;
+    }
+
     public static void main(String[] args) {
         LeaveRequestDAO dao = new LeaveRequestDAO();
+        List<LeaveRequest> l = dao.getApprovedLeaves();
+        System.out.println(l.size());
     }
 }
