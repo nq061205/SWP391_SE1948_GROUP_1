@@ -134,30 +134,33 @@ public class CandidateDAO extends DBContext {
         }
         return candidateList;
     }
-
-    public List<Candidate> getAllPassedCandidates(boolean result) {
-        List<Candidate> candidateList = new ArrayList<>();
-        String sql = "SELECT * FROM candidate WHERE result = ?";
-        try (Connection conn = DBContext.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
-
-            ps.setBoolean(1, result);
-            try (ResultSet rs = ps.executeQuery()) {
-                while (rs.next()) {
-                    Candidate can = new Candidate();
-                    can.setCandidateId(rs.getInt("candidate_id"));
-                    can.setName(rs.getString("name"));
-                    can.setEmail(rs.getString("email"));
-                    can.setPhone(rs.getString("phone"));
-                    RecruitmentPost post = rpDAO.getPostById(rs.getInt("post_id"));
-                    can.setPost(post);
-                    can.setResult(rs.getBoolean("result"));
-                    candidateList.add(can);
-                }
+    public List<Integer> getAllPassCandidateID(String result) {
+        List<Integer> idList = new ArrayList<>();
+        String sql ="select candidate_id from interview where result=?";
+        try(Connection conn = DBContext.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, result);
+            ResultSet rs = ps.executeQuery();
+            while(rs.next()) {
+                int id =0;
+                id = rs.getInt("candidate_id");
+                idList.add(id);
             }
-        } catch (SQLException ex) {
+        }
+        catch(SQLException ex) {
             Logger.getLogger(CandidateDAO.class.getName()).log(Level.SEVERE, null, ex);
         }
-        return candidateList;
+        return idList;
+    }
+
+    public List<Candidate> getAllPassedCandidates(List<Integer> candidateIds) {
+        List<Candidate> result = new ArrayList<>();
+        for (int id : candidateIds) {
+            Candidate c = getCandidateById(id);
+            if (c != null) {
+                result.add(c);
+            }
+        }
+        return result;
     }
 
     public List<Candidate> getCandidateByPage(List<Candidate> fullList, int page, int quantityPerPage) {
@@ -211,10 +214,10 @@ public class CandidateDAO extends DBContext {
         try (Connection conn = DBContext.getConnection(); PreparedStatement stm = conn.prepareStatement(sql)) {
 
             stm.setInt(1, result);
-            stm.setInt(2, id);   
+            stm.setInt(2, id);
 
             int rows = stm.executeUpdate();
-            return rows > 0; 
+            return rows > 0;
 
         } catch (SQLException ex) {
             ex.printStackTrace();
@@ -225,8 +228,8 @@ public class CandidateDAO extends DBContext {
 
     public static void main(String[] args) {
         CandidateDAO dao = new CandidateDAO();
-        for (Candidate c : dao.getAllCandidate("approve")) {
-            System.out.println(c);
-        }
+        List<Integer> idList = dao.getAllPassCandidateID("Pass");
+        List<Candidate> canList = dao.getAllPassedCandidates(idList);
+        System.out.println(canList);
     }
 }

@@ -81,7 +81,7 @@ public class AccountList extends HttpServlet {
         String order = request.getParameter("order");
         String type = request.getParameter("type");
         String empCode = request.getParameter("empCode");
-        int quantityOfPage = 5;
+        int quantityOfPage = 3;
         int currentPage = 1;
         String currentPageStr = request.getParameter("page");
         if (currentPageStr != null && !currentPageStr.trim().isEmpty()) {
@@ -98,6 +98,7 @@ public class AccountList extends HttpServlet {
         if (searchkey != null && !searchkey.trim().isEmpty()) {          
             totalSearchResults = empDAO.countSearchRecordOfEmployee(searchkey);
             totalPages = (int) Math.ceil((double) totalSearchResults / quantityOfPage);
+            currentPage=1;
         } else if (status != null || (deptId != null && deptId.length > 0) || (roleId != null && roleId.length > 0)) {     
             totalFilterResults = empDAO.countFilterRecordOfEmployee(status,deptId,roleId);
             totalPages = (int) Math.ceil((double) totalFilterResults / quantityOfPage);
