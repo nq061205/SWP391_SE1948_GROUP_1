@@ -264,6 +264,33 @@ public class OTRequestDAO extends DBContext {
         return list;
     }
 
+     public List<OTRequest> getApprovedOTs() {
+        List<OTRequest> list = new ArrayList<>();
+        String sql = "SELECT * FROM ot_request WHERE status = 'Approved'";
+        try (PreparedStatement st = connection.prepareStatement(sql);
+             ResultSet rs = st.executeQuery()) {
+
+            while (rs.next()) {
+                Employee e = employeeDAO.getEmployeeByEmpId(rs.getInt("emp_id"));
+                Employee a = employeeDAO.getEmployeeByEmpId(rs.getInt("approved_by"));
+                OTRequest o = new OTRequest(
+                        rs.getInt("ot_id"), e,
+                        rs.getDate("date"),
+                        rs.getDouble("ot_hours"), a,
+                        rs.getTimestamp("approved_at"),
+                        rs.getString("status"),
+                        rs.getTimestamp("created_at"),
+                        rs.getTimestamp("updated_at")
+                );
+                list.add(o);
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return list;
+    }
     public static void main(String[] args) {
         OTRequestDAO dao = new OTRequestDAO();
         List<OTRequest> list = new ArrayList<>();
