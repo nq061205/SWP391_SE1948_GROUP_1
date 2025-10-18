@@ -66,6 +66,7 @@
                     <h4 class="breadcrumb-title">Account Listing</h4>
                     <ul class="db-breadcrumb-list">
                         <li><a href="${pageContext.request.contextPath}/Views/Admin/adminDashboard.jsp"><i class="fa fa-home"></i>Home</a></li>
+                        <li><a href="${pageContext.request.contextPath}/accountlist">Accountlist</a></li>
                     </ul>
                 </div>
                 <c:url var="baseUrl" value="accountlist">
@@ -236,7 +237,10 @@
                                                 <td>${loop.index+1}</td>
                                                 <td><input type="hidden" name="empCode" value="${el.empCode}" />${el.empCode}</td>
                                                 <td>${el.fullname}</td>
-                                                <td><input type="text" name="email" value="${el.email}" /></td>
+                                                <td>
+                                                    <input type="text" name="email" value="${el.email}" />
+                                                    <span style="color:red;">${emailError}</span>
+                                                </td>
                                                 <td>${el.image}</td>
                                                 <td>
                                                     ${el.dept.depName}
@@ -286,7 +290,7 @@
                                 </tbody>
                             </table>
                         </div>
-                        <c:set var="maxPagesToShow" value="3" />
+                        <c:set var="maxPagesToShow" value="5" />
                         <c:set var="halfPagesToShow" value="${(maxPagesToShow-1) / 2}" />
 
                         <c:set var="startPage" value="${page - halfPagesToShow}" />
