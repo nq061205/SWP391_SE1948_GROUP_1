@@ -6,20 +6,27 @@ package controller;
 
 import dal.EmployeeDAO;
 import model.Employee;
-import jakarta.mail.Session;
 import java.io.IOException;
-import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.MultipartConfig;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
+import jakarta.servlet.http.*;
+import java.nio.file.Paths;
 import java.sql.Date;
+import java.io.File;
 
 /**
  *
  * @author nq061205
  */
+@MultipartConfig(
+        fileSizeThreshold = 1024 * 1024 * 2, // 2MB
+        maxFileSize = 1024 * 1024 * 10, // 10MB
+        maxRequestSize = 1024 * 1024 * 50 // 50MB
+)
 public class ProfileServlet extends HttpServlet {
 
     @Override
@@ -47,7 +54,7 @@ public class ProfileServlet extends HttpServlet {
             String fullname = request.getParameter("fullname");
             boolean gender = "Male".equals(request.getParameter("gender"));
             String dobStr = request.getParameter("dob");
-            java.sql.Date dob = null;
+            Date dob = null;
             if (dobStr != null && !dobStr.isEmpty()) {
                 try {
                     dob = java.sql.Date.valueOf(dobStr);
@@ -56,14 +63,27 @@ public class ProfileServlet extends HttpServlet {
                 }
             }
             String phone = request.getParameter("phone");
-            String image = request.getParameter("image");
+            Part filePart = request.getPart("image");
+            String avatarRelativePath = "";
+
+            if (filePart != null && filePart.getSize() > 0) {
+                String fileName = Paths.get(filePart.getSubmittedFileName()).getFileName().toString();
+                String uploadPath = getServletContext().getRealPath("/images/avatar");
+
+                File uploadDir = new File(uploadPath);
+                if (!uploadDir.exists()) {
+                    uploadDir.mkdirs();
+                }
+                filePart.write(uploadPath + File.separator + fileName);
+                avatarRelativePath = "images/avatar/" + fileName;
+            }
             employeeDAO.updateEmployeeInformation(
                     user.getEmpId(),
                     fullname,
                     gender,
                     dob,
                     phone,
-                    image
+                    avatarRelativePath
             );
             Employee updatedUser = employeeDAO.getEmployeeByEmpId(user.getEmpId());
             if (updatedUser != null) {

@@ -78,7 +78,7 @@
                                 <h4>Personal record</h4>
                             </div>
                             <div class="widget-inner">
-                                <form class="edit-profile m-b30" action="${pageContext.request.contextPath}/profile" method="POST">
+                                <form class="edit-profile m-b30" action="${pageContext.request.contextPath}/profile" method="POST" enctype="multipart/form-data">
                                     <div class="row">
                                         <!-- Avatar -->
                                         <div class="col-md-3 text-center">
@@ -133,8 +133,7 @@
                                                 <label class="col-sm-3 col-form-label">Day of birth</label>
                                                 <div class="col-sm-9">
                                                     <input name="dob" class="form-control" type="date" value="${sessionScope.user.dob}"
-                                                           <c:if test="${click != 'save'}"> readonly </c:if>
-                                                               >
+                                                           <c:if test="${click != 'save'}"> readonly </c:if>>
                                                     </div>
                                                 </div>
 
@@ -155,7 +154,7 @@
                                                     >Image</label>
                                                 <div class="col-sm-9">
                                                     <c:if test="${click == 'save'}">
-                                                        <input name="image" class="form-control" type="text" value="${sessionScope.user.image}">
+                                                        <input type="file" class="form-control" name="image" value="${sessionScope.user.image}" placeholder="Upload your image" />
                                                     </c:if>
                                                     <c:if test="${click != 'save'}">
                                                         <input type="hidden" name="image" value="${sessionScope.user.image}">
