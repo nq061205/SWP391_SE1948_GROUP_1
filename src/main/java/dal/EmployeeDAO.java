@@ -191,9 +191,8 @@ public class EmployeeDAO extends DBContext {
     public List<Employee> getAllEmployees() {
         empList = new ArrayList<>();
         String sql = "SELECT * FROM Employee";
-        try {
-            PreparedStatement ps = connection.prepareStatement(sql);
-            ResultSet rs = ps.executeQuery();
+        try (PreparedStatement ps = connection.prepareStatement(sql); ResultSet rs = ps.executeQuery();) {
+
             while (rs.next()) {
                 Employee emp = new Employee();
                 emp.setEmpId(rs.getInt("emp_id"));
@@ -225,9 +224,7 @@ public class EmployeeDAO extends DBContext {
     public List<String> getAllPosition() {
         List<String> positionList = new ArrayList<>();
         String sql = "SELECT DISTINCT position_title FROM Employee WHERE position_title IS NOT NULL;";
-        try {
-            PreparedStatement ps = connection.prepareStatement(sql);
-            ResultSet rs = ps.executeQuery();
+        try (PreparedStatement ps = connection.prepareStatement(sql); ResultSet rs = ps.executeQuery();) {
             while (rs.next()) {
                 positionList.add(rs.getString("position_title"));
             }
@@ -240,8 +237,7 @@ public class EmployeeDAO extends DBContext {
     public Department getDepartmentByDeptID(String deptID) {
         Department dept = new Department();
         String sql = "SELECT * FROM Department WHERE dep_id = ?";
-        try {
-            PreparedStatement ps = connection.prepareStatement(sql);
+        try (PreparedStatement ps = connection.prepareStatement(sql);) {
             ps.setString(1, deptID);
             ResultSet rs = ps.executeQuery();
             if (rs.next()) {
@@ -258,8 +254,7 @@ public class EmployeeDAO extends DBContext {
     public Employee getEmployeeByEmployeeName(String empName) {
         Employee emp = new Employee();
         String sql = "select * from Employee where fullname =? ";
-        try {
-            PreparedStatement ps = connection.prepareStatement(sql);
+        try (PreparedStatement ps = connection.prepareStatement(sql);) {
             ps.setString(1, empName);
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
@@ -287,8 +282,7 @@ public class EmployeeDAO extends DBContext {
 
     public void deleteEmployee(String empCode) {
         String sql = "DELETE FROM Employee where emp_code=?";
-        try {
-            PreparedStatement ps = connection.prepareStatement(sql);
+        try (PreparedStatement ps = connection.prepareStatement(sql);) {
             ps.setString(1, empCode);
             ps.executeUpdate();
         } catch (SQLException ex) {
@@ -297,9 +291,8 @@ public class EmployeeDAO extends DBContext {
     }
 
     public void updateEmployee(Employee employee) {
-        String sql = "UPDATE Employee SET fullname=?,email=?,password=?,gender=?,dob=?,phone=?,position_title=?,image=?,dep_id=?,role_id=?,status=?  WHERE emp_code = ?";
-        try {
-            PreparedStatement ps = connection.prepareStatement(sql);
+        String sql = "UPDATE Employee SET fullname=?,email=?,password=?,gender=?,dob=?,phone=?,position_title=?,image=?,dependant_count=?,dep_id=?,role_id=?,status=?  WHERE emp_code = ?";
+        try (PreparedStatement ps = connection.prepareStatement(sql);) {
             ps.setString(1, employee.getFullname());
             ps.setString(2, employee.getEmail());
             ps.setString(3, employee.getPassword());
@@ -308,10 +301,11 @@ public class EmployeeDAO extends DBContext {
             ps.setString(6, employee.getPhone());
             ps.setString(7, employee.getPositionTitle());
             ps.setString(8, employee.getImage());
-            ps.setString(9, employee.getDept().getDepId());
-            ps.setInt(10, employee.getRole().getRoleId());
-            ps.setBoolean(11, employee.isStatus());
-            ps.setString(12, employee.getEmpCode());
+            ps.setInt(9, employee.getDependantCount());
+            ps.setString(10, employee.getDept().getDepId());
+            ps.setInt(11, employee.getRole().getRoleId());
+            ps.setBoolean(12, employee.isStatus());
+            ps.setString(13, employee.getEmpCode());
             ps.executeUpdate();
         } catch (SQLException ex) {
             Logger.getLogger(EmployeeDAO.class.getName()).log(Level.SEVERE, null, ex);
@@ -380,8 +374,7 @@ public class EmployeeDAO extends DBContext {
         }
 
         sql.append(" LIMIT ? OFFSET ?");
-        try {
-            PreparedStatement ps = connection.prepareStatement(sql.toString());
+        try (PreparedStatement ps = connection.prepareStatement(sql.toString());) {
             int index = 1;
             if (searchkey != null && !searchkey.trim().isEmpty()) {
                 ps.setString(index++, "%" + searchkey + "%");
@@ -435,8 +428,7 @@ public class EmployeeDAO extends DBContext {
 
     public int countSearchRecordOfEmployee(String searchkey) {
         String sql = "Select count(*) from Employee WHERE emp_code LIKE ? OR fullname LIKE ?";
-        try {
-            PreparedStatement ps = connection.prepareStatement(sql);
+        try (PreparedStatement ps = connection.prepareStatement(sql);) {
             ps.setString(1, "%" + searchkey + "%");
             ps.setString(2, "%" + searchkey + "%");
             ResultSet rs = ps.executeQuery();
@@ -602,9 +594,7 @@ public class EmployeeDAO extends DBContext {
 
     public int countAllRecordOfEmployee() {
         String sql = "Select count(*) from Employee";
-        try {
-            PreparedStatement ps = connection.prepareStatement(sql);
-            ResultSet rs = ps.executeQuery();
+        try (PreparedStatement ps = connection.prepareStatement(sql); ResultSet rs = ps.executeQuery();) {
             while (rs.next()) {
                 return rs.getInt(1);
             }
@@ -617,9 +607,7 @@ public class EmployeeDAO extends DBContext {
 
     public String generateUserName() {
         String sql = "SELECT MAX(emp_code) FROM Employee";
-        try {
-            PreparedStatement ps = connection.prepareStatement(sql);
-            ResultSet rs = ps.executeQuery();
+        try (PreparedStatement ps = connection.prepareStatement(sql); ResultSet rs = ps.executeQuery();) {
             while (rs.next()) {
                 String maxCode = rs.getString(1);
                 if (maxCode == null) {
@@ -648,10 +636,9 @@ public class EmployeeDAO extends DBContext {
         return sb.toString();
     }
 
-    public void createEmployee(String username, String password,String fullname,String email,boolean gender,String phone) {
+    public void createEmployee(String username, String password, String fullname, String email, boolean gender, String phone) {
         String sql = "INSERT INTO Employee(emp_code,password,fullname,email,gender,phone) values(?,?,?,?,?,?)";
-        try {
-            PreparedStatement ps = connection.prepareStatement(sql);
+        try (PreparedStatement ps = connection.prepareStatement(sql);) {
             ps.setString(1, username);
             ps.setString(2, password);
             ps.setString(3, fullname);
@@ -663,6 +650,19 @@ public class EmployeeDAO extends DBContext {
             Logger.getLogger(EmployeeDAO.class.getName()).log(Level.SEVERE, null, ex);
         }
 
+    }
+
+    public boolean existsByEmail(String email) {
+        String sql = "SELECT * FROM Employee WHERE email = ?";
+        try (Connection conn = getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, email);
+            try (ResultSet rs = ps.executeQuery()) {
+                return rs.next();
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
     }
 
     public void close() {
@@ -677,12 +677,11 @@ public class EmployeeDAO extends DBContext {
 
     public static void main(String[] args) {
         EmployeeDAO dao = new EmployeeDAO();
-        String sortBy = "emp_code";
-        String order="desc";
-        int page =1;
-        int quantityofpage =5;
-        List<Employee> empList = dao.ManageEmployeeWithPaging(null, page, quantityofpage, null, null, null, sortBy, order);
-        System.out.println(empList);
+
+        Employee emp = dao.getEmployeeByEmpCode("EMP001");
+        emp.setDependantCount(3);
+        dao.updateEmployee(emp);
+
     }
 
 }
