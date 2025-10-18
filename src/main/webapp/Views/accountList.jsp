@@ -65,7 +65,8 @@
                 <div class="db-breadcrumb">
                     <h4 class="breadcrumb-title">Account Listing</h4>
                     <ul class="db-breadcrumb-list">
-                        <li><a href="${pageContext.request.contextPath}/accountlist"><i class="fa fa-home"></i> Account List</a></li>
+                        <li><a href="${pageContext.request.contextPath}/Views/Admin/adminDashboard.jsp"><i class="fa fa-home"></i>Home</a></li>
+                        <li><a href="${pageContext.request.contextPath}/accountlist">Accountlist</a></li>
                     </ul>
                 </div>
                 <c:url var="baseUrl" value="accountlist">
@@ -90,7 +91,7 @@
 
                 <div class="row">
                     <div class="col-md-2">
-                        <form action="${pageContext.request.contextPath}/accountlist" method="get" class="mb-3">
+                        <form action="${pageContext.request.contextPath}/accountlist" method="get" class=" mb-3">
                             <div class="mb-3">                                                    
                                 <input type="hidden" name="page" value="${page}">
                                 <c:if test="${not empty searchkey}">
@@ -150,7 +151,7 @@
                     </div>
                     <div class="col-md-10">
                         <div>
-                            <form action="${pageContext.request.contextPath}/accountlist" method="get" class="d-flex mb-3">
+                            <form action="${pageContext.request.contextPath}/accountlist" method="get" class="d-flex align-items-center justify-content-between mb-3">
                                 <input type="hidden" name="page" value="${page}">
                                 <c:if test="${status != null}">
                                     <input type="hidden" name="status" value="${status}">
@@ -169,48 +170,49 @@
                                     <input type="hidden" name="sortBy" value="${sortBy}">
                                     <input type="hidden" name="order" value="${order}">
                                 </c:if>
-                                <input type="text" name="searchkey" class="form-control me-2" placeholder="Search by code or name" value="${searchkey}">
+                                <input type="text" name="searchkey" class="form-control border-start-0" placeholder="Search by code or name" value="${searchkey}">
                                 <button type="submit" class="btn btn-primary">Search</button>
                             </form>
 
                         </div>
                         <div class="row">
-                            <div class="col-md-5">
+                            <div class="col-md-4">
                                 <c:if test="${not empty searchkey}">
                                     <p>Found <strong>${totalSearchResults}</strong> products with search key is <strong>${searchkey}</strong></p>  
                                 </c:if>
                             </div>
 
-                            <div class="col-md-7" style="display: flex; align-items: center; gap: 15px;">
+                            <div class="col-md-8" style="display: flex; align-items: center; gap: 15px;">
                                 <p style="margin: 1%;">Sort by:</p>
                                 <div style="display: flex; gap: 20px;">
+                                    <c:set var="urlPrefix" value="${baseUrl}${fn:contains(baseUrl, '?') ? '&' : '?'}" />
                                     Code:
                                     <div style="display: flex; flex-direction: column; line-height: 1.2;">
-                                        <a href="${baseUrl}&sortBy=emp_code&order=asc&page=${page}">ASC</a>
-                                        <a href="${baseUrl}&sortBy=emp_code&order=desc&page=${page}">DESC</a>
+                                        <a href="${urlPrefix}sortBy=emp_code&order=asc&page=${page}" class="sort-link">ASC</a>
+                                        <a href="${urlPrefix}sortBy=emp_code&order=desc&page=${page}" class="sort-link">DESC</a>
                                     </div>
                                     Name:
                                     <div style="display: flex; flex-direction: column; line-height: 1.2;">
-                                        <a href="${baseUrl}&sortBy=fullname&order=asc&page=${page}">ASC</a>
-                                        <a href="${baseUrl}&sortBy=fullname&order=desc&page=${page}">DESC</a>
+                                        <a href="${urlPrefix}sortBy=fullname&order=asc&page=${page}" class="sort-link">ASC</a>
+                                        <a href="${urlPrefix}sortBy=fullname&order=desc&page=${page}" class="sort-link">DESC</a>
                                     </div>
                                     Email:
                                     <div style="display: flex; flex-direction: column; line-height: 1.2;">
-                                        <a href="${baseUrl}&sortBy=email&order=asc&page=${page}">ASC</a>
-                                        <a href="${baseUrl}&sortBy=email&order=desc&page=${page}">DESC</a>
+                                        <a href="${urlPrefix}sortBy=email&order=asc&page=${page}" class="sort-link">ASC</a>
+                                        <a href="${urlPrefix}sortBy=email&order=desc&page=${page}" class="sort-link">DESC</a>
                                     </div>
                                     Department:
                                     <div style="display: flex; flex-direction: column; line-height: 1.2;">
-                                        <a href="${baseUrl}&sortBy=dep_id&order=asc&page=${page}">ASC</a>
-                                        <a href="${baseUrl}&sortBy=dep_id&order=desc&page=${page}">DESC</a>
+                                        <a href="${urlPrefix}sortBy=dep_id&order=asc&page=${page}" class="sort-link">ASC</a>
+                                        <a href="${urlPrefix}sortBy=dep_id&order=desc&page=${page}" class="sort-link">DESC</a>
                                     </div>
                                 </div>
 
                             </div>
                         </div>
-                        <div class="mail-box-list" style="overflow-x: scroll;">
-                            <table class="table table-bordered table-hover">
-                                <thead style="background-color: #f5f5f5;">
+                        <div class="table-responsive">
+                            <table class="table table-striped table-bordered table-hover align-middle text-center">
+                                <thead class="thead-dark" >
                                     <tr>
                                         <th>ID</th>
                                         <th>Employee Code</th>
@@ -235,7 +237,10 @@
                                                 <td>${loop.index+1}</td>
                                                 <td><input type="hidden" name="empCode" value="${el.empCode}" />${el.empCode}</td>
                                                 <td>${el.fullname}</td>
-                                                <td><input type="text" name="email" value="${el.email}" /></td>
+                                                <td>
+                                                    <input type="text" name="email" value="${el.email}" />
+                                                    <span style="color:red;">${emailError}</span>
+                                                </td>
                                                 <td>${el.image}</td>
                                                 <td>
                                                     ${el.dept.depName}
@@ -285,10 +290,44 @@
                                 </tbody>
                             </table>
                         </div>
-                        <div>
-                            <c:forEach var="i" begin="1" end="${totalPages}">
-                                <a href="${baseUrl}?page=${i}<c:if test='${not empty sortBy}'> &sortBy=${sortBy}&order=${order}</c:if>">${i}</a>
+                        <c:set var="maxPagesToShow" value="5" />
+                        <c:set var="halfPagesToShow" value="${(maxPagesToShow-1) / 2}" />
+
+                        <c:set var="startPage" value="${page - halfPagesToShow}" />
+                        <c:set var="endPage" value="${page + halfPagesToShow}" />
+
+                        <c:if test="${startPage < 1}"><c:set var="startPage" value="1" /></c:if>
+                        <c:if test="${endPage > totalPages}"><c:set var="endPage" value="${totalPages}" /></c:if>
+
+                            <div class="pagination">
+
+                            <c:if test="${page > 1}">
+                                <a href="${urlPrefix}page=${page - 1}<c:if test='${not empty sortBy}'>&sortBy=${sortBy}&order=${order}</c:if>">&laquo;Prev</a>
+                            </c:if>
+
+                            <c:if test="${startPage > 1}">
+                                <a href="${urlPrefix}page=1<c:if test='${not empty sortBy}'>&sortBy=${sortBy}&order=${order}</c:if>">1</a>
+                                    <span>...</span>
+                            </c:if>
+
+                            <c:forEach var="i" begin="${startPage}" end="${endPage}">
+                                <c:choose>
+                                    <c:when test="${i == page}">
+                                        <span class="current">${i}</span>
+                                    </c:when>
+                                    <c:otherwise>
+                                        <a href="${urlPrefix}page=${i}<c:if test='${not empty sortBy}'>&sortBy=${sortBy}&order=${order}</c:if>">${i}</a>
+                                    </c:otherwise>
+                                </c:choose>
                             </c:forEach>
+
+                            <c:if test="${endPage < totalPages}">
+                                <span>...</span>
+                                <a href="${urlPrefix}page=${totalPages}<c:if test='${not empty sortBy}'>&sortBy=${sortBy}&order=${order}</c:if>">${totalPages}</a>
+                            </c:if>
+                            <c:if test="${page < totalPages}">
+                                <a href="${urlPrefix}page=${page + 1}<c:if test='${not empty sortBy}'>&sortBy=${sortBy}&order=${order}</c:if>">Next &raquo;</a>
+                            </c:if>
                         </div>
                     </div>
                 </div>
@@ -330,6 +369,23 @@
                 padding: 0;             /* bỏ khoảng cách bên trong */
                 cursor: pointer;        /* hiện con trỏ tay khi hover */
                 color: inherit;
+            }
+            .pagination a {
+                padding: 5px 10px;
+                margin: 2px;
+                border: 1px solid #ccc;
+                text-decoration: none;
+                color: #333;
+            }
+            .pagination a:hover {
+                background-color: #eee;
+            }
+            .pagination span.current {
+                padding: 5px 10px;
+                margin: 2px;
+                font-weight: bold;
+                background-color: #333;
+                color: white;
             }
 
             .icon-circle:hover {
@@ -377,6 +433,55 @@
             #candidateModal table th {
                 text-align: center;
                 vertical-align: middle;
+            }
+            .sort-link {
+                display: inline-block;
+                padding: 6px 12px;
+                margin: 2px;
+                background-color: #4CAF50; /* màu nền */
+                color: white; /* màu chữ */
+                text-decoration: none; /* bỏ gạch chân */
+                border-radius: 5px; /* bo tròn góc */
+                font-weight: bold;
+                transition: background-color 0.3s, transform 0.2s;
+            }
+
+            .sort-link:hover {
+                background-color: #45a049; /* màu khi hover */
+                transform: scale(1.05); /* phóng to nhẹ khi hover */
+            }
+            .pagination {
+                display: flex;
+                gap: 8px;
+                margin-top: 20px;
+                justify-content: center;
+                align-items: center;
+                font-family: Arial, sans-serif;
+            }
+
+            .pagination a {
+                display: inline-block;
+                padding: 6px 12px;
+                text-decoration: none;
+                color: #007bff;
+                border: 1px solid #dee2e6;
+                border-radius: 5px;
+                transition: 0.2s;
+                font-size: 14px;
+            }
+
+            .pagination a:hover {
+                background-color: #007bff;
+                color: white;
+                border-color: #007bff;
+            }
+
+            .pagination a.active {
+                background-color: #007bff;
+                color: white;
+                border-color: #007bff;
+                font-weight: bold;
+                cursor: default;
             }
 
         </style>

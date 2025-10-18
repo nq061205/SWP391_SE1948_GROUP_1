@@ -74,36 +74,44 @@
                 </div>
                 <div class="row">
                     <div class="col-lg-12">
-                        <div class="d-flex justify-content-between align-items-center mb-3">
-                            <form action="${pageContext.request.contextPath}/application" method="get" class="form-inline">
+                        <div class="filter-row mb-3">
+                            <form action="${pageContext.request.contextPath}/application" method="get"
+                                  class="d-flex align-items-center flex-nowrap w-100" style="gap:12px;">
                                 <input type="hidden" name="typeapplication" value="LEAVE"/>
-                                <div class="input-group mr-2">
+
+                                <div class="input-group" style="max-width:260px;">
                                     <input type="text" name="search" value="${fn:escapeXml(param.search)}"
-                                           class="form-control" placeholder="Search by date, hours, status..." style="width:260px;">
-                                    <div class="input-group-append">
-                                        <button class="btn btn-primary" type="submit"><i class="fa fa-search"></i></button>
-                                    </div>
+                                           class="form-control filter-h" placeholder="Search..." />
+                                    <button class="btn btn-warning filter-h" type="submit">
+                                        <i class="fa fa-search"></i>
+                                    </button>
                                 </div>
-                                <select name="status" class="form-control mr-2" onchange="this.form.submit()">
+
+                                <select name="status" class="form-control filter-h" style="width:160px;" onchange="this.form.submit()">
                                     <option value="">All Status</option>
                                     <option value="Pending"  ${param.status == 'Pending'  ? 'selected' : ''}>Pending</option>
                                     <option value="Approved" ${param.status == 'Approved' ? 'selected' : ''}>Approved</option>
                                     <option value="Rejected" ${param.status == 'Rejected' ? 'selected' : ''}>Rejected</option>
                                 </select>
-                                <select name="type" class="form-control mr-2" onchange="this.form.submit()">
+
+                                <select name="type" class="form-control filter-h" style="width:170px;" onchange="this.form.submit()">
                                     <option value="">All Type</option>
-                                    <option value="Annual Leave"  ${param.type == 'Annual Leave'  ? 'selected' : ''}>Annual Leave</option>
-                                    <option value="Sick" ${param.type == 'Sick' ? 'selected' : ''}>Sick</option>
-                                    <option value="Unpaid" ${param.type == 'Unpaid' ? 'selected' : ''}>Unpaid</option>
+                                    <option value="Annual Leave" ${param.type == 'Annual Leave' ? 'selected' : ''}>Annual Leave</option>
+                                    <option value="Sick"    ${param.type == 'Sick'    ? 'selected' : ''}>Sick</option>
+                                    <option value="Unpaid"  ${param.type == 'Unpaid'  ? 'selected' : ''}>Unpaid</option>
                                     <option value="Maternity" ${param.type == 'Maternity' ? 'selected' : ''}>Maternity</option>
-                                    <option value="Other" ${param.type == 'Other' ? 'selected' : ''}>Other</option>
+                                    <option value="Other"   ${param.type == 'Other'   ? 'selected' : ''}>Other</option>
                                 </select>
-                                <input type="date" name="startDate" value="${param.startDate}" class="form-control mr-2" />
-                                <span class="mr-2">to</span>
-                                <input type="date" name="endDate"   value="${param.endDate}"   class="form-control mr-2" />
-                                <button type="submit" class="btn btn-outline-secondary mr-2">Apply</button>
-                                <a class="btn btn-light"
-                                   href="${pageContext.request.contextPath}/application?typeapplication=LEAVE">Clear</a>
+
+                                <input type="date" name="startDate" value="${param.startDate}"
+                                       class="form-control filter-h" style="width:170px;">
+                                <span class="sep">to</span>
+                                <input type="date" name="endDate" value="${param.endDate}"
+                                       class="form-control filter-h" style="width:170px;">
+
+                                <button type="submit" class="btn btn-outline-secondary filter-h">Apply</button>
+                                <a href="${pageContext.request.contextPath}/application?typeapplication=LEAVE"
+                                   class="btn btn-warning filter-h">Clear</a>
                             </form>
                         </div>
                         <div class="mail-box-list">
@@ -173,11 +181,27 @@
             </c:url>
             <nav class="mt-3">
                 <ul class="pagination justify-content-center">
+                    <c:set var="startPage" value="${page - 1}" />
+                    <c:set var="endPage" value="${page + 1}" />
+
+                    <c:if test="${startPage < 1}">
+                        <c:set var="endPage" value="${endPage + (1 - startPage)}" />
+                        <c:set var="startPage" value="1" />
+                    </c:if>
+
+                    <c:if test="${endPage > totalPages}">
+                        <c:set var="startPage" value="${startPage - (endPage - totalPages)}" />
+                        <c:set var="endPage" value="${totalPages}" />
+                    </c:if>
+
+                    <c:if test="${startPage < 1}">
+                        <c:set var="startPage" value="1" />
+                    </c:if>
                     <li class="page-item ${page <= 1 ? 'disabled' : ''}">
                         <a class="page-link" href="${baseUrl}&page=${page-1}">Prev</a>
                     </li>
 
-                    <c:forEach var="p" begin="1" end="${totalPages}">
+                    <c:forEach var="p" begin="${startPage}" end="${endPage}">
                         <li class="page-item ${p == page ? 'active' : ''}">
                             <a class="page-link" href="${baseUrl}&page=${p}">${p}</a>
                         </li>

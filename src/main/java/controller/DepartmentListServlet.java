@@ -7,7 +7,6 @@ package controller;
 import dal.DeptDAO;
 import dal.EmployeeDAO;
 import dal.RoleDAO;
-import model.Employee;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
@@ -15,12 +14,8 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
 import model.Department;
-import model.Role;
 
 /**
  *
@@ -67,9 +62,7 @@ public class DepartmentListServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         HttpSession ses = request.getSession();
-        EmployeeDAO empDAO = new EmployeeDAO();
         DeptDAO deptDAO = new DeptDAO();
-        RoleDAO rDAO = new RoleDAO();
         List<Department> deptList;
         deptList = deptDAO.getAllDepartment();
         String type = request.getParameter("type");
@@ -80,6 +73,7 @@ public class DepartmentListServlet extends HttpServlet {
             request.setAttribute("editDept", editDept);
         }
         ses.setAttribute("deptList", deptList);
+        deptDAO.close();
         //Comment de merge
         request.getRequestDispatcher("Views/departmentlist.jsp").forward(request, response);
     }
@@ -106,13 +100,30 @@ public class DepartmentListServlet extends HttpServlet {
             String depName = request.getParameter("depName");
             String description = request.getParameter("description");
             Department dept = depDAO.getDepartmentByDepartmentId(editDepId);
-            if (dept != null) {
+            boolean hasError = false;
+            if (depName == null || depName.trim().isEmpty()) {
+                hasError = true;
+                request.setAttribute("depNameError", "You must input department name!");
+            }
+             if (description == null || description.trim().isEmpty()) {
+                hasError = true;
+                request.setAttribute("descriptionError", "You must input description!");
+            }
+
+            if (hasError) {
                 dept.setDepName(depName);
                 dept.setDescription(description);
-                depDAO.updateDepartment(dept);
+                request.setAttribute("editDept", dept);
+                request.getRequestDispatcher("Views/departmentlist.jsp").forward(request, response);
+                return;
+            } else {
+                if (dept != null) {
+                    dept.setDepName(depName);
+                    dept.setDescription(description);
+                    depDAO.updateDepartment(dept);
+                }
             }
-        }
-        else if ("add".equalsIgnoreCase(action)) {
+        } else if ("add".equalsIgnoreCase(action)) {
             Department dept = new Department();
             dept.setDepId(addDepId);
             dept.setDepName(addDepName);

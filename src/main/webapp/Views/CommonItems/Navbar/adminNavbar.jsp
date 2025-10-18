@@ -87,10 +87,10 @@
                     </a>
                     <ul>
                         <li>
-                            <a href="${pageContext.request.contextPath}/Views/accountList.jsp" class="ttr-material-button"><span class="ttr-label">Account List</span></a>
+                            <a href="${pageContext.request.contextPath}/accountlist" class="ttr-material-button"><span class="ttr-label">Account List</span></a>
                         </li>
                         <li>
-                            <a href="${pageContext.request.contextPath}/Views/departmentlist.jsp" class="ttr-material-button"><span class="ttr-label">Department List</span></a>
+                            <a href="${pageContext.request.contextPath}/departmentlistservlet" class="ttr-material-button"><span class="ttr-label">Department List</span></a>
                         </li>
                     </ul>
 
