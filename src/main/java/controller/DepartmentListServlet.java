@@ -100,13 +100,30 @@ public class DepartmentListServlet extends HttpServlet {
             String depName = request.getParameter("depName");
             String description = request.getParameter("description");
             Department dept = depDAO.getDepartmentByDepartmentId(editDepId);
-            if (dept != null) {
+            boolean hasError = false;
+            if (depName == null || depName.trim().isEmpty()) {
+                hasError = true;
+                request.setAttribute("depNameError", "You must input department name!");
+            }
+             if (description == null || description.trim().isEmpty()) {
+                hasError = true;
+                request.setAttribute("descriptionError", "You must input description!");
+            }
+
+            if (hasError) {
                 dept.setDepName(depName);
                 dept.setDescription(description);
-                depDAO.updateDepartment(dept);
+                request.setAttribute("editDept", dept);
+                request.getRequestDispatcher("Views/departmentlist.jsp").forward(request, response);
+                return;
+            } else {
+                if (dept != null) {
+                    dept.setDepName(depName);
+                    dept.setDescription(description);
+                    depDAO.updateDepartment(dept);
+                }
             }
-        }
-        else if ("add".equalsIgnoreCase(action)) {
+        } else if ("add".equalsIgnoreCase(action)) {
             Department dept = new Department();
             dept.setDepId(addDepId);
             dept.setDepName(addDepName);

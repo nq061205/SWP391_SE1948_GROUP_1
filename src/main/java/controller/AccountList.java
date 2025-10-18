@@ -90,23 +90,24 @@ public class AccountList extends HttpServlet {
             } catch (NumberFormatException e) {
             }
         }
-        List<Employee> empList =empDAO.ManageEmployeeWithPaging(searchkey, currentPage, quantityOfPage,status, deptId, roleId,sortBy,order);
+        List<Employee> empList = empDAO.ManageEmployeeWithPaging(searchkey, currentPage, quantityOfPage, status, deptId, roleId, sortBy, order);
         int totalSearchResults = 0;
-        int totalFilterResults =0;
-        int totalPages =0;
-        int totalResults =0;
-        if (searchkey != null && !searchkey.trim().isEmpty()) {          
+        int totalFilterResults = 0;
+        int totalPages = 0;
+        int totalResults = 0;
+        if (searchkey != null && !searchkey.trim().isEmpty()) {
             totalSearchResults = empDAO.countSearchRecordOfEmployee(searchkey);
             totalPages = (int) Math.ceil((double) totalSearchResults / quantityOfPage);
-            currentPage=1;
-        } else if (status != null || (deptId != null && deptId.length > 0) || (roleId != null && roleId.length > 0)) {     
-            totalFilterResults = empDAO.countFilterRecordOfEmployee(status,deptId,roleId);
+            currentPage = 1;
+        } else if (status != null || (deptId != null && deptId.length > 0) || (roleId != null && roleId.length > 0)) {
+            totalFilterResults = empDAO.countFilterRecordOfEmployee(status, deptId, roleId);
             totalPages = (int) Math.ceil((double) totalFilterResults / quantityOfPage);
+            currentPage=1;
         } else if (sortBy != null) {
             totalResults = empDAO.countAllRecordOfEmployee();
             totalPages = (int) Math.ceil((double) totalResults / quantityOfPage);
-        }
-        else {
+            currentPage=1;
+        } else {
             totalResults = empDAO.countAllRecordOfEmployee();
             totalPages = (int) Math.ceil((double) totalResults / quantityOfPage);
         }
@@ -159,31 +160,20 @@ public class AccountList extends HttpServlet {
             throws ServletException, IOException {
         HttpSession ses = request.getSession();
         String action = request.getParameter("action");
+
         EmployeeDAO empDAO = new EmployeeDAO();
         RoleDAO rDAO = new RoleDAO();
 
-        String empCode = request.getParameter("empCode");
-        if ("save".equalsIgnoreCase(action)) {
-            String email = request.getParameter("email");
-            int roleId = Integer.parseInt(request.getParameter("roleId"));
-            Employee emp = empDAO.getEmployeeByEmpCode(empCode);
-            if (emp != null) {
-                emp.setEmail(email);
-                Role role = rDAO.getRoleByRoleId(roleId);
-                emp.setRole(role);
-                empDAO.updateEmployee(emp);
-            }
-        } else if ("toggle".equalsIgnoreCase(action)) {
-            boolean status = Boolean.parseBoolean(request.getParameter("newstatus"));
-            Employee emp = empDAO.getEmployeeByEmpCode(empCode);
-            if (emp != null) {
-                emp.setStatus(status);
-                empDAO.updateEmployee(emp);
-            }
-        }
-        int quantityOfPage = 5;
+        int quantityOfPage = 3;
         int currentPage = 1;
         String currentPageStr = request.getParameter("page");
+        if (currentPageStr != null && !currentPageStr.trim().isEmpty()) {
+            try {
+                currentPage = Integer.parseInt(currentPageStr);
+            } catch (Exception ignored) {
+            }
+        }
+
         String searchkey = request.getParameter("searchkey");
         String statusStr = request.getParameter("status");
         Boolean status = null;
@@ -191,24 +181,62 @@ public class AccountList extends HttpServlet {
             status = Boolean.parseBoolean(statusStr);
         }
         String[] deptId = request.getParameterValues("deptId");
-        String[] roleId = request.getParameterValues("roleId");
+        String[] roleIds = request.getParameterValues("roleId");
         String sortBy = request.getParameter("sortBy");
         String order = request.getParameter("order");
-        if (currentPageStr != null && !currentPageStr.trim().isEmpty()) {
-            try {
-                currentPage = Integer.parseInt(currentPageStr);
-            } catch (NumberFormatException e) {
+
+        String empCode = request.getParameter("empCode");
+
+        if ("save".equalsIgnoreCase(action)) {
+            Employee emp = empDAO.getEmployeeByEmpCode(empCode);
+
+            String email = request.getParameter("email");
+            String roleIdStr = request.getParameter("roleId");
+            int roleId = Integer.parseInt(roleIdStr);
+
+            boolean hasError = false;
+
+            if (email == null || email.trim().isEmpty()) {
+                hasError = true;
+                request.setAttribute("emailError", "Email cannot be empty!");
+            } else if (!email.matches("^[A-Za-z0-9+_.-]+@(.+)$")) {
+                hasError = true;
+                request.setAttribute("emailError", "Invalid email format!");
+            }
+
+            if (hasError) {
+                List<Employee> empList = empDAO.ManageEmployeeWithPaging(searchkey, currentPage, quantityOfPage, status, deptId, roleIds, sortBy, order);
+                request.setAttribute("editEmp", emp);
+                request.setAttribute("empList", empList);
+                request.setAttribute("page", currentPage);
+
+                int totalResults = empDAO.countAllRecordOfEmployee();
+                request.setAttribute("totalPages", (int) Math.ceil((double) totalResults / quantityOfPage));
+
+                request.getRequestDispatcher("Views/accountList.jsp").forward(request, response);
+                return;
+            } else {
+
+                emp.setEmail(email);
+                emp.setRole(rDAO.getRoleByRoleId(roleId));
+                empDAO.updateEmployee(emp);
+
+                response.sendRedirect("accountlist?page=" + currentPage);
             }
         }
-        List<Employee> empList =empDAO.ManageEmployeeWithPaging(searchkey, currentPage, quantityOfPage,status, deptId, roleId,sortBy,order);
-        ses.setAttribute("empList", empList);
-        int totalResults = empDAO.countAllRecordOfEmployee();
-        int totalPages = (int) Math.ceil((double) totalResults / quantityOfPage);
-        request.setAttribute("page", currentPage);
-        request.setAttribute("totalPages", totalPages);
+
+        if ("toggle".equalsIgnoreCase(action)) {
+            boolean newStatus = Boolean.parseBoolean(request.getParameter("newstatus"));
+            Employee emp = empDAO.getEmployeeByEmpCode(empCode);
+            if (emp != null) {
+                emp.setStatus(newStatus);
+                empDAO.updateEmployee(emp);
+            }
+            response.sendRedirect("accountlist?page=" + currentPage);
+        }
+
         empDAO.close();
         rDAO.close();
-        response.sendRedirect("accountlist?page=" + currentPage);
 
     }
 
