@@ -23,7 +23,13 @@
         <nav class="ttr-sidebar-navi">
             <ul>
                 <li>
-                    <a href="${pageContext.request.contextPath}/Views/profile.jsp" class="ttr-material-button">
+                    <a href="${pageContext.request.contextPath}/dashboard" class="ttr-material-button">
+                        <span class="ttr-icon"><i class="ti-dashboard"></i></span>
+                        <span class="ttr-label">Dashboard</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="${pageContext.request.contextPath}/profile" class="ttr-material-button">
                         <span class="ttr-icon"><i class="ti-book"></i></span>
                         <span class="ttr-label">Profile</span>
                     </a>
@@ -50,45 +56,53 @@
                     </ul>
                 </li>
                 <li>
-                    <a href="#" class="ttr-material-button">
-                        <span class="ttr-icon"><i class="ti-calendar"></i></span>
-                        <span class="ttr-label">Attendance</span>
-                        <span class="ttr-arrow-icon"><i class="fa fa-angle-down"></i></span>
+                    <a href="${pageContext.request.contextPath}/candidatelist" class="ttr-material-button">
+                        <span class="ttr-icon"><i class="ti-book"></i></span>
+                        <span class="ttr-post-media">Candidate List</span>
                     </a>
                 </li>
                 <li>
-                    <a href="bookmark.html" class="ttr-material-button">
-                        <span class="ttr-icon"><i class="ti-bookmark-alt"></i></span>
-                        <span class="ttr-label">Bookmarks</span>
+                    <a href="${pageContext.request.contextPath}/accountlist" class="ttr-material-button">
+                        <span class="ttr-icon"><i class="ti-book"></i></span>
+                        <span class="ttr-accordion">Account List</span>
                     </a>
                 </li>
                 <li>
-                    <a href="review.html" class="ttr-material-button">
-                        <span class="ttr-icon"><i class="ti-comments"></i></span>
-                        <span class="ttr-label">Review</span>
+                    <a href="${pageContext.request.contextPath}/employeelistservlet" class="ttr-material-button">
+                        <span class="ttr-icon"><i class="ti-book"></i></span>
+                        <span class="ttr-post-media">Employee List</span>
                     </a>
                 </li>
                 <li>
-                    <a href="add-listing.html" class="ttr-material-button">
-                        <span class="ttr-icon"><i class="ti-layout-accordion-list"></i></span>
-                        <span class="ttr-label">Add listing</span>
+                    <a href="${pageContext.request.contextPath}/departmentlistservlet" class="ttr-material-button">
+                        <span class="ttr-icon"><i class="ti-book"></i></span>
+                        <span class="ttr-post-media">Department List</span>
                     </a>
                 </li>
                 <li>
-                    <a href="#" class="ttr-material-button">
-                        <span class="ttr-icon"><i class="ti-user"></i></span>
-                        <span class="ttr-label">My Profile</span>
-                        <span class="ttr-arrow-icon"><i class="fa fa-angle-down"></i></span>
+                    <a href="${pageContext.request.contextPath}/hrrecruitment" class="ttr-material-button">
+                        <span class="ttr-icon"><i class="ti-book"></i></span>
+                        <span class="ttr-post-media">HR Recuitment</span>
                     </a>
-                    <ul>
-                        <li>
-                            <a href="user-profile.html" class="ttr-material-button"><span class="ttr-label">User Profile</span></a>
-                        </li>
-                        <li>
-                            <a href="teacher-profile.html" class="ttr-material-button"><span class="ttr-label">Teacher Profile</span></a>
-                        </li>
-                    </ul>
                 </li>
+                <li>
+                    <a href="${pageContext.request.contextPath}/hrmanagerrecruitment" class="ttr-material-button">
+                        <span class="ttr-icon"><i class="ti-book"></i></span>
+                        <span class="ttr-post-media">HRM Recuitment</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="${pageContext.request.contextPath}/raw-attendance" class="ttr-material-button">
+                        <span class="ttr-icon"><i class="ti-book"></i></span>
+                        <span class="ttr-post-media">Raw Attendance</span>
+                    </a>
+                </li>
+<!--                <li>
+                    <a href="${pageContext.request.contextPath}/hrmanagerrecruitment" class="ttr-material-button">
+                        <span class="ttr-icon"><i class="ti-book"></i></span>
+                        <span class="ttr-post-media">HRM Recuitment</span>
+                    </a>
+                </li>-->
                 <li class="ttr-seperate"></li>
             </ul>
             <!-- sidebar menu end -->

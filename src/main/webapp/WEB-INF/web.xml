@@ -106,6 +106,10 @@
         <servlet-name>JobSiteServlet</servlet-name>
         <servlet-class>controller.JobSiteServlet</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>DashboardServlet</servlet-name>
+        <servlet-class>controller.DashboardServlet</servlet-class>
+    </servlet>
     <servlet-mapping>
         <servlet-name>HomePageServlet</servlet-name>
         <url-pattern>/homepage</url-pattern>
@@ -218,6 +222,10 @@
     <servlet-mapping>
         <servlet-name>ApplyJobServlet</servlet-name>
         <url-pattern>/applyjob</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>DashboardServlet</servlet-name>
+        <url-pattern>/dashboard</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>JobSiteServlet</servlet-name>
