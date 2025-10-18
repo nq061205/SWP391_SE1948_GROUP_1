@@ -66,6 +66,7 @@
                     <h4 class="breadcrumb-title">Employee Listing</h4>
                     <ul class="db-breadcrumb-list">
                         <li><a href="${pageContext.request.contextPath}/Views/HR/hrDashboard.jsp"><i class="fa fa-home"></i> Home</a></li>
+                        <li><a href="${pageContext.request.contextPath}/employeelistservlet">Employee list</a></li>
                     </ul>
                 </div>
                 <c:url var="baseUrl" value="employeelistservlet">
@@ -211,7 +212,7 @@
                             </div>
                         </div>
                         <div class="table-responsive">
-                            <table class="table table-striped table-bordered table-hover align-middle text-center">
+                            <table class="table table-striped table-bordered table-hover align-middle text-center" style="width:100%">
                                 <thead class="thead-dark" >
                                     <tr>
                                         <th>ID</th>
@@ -237,16 +238,22 @@
                                                 <td>${loop.index+1}</td>
                                                 <td><input type="hidden" name="empCode" value="${el.empCode}" />${el.empCode}</td>
                                                 <td>${el.fullname}</td>
-                                                <td><input type="text" name="email" value="${el.email}" /></td>
+                                                <td><input type="text" name="email" value="${el.email}" />
+                                                    <span style="color:red;">${emailError}</span>
+                                                </td>
                                                 <td>${el.gender}</td>
                                                 <td>
                                                     <input type="date" name="dob" value="${el.dob}"/>
+                                                     <span style="color:red;">${dobError}</span>
                                                 </td>
                                                 <td>${el.image}</td>
                                                 <td>
                                                     <input type="text" name="positionTitle" value="${el.positionTitle}"/>
+                                                    <span style="color:red;">${posError}</span>
                                                 </td>
-                                                <td><input type="number" name="dependantCount" value="${el.dependantCount}"/></td>
+                                                <td><input type="number" name="dependantCount" value="${el.dependantCount}"/>
+                                                    <span style="color:red;">${dependantError}</span>
+                                                </td>
                                                 <td>
                                                     <button type="submit" name="action" value="save" class="btn btn-success btn-sm">Save</button>
                                                     <a href="${pageContext.request.contextPath}/employeelistservlet" class="btn btn-secondary btn-sm">Cancel</a>
@@ -274,7 +281,7 @@
                                 </tbody>
                             </table>
                         </div>
-                        <c:set var="maxPagesToShow" value="3" />
+                        <c:set var="maxPagesToShow" value="5" />
                         <c:set var="halfPagesToShow" value="${(maxPagesToShow-1) / 2}" />
 
                         <c:set var="startPage" value="${page - halfPagesToShow}" />
