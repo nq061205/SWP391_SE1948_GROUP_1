@@ -4,6 +4,7 @@
  */
 package controller;
 
+import api.EmailUtil;
 import dal.CandidateDAO;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -21,7 +22,6 @@ import model.Candidate;
  */
 public class CandidateActionServlet extends HttpServlet {
 
-  
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -35,36 +35,36 @@ public class CandidateActionServlet extends HttpServlet {
         }
         try {
             int candidateid = Integer.parseInt(id);
-            
+            Candidate thisCandidate = cDAO.getCandidateById(candidateid);
             Candidate candidate = getNextCandidate(candidateid, cDAO.getAllCandidate("pending"));
-            if("approve".equals(action)){
+            if ("approve".equals(action)) {
+                EmailUtil.sendEmail(thisCandidate.getEmail(), "CV result notification", "Congratuation " + thisCandidate.getName() + " has pass our cv stage, please go to interview tommorow");
                 cDAO.updateResultCandidate(1, candidateid);
-            }
-            else{
+            } else {
+                EmailUtil.sendEmail(thisCandidate.getEmail(), "CV result notification", "get out of our company " + thisCandidate.getName());
                 cDAO.updateResultCandidate(0, candidateid);
             }
-            if(candidate == null){
+            if (candidate == null) {
                 response.sendRedirect("candidatelist");
             }
-            response.sendRedirect("candidatedetail?id="+candidate.getCandidateId());
+            response.sendRedirect("candidatedetail?id=" + candidate.getCandidateId());
         } catch (Exception e) {
             System.out.println(e);
         }
     }
-    
+
     public Candidate getNextCandidate(int canId, List<Candidate> candidates) {
-    for (int i = 0; i < candidates.size(); i++) {
-        if (candidates.get(i).getCandidateId() == canId) {
-            if (i + 1 < candidates.size()) {
-                return candidates.get(i + 1);
-            } else {
-                return null;
+        for (int i = 0; i < candidates.size(); i++) {
+            if (candidates.get(i).getCandidateId() == canId) {
+                if (i + 1 < candidates.size()) {
+                    return candidates.get(i + 1);
+                } else {
+                    return null;
+                }
             }
         }
+        return null;
     }
-    return null; // not found
-}
-
 
     /**
      * Handles the HTTP <code>POST</code> method.
