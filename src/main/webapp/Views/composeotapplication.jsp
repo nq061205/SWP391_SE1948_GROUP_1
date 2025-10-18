@@ -93,11 +93,6 @@
                                         <input type="date" name="date" value="${date}" class="form-control" required/>
                                     </div>
 
-                                    <div class="form-group mb-3">
-                                        <label for="type">Overtime hours:</label>
-                                        <input type="number" name="othour" value="${othour}" class="form-control" min="0" max="4"/>
-                                    </div>
-
                                     <div class="text-right">
                                         <c:if test="${not empty isEdit}">
                                             <button type="submit" class="btn btn-primary btn-lg">Update</button>

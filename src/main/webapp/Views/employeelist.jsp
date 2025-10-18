@@ -58,7 +58,7 @@
 
         <!-- HEADER + NAVBAR -->
         <%@ include file="CommonItems/Header/dashboardHeader.jsp" %>
-        <%@ include file="CommonItems/Navbar/hrNavbar.jsp" %>
+        <%@ include file="CommonItems/Navbar/empNavbar.jsp" %>
         <input type="hidden" name="typeApplication" value="leaverequest" />
         <main class="ttr-wrapper">
             <div class="container-fluid">
@@ -244,7 +244,7 @@
                                                 <td>${el.gender}</td>
                                                 <td>
                                                     <input type="date" name="dob" value="${el.dob}"/>
-                                                     <span style="color:red;">${dobError}</span>
+                                                    <span style="color:red;">${dobError}</span>
                                                 </td>
                                                 <td>${el.image}</td>
                                                 <td>
