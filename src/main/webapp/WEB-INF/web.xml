@@ -102,6 +102,10 @@
         <servlet-name>ApplyJobServlet</servlet-name>
         <servlet-class>controller.ApplyJobServlet</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>JobSiteServlet</servlet-name>
+        <servlet-class>controller.JobSiteServlet</servlet-class>
+    </servlet>
     <servlet-mapping>
         <servlet-name>HomePageServlet</servlet-name>
         <url-pattern>/homepage</url-pattern>
@@ -214,6 +218,10 @@
     <servlet-mapping>
         <servlet-name>ApplyJobServlet</servlet-name>
         <url-pattern>/applyjob</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>JobSiteServlet</servlet-name>
+        <url-pattern>/jobsite</url-pattern>
     </servlet-mapping>
     <session-config>
         <session-timeout>30</session-timeout>
