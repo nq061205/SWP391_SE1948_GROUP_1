@@ -103,6 +103,10 @@
         <servlet-class>controller.ApplyJobServlet</servlet-class>
     </servlet>
     <servlet>
+        <servlet-name>JobSiteServlet</servlet-name>
+        <servlet-class>controller.JobSiteServlet</servlet-class>
+    </servlet>
+    <servlet>
         <servlet-name>DashboardServlet</servlet-name>
         <servlet-class>controller.DashboardServlet</servlet-class>
     </servlet>
@@ -223,15 +227,14 @@
         <servlet-name>DashboardServlet</servlet-name>
         <url-pattern>/dashboard</url-pattern>
     </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>JobSiteServlet</servlet-name>
+        <url-pattern>/jobsite</url-pattern>
+    </servlet-mapping>
     <session-config>
         <session-timeout>30</session-timeout>
     </session-config>
     <welcome-file-list>
         <welcome-file>HomePageServlet</welcome-file>
     </welcome-file-list>
-    <Context>
-        <Resources>
-            <PostResources base="D:/hrm_storage/uploads" className="org.apache.catalina.webresources.DirResourceSet" webAppMount="/uploads"/>
-        </Resources>
-    </Context>
 </web-app>
