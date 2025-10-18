@@ -56,7 +56,7 @@ public class LoginServlet extends HttpServlet {
         }
         HttpSession ses = request.getSession();
         ses.setAttribute("user", emp);
-        response.sendRedirect("homepage");
+        response.sendRedirect("dashboard");
     }
 
     @Override
@@ -86,7 +86,7 @@ public class LoginServlet extends HttpServlet {
                     ckPass.setMaxAge(0);
                     response.addCookie(ckPass);
                 }
-                response.sendRedirect("homepage");
+                response.sendRedirect("dashboard");
             } else {
                 request.setAttribute("errorMessage", "Employee Code or Password invalid");
                 request.getRequestDispatcher("Views/login.jsp").forward(request, response);

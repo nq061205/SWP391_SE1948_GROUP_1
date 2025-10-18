@@ -103,7 +103,7 @@
                     </a>
                     <ul>
                         <li>
-                            <a href="user-profile.html" class="ttr-material-button"><span class="ttr-label">User Profile</span></a>
+                            <a href="${pageContext.request.contextPath}/profile" class="ttr-material-button"><span class="ttr-label">User Profile</span></a>
                         </li>
                         <li>
                             <a href="teacher-profile.html" class="ttr-material-button"><span class="ttr-label">Teacher Profile</span></a>

@@ -678,9 +678,8 @@ public class EmployeeDAO extends DBContext {
     public static void main(String[] args) {
         EmployeeDAO dao = new EmployeeDAO();
 
-        Employee emp = dao.getEmployeeByEmpCode("EMP001");
-        emp.setDependantCount(3);
-        dao.updateEmployee(emp);
+        System.out.println(dao.getEmployeeByUsernamePassword("EMP001", "123"));
+        
 
     }
 

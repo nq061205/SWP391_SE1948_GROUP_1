@@ -25,7 +25,7 @@
         <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/assets2/css/dashboard.css">
         <link class="skin" rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/assets2/css/color/color-1.css">
         <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.11.5/css/dataTables.bootstrap4.min.css">
-        
+
         <style>
             .post-card {
                 border: 1px solid #dee2e6;
@@ -33,40 +33,40 @@
                 margin-bottom: 20px;
                 transition: all 0.3s ease;
             }
-            
+
             .post-card:hover {
                 box-shadow: 0 4px 8px rgba(0,0,0,0.1);
                 transform: translateY(-2px);
             }
-            
+
             .post-header {
                 background-color: #f8f9fa;
                 padding: 15px;
                 border-bottom: 1px solid #dee2e6;
                 border-radius: 8px 8px 0 0;
             }
-            
+
             .post-body {
                 padding: 20px;
             }
-            
+
             .post-footer {
                 padding: 15px;
                 background-color: #f8f9fa;
                 border-top: 1px solid #dee2e6;
                 border-radius: 0 0 8px 8px;
             }
-            
+
             .status-badge {
                 font-size: 0.9rem;
                 padding: 5px 15px;
                 border-radius: 20px;
             }
-            
+
             .btn-action {
                 min-width: 100px;
             }
-            
+
             .post-content {
                 max-height: 200px;
                 overflow-y: auto;
@@ -75,24 +75,24 @@
                 border-radius: 5px;
                 margin: 10px 0;
             }
-            
+
             .info-item {
                 margin-bottom: 10px;
             }
-            
+
             .info-label {
                 font-weight: bold;
                 color: #6c757d;
                 min-width: 120px;
                 display: inline-block;
             }
-            
+
             /* Tabs Styling */
             .nav-tabs {
                 border-bottom: 2px solid #dee2e6;
                 margin-bottom: 0;
             }
-            
+
             .nav-tabs .nav-link {
                 border: none;
                 border-bottom: 3px solid transparent;
@@ -101,31 +101,31 @@
                 padding: 12px 20px;
                 transition: all 0.3s;
             }
-            
+
             .nav-tabs .nav-link:hover {
                 border-bottom-color: #dee2e6;
                 color: #495057;
             }
-            
+
             .nav-tabs .nav-link.active {
                 color: #007bff;
                 border-bottom-color: #007bff;
                 background-color: transparent;
             }
-            
+
             .nav-tabs .nav-link i {
                 margin-right: 5px;
             }
-            
+
             .tab-content {
                 background-color: #fff;
             }
-            
+
             .thead-warning {
                 background-color: #ffc107;
                 color: #000;
             }
-            
+
             .thead-danger {
                 background-color: #dc3545;
                 color: #fff;
@@ -135,7 +135,8 @@
 
     <body class="ttr-opened-sidebar ttr-pinned-sidebar">
         <jsp:include page="../CommonItems/Header/dashboardHeader.jsp" />
-        <jsp:include page="../CommonItems/Navbar/adminNavbar.jsp" />
+        <jsp:include page="../CommonItems/Navbar/empNavbar.jsp" />
+
 
         <main class="ttr-wrapper">
             <div class="container-fluid">
@@ -147,7 +148,7 @@
                         <li>Post Review</li>
                     </ul>
                 </div>
-                
+
                 <c:if test="${not empty successMessage}">
                     <div class="alert alert-success alert-dismissible fade show" role="alert">
                         <strong><i class="fa fa-check-circle"></i> Success!</strong> ${successMessage}
@@ -156,7 +157,7 @@
                         </button>
                     </div>
                 </c:if>
-                
+
                 <c:if test="${not empty errorMessage}">
                     <div class="alert alert-danger alert-dismissible fade show" role="alert">
                         <strong><i class="fa fa-exclamation-triangle"></i> Error!</strong> ${errorMessage}
@@ -165,7 +166,7 @@
                         </button>
                     </div>
                 </c:if>
-                
+
                 <div class="row">
                     <div class="col-lg-12 m-b30">
                         <div class="widget-box">
@@ -187,7 +188,7 @@
                                         </a>
                                     </li>
                                 </ul>
-                                
+
                                 <div class="tab-content">
                                     <div class="tab-pane fade show active" id="pendingTab" role="tabpanel">
                                         <div class="p-3">
@@ -197,7 +198,7 @@
                                                     <c:set var="hasPending" value="true" />
                                                 </c:if>
                                             </c:forEach>
-                                            
+
                                             <c:choose>
                                                 <c:when test="${hasPending}">
                                                     <div class="table-responsive">
@@ -273,7 +274,7 @@
                                             </c:choose>
                                         </div>
                                     </div>
-                                    
+
                                     <div class="tab-pane fade" id="rejectedTab" role="tabpanel">
                                         <div class="p-3">
                                             <c:set var="hasRejected" value="false" />
@@ -282,7 +283,7 @@
                                                     <c:set var="hasRejected" value="true" />
                                                 </c:if>
                                             </c:forEach>
-                                            
+
                                             <c:choose>
                                                 <c:when test="${hasRejected}">
                                                     <div class="table-responsive">
@@ -347,7 +348,7 @@
                         </div>
                     </div>
                 </div>
-                
+
             </div>
         </main>
 
@@ -367,56 +368,56 @@
         <script src="${pageContext.request.contextPath}/assets2/js/functions.js"></script>
         <script src="${pageContext.request.contextPath}/assets2/vendors/chart/chart.min.js"></script>
         <script src="${pageContext.request.contextPath}/assets2/js/admin.js"></script>
-        
+
         <script type="text/javascript" src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
         <script type="text/javascript" src="https://cdn.datatables.net/1.11.5/js/dataTables.bootstrap4.min.js"></script>
 
         <script>
-            $(document).ready(function () {
-                $('#pendingTable').DataTable({
-                    "pageLength": 5,
-                    "lengthMenu": [[5, 10, 25, 50], [5, 10, 25, 50]],
-                    "order": [[3, "desc"]],
-                    "columnDefs": [
-                        { "orderable": false, "targets": 4 },
-                        { "className": "text-center", "targets": [0, 3, 4] }
-                    ],
-                    "language": {
-                        "search": "Search pending posts:",
-                        "lengthMenu": "Show _MENU_ posts",
-                        "info": "Showing _START_ to _END_ of _TOTAL_ pending posts",
-                        "infoEmpty": "No pending posts",
-                        "infoFiltered": "(filtered from _MAX_ total posts)",
-                        "zeroRecords": "No matching pending posts found"
-                    }
-                });
-                
-                $('#rejectedTable').DataTable({
-                    "pageLength": 5,
-                    "lengthMenu": [[5, 10, 25, 50], [5, 10, 25, 50]],
-                    "order": [[3, "desc"]],
-                    "columnDefs": [
-                        { "orderable": false, "targets": 4 },
-                        { "className": "text-center", "targets": [0, 3, 4] }
-                    ],
-                    "language": {
-                        "search": "Search rejected posts:",
-                        "lengthMenu": "Show _MENU_ posts",
-                        "info": "Showing _START_ to _END_ of _TOTAL_ rejected posts",
-                        "infoEmpty": "No rejected posts",
-                        "infoFiltered": "(filtered from _MAX_ total posts)",
-                        "zeroRecords": "No matching rejected posts found"
-                    }
-                });
-                
-                setTimeout(function() {
-                    $('.alert').fadeOut('slow');
-                }, 5000);
-            });
-            
-            function viewPostDetail(postId) {
-                window.location.href = '${pageContext.request.contextPath}/postreview?action=view&postId=' + postId;
-            }
+                                                                                          $(document).ready(function () {
+                                                                                              $('#pendingTable').DataTable({
+                                                                                                  "pageLength": 5,
+                                                                                                  "lengthMenu": [[5, 10, 25, 50], [5, 10, 25, 50]],
+                                                                                                  "order": [[3, "desc"]],
+                                                                                                  "columnDefs": [
+                                                                                                      {"orderable": false, "targets": 4},
+                                                                                                      {"className": "text-center", "targets": [0, 3, 4]}
+                                                                                                  ],
+                                                                                                  "language": {
+                                                                                                      "search": "Search pending posts:",
+                                                                                                      "lengthMenu": "Show _MENU_ posts",
+                                                                                                      "info": "Showing _START_ to _END_ of _TOTAL_ pending posts",
+                                                                                                      "infoEmpty": "No pending posts",
+                                                                                                      "infoFiltered": "(filtered from _MAX_ total posts)",
+                                                                                                      "zeroRecords": "No matching pending posts found"
+                                                                                                  }
+                                                                                              });
+
+                                                                                              $('#rejectedTable').DataTable({
+                                                                                                  "pageLength": 5,
+                                                                                                  "lengthMenu": [[5, 10, 25, 50], [5, 10, 25, 50]],
+                                                                                                  "order": [[3, "desc"]],
+                                                                                                  "columnDefs": [
+                                                                                                      {"orderable": false, "targets": 4},
+                                                                                                      {"className": "text-center", "targets": [0, 3, 4]}
+                                                                                                  ],
+                                                                                                  "language": {
+                                                                                                      "search": "Search rejected posts:",
+                                                                                                      "lengthMenu": "Show _MENU_ posts",
+                                                                                                      "info": "Showing _START_ to _END_ of _TOTAL_ rejected posts",
+                                                                                                      "infoEmpty": "No rejected posts",
+                                                                                                      "infoFiltered": "(filtered from _MAX_ total posts)",
+                                                                                                      "zeroRecords": "No matching rejected posts found"
+                                                                                                  }
+                                                                                              });
+
+                                                                                              setTimeout(function () {
+                                                                                                  $('.alert').fadeOut('slow');
+                                                                                              }, 5000);
+                                                                                          });
+
+                                                                                          function viewPostDetail(postId) {
+                                                                                              window.location.href = '${pageContext.request.contextPath}/postreview?action=view&postId=' + postId;
+                                                                                          }
         </script>
     </body>
 </html>
