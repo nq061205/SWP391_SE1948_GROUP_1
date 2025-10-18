@@ -92,12 +92,9 @@ public class ComposeApplicationServlet extends HttpServlet {
                 String hoursStr = request.getParameter("othour");
                 try {
                     Date otDate = Date.valueOf(dateStr);
-                    double otHours = Double.parseDouble(hoursStr);
                     String email = request.getParameter("email");
 
                     request.setAttribute("email", email);
-                    request.setAttribute("date", otDate);
-                    request.setAttribute("othour", otHours);
                     int approvedBy;
                     if (empDAO.getEmployeeByEmail(request.getParameter("email")) != null) {
                         Employee approver = empDAO.getEmployeeByEmail(request.getParameter("email"));
@@ -110,7 +107,7 @@ public class ComposeApplicationServlet extends HttpServlet {
                     otDAO.composeOTRequest(
                             user.getEmpId(),
                             otDate,
-                            otHours,
+                            4,
                             approvedBy
                     );
                     request.getRequestDispatcher("Views/applicationsuccess.jsp").forward(request, response);
