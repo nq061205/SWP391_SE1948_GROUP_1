@@ -84,8 +84,8 @@
                                                    disabled
                                                </c:if> 
                                                >
-                                        <c:if test="${message!=null}">
-                                            <input type="text" class="form-control" value="${message}">
+                                        <c:if test="${messageEmail!=null}">
+                                            <input type="text" class="form-control" value="${messageEmail}">
                                         </c:if>
                                     </div>
                                     <div class="form-group mb-3">
@@ -130,6 +130,15 @@
                                         <input type="date" name="enddate" value="${enddate}" class="form-control" required/>
                                     </div>
 
+                                    <c:if test="${paidLeaveDay>0}">
+                                        <div class="form-group mb-3">
+                                            <label for="paidLeaveDay">Reason:</label>
+                                            <input type="checkbox" name="paidLeaveDay" value="ON" class="form-control"/>
+                                        </div>
+                                    </c:if>
+                                    <c:if test="${messageDate!=null}">
+                                        <input type="text" class="form-control" value="${messageDate}">
+                                    </c:if>
                                     <div class="form-group mb-3">
                                         <label for="content">Reason:</label>
                                         <textarea id="content" name="content" class="form-control" rows="6" placeholder="Typing here..." required>${content}</textarea>
@@ -171,17 +180,5 @@
                 <script src="${pageContext.request.contextPath}/assets2/vendors/summernote/summernote.js"></script>
                 <script src="${pageContext.request.contextPath}/assets2/vendors/file-upload/imageuploadify.min.js"></script>
                 <script src='${pageContext.request.contextPath}/assets2/vendors/switcher/switcher.js'></script>
-                <!-- include plugin -->
-                <script>
-                                                    $(document).ready(function () {
-                                                        $('.summernote').summernote({
-                                                            height: 300,
-                                                            tabsize: 2
-                                                        });
-
-                                                        $('input[type="file"]').imageuploadify();
-                                                    });
-                </script>
-
                 </body>
                 </html>
