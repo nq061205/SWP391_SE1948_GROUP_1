@@ -76,28 +76,37 @@ public class ChangePassword extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-            HttpSession session = request.getSession();
-            Employee emp = (Employee) session.getAttribute("user");
-            String currentPass = request.getParameter("currentPassword");
-            String newPass = request.getParameter("newPassword");
-            String confirmPass = request.getParameter("confirmPassword");
-            if (!currentPass.equals(emp.getPassword())) {
-                request.setAttribute("errorMessage", "password is incorect");
-                request.getRequestDispatcher("Views/changepassword.jsp").forward(request, response);
-                return;
-            }
-            if (!newPass.equals(confirmPass)) {
-                request.setAttribute("errorMessage", "New password and confirm password is not match");
-                request.getRequestDispatcher("Views/changepassword.jsp").forward(request, response);
-                return;
-            }
-
-            EmployeeDAO eDao = new EmployeeDAO();
-            eDao.updatePassword(emp.getEmpCode(), newPass);
-            request.setAttribute("successMessage", "New password has been updated");
+        HttpSession session = request.getSession();
+        Employee emp = (Employee) session.getAttribute("user");
+        String currentPass = request.getParameter("currentPassword");
+        String newPass = request.getParameter("newPassword");
+        String confirmPass = request.getParameter("confirmPassword");
+        if(newPass.equals(currentPass)){
+            request.setAttribute("errorMessage", "The new password cannot be the same as the old password ");
             request.getRequestDispatcher("Views/changepassword.jsp").forward(request, response);
+            return;
+        }
+        if (!currentPass.equals(emp.getPassword())) {
+            request.setAttribute("errorMessage", "password is incorect");
+            request.getRequestDispatcher("Views/changepassword.jsp").forward(request, response);
+            return;
+        }
+        if (!newPass.equals(confirmPass)) {
+            request.setAttribute("errorMessage", "New password and confirm password is not match");
+            request.getRequestDispatcher("Views/changepassword.jsp").forward(request, response);
+            return;
+        }
 
-
+        EmployeeDAO eDao = new EmployeeDAO();
+        boolean success = eDao.updatePassword(emp.getEmpCode(), newPass);
+        if (success) {
+            emp.setPassword(newPass);
+            session.setAttribute("user", emp);
+            request.setAttribute("successMessage", "New password has been updated");
+        } else {
+            request.setAttribute("errorMessage", "Lỗi khi cập nhật mật khẩu!");
+        }
+                    request.getRequestDispatcher("Views/changepassword.jsp").forward(request, response);
 
     }
 
