@@ -32,6 +32,12 @@ public class ApplicationServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        HttpSession session = request.getSession();
+        Employee user = (Employee) session.getAttribute("user");
+        if (user == null) {
+            response.sendRedirect("Views/login.jsp");
+            return;
+        }
         EmployeeDAO empDAO = new EmployeeDAO();
         Employee emp = empDAO.getEmployeeByEmpId(1);
         String typeApplication = request.getParameter("typeapplication");
@@ -50,7 +56,10 @@ public class ApplicationServlet extends HttpServlet {
 
     protected void doLeaveRequestApplication(HttpServletRequest request, HttpServletResponse response, Employee user)
             throws ServletException, IOException {
-
+        if (user == null) {
+            response.sendRedirect("Views/login.jsp");
+            return;
+        }
         LeaveRequestDAO leaveDAO = new LeaveRequestDAO();
 
         String search = trimOrNull(request.getParameter("search"));
@@ -59,11 +68,10 @@ public class ApplicationServlet extends HttpServlet {
         String startStr = trimOrNull(request.getParameter("startDate"));
         String endStr = trimOrNull(request.getParameter("endDate"));
 
-        java.sql.Date startDate = parseSqlDate(startStr); // null-safe
-        java.sql.Date endDate = parseSqlDate(endStr);   // null-safe
-
+        Date startDate = parseSqlDate(startStr);
+        Date endDate = parseSqlDate(endStr);
         if (startDate != null && endDate != null && startDate.after(endDate)) {
-            java.sql.Date tmp = startDate;
+            Date tmp = startDate;
             startDate = endDate;
             endDate = tmp;
         }
@@ -99,7 +107,10 @@ public class ApplicationServlet extends HttpServlet {
 
     protected void doOTRequestApplication(HttpServletRequest request, HttpServletResponse response, Employee user)
             throws ServletException, IOException {
-
+        if (user == null) {
+            response.sendRedirect("Views/login.jsp");
+            return;
+        }
         OTRequestDAO otDAO = new OTRequestDAO();
 
         String search = trimOrNull(request.getParameter("search"));
