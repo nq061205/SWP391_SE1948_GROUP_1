@@ -63,8 +63,10 @@ public class EmployeeDAO extends DBContext {
                         rs.getString("position_title"),
                         rs.getString("image"),
                         rs.getInt("dependant_count"),
+                        rs.getInt("paid_leave_days"),
                         department,
-                        roleDAO.getRoleByEmpId(rs.getInt("emp_id"))
+                        roleDAO.getRoleByEmpId(rs.getInt("emp_id")),
+                        rs.getBoolean("status")
                 );
                 employee.setStatus(rs.getBoolean("status"));
             }
@@ -94,8 +96,10 @@ public class EmployeeDAO extends DBContext {
                             rs.getString("position_title"),
                             rs.getString("image"),
                             rs.getInt("dependant_count"),
+                            rs.getInt("paid_leave_days"),
                             department,
-                            roleDAO.getRoleByEmpId(rs.getInt("emp_id"))
+                            roleDAO.getRoleByEmpId(rs.getInt("emp_id")),
+                            rs.getBoolean("status")
                     );
                     employee.setStatus(rs.getBoolean("status"));
                     return employee;
@@ -127,6 +131,7 @@ public class EmployeeDAO extends DBContext {
                     emp.setPositionTitle(rs.getString("position_title"));
                     emp.setImage(rs.getString("image"));
                     emp.setDependantCount(rs.getInt("dependant_count"));
+                    emp.setPaidLeaveDays(rs.getInt("paid_leave_days"));
                     Department dept = deptDAO.getDepartmentByEmpId(rs.getInt("emp_id"));
                     emp.setDept(dept);
                     Role role = roleDAO.getRoleByEmpId(rs.getInt("emp_id"));
@@ -678,9 +683,7 @@ public class EmployeeDAO extends DBContext {
     public static void main(String[] args) {
         EmployeeDAO dao = new EmployeeDAO();
 
-        Employee emp = dao.getEmployeeByEmpCode("EMP001");
-        emp.setDependantCount(3);
-        dao.updateEmployee(emp);
+        System.out.println(dao.getEmployeeByUsernamePassword("EMP001", "123"));
 
     }
 

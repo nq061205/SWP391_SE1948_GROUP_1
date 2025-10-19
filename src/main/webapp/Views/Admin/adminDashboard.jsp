@@ -1,12 +1,6 @@
-<%-- 
-    Document   : dashboard
-    Created on : Oct 4, 2025, 4:14:15 PM
-    Author     : admin
---%>
-
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <!DOCTYPE html>
-<html>
+<html lang="en">
     <head>
         <!-- META ============================================= -->
         <meta charset="utf-8">
@@ -14,150 +8,187 @@
         <meta name="keywords" content="" />
         <meta name="author" content="" />
         <meta name="robots" content="" />
+        <meta name="description" content="EduChamp Dashboard Template" />
+        <meta property="og:title" content="EduChamp Admin Dashboard" />
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>Dashboard | EduChamp HR System</title>
 
-        <!-- DESCRIPTION -->
-        <meta name="description" content="EduChamp : Education HTML Template" />
-
-        <!-- OG -->
-        <meta property="og:title" content="EduChamp : Education HTML Template" />
-        <meta property="og:description" content="EduChamp : Education HTML Template" />
-        <meta property="og:image" content="" />
-        <meta name="format-detection" content="telephone=no">
-
-        <!-- FAVICONS ICON ============================================= -->
+        <!-- FAVICONS -->
         <link rel="icon" href="${pageContext.request.contextPath}/assets2/images/favicon.ico" type="image/x-icon" />
         <link rel="shortcut icon" type="image/x-icon" href="${pageContext.request.contextPath}/assets2/images/favicon.png" />
 
-        <!-- PAGE TITLE HERE ============================================= -->
-        <title>EduChamp : Education HTML Template</title>
-
-        <!-- MOBILE SPECIFIC ============================================= -->
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-
-        <!--[if lt IE 9]>
-        <script src="${pageContext.request.contextPath}/assets2/js/html5shiv.min.js"></script>
-        <script src="${pageContext.request.contextPath}/assets2/js/respond.min.js"></script>
-        <![endif]-->
-
-        <!-- All PLUGINS CSS ============================================= -->
-        <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/assets2/css/assets.css">
-        <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/assets2/vendors/calendar/fullcalendar.css">
-
-        <!-- TYPOGRAPHY ============================================= -->
-        <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/assets2/css/typography.css">
-
-        <!-- SHORTCODES ============================================= -->
-        <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/assets2/css/shortcodes/shortcodes.css">
-
-        <!-- STYLESHEETS ============================================= -->
-        <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/assets2/css/style.css">
-        <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/assets2/css/dashboard.css">
-        <link class="skin" rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/assets2/css/color/color-1.css">
+        <!-- STYLES -->
+        <link rel="stylesheet" href="${pageContext.request.contextPath}/assets2/css/assets.css">
+        <link rel="stylesheet" href="${pageContext.request.contextPath}/assets2/vendors/calendar/fullcalendar.css">
+        <link rel="stylesheet" href="${pageContext.request.contextPath}/assets2/css/typography.css">
+        <link rel="stylesheet" href="${pageContext.request.contextPath}/assets2/css/shortcodes/shortcodes.css">
+        <link rel="stylesheet" href="${pageContext.request.contextPath}/assets2/css/style.css">
+        <link rel="stylesheet" href="${pageContext.request.contextPath}/assets2/css/dashboard.css">
+        <link class="skin" rel="stylesheet" href="${pageContext.request.contextPath}/assets2/css/color/color-1.css">
     </head>
 
     <body class="ttr-opened-sidebar ttr-pinned-sidebar">
-        <jsp:include page="../CommonItems/Header/dashboardHeader.jsp" />
-        <jsp:include page="../CommonItems/Navbar/adminNavbar.jsp" />
+        <%@ include file="../CommonItems/Header/dashboardHeader.jsp" %>
+        <%@ include file="../CommonItems/Navbar/empNavbar.jsp" %>
 
-    </body>
+        <!-- MAIN CONTENT -->
+        <main class="ttr-wrapper">
+            <div class="container-fluid">
+                <!-- Breadcrumb -->
+                <div class="db-breadcrumb">
+                    <h4 class="breadcrumb-title">Dashboard</h4>
+                    <ul class="db-breadcrumb-list">
+                        <li><a href="#"><i class="fa fa-home"></i>Home</a></li>
+                        <li>Dashboard</li>
+                    </ul>
+                </div>
 
-    <script src="${pageContext.request.contextPath}/assets2/js/jquery.min.js"></script>
-    <script src="${pageContext.request.contextPath}/assets2/vendors/bootstrap/js/popper.min.js"></script>
-    <script src="${pageContext.request.contextPath}/assets2/vendors/bootstrap/js/bootstrap.min.js"></script>
-    <script src="${pageContext.request.contextPath}/assets2/vendors/bootstrap-select/bootstrap-select.min.js"></script>
-    <script src="${pageContext.request.contextPath}/assets2/vendors/bootstrap-touchspin/jquery.bootstrap-touchspin.js"></script>
-    <script src="${pageContext.request.contextPath}/assets2/vendors/magnific-popup/magnific-popup.js"></script>
-    <script src="${pageContext.request.contextPath}/assets2/vendors/counter/waypoints-min.js"></script>
-    <script src="${pageContext.request.contextPath}/assets2/vendors/counter/counterup.min.js"></script>
-    <script src="${pageContext.request.contextPath}/assets2/vendors/imagesloaded/imagesloaded.js"></script>
-    <script src="${pageContext.request.contextPath}/assets2/vendors/masonry/masonry.js"></script>
-    <script src="${pageContext.request.contextPath}/assets2/vendors/masonry/filter.js"></script>
-    <script src="${pageContext.request.contextPath}/assets2/vendors/owl-carousel/owl.carousel.js"></script>
-    <script src="${pageContext.request.contextPath}/assets2/vendors/scroll/scrollbar.min.js"></script>
-    <script src="${pageContext.request.contextPath}/assets2/js/functions.js"></script>
-    <script src="${pageContext.request.contextPath}/assets2/vendors/chart/chart.min.js"></script>
-    <script src="${pageContext.request.contextPath}/assets2/js/admin.js"></script>
-    <script src="${pageContext.request.contextPath}/assets2/vendors/calendar/moment.min.js"></script>
-    <script src="${pageContext.request.contextPath}/assets2/vendors/calendar/fullcalendar.js"></script>
-    <script src="${pageContext.request.contextPath}/assets2/vendors/switcher/switcher.js"></script>
+                <!-- STATISTICS CARDS -->
+                <div class="row">
+                    <div class="col-md-6 col-lg-3">
+                        <div class="widget-card widget-bg1">
+                            <div class="wc-item">
+                                <h4 class="wc-title">Total Employees</h4>
+                                <span class="wc-des">All active employees</span>
+                                <span class="wc-stats"><span class="counter">150</span></span>
+                                <div class="progress wc-progress"><div class="progress-bar" style="width: 75%;"></div></div>
+                                <span class="wc-progress-bx"><span class="wc-change">Change</span><span class="wc-number ml-auto">75%</span></span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6 col-lg-3">
+                        <div class="widget-card widget-bg2">
+                            <div class="wc-item">
+                                <h4 class="wc-title">New Applications</h4>
+                                <span class="wc-des">Pending candidate applications</span>
+                                <span class="wc-stats counter">35</span>
+                                <div class="progress wc-progress"><div class="progress-bar" style="width: 60%;"></div></div>
+                                <span class="wc-progress-bx"><span class="wc-change">Change</span><span class="wc-number ml-auto">60%</span></span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6 col-lg-3">
+                        <div class="widget-card widget-bg3">
+                            <div class="wc-item">
+                                <h4 class="wc-title">Departments</h4>
+                                <span class="wc-des">Active departments</span>
+                                <span class="wc-stats counter">8</span>
+                                <div class="progress wc-progress"><div class="progress-bar" style="width: 80%;"></div></div>
+                                <span class="wc-progress-bx"><span class="wc-change">Change</span><span class="wc-number ml-auto">80%</span></span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6 col-lg-3">
+                        <div class="widget-card widget-bg4">
+                            <div class="wc-item">
+                                <h4 class="wc-title">On Leave Today</h4>
+                                <span class="wc-des">Current approved leaves</span>
+                                <span class="wc-stats counter">5</span>
+                                <div class="progress wc-progress"><div class="progress-bar" style="width: 30%;"></div></div>
+                                <span class="wc-progress-bx"><span class="wc-change">Change</span><span class="wc-number ml-auto">30%</span></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
 
-    <script>
-        $(document).ready(function () {
+                <!-- CHARTS AND NOTIFICATIONS -->
+                <div class="row">
+                    <div class="col-lg-8 m-b30">
+                        <div class="widget-box">
+                            <div class="wc-title"><h4>Employee Growth Overview</h4></div>
+                            <div class="widget-inner"><canvas id="chart" width="100" height="45"></canvas></div>
+                        </div>
+                    </div>
 
-            $('#calendar').fullCalendar({
-                header: {
-                    left: 'prev,next today',
-                    center: 'title',
-                    right: 'month,agendaWeek,agendaDay,listWeek'
-                },
-                defaultDate: '2019-03-12',
-                navLinks: true, // can click day/week names to navigate views
+                    <div class="col-lg-4 m-b30">
+                        <div class="widget-box">
+                            <div class="wc-title"><h4>Notifications</h4></div>
+                            <div class="widget-inner">
+                                <div class="noti-box-list">
+                                    <ul>
+                                        <li><span class="notification-icon dashbg-gray"><i class="fa fa-check"></i></span><span class="notification-text"><span>Admin</span> approved your leave.</span><span class="notification-time"><span>10:30 AM</span></span></li>
+                                        <li><span class="notification-icon dashbg-yellow"><i class="fa fa-bullhorn"></i></span><span class="notification-text"><span>New job posting available.</span></span><span class="notification-time"><span>2 hrs ago</span></span></li>
+                                        <li><span class="notification-icon dashbg-green"><i class="fa fa-comments-o"></i></span><span class="notification-text"><span>HR</span> commented on your application.</span><span class="notification-time"><span>Yesterday</span></span></li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
 
-                weekNumbers: true,
-                weekNumbersWithinDays: true,
-                weekNumberCalculation: 'ISO',
+                <!-- USERS & CALENDAR -->
+                <div class="row">
+                    <div class="col-lg-6 m-b30">
+                        <div class="widget-box">
+                            <div class="wc-title"><h4>New Employees</h4></div>
+                            <div class="widget-inner">
+                                <ul class="new-user-list">
+                                    <li><span class="new-users-pic"><img src="${pageContext.request.contextPath}/assets2/images/testimonials/pic1.jpg" alt=""/></span><span class="new-users-text"><a href="#" class="new-users-name">Anna Strong</a><span class="new-users-info">Developer - IT Department</span></span></li>
+                                    <li><span class="new-users-pic"><img src="${pageContext.request.contextPath}/assets2/images/testimonials/pic2.jpg" alt=""/></span><span class="new-users-text"><a href="#" class="new-users-name">John Smith</a><span class="new-users-info">Marketing Coordinator</span></span></li>
+                                    <li><span class="new-users-pic"><img src="${pageContext.request.contextPath}/assets2/images/testimonials/pic3.jpg" alt=""/></span><span class="new-users-text"><a href="#" class="new-users-name">Sara Lee</a><span class="new-users-info">HR Assistant</span></span></li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
 
-                editable: true,
-                eventLimit: true, // allow "more" link when too many events
-                events: [
-                    {
-                        title: 'All Day Event',
-                        start: '2019-03-01'
+                    <div class="col-lg-6 m-b30">
+                        <div class="widget-box">
+                            <div class="wc-title"><h4>Calendar</h4></div>
+                            <div class="widget-inner"><div id="calendar"></div></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <!-- JS FILES -->
+        <script src="${pageContext.request.contextPath}/assets2/js/jquery.min.js"></script>
+        <script src="${pageContext.request.contextPath}/assets2/vendors/bootstrap/js/popper.min.js"></script>
+        <script src="${pageContext.request.contextPath}/assets2/vendors/bootstrap/js/bootstrap.min.js"></script>
+        <script src="${pageContext.request.contextPath}/assets2/vendors/bootstrap-select/bootstrap-select.min.js"></script>
+        <script src="${pageContext.request.contextPath}/assets2/vendors/magnific-popup/magnific-popup.js"></script>
+        <script src="${pageContext.request.contextPath}/assets2/vendors/counter/waypoints-min.js"></script>
+        <script src="${pageContext.request.contextPath}/assets2/vendors/counter/counterup.min.js"></script>
+        <script src="${pageContext.request.contextPath}/assets2/vendors/owl-carousel/owl.carousel.js"></script>
+        <script src="${pageContext.request.contextPath}/assets2/vendors/scroll/scrollbar.min.js"></script>
+        <script src="${pageContext.request.contextPath}/assets2/vendors/chart/chart.min.js"></script>
+        <script src="${pageContext.request.contextPath}/assets2/vendors/calendar/moment.min.js"></script>
+        <script src="${pageContext.request.contextPath}/assets2/vendors/calendar/fullcalendar.js"></script>
+        <script src="${pageContext.request.contextPath}/assets2/js/functions.js"></script>
+        <script src="${pageContext.request.contextPath}/assets2/js/admin.js"></script>
+
+        <script>
+            $(document).ready(function () {
+                // Chart Example
+                var ctx = document.getElementById("chart").getContext("2d");
+                new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun"],
+                        datasets: [{
+                            label: 'Employee Growth',
+                            data: [5, 10, 8, 15, 12, 20],
+                            backgroundColor: 'rgba(66,165,245,0.2)',
+                            borderColor: '#42a5f5',
+                            borderWidth: 2,
+                            fill: true
+                        }]
                     },
-                    {
-                        title: 'Long Event',
-                        start: '2019-03-07',
-                        end: '2019-03-10'
-                    },
-                    {
-                        id: 999,
-                        title: 'Repeating Event',
-                        start: '2019-03-09T16:00:00'
-                    },
-                    {
-                        id: 999,
-                        title: 'Repeating Event',
-                        start: '2019-03-16T16:00:00'
-                    },
-                    {
-                        title: 'Conference',
-                        start: '2019-03-11',
-                        end: '2019-03-13'
-                    },
-                    {
-                        title: 'Meeting',
-                        start: '2019-03-12T10:30:00',
-                        end: '2019-03-12T12:30:00'
-                    },
-                    {
-                        title: 'Lunch',
-                        start: '2019-03-12T12:00:00'
-                    },
-                    {
-                        title: 'Meeting',
-                        start: '2019-03-12T14:30:00'
-                    },
-                    {
-                        title: 'Happy Hour',
-                        start: '2019-03-12T17:30:00'
-                    },
-                    {
-                        title: 'Dinner',
-                        start: '2019-03-12T20:00:00'
-                    },
-                    {
-                        title: 'Birthday Party',
-                        start: '2019-03-13T07:00:00'
-                    },
-                    {
-                        title: 'Click for Google',
-                        url: 'http://google.com/',
-                        start: '2019-03-28'
-                    }
-                ]
+                    options: {responsive: true, maintainAspectRatio: false}
+                });
+
+                // Calendar Example
+                $('#calendar').fullCalendar({
+                    header: {left: 'prev,next today', center: 'title', right: 'month,agendaWeek,agendaDay'},
+                    editable: false,
+                    eventLimit: true,
+                    events: [
+                        {title: 'Company Meeting', start: '2025-10-19'},
+                        {title: 'HR Interview', start: '2025-10-21'},
+                        {title: 'System Maintenance', start: '2025-10-23'}
+                    ]
+                });
             });
-
-        });
-    </script>
-
+        </script>
+    </body>
 </html>

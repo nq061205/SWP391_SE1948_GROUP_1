@@ -21,8 +21,13 @@
         <link rel="stylesheet" href="${pageContext.request.contextPath}/assets2/css/style.css">
         <link rel="stylesheet" href="${pageContext.request.contextPath}/assets2/css/dashboard.css">
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-
-        <!-- Custom tab highlight -->
+        <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/assets2/css/assets.css">
+        <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/assets2/vendors/calendar/fullcalendar.css">
+        <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/assets2/css/typography.css">
+        <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/assets2/css/shortcodes/shortcodes.css">
+        <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/assets2/css/style.css">
+        <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/assets2/css/dashboard.css">
+        <link class="skin" rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/assets2/css/color/color-1.css">
         <style>
             .nav-tabs .nav-link.active {
                 background-color: #007bff !important; /* xanh dương */
@@ -38,7 +43,7 @@
     <body class="ttr-opened-sidebar ttr-pinned-sidebar">
         <!-- Header + Navbar -->
         <jsp:include page="CommonItems/Header/dashboardHeader.jsp" />
-        <jsp:include page="CommonItems/Navbar/adminNavbar.jsp" />
+         <%@ include file="CommonItems/Navbar/empNavbar.jsp" %>
 
         <main class="ttr-wrapper">
             <div class="container-fluid">
@@ -112,13 +117,13 @@
                                     <tr>
                                         <th>#</th>
                                         <th style="cursor:pointer;"
-                                            onclick="window.location = '${pageContext.request.contextPath}/candidatelist?type=name'">
+                                            onclick="window.location = '${pageContext.request.contextPath}/candidatelist?type=name&tab=${sessionScope.tab}'">
                                             Full Name <i class="fa fa-sort"></i>
                                         </th>
                                         <th>Email</th>
                                         <th>Phone</th>
                                         <th style="cursor:pointer;"
-                                            onclick="window.location = '${pageContext.request.contextPath}/candidatelist?type=appliedat'">
+                                            onclick="window.location = '${pageContext.request.contextPath}/candidatelist?type=appliedat&tab=${sessionScope.tab}'">
                                             Applied At <i class="fa fa-sort"></i>
                                         </th>
                                         <th>Action</th>
@@ -195,5 +200,22 @@
         <!-- JS libraries -->
         <script src="${pageContext.request.contextPath}/assets2/js/jquery.min.js"></script>
         <script src="${pageContext.request.contextPath}/assets2/vendors/bootstrap/js/bootstrap.bundle.min.js"></script>
+        <script src="${pageContext.request.contextPath}/assets2/js/jquery.min.js"></script>
+        <script src="${pageContext.request.contextPath}/assets2/vendors/bootstrap/js/popper.min.js"></script>
+        <script src="${pageContext.request.contextPath}/assets2/vendors/bootstrap/js/bootstrap.min.js"></script>
+        <script src="${pageContext.request.contextPath}/assets2/vendors/bootstrap-select/bootstrap-select.min.js"></script>
+        <script src="${pageContext.request.contextPath}/assets2/vendors/bootstrap-touchspin/jquery.bootstrap-touchspin.js"></script>
+        <script src="${pageContext.request.contextPath}/assets2/vendors/magnific-popup/magnific-popup.js"></script>
+        <script src="${pageContext.request.contextPath}/assets2/vendors/counter/waypoints-min.js"></script>
+        <script src="${pageContext.request.contextPath}/assets2/vendors/counter/counterup.min.js"></script>
+        <script src="${pageContext.request.contextPath}/assets2/vendors/imagesloaded/imagesloaded.js"></script>
+        <script src="${pageContext.request.contextPath}/assets2/vendors/masonry/masonry.js"></script>
+        <script src="${pageContext.request.contextPath}/assets2/vendors/masonry/filter.js"></script>
+        <script src="${pageContext.request.contextPath}/assets2/vendors/owl-carousel/owl.carousel.js"></script>
+        <script src="${pageContext.request.contextPath}/assets2/vendors/scroll/scrollbar.min.js"></script>
+        <script src="${pageContext.request.contextPath}/assets2/js/functions.js"></script>
+        <script src="${pageContext.request.contextPath}/assets2/vendors/chart/chart.min.js"></script>
+        <script src="${pageContext.request.contextPath}/assets2/js/admin.js"></script>
+        <script src="${pageContext.request.contextPath}/assets2/vendors/switcher/switcher.js"></script>
     </body>
 </html>
