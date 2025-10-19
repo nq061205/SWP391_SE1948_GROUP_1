@@ -23,9 +23,9 @@ import model.Candidate;
  * @author hgduy
  */
 @MultipartConfig(
-        fileSizeThreshold = 1024 * 1024 * 2, // 2MB
-        maxFileSize = 1024 * 1024 * 10, // 10MB
-        maxRequestSize = 1024 * 1024 * 50 // 50MB
+        fileSizeThreshold = 1024 * 1024 * 2, 
+        maxFileSize = 1024 * 1024 * 10,
+        maxRequestSize = 1024 * 1024 * 50 
 )
 public class ApplyJobServlet extends HttpServlet {
 
@@ -46,9 +46,7 @@ public class ApplyJobServlet extends HttpServlet {
         String email = request.getParameter("email");
         String phone = request.getParameter("phone");
         String postId = request.getParameter("postId");
-
         Part filePart = request.getPart("cvFile");
-
         try {
             int post = Integer.parseInt(postId);
             String cvRelativePath = "";

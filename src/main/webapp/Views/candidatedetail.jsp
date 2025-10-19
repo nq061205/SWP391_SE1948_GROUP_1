@@ -22,7 +22,13 @@
         <link rel="stylesheet" href="${pageContext.request.contextPath}/assets2/css/style.css">
         <link rel="stylesheet" href="${pageContext.request.contextPath}/assets2/css/dashboard.css">
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-
+        <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/assets2/css/assets.css">
+        <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/assets2/vendors/calendar/fullcalendar.css">
+        <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/assets2/css/typography.css">
+        <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/assets2/css/shortcodes/shortcodes.css">
+        <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/assets2/css/style.css">
+        <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/assets2/css/dashboard.css">
+        <link class="skin" rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/assets2/css/color/color-1.css">
         <style>
             .cv-container {
                 border: 1px solid #ddd;
@@ -62,7 +68,7 @@
     <body class="ttr-opened-sidebar ttr-pinned-sidebar">
         <!-- Header + Navbar -->
         <jsp:include page="CommonItems/Header/dashboardHeader.jsp" />
-        <jsp:include page="CommonItems/Navbar/adminNavbar.jsp" />
+        <%@ include file="CommonItems/Navbar/empNavbar.jsp" %>
 
         <main class="ttr-wrapper">
             <div class="container-fluid">
@@ -137,13 +143,13 @@
                                     <i class="fa fa-arrow-left"></i> Back
                                 </a>
                                 <c:if test="${candidate.result == null}">
-                                    <div>
-                                        <a href="${pageContext.request.contextPath}/candidateaction?id=${candidate.candidateId}&action=approve"
+                                    <div >
+                                        <a style="background-color: green" href="${pageContext.request.contextPath}/candidateaction?id=${candidate.candidateId}&action=approve"
                                            class="btn btn-success"
                                            onclick="return confirm('Approve this candidate?');">
                                             <i class="fa fa-check"></i> Approve
                                         </a>
-                                        <a href="${pageContext.request.contextPath}/candidateaction?id=${candidate.candidateId}&action=reject"
+                                        <a style="background-color: red" href="${pageContext.request.contextPath}/candidateaction?id=${candidate.candidateId}&action=reject"
                                            class="btn btn-danger"
                                            onclick="return confirm('Reject this candidate?');">
                                             <i class="fa fa-times"></i> Reject
@@ -160,5 +166,22 @@
         <!-- JS Libraries -->
         <script src="${pageContext.request.contextPath}/assets2/js/jquery.min.js"></script>
         <script src="${pageContext.request.contextPath}/assets2/vendors/bootstrap/js/bootstrap.bundle.min.js"></script>
+        <script src="${pageContext.request.contextPath}/assets2/js/jquery.min.js"></script>
+        <script src="${pageContext.request.contextPath}/assets2/vendors/bootstrap/js/popper.min.js"></script>
+        <script src="${pageContext.request.contextPath}/assets2/vendors/bootstrap/js/bootstrap.min.js"></script>
+        <script src="${pageContext.request.contextPath}/assets2/vendors/bootstrap-select/bootstrap-select.min.js"></script>
+        <script src="${pageContext.request.contextPath}/assets2/vendors/bootstrap-touchspin/jquery.bootstrap-touchspin.js"></script>
+        <script src="${pageContext.request.contextPath}/assets2/vendors/magnific-popup/magnific-popup.js"></script>
+        <script src="${pageContext.request.contextPath}/assets2/vendors/counter/waypoints-min.js"></script>
+        <script src="${pageContext.request.contextPath}/assets2/vendors/counter/counterup.min.js"></script>
+        <script src="${pageContext.request.contextPath}/assets2/vendors/imagesloaded/imagesloaded.js"></script>
+        <script src="${pageContext.request.contextPath}/assets2/vendors/masonry/masonry.js"></script>
+        <script src="${pageContext.request.contextPath}/assets2/vendors/masonry/filter.js"></script>
+        <script src="${pageContext.request.contextPath}/assets2/vendors/owl-carousel/owl.carousel.js"></script>
+        <script src="${pageContext.request.contextPath}/assets2/vendors/scroll/scrollbar.min.js"></script>
+        <script src="${pageContext.request.contextPath}/assets2/js/functions.js"></script>
+        <script src="${pageContext.request.contextPath}/assets2/vendors/chart/chart.min.js"></script>
+        <script src="${pageContext.request.contextPath}/assets2/js/admin.js"></script>
+        <script src="${pageContext.request.contextPath}/assets2/vendors/switcher/switcher.js"></script>
     </body>
 </html>
