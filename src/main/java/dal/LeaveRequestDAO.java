@@ -134,13 +134,14 @@ public class LeaveRequestDAO extends DBContext {
     }
 
     public int updateLeaveRequest(int id, String leaveType, String content, Date startDate, Date endDate) {
-        String sql = "UPDATE hrm.leave_request SET leave_type=?, reason=?, start_date=?, end_date=?, updated_at=NOW() WHERE leave_id=?";
+        String sql = "UPDATE hrm.leave_request SET leave_type=?, reason=?,day_requested = ? ,start_date = ?, end_date = ?, updated_at = NOW() WHERE leave_id=?";
         try (PreparedStatement stm = connection.prepareStatement(sql)) {
             stm.setString(1, leaveType);
             stm.setString(2, content);
-            stm.setDate(3, startDate);
-            stm.setDate(4, endDate);
-            stm.setInt(5, id);
+            stm.setInt(3, (int) (endDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24) + 1);
+            stm.setDate(4, startDate);
+            stm.setDate(5, endDate);
+            stm.setInt(6, id);
             return stm.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
