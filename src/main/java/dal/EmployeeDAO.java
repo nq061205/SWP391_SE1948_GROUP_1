@@ -675,11 +675,71 @@ public class EmployeeDAO extends DBContext {
         }
     }
 
+    public int countFilterEmployee(Boolean gender, String[] positionTitle, String ageRange) {
+        int count = 0;
+        try {
+            StringBuilder sql = new StringBuilder("SELECT COUNT(*) FROM Employee WHERE 1=1");
+
+            if (gender != null) {
+                sql.append(" AND gender = ?");
+            }
+
+            if (positionTitle != null && positionTitle.length > 0) {
+                sql.append(" AND position_title IN (");
+                for (int i = 0; i < positionTitle.length; i++) {
+                    sql.append("?");
+                    if (i < positionTitle.length - 1) {
+                        sql.append(", ");
+                    }
+                }
+                sql.append(")");
+            }
+
+            if (ageRange != null && !ageRange.trim().isEmpty()) {
+                switch (ageRange) {
+                    case "under25":
+                        sql.append(" AND TIMESTAMPDIFF(YEAR, dob, CURDATE()) < 25");
+                        break;
+                    case "25to30":
+                        sql.append(" AND TIMESTAMPDIFF(YEAR, dob, CURDATE()) BETWEEN 25 AND 30");
+                        break;
+                    case "31to40":
+                        sql.append(" AND TIMESTAMPDIFF(YEAR, dob, CURDATE()) BETWEEN 31 AND 40");
+                        break;
+                    case "above40":
+                        sql.append(" AND TIMESTAMPDIFF(YEAR, dob, CURDATE()) > 40");
+                        break;
+                }
+            }
+
+            PreparedStatement ps = connection.prepareStatement(sql.toString());
+            int index = 1;
+
+            if (gender != null) {
+                ps.setBoolean(index++, gender);
+            }
+
+            if (positionTitle != null && positionTitle.length > 0) {
+                for (String pos : positionTitle) {
+                    ps.setString(index++, pos);
+                }
+            }
+
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                count = rs.getInt(1);
+            }
+
+            rs.close();
+            ps.close();
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
+        return count;
+    }
+
     public static void main(String[] args) {
         EmployeeDAO dao = new EmployeeDAO();
-
-        System.out.println(dao.getEmployeeByUsernamePassword("EMP001", "123"));
-        
 
     }
 
