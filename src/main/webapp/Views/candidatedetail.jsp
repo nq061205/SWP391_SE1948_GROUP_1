@@ -86,7 +86,7 @@
                             </div>
                             <div class="widget-inner cv-container">
                                 <iframe 
-                                    src="${pageContext.request.contextPath}/assets2/uploads/cv/MrHoang-MAI-Duy-TopCV.vn-111025.101939.pdf" 
+                                    src="${candidate.cv}" 
                                     type="application/pdf" 
                                     width="100%"    
                                     height="600px">

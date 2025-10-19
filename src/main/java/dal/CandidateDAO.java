@@ -134,19 +134,19 @@ public class CandidateDAO extends DBContext {
         }
         return candidateList;
     }
+
     public List<Integer> getAllPassCandidateID(String result) {
         List<Integer> idList = new ArrayList<>();
-        String sql ="select candidate_id from interview where result=?";
-        try(Connection conn = DBContext.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
+        String sql = "select candidate_id from interview where result=?";
+        try (Connection conn = DBContext.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setString(1, result);
             ResultSet rs = ps.executeQuery();
-            while(rs.next()) {
-                int id =0;
+            while (rs.next()) {
+                int id = 0;
                 id = rs.getInt("candidate_id");
                 idList.add(id);
             }
-        }
-        catch(SQLException ex) {
+        } catch (SQLException ex) {
             Logger.getLogger(CandidateDAO.class.getName()).log(Level.SEVERE, null, ex);
         }
         return idList;
@@ -223,6 +223,43 @@ public class CandidateDAO extends DBContext {
             ex.printStackTrace();
         }
 
+        return false;
+    }
+
+    public boolean insertCandidate(Candidate c) {
+        String checkSql = "SELECT candidate_id FROM candidate WHERE email = ?";
+        String insertSql = "INSERT INTO candidate (name, email, phone, cv, post_id, applied_at, result) "
+                + "VALUES (?, ?, ?, ?, ?, CURRENT_TIMESTAMP, NULL)";
+        String updateSql = "UPDATE candidate SET name=?, phone=?, cv=?, post_id=?, applied_at=CURRENT_TIMESTAMP "
+                + "WHERE email=?";
+        try (Connection conn = DBContext.getConnection()) {
+            try (PreparedStatement checkPs = conn.prepareStatement(checkSql)) {
+                checkPs.setString(1, c.getEmail());
+                ResultSet rs = checkPs.executeQuery();
+
+                if (rs.next()) {
+                    try (PreparedStatement ps = conn.prepareStatement(updateSql)) {
+                        ps.setString(1, c.getName());
+                        ps.setString(2, c.getPhone());
+                        ps.setString(3, c.getCv());
+                        ps.setInt(4, c.getPost().getPostId());
+                        ps.setString(5, c.getEmail());
+                        return ps.executeUpdate() > 0;
+                    }
+                } else {
+                    try (PreparedStatement ps = conn.prepareStatement(insertSql)) {
+                        ps.setString(1, c.getName());
+                        ps.setString(2, c.getEmail());
+                        ps.setString(3, c.getPhone());
+                        ps.setString(4, c.getCv());
+                        ps.setInt(5, c.getPost().getPostId());
+                        return ps.executeUpdate() > 0;
+                    }
+                }
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(CandidateDAO.class.getName()).log(Level.SEVERE, null, ex);
+        }
         return false;
     }
 
