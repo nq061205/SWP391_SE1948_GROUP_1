@@ -264,11 +264,10 @@ public class OTRequestDAO extends DBContext {
         return list;
     }
 
-     public List<OTRequest> getApprovedOTs() {
+    public List<OTRequest> getApprovedOTs() {
         List<OTRequest> list = new ArrayList<>();
         String sql = "SELECT * FROM ot_request WHERE status = 'Approved'";
-        try (PreparedStatement st = connection.prepareStatement(sql);
-             ResultSet rs = st.executeQuery()) {
+        try (PreparedStatement st = connection.prepareStatement(sql); ResultSet rs = st.executeQuery()) {
 
             while (rs.next()) {
                 Employee e = employeeDAO.getEmployeeByEmpId(rs.getInt("emp_id"));
@@ -291,13 +290,46 @@ public class OTRequestDAO extends DBContext {
 
         return list;
     }
+
+    public List<OTRequest> getApprovedOTBetween(Date minDate, Date maxDate) {
+        List<OTRequest> list = new ArrayList<>();
+        String sql = "SELECT * FROM ot_request WHERE status = 'Approved' AND date BETWEEN ? AND ?";
+
+        try (PreparedStatement st = connection.prepareStatement(sql)) {
+            st.setDate(1, minDate);
+            st.setDate(2, maxDate);
+            try (ResultSet rs = st.executeQuery()) {
+                while (rs.next()) {
+                    Employee e = employeeDAO.getEmployeeByEmpId(rs.getInt("emp_id"));
+                    Employee a = employeeDAO.getEmployeeByEmpId(rs.getInt("approved_by"));
+                    OTRequest o = new OTRequest(
+                            rs.getInt("ot_id"),
+                            e,
+                            rs.getDate("date"),
+                            rs.getDouble("ot_hours"),
+                            a,
+                            rs.getTimestamp("approved_at"),
+                            rs.getString("status"),
+                            rs.getTimestamp("created_at"),
+                            rs.getTimestamp("updated_at")
+                    );
+                    list.add(o);
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return list;
+    }
+
     public static void main(String[] args) {
         OTRequestDAO dao = new OTRequestDAO();
         List<OTRequest> list = new ArrayList<>();
-        System.out.println(dao.countOTByEmpFiltered(1, null, "Pending",null ,null));
-        list = dao.findOTByEmpPaged(1, 0, 10, null, "Pending",null ,null );
+        System.out.println(dao.countOTByEmpFiltered(1, null, "Pending", null, null));
+        list = dao.findOTByEmpPaged(1, 0, 10, null, "Pending", null, null);
         for (OTRequest x : list) {
             System.out.println(x.toString());
         }
     }
+
 }
