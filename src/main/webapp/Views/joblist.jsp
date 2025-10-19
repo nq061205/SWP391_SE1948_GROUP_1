@@ -39,7 +39,7 @@
             <div class="job-department">
                 <%= post.getDepartment() != null ? post.getDepartment().getDepName() : "" %>
             </div>
-            <a class="apply-btn" href="/HRMSystem/Views/applyjob.jsp?jobId=<%= post.getPostId() %>">Ứng tuyển ngay</a>
+            <a class="apply-btn" href="${pageContext.request.contextPath}/applyjob?postId=<%= post.getPostId() %>">Ứng tuyển ngay</a>
         </div>
     <%
             }

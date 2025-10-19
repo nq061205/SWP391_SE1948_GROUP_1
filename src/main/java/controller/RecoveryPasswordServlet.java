@@ -22,7 +22,7 @@ import java.util.logging.Logger;
  *
  * @author hgduy
  */
-public class RecoveryPassword extends HttpServlet {
+public class RecoveryPasswordServlet extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
