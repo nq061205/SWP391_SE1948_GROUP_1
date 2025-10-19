@@ -123,10 +123,10 @@
 
                             <!-- Nút điều hướng -->
                             <div class="btn-wrap d-flex flex-column flex-sm-row justify-content-center gap-2">
-                                <a href="${pageContext.request.contextPath}/Views/listapplication.jsp"
+<!--                                <a href="${pageContext.request.contextPath}/Views/"
                                    class="btn btn-primary">
-                                    <i class="ti-list"></i> Xem danh sách đơn
-                                </a>
+                                    <i class="ti-list"></i> Xem lịch
+                                </a>-->
 
                                 <c:choose>
                                     <c:when test="${type eq 'LEAVE'}">

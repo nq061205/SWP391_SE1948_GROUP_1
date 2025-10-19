@@ -36,7 +36,7 @@
     <body class="ttr-opened-sidebar ttr-pinned-sidebar">
         <!-- Include Header -->
         <jsp:include page="../CommonItems/Header/dashboardHeader.jsp" />
-        
+
         <!-- Include Navbar -->
         <jsp:include page="../CommonItems/Navbar/empNavbar.jsp" />
 
@@ -51,7 +51,7 @@
                         <li>Approved Posts</li>
                     </ul>
                 </div>	
-                
+
                 <c:if test="${not empty successMessage}">
                     <div class="alert alert-success alert-dismissible fade show" role="alert">
                         <strong>Success!</strong> ${successMessage}
@@ -60,7 +60,7 @@
                         </button>
                     </div>
                 </c:if>
-                
+
                 <c:if test="${not empty errorMessage}">
                     <div class="alert alert-danger alert-dismissible fade show" role="alert">
                         <strong>Error!</strong> ${errorMessage}
@@ -69,7 +69,7 @@
                         </button>
                     </div>
                 </c:if>
-                
+
                 <c:if test="${empty editPost}">
                     <div class="row">
                         <div class="col-lg-12 m-b30">
@@ -125,7 +125,7 @@
                         </div>
                     </div>
                 </c:if>
-                
+
                 <!-- Edit Post Form (replaces create form when editing) -->
                 <c:if test="${not empty editPost}">
                     <div class="row">
@@ -154,7 +154,7 @@
                                                         <option value="">Select Department</option>
                                                         <c:forEach var="dept" items="${departments}">
                                                             <option value="${dept.depId}" 
-                                                                ${editPost.department.depId == dept.depId ? 'selected' : ''}>
+                                                                    ${editPost.department.depId == dept.depId ? 'selected' : ''}>
                                                                 ${dept.depName}
                                                             </option>
                                                         </c:forEach>
@@ -186,7 +186,7 @@
                         </div>
                     </div>
                 </c:if>
-                
+
                 <div class="row">
                     <div class="col-lg-12 m-b30">
                         <div class="widget-box">
@@ -266,7 +266,7 @@
                         </div>
                     </div>
                 </div>
-                
+
                 <div class="row">
                     <div class="col-lg-12 m-b30">
                         <div class="widget-box">
@@ -402,8 +402,8 @@
                     "lengthMenu": [[10, 25, 50, 100], [10, 25, 50, 100]],
                     "order": [[4, "desc"]],
                     "columnDefs": [
-                        { "orderable": false, "targets": [5] },
-                        { "className": "text-center", "targets": [0, 5] }
+                        {"orderable": false, "targets": [5]},
+                        {"className": "text-center", "targets": [0, 5]}
                     ],
                     "language": {
                         "search": "Search posts:",
@@ -419,14 +419,14 @@
                         }
                     }
                 });
-                
+
                 $('#notificationTable').DataTable({
                     "pageLength": 5,
                     "lengthMenu": [[5, 10, 25], [5, 10, 25]],
                     "order": [[0, "asc"]],
                     "columnDefs": [
-                        { "orderable": false, "targets": [3] },
-                        { "className": "text-center", "targets": [0, 2, 3] }
+                        {"orderable": false, "targets": [3]},
+                        {"className": "text-center", "targets": [0, 2, 3]}
                     ],
                     "language": {
                         "search": "Search notifications:",
