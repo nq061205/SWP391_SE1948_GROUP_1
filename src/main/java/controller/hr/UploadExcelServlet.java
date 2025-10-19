@@ -8,6 +8,7 @@ import model.Employee;
 import model.AttendanceRaw;
 import dal.AttendanceRawDAO;
 import dal.DailyAttendanceDAO;
+import helper.AttendanceService;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
@@ -74,6 +75,8 @@ public class UploadExcelServlet extends HttpServlet {
             List<AttendanceRaw> list = (List<AttendanceRaw>) request.getSession().getAttribute("importList");
             if (list != null) {
                 new AttendanceRawDAO().insertRawBatch(list);
+                AttendanceService attendanceService = new AttendanceService();
+                attendanceService.processDailyAttendance(list);
                 request.getSession().removeAttribute("importList");
                 request.setAttribute("success", "Successfully imported " + list.size() + " records!");
             }
