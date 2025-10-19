@@ -1,5 +1,6 @@
 
 
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <!DOCTYPE html>
 <html>
@@ -75,13 +76,29 @@
                             <div id="message" class="m-b10" style="color:red; display:none;"></div>
 
                             <div class="form-group text-center">
-                                <button type="submit" class="btn radius-xl" onclick="validateForm()">Reset Password</button>
+                                <button type="submit" class="btn radius-xl" >Reset Password</button>
                             </div>
+
+
+
 
                             <div class="form-group text-center">
                                 <a href="${pageContext.request.contextPath}/login" class="text-primary">Back to Login</a>
                             </div>
                         </form>
+                        <c:if test="${not empty errorMessage}">
+                            <div class="alert alert-danger text-center" role="alert" 
+                                 style="color: #fff; background-color: #e74c3c; padding: 10px; border-radius: 8px; margin-bottom: 15px;">
+                                ${errorMessage}
+                            </div>
+                        </c:if>
+
+                        <c:if test="${not empty successMessage}">
+                            <div class="alert alert-success text-center" role="alert" 
+                                 style="color: #fff; background-color: #2ecc71; padding: 10px; border-radius: 8px; margin-bottom: 15px;">
+                                ${successMessage}
+                            </div>
+                        </c:if>
                     </div>
                 </div>
             </div>
@@ -107,30 +124,5 @@
 
 
     </body>
-    <!-- Simple Validation JS -->
-    <script>
-                                    function validateForm() {
-                                        const newPass = document.getElementById("newPassword").value.trim();
-                                        const confirmPass = document.getElementById("confirmPassword").value.trim();
-                                        const msg = document.getElementById("message");
 
-                                        if (newPass.length < 6) {
-                                            msg.style.display = "block";
-                                            msg.style.color = "red";
-                                            msg.textContent = "Password must be at least 6 characters long!";
-                                            return;
-                                        }
-
-                                        if (newPass !== confirmPass) {
-                                            msg.style.display = "block";
-                                            msg.style.color = "red";
-                                            msg.textContent = "Passwords do not match!";
-                                            return;
-                                        }
-
-                                        msg.style.display = "block";
-                                        msg.style.color = "green";
-                                        msg.textContent = "✅ Password reset successful (demo only)";
-                                    }
-    </script>
 </html>

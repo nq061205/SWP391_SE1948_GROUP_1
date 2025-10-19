@@ -87,17 +87,36 @@ public class RecoveryPasswordServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-            HttpSession session = request.getSession(false);
-            String newPassword = request.getParameter("newPassword");
-            String email = (String) session.getAttribute("resetEmail");
-            session.removeAttribute("resetEmail");
-            session.removeAttribute("resetToken");
-            EmployeeDAO lDao = new EmployeeDAO();
-            Employee emp = lDao.getEmployeeByEmail(email);
-            lDao.updatePassword(emp.getEmpCode(), newPassword);
-            response.sendRedirect("login");
-        
+        HttpSession session = request.getSession(false);
+        String newPassword = request.getParameter("newPassword");
+        String confirmPassword = request.getParameter("confirmPassword");
 
+        String passwordPattern = "^[A-Z].{6,}[!@#$%^&*()_+=\\-{}\\[\\]:;\"'<>,.?/~`]$";
+        if (newPassword == null || !newPassword.matches(passwordPattern) || newPassword.length() < 8) {
+            request.setAttribute("errorMessage",
+                    "Password must be at least 8 characters long, start with a capital letter, and end with a special character.");
+            request.getRequestDispatcher("Views/recoverypassword.jsp").forward(request, response);
+            return;
+        }
+        if (confirmPassword == null || !newPassword.equals(confirmPassword)) {
+            request.setAttribute("errorMessage", "Passwords do not match!");
+            request.getRequestDispatcher("Views/recoverypassword.jsp").forward(request, response);
+            return;
+        }
+        String email = (String) session.getAttribute("resetEmail");
+        session.removeAttribute("resetEmail");
+        session.removeAttribute("resetToken");
+
+        EmployeeDAO lDao = new EmployeeDAO();
+        Employee emp = lDao.getEmployeeByEmail(email);
+        if (emp != null) {
+            lDao.updatePassword(emp.getEmpCode(), newPassword);
+            request.setAttribute("successMessage", "Password reset successfully! Please login again.");
+            request.getRequestDispatcher("Views/recoverypassword.jsp").forward(request, response);
+        } else {
+            request.setAttribute("errorMessage", "Account not found. Please try again.");
+            request.getRequestDispatcher("Views/recoverypassword.jsp").forward(request, response);
+        }
     }
 
     /**
