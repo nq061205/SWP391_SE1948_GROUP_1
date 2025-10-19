@@ -231,7 +231,7 @@ public class CandidateDAO extends DBContext {
         String insertSql = "INSERT INTO candidate (name, email, phone, cv, post_id, applied_at, result) "
                 + "VALUES (?, ?, ?, ?, ?, CURRENT_TIMESTAMP, NULL)";
         String updateSql = "UPDATE candidate SET name=?, phone=?, cv=?, post_id=?, applied_at=CURRENT_TIMESTAMP "
-                + "WHERE email=?";
+                + "WHERE email=? and result = null";
         try (Connection conn = DBContext.getConnection()) {
             try (PreparedStatement checkPs = conn.prepareStatement(checkSql)) {
                 checkPs.setString(1, c.getEmail());

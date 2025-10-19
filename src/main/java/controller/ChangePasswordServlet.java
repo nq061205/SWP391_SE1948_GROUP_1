@@ -18,7 +18,7 @@ import jakarta.servlet.http.HttpSession;
  *
  * @author hgduy
  */
-public class ChangePassword extends HttpServlet {
+public class ChangePasswordServlet extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
