@@ -6,6 +6,7 @@
 package controller.hr;
 
 import dal.AttendanceRawDAO;
+import helper.AttendanceService;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
@@ -19,6 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 import model.AttendanceRaw;
 import model.Employee;
+import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
@@ -80,6 +82,7 @@ public class RawAttendanceServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        request.getSession().setMaxInactiveInterval(1800); // 30 minutes
 
         String action = request.getParameter("action");
 
@@ -97,6 +100,8 @@ public class RawAttendanceServlet extends HttpServlet {
                 try {
                     dao = new AttendanceRawDAO();
                     dao.insertRawBatch(list);
+                    AttendanceService attendanceService = new AttendanceService();
+                    attendanceService.processDailyAttendance(list);
                     request.getSession().removeAttribute("importList");
                     request.setAttribute("success", "Successfully imported " + list.size() + " records!");
                 } catch (Exception e) {
@@ -132,20 +137,56 @@ public class RawAttendanceServlet extends HttpServlet {
                     continue;
                 }
 
-                int empId = (int) row.getCell(0).getNumericCellValue();
-                java.util.Date utilDate = row.getCell(1).getDateCellValue();
-                java.sql.Date sqlDate = new java.sql.Date(utilDate.getTime());
-
-                java.sql.Time sqlTime;
-                if (row.getCell(2).getCellType() == CellType.STRING) {
-                    sqlTime = java.sql.Time.valueOf(row.getCell(2).getStringCellValue());
-                } else {
-                    java.util.Date d = row.getCell(2).getDateCellValue();
-                    sqlTime = new java.sql.Time(d.getTime());
+                // --- Cột 0: Employee ID ---
+                Cell empCell = row.getCell(0);
+                int empId = 0;
+                if (empCell != null) {
+                    if (empCell.getCellType() == CellType.NUMERIC) {
+                        empId = (int) empCell.getNumericCellValue();
+                    } else if (empCell.getCellType() == CellType.STRING) {
+                        String text = empCell.getStringCellValue().trim();
+                        if (!text.isEmpty()) {
+                            empId = Integer.parseInt(text);
+                        }
+                    }
                 }
 
-                String checkType = row.getCell(3).getStringCellValue();
+                // --- Cột 1: Date (yyyy-MM-dd) ---
+                Cell dateCell = row.getCell(1);
+                java.sql.Date sqlDate = null;
+                if (dateCell != null) {
+                    if (dateCell.getCellType() == CellType.NUMERIC) {
+                        java.util.Date d = dateCell.getDateCellValue();
+                        sqlDate = new java.sql.Date(d.getTime());
+                    } else {
+                        String text = dateCell.getStringCellValue().trim();
+                        if (!text.isEmpty()) {
+                            java.util.Date d = java.sql.Date.valueOf(text);
+                            sqlDate = new java.sql.Date(d.getTime());
+                        }
+                    }
+                }
 
+                // --- Cột 2: Check Time (HH:mm:ss) ---
+                Cell timeCell = row.getCell(2);
+                java.sql.Time sqlTime = null;
+                if (timeCell != null) {
+                    if (timeCell.getCellType() == CellType.STRING) {
+                        String text = timeCell.getStringCellValue().trim();
+                        if (!text.isEmpty()) {
+                            sqlTime = java.sql.Time.valueOf(text);
+                        }
+                    } else if (timeCell.getCellType() == CellType.NUMERIC) {
+                        java.util.Date d = timeCell.getDateCellValue();
+                        sqlTime = new java.sql.Time(d.getTime());
+                    }
+                }
+
+                // --- Cột 3: Check Type (IN/OUT) ---
+                Cell checkTypeCell = row.getCell(3);
+                String checkType = (checkTypeCell != null) ? checkTypeCell.getStringCellValue().trim() : "";
+
+                // --- Tạo đối tượng và thêm vào list ---
                 Employee e = new Employee();
                 e.setEmpId(empId);
                 list.add(new AttendanceRaw(e, sqlDate, sqlTime, checkType));

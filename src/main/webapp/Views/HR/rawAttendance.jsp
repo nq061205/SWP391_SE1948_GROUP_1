@@ -109,6 +109,24 @@
                 color: #000000 !important;
             }
 
+            /* Loading Modal Styles */
+            #processingModal .modal-content {
+                border-radius: 15px;
+                box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+            }
+
+            #processingModal .spinner-border {
+                border-width: 0.4rem;
+            }
+
+            #processingModal .progress {
+                border-radius: 10px;
+            }
+
+            #processingModal .modal-body {
+                padding: 3rem 2rem;
+            }
+
 
         </style>
 
@@ -477,6 +495,38 @@
                         </div>
                     </div>
                 </div>
+                <!-- Loading Modal -->
+                <!-- Loading Modal -->
+                <div class="modal fade" id="processingModal" data-backdrop="static" data-keyboard="false" tabindex="-1" role="dialog">
+                    <div class="modal-dialog modal-dialog-centered" role="document">
+                        <div class="modal-content">
+                            <div class="modal-body text-center py-5">
+                                <div class="spinner-border text-primary mb-4" role="status" style="width: 4rem; height: 4rem;">
+                                    <span class="sr-only">Processing...</span>
+                                </div>
+                                <h3 class="mb-3"><i class="fa fa-cog fa-spin"></i> Processing Import</h3>
+
+                                <!-- THÊM ID ĐỂ UPDATE MESSAGES -->
+                                <p class="text-muted mb-2 lead" id="processingMessage" style="min-height: 30px;">
+                                    <strong>Preparing to import...</strong>
+                                </p>
+
+                                <div class="alert alert-warning mt-4 mb-0">
+                                    <i class="fa fa-exclamation-triangle"></i>
+                                    <strong>Please do not close this window or navigate away</strong>
+                                </div>
+
+                                <div class="progress mt-4" style="height: 30px;">
+                                    <div class="progress-bar progress-bar-striped progress-bar-animated bg-success" 
+                                         role="progressbar" style="width: 100%">
+                                        <strong>Processing...</strong>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
 
         </main>
     </body>
@@ -502,82 +552,82 @@
     <script src="${pageContext.request.contextPath}/assets2/vendors/switcher/switcher.js"></script>
 
     <script>
-            $(document).ready(function () {
+                                                            $(document).ready(function () {
 
-                $('#calendar').fullCalendar({
-                    header: {
-                        left: 'prev,next today',
-                        center: 'title',
-                        right: 'month,agendaWeek,agendaDay,listWeek'
-                    },
-                    defaultDate: '2019-03-12',
-                    navLinks: true, // can click day/week names to navigate views
+                                                                $('#calendar').fullCalendar({
+                                                                    header: {
+                                                                        left: 'prev,next today',
+                                                                        center: 'title',
+                                                                        right: 'month,agendaWeek,agendaDay,listWeek'
+                                                                    },
+                                                                    defaultDate: '2019-03-12',
+                                                                    navLinks: true, // can click day/week names to navigate views
 
-                    weekNumbers: true,
-                    weekNumbersWithinDays: true,
-                    weekNumberCalculation: 'ISO',
+                                                                    weekNumbers: true,
+                                                                    weekNumbersWithinDays: true,
+                                                                    weekNumberCalculation: 'ISO',
 
-                    editable: true,
-                    eventLimit: true, // allow "more" link when too many events
-                    events: [
-                        {
-                            title: 'All Day Event',
-                            start: '2019-03-01'
-                        },
-                        {
-                            title: 'Long Event',
-                            start: '2019-03-07',
-                            end: '2019-03-10'
-                        },
-                        {
-                            id: 999,
-                            title: 'Repeating Event',
-                            start: '2019-03-09T16:00:00'
-                        },
-                        {
-                            id: 999,
-                            title: 'Repeating Event',
-                            start: '2019-03-16T16:00:00'
-                        },
-                        {
-                            title: 'Conference',
-                            start: '2019-03-11',
-                            end: '2019-03-13'
-                        },
-                        {
-                            title: 'Meeting',
-                            start: '2019-03-12T10:30:00',
-                            end: '2019-03-12T12:30:00'
-                        },
-                        {
-                            title: 'Lunch',
-                            start: '2019-03-12T12:00:00'
-                        },
-                        {
-                            title: 'Meeting',
-                            start: '2019-03-12T14:30:00'
-                        },
-                        {
-                            title: 'Happy Hour',
-                            start: '2019-03-12T17:30:00'
-                        },
-                        {
-                            title: 'Dinner',
-                            start: '2019-03-12T20:00:00'
-                        },
-                        {
-                            title: 'Birthday Party',
-                            start: '2019-03-13T07:00:00'
-                        },
-                        {
-                            title: 'Click for Google',
-                            url: 'http://google.com/',
-                            start: '2019-03-28'
-                        }
-                    ]
-                });
+                                                                    editable: true,
+                                                                    eventLimit: true, // allow "more" link when too many events
+                                                                    events: [
+                                                                        {
+                                                                            title: 'All Day Event',
+                                                                            start: '2019-03-01'
+                                                                        },
+                                                                        {
+                                                                            title: 'Long Event',
+                                                                            start: '2019-03-07',
+                                                                            end: '2019-03-10'
+                                                                        },
+                                                                        {
+                                                                            id: 999,
+                                                                            title: 'Repeating Event',
+                                                                            start: '2019-03-09T16:00:00'
+                                                                        },
+                                                                        {
+                                                                            id: 999,
+                                                                            title: 'Repeating Event',
+                                                                            start: '2019-03-16T16:00:00'
+                                                                        },
+                                                                        {
+                                                                            title: 'Conference',
+                                                                            start: '2019-03-11',
+                                                                            end: '2019-03-13'
+                                                                        },
+                                                                        {
+                                                                            title: 'Meeting',
+                                                                            start: '2019-03-12T10:30:00',
+                                                                            end: '2019-03-12T12:30:00'
+                                                                        },
+                                                                        {
+                                                                            title: 'Lunch',
+                                                                            start: '2019-03-12T12:00:00'
+                                                                        },
+                                                                        {
+                                                                            title: 'Meeting',
+                                                                            start: '2019-03-12T14:30:00'
+                                                                        },
+                                                                        {
+                                                                            title: 'Happy Hour',
+                                                                            start: '2019-03-12T17:30:00'
+                                                                        },
+                                                                        {
+                                                                            title: 'Dinner',
+                                                                            start: '2019-03-12T20:00:00'
+                                                                        },
+                                                                        {
+                                                                            title: 'Birthday Party',
+                                                                            start: '2019-03-13T07:00:00'
+                                                                        },
+                                                                        {
+                                                                            title: 'Click for Google',
+                                                                            url: 'http://google.com/',
+                                                                            start: '2019-03-28'
+                                                                        }
+                                                                    ]
+                                                                });
 
-            });
+                                                            });
     </script>
     <script>
         function changePageSize(newPageSize) {
@@ -592,4 +642,77 @@
             window.location.href = url.toString();
         }
     </script>
+
+
+    <script>
+        let isProcessing = false;
+
+        $(document).ready(function () {
+            // Handle Confirm Import button click
+            $('form').on('submit', function (e) {
+                const action = $(this).find('input[name="action"]').val();
+
+                if (action === 'confirm') {
+                    e.preventDefault();
+
+                    const form = this;
+
+                    // Show loading modal
+                    $('#processingModal').modal({
+                        backdrop: 'static',
+                        keyboard: false
+                    });
+
+                    isProcessing = true;
+
+                    // Disable all buttons
+                    $('button, a.btn').prop('disabled', true).addClass('disabled');
+
+                    // Animate processing messages
+                    const messages = [
+                        '<i class="fa fa-check text-success"></i> Validating data...',
+                        '<i class="fa fa-database text-primary"></i> Importing raw attendance records...',
+                        '<i class="fa fa-users text-info"></i> Loading employee information...',
+                        '<i class="fa fa-calculator text-warning"></i> Calculating work hours...',
+                        '<i class="fa fa-clock-o text-primary"></i> Processing overtime requests...',
+                        '<i class="fa fa-check-circle text-success"></i> Finalizing daily attendance...'
+                    ];
+
+                    const messageElement = $('#processingMessage');
+                    let step = 0;
+
+                    // Update message every 500ms
+                    const messageInterval = setInterval(function () {
+                        if (step < messages.length) {
+                            messageElement.fadeOut(200, function () {
+                                $(this).html(messages[step]).fadeIn(200);
+                            });
+                            step++;
+                        } else {
+                            clearInterval(messageInterval);
+                        }
+                    }, 800);
+
+                    // DELAY SUBMIT ĐỂ MODAL HIỂN THỊ ÍT NHẤT 3 GIÂY
+                    setTimeout(function () {
+                        form.submit();
+                    }, 3000); // 3 seconds - đủ thời gian để user đọc messages
+                }
+            });
+        });
+
+        function changePageSize(newPageSize) {
+            if (isProcessing) {
+                alert('Please wait until processing is complete');
+                return;
+            }
+            const url = new URL(window.location.href);
+            url.searchParams.set('pageSize', newPageSize);
+            url.searchParams.set('page', '1');
+            window.location.href = url.toString();
+        }
+    </script>
+
+
+
 </html>
