@@ -1,208 +1,153 @@
-<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@ page import="java.util.List" %>
 <%@ page import="model.RecruitmentPost" %>
 <!DOCTYPE html>
-<html>
+<html lang="vi">
 <head>
+    <!-- META ============================================= -->
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="keywords" content="Job, HRM, Human Tech, Career" />
+    <meta name="author" content="Human Tech" />
+    <meta name="robots" content="index, follow" />
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Job Listings - HRM System</title>
-    
-    <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/assets2/css/assets.css">
-    <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/assets2/css/typography.css">
-    <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/assets2/css/style.css">
-    <link class="skin" rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/assets2/css/color/color-1.css">
-    
+    <title>Career Opportunities | Human Tech</title>
+
+    <!-- FAVICONS ICON ============================================= -->
+    <link rel="icon" href="${pageContext.request.contextPath}/assets1/images/favicon.ico" type="image/x-icon" />
+    <link rel="shortcut icon" type="image/x-icon" href="${pageContext.request.contextPath}/assets1/images/favicon.png" />
+
+    <!-- CSS ============================================= -->
+    <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/assets1/css/assets.css">
+    <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/assets1/css/typography.css">
+    <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/assets1/css/shortcodes/shortcodes.css">
+    <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/assets1/css/style.css">
+    <link class="skin" rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/assets1/css/color/color-1.css">
+
     <style>
-        body { 
-            background: #f3f4f7; 
-            font-family: 'Roboto', sans-serif;
-            margin: 0;
-            padding: 0;
+        .career-section {
+            padding: 80px 0;
+            background-color: #f9f9f9;
         }
-        .page-header {
-            background: #3d4465;
-            padding: 50px 0 35px;
-            margin-bottom: 35px;
-            color: white;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        .career-header {
+            text-align: center;
+            margin-bottom: 50px;
         }
-        .page-header h1 {
-            font-size: 2.2em;
+        .career-header h2 {
+            font-size: 36px;
+            font-weight: 700;
+            color: #3d4465;
+            text-transform: uppercase;
+        }
+        .career-header p {
+            color: #6c757d;
+            font-size: 16px;
+        }
+        .job-card {
+            background: #fff;
+            border-radius: 8px;
+            box-shadow: 0 5px 25px rgba(0,0,0,0.06);
+            margin-bottom: 30px;
+            padding: 25px 30px;
+            transition: all .3s ease;
+        }
+        .job-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 30px rgba(0,0,0,0.1);
+        }
+        .job-title {
+            font-size: 20px;
+            color: #222;
             font-weight: 600;
-            margin: 0;
-            text-align: center;
-            color: #ffffff;
-        }
-        .page-header p {
-            text-align: center;
-            font-size: 1em;
-            margin-top: 8px;
-            opacity: 0.85;
-            color: #e0e0e0;
-        }
-        .container { 
-            max-width: 1100px; 
-            margin: 0 auto; 
-            padding: 0 20px 50px;
-        }
-        .job-listing { 
-            background: #ffffff; 
-            border: 1px solid #e5e7eb; 
-            box-shadow: 0 1px 4px rgba(0,0,0,0.06); 
-            padding: 28px 32px; 
-            margin-bottom: 20px; 
-            border-radius: 6px; 
-            transition: all 0.25s ease;
-            position: relative;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        .job-listing:hover {
-            box-shadow: 0 3px 12px rgba(0,0,0,0.1);
-            border-color: #ffbc3b;
-        }
-        .job-info {
-            flex: 1;
-        }
-        .job-title { 
-            font-size: 1.4em; 
-            color: #3d4465; 
-            font-weight: 600; 
-            margin-bottom: 10px; 
-            letter-spacing: 0.2px;
-            line-height: 1.3;
+            margin-bottom: 10px;
         }
         .job-meta {
+            color: #555;
+            font-size: 15px;
             display: flex;
             align-items: center;
-            gap: 20px;
-            margin-top: 10px;
+            gap: 10px;
         }
-        .job-department { 
-            color: #6c757d; 
-            font-size: 0.95em;
-            display: flex;
-            align-items: center;
+        .job-meta i {
+            color: var(--primary);
         }
-        .job-department i {
-            margin-right: 8px;
-            color: #ffbc3b;
-            font-size: 1.1em;
-        }
-        .job-badge {
-            background: #e8f5e9;
-            color: #2e7d32;
-            padding: 4px 12px;
-            border-radius: 20px;
-            font-size: 0.85em;
-            font-weight: 500;
-        }
-        .apply-btn { 
-            background: #ffbc3b;
-            color: #3d4465; 
-            border: none; 
-            padding: 12px 32px; 
-            border-radius: 4px; 
-            cursor: pointer; 
-            font-weight: 600;
-            font-size: 0.95em;
-            text-decoration: none;
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            transition: all 0.25s ease;
-            box-shadow: 0 2px 6px rgba(255, 188, 59, 0.25);
-        }
-        .apply-btn i {
-            font-size: 1em;
-        }
-        .apply-btn:hover { 
-            background: #ffa000;
-            box-shadow: 0 4px 10px rgba(255, 188, 59, 0.35);
-            text-decoration: none;
-            color: #3d4465;
-            transform: translateY(-1px);
+        .apply-btn {
+            margin-top: 15px;
+            display: inline-block;
         }
         .no-jobs {
             text-align: center;
-            padding: 80px 20px;
-            color: #6c757d;
-            font-size: 1.1em;
-            background: #ffffff;
+            padding: 60px 20px;
+            background: #fff;
             border-radius: 6px;
-            box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+            box-shadow: 0 5px 25px rgba(0,0,0,0.05);
         }
         .no-jobs i {
-            font-size: 4.5em;
-            margin-bottom: 25px;
-            color: #d1d5db;
+            font-size: 60px;
+            color: #ccc;
+            margin-bottom: 20px;
             display: block;
-        }
-        .no-jobs p {
-            margin: 0;
-            font-size: 1.05em;
-        }
-        @media (max-width: 768px) {
-            .job-listing {
-                flex-direction: column;
-                align-items: flex-start;
-            }
-            .apply-btn {
-                margin-top: 15px;
-                width: 100%;
-                justify-content: center;
-            }
         }
     </style>
 </head>
-<body>
-    <div class="page-header">
-        <div class="container">
-            <h1>Cơ Hội Nghề Nghiệp</h1>
-            <p>Khám phá các vị trí tuyển dụng đang mở tại công ty chúng tôi</p>
-        </div>
-    </div>
-    
-    <div class="container">
 
-        <%
-            List<RecruitmentPost> posts = (List<RecruitmentPost>) request.getAttribute("posts");
-            if (posts != null && !posts.isEmpty()) {
-                for (RecruitmentPost post : posts) {
-        %>
-            <div class="job-listing">
-                <div class="job-info">
-                    <div class="job-title">
-                        <%= post.getTitle() %>
-                    </div>
-                    <div class="job-meta">
-                        <div class="job-department">
-                            <i class="ti-briefcase"></i>
-                            <%= post.getDepartment() != null ? post.getDepartment().getDepName() : "Chưa xác định" %>
-                        </div>
-                    </div>
+<body id="bg">
+<div class="page-wraper">
+    <div class="page-content bg-white">
+        <div class="career-section">
+            <div class="container">
+                <div class="career-header">
+                    <h2>Cơ Hội Nghề Nghiệp</h2>
+                    <p>Khám phá các vị trí tuyển dụng đang mở tại Human Tech</p>
                 </div>
-                <a class="apply-btn" href="/HRMSystem/Views/applyjob.jsp?jobId=<%= post.getPostId() %>">
-                    <i class="ti-arrow-right"></i> Ứng tuyển ngay
-                </a>
+
+                <div class="row">
+                    <%
+                        List<RecruitmentPost> posts = (List<RecruitmentPost>) request.getAttribute("posts");
+                        if (posts != null && !posts.isEmpty()) {
+                            for (RecruitmentPost post : posts) {
+                    %>
+                        <div class="col-lg-6 col-md-12">
+                            <div class="job-card">
+                                <h4 class="job-title"><%= post.getTitle() %></h4>
+                                <div class="job-meta">
+                                    <i class="ti-briefcase"></i>
+                                    <span><%= post.getDepartment() != null ? post.getDepartment().getDepName() : "Chưa xác định" %></span>
+                                </div>
+                                <a href="${pageContext.request.contextPath}/applyjob?postId=<%= post.getPostId() %>" 
+                                   class="btn radius-xl m-t20 apply-btn">
+                                   <i class="ti-arrow-right"></i> Ứng tuyển ngay
+                                </a>
+                            </div>
+                        </div>
+                    <%
+                            }
+                        } else {
+                    %>
+                        <div class="col-md-12">
+                            <div class="no-jobs">
+                                <i class="ti-folder"></i>
+                                <p>Hiện tại chưa có vị trí tuyển dụng nào. Vui lòng quay lại sau!</p>
+                            </div>
+                        </div>
+                    <%
+                        }
+                    %>
+                </div>
             </div>
-        <%
-                }
-            } else {
-        %>
-            <div class="no-jobs">
-                <i class="ti-folder"></i>
-                <p>Hiện tại chưa có vị trí tuyển dụng nào. Vui lòng quay lại sau!</p>
-            </div>
-        <%
-            }
-        %>
+        </div>
+
+        <%@ include file="CommonItems/Footer/homepageFooter.jsp" %>
     </div>
-    
-    <script src="${pageContext.request.contextPath}/assets2/js/jquery.min.js"></script>
-    <script src="${pageContext.request.contextPath}/assets2/js/bootstrap.min.js"></script>
+
+    <button class="back-to-top fa fa-chevron-up"></button>
+</div>
+
+<!-- Scripts -->
+<script src="${pageContext.request.contextPath}/assets1/js/jquery.min.js"></script>
+<script src="${pageContext.request.contextPath}/assets1/vendors/bootstrap/js/popper.min.js"></script>
+<script src="${pageContext.request.contextPath}/assets1/vendors/bootstrap/js/bootstrap.min.js"></script>
+<script src="${pageContext.request.contextPath}/assets1/vendors/owl-carousel/owl.carousel.js"></script>
+<script src="${pageContext.request.contextPath}/assets1/js/functions.js"></script>
 </body>
 </html>

@@ -71,8 +71,21 @@ public class EditApplicationServlet extends HttpServlet {
                     String content = request.getParameter("content");
                     Date startDate = Date.valueOf(request.getParameter("startdate"));
                     Date endDate = Date.valueOf(request.getParameter("enddate"));
-                    leaveDAO.updateLeaveRequest(id, leaveType, content, startDate, endDate);
-                    response.sendRedirect("application?typeapplication=leave&issuccess=true");
+                    if (endDate.before(startDate)) {
+                        request.setAttribute("isEdit", "true");
+                        request.setAttribute("id", id);
+                        request.setAttribute("type_leave", leaveType);
+                        request.setAttribute("startdate", startDate);
+                        request.setAttribute("enddate", endDate);
+                        request.setAttribute("content", content);
+                        request.setAttribute("messageDate", "End date must be after start date");
+                        request.getRequestDispatcher("Views/composeleaveapplication.jsp")
+                                .forward(request, response);
+                        return;
+                    } else {
+                        leaveDAO.updateLeaveRequest(id, leaveType, content, startDate, endDate);
+                        response.sendRedirect("application?typeapplication=leave&issuccess=true");
+                    }
                     break;
                 }
                 case "OT": {

@@ -81,13 +81,21 @@ public class ChangePasswordServlet extends HttpServlet {
         String currentPass = request.getParameter("currentPassword");
         String newPass = request.getParameter("newPassword");
         String confirmPass = request.getParameter("confirmPassword");
-        if(newPass.equals(currentPass)){
+        if (newPass.equals(currentPass)) {
             request.setAttribute("errorMessage", "The new password cannot be the same as the old password ");
             request.getRequestDispatcher("Views/changepassword.jsp").forward(request, response);
             return;
         }
         if (!currentPass.equals(emp.getPassword())) {
             request.setAttribute("errorMessage", "password is incorect");
+            request.getRequestDispatcher("Views/changepassword.jsp").forward(request, response);
+            return;
+        }
+
+        String passwordPattern = "^[A-Z].{6,}[!@#$%^&*()_+=\\-{}\\[\\]:;\"'<>,.?/~`]$";
+        if (newPass == null || !newPass.matches(passwordPattern) || newPass.length() < 8) {
+            request.setAttribute("errorMessage",
+                    "Password must be at least 8 characters long, start with a capital letter, and end with a special character.");
             request.getRequestDispatcher("Views/changepassword.jsp").forward(request, response);
             return;
         }
@@ -106,7 +114,7 @@ public class ChangePasswordServlet extends HttpServlet {
         } else {
             request.setAttribute("errorMessage", "Lỗi khi cập nhật mật khẩu!");
         }
-                    request.getRequestDispatcher("Views/changepassword.jsp").forward(request, response);
+        request.getRequestDispatcher("Views/changepassword.jsp").forward(request, response);
 
     }
 

@@ -165,7 +165,7 @@ public class ApplicationServlet extends HttpServlet {
 
     private Date parseSqlDate(String s) {
         try {
-            return (s == null) ? null : java.sql.Date.valueOf(s);
+            return (s == null) ? null : Date.valueOf(s);
         } catch (IllegalArgumentException ex) {
             return null;
         }
