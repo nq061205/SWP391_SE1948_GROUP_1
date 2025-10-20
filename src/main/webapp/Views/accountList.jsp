@@ -209,7 +209,7 @@
                                                 Department<i class="fa fa-sort"></i>
                                             </a>
                                         </th>
-                                        <th>Role</th>
+                                        <th>Role</th> 
                                         <th>Status</th>
                                         <th>Edit</th>
                                         <th>Action</th>
@@ -225,8 +225,8 @@
                                                 <input type="hidden" name="page" value="${page}">
                                                 <input type="hidden" name="newstatus" value="${!el.status}">
                                                 <input type="hidden" name="status" value="${status}">
-                                                <c:if test="${not empty searchKey}">
-                                                    <input type="hidden" name="searchKey" value="${searchKey}">
+                                                <c:if test="${not empty searchkey}">
+                                                    <input type="hidden" name="searchkey" value="${searchkey}">
                                                 </c:if>
                                                 <c:if test="${status != null}">
                                                     <input type="hidden" name="status" value="${status}">
@@ -250,8 +250,7 @@
                                                 <td><input type="hidden" name="empCode" value="${el.empCode}" />${el.empCode}</td>
                                                 <td>${el.fullname}</td>
                                                 <td>
-                                                    <input type="text" name="email" value="${el.email}" />
-                                                    <span style="color:red;">${emailError}</span>
+                                                    <input type="email" name="email" value="${el.email}" />
                                                 </td>
                                                 <td>
                                                     <img src="${el.image}" alt="" style="width:60px; height:60px; object-fit:cover; border-radius:5px;">
@@ -300,8 +299,8 @@
                                                     <input type="hidden" name="empCode" value="${el.empCode}">
                                                     <input type="hidden" name="newstatus" value="${!el.status}">
                                                     <input type="hidden" name="page" value="${page}">
-                                                    <c:if test="${not empty searchKey}">
-                                                        <input type="hidden" name="searchKey" value="${searchKey}">
+                                                    <c:if test="${not empty searchkey}">
+                                                        <input type="hidden" name="searchkey" value="${searchkey}">
                                                     </c:if>
                                                     <c:if test="${status != null}">
                                                         <input type="hidden" name="status" value="${status}">
@@ -340,6 +339,31 @@
                                 </tbody>
                             </table>
                         </div>
+                        <c:url var="baseUrlWithSort" value="accountlist">
+                            <c:if test="${status != null}">
+                                <c:param name="status" value="${status}" />
+                            </c:if>
+                            <c:if test="${not empty deptId}">
+                                <c:forEach var="d" items="${deptId}">
+                                    <c:param name="deptId" value="${d}" />
+                                </c:forEach>
+                            </c:if>
+                            <c:if test="${not empty roleId}">
+                                <c:forEach var="r" items="${roleId}">
+                                    <c:param name="roleId" value="${r}" />
+                                </c:forEach>
+                            </c:if>
+                            <c:if test="${not empty searchkey}">
+                                <c:param name="searchkey" value="${searchkey}" />
+                            </c:if>
+                            <c:if test="${not empty sortBy}">
+                                <c:param name="sortBy" value="${sortBy}" />
+                            </c:if>
+                            <c:if test="${not empty order}">
+                                <c:param name="order" value="${order}" />
+                            </c:if>
+                        </c:url>
+                        <c:set var="urlPrefixWithSort" value="${baseUrlWithSort}${fn:contains(baseUrlWithSort, '?') ? '&' : '?'}" />
                         <nav class="mt-3">
                             <ul class="pagination justify-content-center">
                                 <c:set var="startPage" value="${page - 1}" />
@@ -359,17 +383,17 @@
                                     <c:set var="startPage" value="1" />
                                 </c:if>
                                 <li class="page-item ${page <= 1 ? 'disabled' : ''}">
-                                    <a class="page-link" href="${baseUrl}&page=${page-1}">Prev</a>
+                                    <a class="page-link" href="${urlPrefixWithSort}&page=${page-1}">Prev</a>
                                 </li>
 
                                 <c:forEach var="p" begin="${startPage}" end="${endPage}">
                                     <li class="page-item ${p == page ? 'active' : ''}">
-                                        <a class="page-link" href="${urlPrefix}&page=${p}">${p}</a>
+                                        <a class="page-link" href="${urlPrefixWithSort}&page=${p}">${p}</a>
                                     </li>
                                 </c:forEach>
 
                                 <li class="page-item ${page >= totalPages ? 'disabled' : ''}">
-                                    <a class="page-link" href="${urlPrefix}&page=${page+1}">Next</a>
+                                    <a class="page-link" href="${urlPrefixWithSort}&page=${page+1}">Next</a>
                                 </li>
                             </ul>
                         </nav>
