@@ -25,25 +25,9 @@ import java.util.logging.Logger;
  *
  * @author hgduy
  */
-public class ForgetPassword extends HttpServlet {
+public class ForgetPasswordServlet extends HttpServlet {
 
 
-    protected void processRequest(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-        response.setContentType("text/html;charset=UTF-8");
-        try (PrintWriter out = response.getWriter()) {
-            /* TODO output your page here. You may use following sample code. */
-            out.println("<!DOCTYPE html>");
-            out.println("<html>");
-            out.println("<head>");
-            out.println("<title>Servlet ForgetPassword</title>");
-            out.println("</head>");
-            out.println("<body>");
-            out.println("<h1>Servlet ForgetPassword at " + request.getContextPath() + "</h1>");
-            out.println("</body>");
-            out.println("</html>");
-        }
-    }
 
 
     @Override
@@ -75,7 +59,7 @@ public class ForgetPassword extends HttpServlet {
                 response.sendRedirect("forgetpassword");
             }
         } catch (Exception ex) {
-            Logger.getLogger(ForgetPassword.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(ForgetPasswordServlet.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
     private static final String CHARACTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";

@@ -21,6 +21,7 @@ public class Employee {
     private String positionTitle;
     private String image;
     private int dependantCount;
+    private int paidLeaveDays;
     private Department dept;
     private Role role;
     private boolean status;
@@ -29,7 +30,7 @@ public class Employee {
     public Employee() {
     }
 
-    public Employee(int empId, String empCode, String fullname, String email, String password, boolean gender, Date dob, String phone, String positionTitle, String image, int dependantCount, Department dept, Role role) {
+    public Employee(int empId, String empCode, String fullname, String email, String password, boolean gender, Date dob, String phone, String positionTitle, String image, int dependantCount, int paidLeaveDays, Department dept, Role role, boolean status) {
         this.empId = empId;
         this.empCode = empCode;
         this.fullname = fullname;
@@ -41,10 +42,11 @@ public class Employee {
         this.positionTitle = positionTitle;
         this.image = image;
         this.dependantCount = dependantCount;
+        this.paidLeaveDays = paidLeaveDays;
         this.dept = dept;
         this.role = role;
+        this.status = status;
     }
-
 
     public void setDept(Department dept) {
         this.dept = dept;
@@ -138,6 +140,14 @@ public class Employee {
         this.dependantCount = dependantCount;
     }
 
+    public int getPaidLeaveDays() {
+        return paidLeaveDays;
+    }
+
+    public void setPaidLeaveDays(int paidLeaveDays) {
+        this.paidLeaveDays = paidLeaveDays;
+    }
+
     public Department getDept() {
         return dept;
     }
@@ -160,8 +170,10 @@ public class Employee {
 
     @Override
     public String toString() {
-        return "Employee{" + "empId=" + empId + ", empCode=" + empCode + ", fullname=" + fullname + ", email=" + email + ", password=" + password + ", gender=" + gender + ", dob=" + dob + ", phone=" + phone + ", positionTitle=" + positionTitle + ", image=" + image + ", dependantCount=" + dependantCount + ", dept=" + dept + ", role=" + role + ", status=" + status + '}';
+        return "Employee{" + "empId=" + empId + ", empCode=" + empCode + ", fullname=" + fullname + ", email=" + email + ", password=" + password + ", gender=" + gender + ", dob=" + dob + ", phone=" + phone + ", positionTitle=" + positionTitle + ", image=" + image + ", dependantCount=" + dependantCount + ", paidLeaveDays=" + paidLeaveDays + ", dept=" + dept + ", role=" + role + ", status=" + status + '}';
     }
+
+   
 
 
     
