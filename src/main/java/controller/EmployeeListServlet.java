@@ -187,7 +187,7 @@ public class EmployeeListServlet extends HttpServlet {
                 List<Employee> empList = empDAO.manageEmployeeForHR(searchkey, currentPage, quantityOfPage, gender, positionTitleArray, ageRange, sortBy, order);
                 int totalResults = empDAO.countAllRecordOfEmployee();
                 int totalPages = (int) Math.ceil((double) totalResults / quantityOfPage);
-                int totalSearchRecords = empDAO.countSearchAndFilterEmployee(searchkey,status, deptId, roleIds);;
+                int totalSearchRecords = empDAO.countSearchAndFilterEmployee(searchkey,null, null, null);
 
                 request.setAttribute("editEmp", emp);
                 ses.setAttribute("empList", empList);
