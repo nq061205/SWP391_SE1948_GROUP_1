@@ -114,7 +114,7 @@
                                     <i class="ti-briefcase"></i>
                                     <span><%= post.getDepartment() != null ? post.getDepartment().getDepName() : "Chưa xác định" %></span>
                                 </div>
-                                <a href="${pageContext.request.contextPath}/Views/applyjob.jsp?jobId=<%= post.getPostId() %>" 
+                                <a href="${pageContext.request.contextPath}/applyjob?postId=<%= post.getPostId() %>" 
                                    class="btn radius-xl m-t20 apply-btn">
                                    <i class="ti-arrow-right"></i> Ứng tuyển ngay
                                 </a>
