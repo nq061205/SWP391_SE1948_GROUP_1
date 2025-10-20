@@ -21,6 +21,13 @@ public class DailyAttendanceDAO extends DBContext {
 
     private Connection con;
 
+    public DailyAttendanceDAO() {
+        try {
+            con = DBContext.getConnection();
+        } catch (Exception e) {
+        }
+    }
+
     public void upsertDailyAttendance(List<DailyAttendance> list) {
         if (list == null || list.isEmpty()) {
             return;
@@ -88,4 +95,131 @@ public class DailyAttendanceDAO extends DBContext {
         return list;
     }
 
+    public List<DailyAttendance> getMonthlyAttendance(int year, int month, String department, String search, String sortBy) {
+        List<DailyAttendance> list = new ArrayList<>();
+
+        StringBuilder sql = new StringBuilder();
+        sql.append("SELECT da.*, e.emp_id, e.emp_code, e.name, e.department ");
+        sql.append("FROM daily_attendance da ");
+        sql.append("JOIN employee e ON da.emp_id = e.emp_id ");
+        sql.append("WHERE YEAR(da.date) = ? AND MONTH(da.date) = ? ");
+
+        List<Object> params = new ArrayList<>();
+        params.add(year);
+        params.add(month);
+        if (department != null && !department.isEmpty()) {
+            sql.append("AND e.department = ? ");
+            params.add(department);
+        }
+        if (search != null && !search.trim().isEmpty()) {
+            sql.append("AND (e.emp_code LIKE ? OR e.name LIKE ?) ");
+            String searchPattern = "%" + search.trim() + "%";
+            params.add(searchPattern);
+            params.add(searchPattern);
+        }
+        if ("name".equals(sortBy)) {
+            sql.append("ORDER BY e.name, da.date");
+        } else if ("department".equals(sortBy)) {
+            sql.append("ORDER BY e.department, e.emp_code, da.date");
+        } else {
+            sql.append("ORDER BY e.emp_code, da.date");
+        }
+
+        try (PreparedStatement st = con.prepareStatement(sql.toString())) {
+            for (int i = 0; i < params.size(); i++) {
+                st.setObject(i + 1, params.get(i));
+            }
+            try (ResultSet rs = st.executeQuery()) {
+                EmployeeDAO empDAO = new EmployeeDAO();
+                while (rs.next()) {
+                    Employee e = empDAO.getEmployeeByEmpId(rs.getInt("emp_id"));
+                    DailyAttendance d = new DailyAttendance(
+                            e,
+                            rs.getDate("date"),
+                            rs.getDouble("work_day"),
+                            rs.getTime("check_in_time"),
+                            rs.getTime("check_out_time"),
+                            rs.getDouble("ot_hours"),
+                            rs.getString("status")
+                    );
+                    list.add(d);
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return list;
+    }
+
+    public DailyAttendance getAttendanceByEmpCodeAndDate(String empCode, java.util.Date date) {
+        String sql = "SELECT da.* FROM daily_attendance da "
+                + "JOIN employee e ON da.emp_id = e.emp_id "
+                + "WHERE e.emp_code = ? AND da.date = ?";
+
+        try (PreparedStatement st = con.prepareStatement(sql)) {
+            st.setString(1, empCode);
+            st.setDate(2, new java.sql.Date(date.getTime()));
+
+            try (ResultSet rs = st.executeQuery()) {
+                if (rs.next()) {
+                    Employee e = new EmployeeDAO().getEmployeeByEmpCode(empCode);
+
+                    return new DailyAttendance(
+                            e,
+                            rs.getDate("date"),
+                            rs.getDouble("work_day"),
+                            rs.getTime("check_in_time"),
+                            rs.getTime("check_out_time"),
+                            rs.getDouble("ot_hours"),
+                            rs.getString("status")
+                    );
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return null;
+    }
+
+
+    public int countEmployeesWithAttendance(int year, int month, String department, String search) {
+        StringBuilder sql = new StringBuilder();
+        sql.append("SELECT COUNT(DISTINCT e.emp_id) as total ");
+        sql.append("FROM employee e ");
+        sql.append("JOIN daily_attendance da ON e.emp_id = da.emp_id ");
+        sql.append("WHERE YEAR(da.date) = ? AND MONTH(da.date) = ? ");
+
+        List<Object> params = new ArrayList<>();
+        params.add(year);
+        params.add(month);
+
+        if (department != null && !department.isEmpty()) {
+            sql.append("AND e.department = ? ");
+            params.add(department);
+        }
+
+        if (search != null && !search.trim().isEmpty()) {
+            sql.append("AND (e.emp_code LIKE ? OR e.name LIKE ?) ");
+            String searchPattern = "%" + search.trim() + "%";
+            params.add(searchPattern);
+            params.add(searchPattern);
+        }
+
+        try (PreparedStatement st = con.prepareStatement(sql.toString())) {
+            for (int i = 0; i < params.size(); i++) {
+                st.setObject(i + 1, params.get(i));
+            }
+
+            try (ResultSet rs = st.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt("total");
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return 0;
+    }
 }

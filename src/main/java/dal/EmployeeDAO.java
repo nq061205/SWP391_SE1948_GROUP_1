@@ -648,7 +648,7 @@ public class EmployeeDAO extends DBContext {
         return sb.toString();
     }
 
-    public void createEmployee(String username, String password,String fullname,String email,boolean gender,String phone) {
+    public void createEmployee(String username, String password, String fullname, String email, boolean gender, String phone) {
         String sql = "INSERT INTO Employee(emp_code,password,fullname,email,gender,phone) values(?,?,?,?,?,?)";
         try {
             PreparedStatement ps = connection.prepareStatement(sql);
@@ -675,12 +675,14 @@ public class EmployeeDAO extends DBContext {
         }
     }
 
+ 
+
     public static void main(String[] args) {
         EmployeeDAO dao = new EmployeeDAO();
         String sortBy = "emp_code";
-        String order="desc";
-        int page =1;
-        int quantityofpage =5;
+        String order = "desc";
+        int page = 1;
+        int quantityofpage = 5;
         List<Employee> empList = dao.ManageEmployeeWithPaging(null, page, quantityofpage, null, null, null, sortBy, order);
         System.out.println(empList);
     }
