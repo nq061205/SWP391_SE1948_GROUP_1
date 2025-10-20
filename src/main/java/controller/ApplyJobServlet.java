@@ -7,7 +7,6 @@ package controller;
 import dal.CandidateDAO;
 import dal.RecruitmentPostDAO;
 import java.io.IOException;
-import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.MultipartConfig;
 import jakarta.servlet.http.HttpServlet;
@@ -47,6 +46,7 @@ public class ApplyJobServlet extends HttpServlet {
         String phone = request.getParameter("phone");
         String postId = request.getParameter("postId");
         Part filePart = request.getPart("cvFile");
+        request.setAttribute("postId", postId);
         try {
             int post = Integer.parseInt(postId);
             String cvRelativePath = "";
