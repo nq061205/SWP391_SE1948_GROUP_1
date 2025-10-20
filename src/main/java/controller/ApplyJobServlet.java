@@ -1,31 +1,22 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Servlet.java to edit this template
- */
 package controller;
 
 import dal.CandidateDAO;
 import dal.RecruitmentPostDAO;
 import java.io.IOException;
-import java.io.PrintWriter;
+import java.io.File;
+import java.nio.file.Paths;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.MultipartConfig;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.Part;
-import java.io.File;
-import java.nio.file.Paths;
 import model.Candidate;
 
-/**
- *
- * @author hgduy
- */
 @MultipartConfig(
-        fileSizeThreshold = 1024 * 1024 * 2, 
+        fileSizeThreshold = 1024 * 1024 * 2,
         maxFileSize = 1024 * 1024 * 10,
-        maxRequestSize = 1024 * 1024 * 50 
+        maxRequestSize = 1024 * 1024 * 50
 )
 public class ApplyJobServlet extends HttpServlet {
 
@@ -36,32 +27,47 @@ public class ApplyJobServlet extends HttpServlet {
         request.getRequestDispatcher("Views/applyjob.jsp").forward(request, response);
     }
 
-
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         CandidateDAO cDAO = new CandidateDAO();
         RecruitmentPostDAO rDAO = new RecruitmentPostDAO();
-        String name = request.getParameter("name");
-        String email = request.getParameter("email");
-        String phone = request.getParameter("phone");
+
+        String name = request.getParameter("name").trim();
+        String email = request.getParameter("email").trim();
+        String phone = request.getParameter("phone").trim();
         String postId = request.getParameter("postId");
         Part filePart = request.getPart("cvFile");
+        request.setAttribute("postId", postId);
+
         try {
+
+            if (!name.matches("^[\\p{L} ]+$")) {
+                request.setAttribute("errorMessage", "Invalid name! Name cannot contain numbers or special characters.");
+                request.getRequestDispatcher("Views/applyjob.jsp").forward(request, response);
+                return;
+            }
+
+            if (!phone.matches("^0\\d{9}$")) {
+                request.setAttribute("errorMessage", "Invalid phone number! It must start with 0 and contain 10 digits.");
+                request.getRequestDispatcher("Views/applyjob.jsp").forward(request, response);
+                return;
+            }
+
             int post = Integer.parseInt(postId);
             String cvRelativePath = "";
+
             if (filePart != null && filePart.getSize() > 0) {
                 String fileName = Paths.get(filePart.getSubmittedFileName()).getFileName().toString();
                 String uploadPath = getServletContext().getRealPath("/images/cv");
-
                 File uploadDir = new File(uploadPath);
                 if (!uploadDir.exists()) {
                     uploadDir.mkdirs();
                 }
-
                 filePart.write(uploadPath + File.separator + fileName);
                 cvRelativePath = "images/cv/" + fileName;
             }
+
             Candidate candidate = new Candidate();
             candidate.setCv(cvRelativePath);
             candidate.setName(name);
@@ -74,18 +80,17 @@ public class ApplyJobServlet extends HttpServlet {
             } else {
                 request.setAttribute("errorMessage", "Apply failed. Please try again.");
             }
+
             request.getRequestDispatcher("Views/applyjob.jsp").forward(request, response);
+
         } catch (Exception e) {
-            request.setAttribute("errorMessage", e);
+            request.setAttribute("errorMessage", "Error: " + e.getMessage());
             request.getRequestDispatcher("Views/applyjob.jsp").forward(request, response);
         }
-
     }
-
 
     @Override
     public String getServletInfo() {
-        return "Short description";
-    }// </editor-fold>
-
+        return "ApplyJobServlet handles candidate job application with validation.";
+    }
 }
