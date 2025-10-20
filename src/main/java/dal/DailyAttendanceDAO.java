@@ -33,39 +33,88 @@ public class DailyAttendanceDAO extends DBContext {
             return;
         }
 
-        String sql = "INSERT INTO daily_attendance(emp_id, date, work_day, check_in_time, check_out_time, ot_hours, status)"
-                + "VALUES (?, ?, ?, ?, ?, ?, ?)"
-                + "ON DUPLICATE KEY UPDATE"
-                + "work_day = VALUES(work_day),"
-                + "check_in_time = VALUES(check_in_time),"
-                + "check_out_time = VALUES(check_out_time),"
-                + "ot_hours = VALUES(ot_hours),"
+        String sql = "INSERT INTO daily_attendance(emp_id, date, work_day, check_in_time, check_out_time, ot_hours, status) "
+                + "VALUES (?, ?, ?, ?, ?, ?, ?) "
+                + "ON DUPLICATE KEY UPDATE "
+                + "work_day = VALUES(work_day), "
+                + "check_in_time = VALUES(check_in_time), "
+                + "check_out_time = VALUES(check_out_time), "
+                + "ot_hours = VALUES(ot_hours), "
                 + "status = VALUES(status)";
 
-        try (PreparedStatement st = con.prepareStatement(sql)) {
+        PreparedStatement st = null;
+        try {
+            boolean originalAutoCommit = con.getAutoCommit();
+            con.setAutoCommit(false);
+
+            st = con.prepareStatement(sql);
+
+            int count = 0;
             for (DailyAttendance d : list) {
+                if (d.getEmployee() == null || d.getEmployee().getEmpId() == 0) {
+                    continue;
+                }
+
                 st.setInt(1, d.getEmployee().getEmpId());
                 st.setDate(2, new java.sql.Date(d.getDate().getTime()));
                 st.setDouble(3, d.getWorkDay());
+
                 if (d.getCheckInTime() != null) {
                     st.setTime(4, new java.sql.Time(d.getCheckInTime().getTime()));
                 } else {
-                    st.setNull(4, Types.TIMESTAMP);
+                    st.setNull(4, Types.TIME);  // FIX: Dùng TIME thay vì TIMESTAMP
                 }
 
                 if (d.getCheckOutTime() != null) {
                     st.setTime(5, new java.sql.Time(d.getCheckOutTime().getTime()));
                 } else {
-                    st.setNull(5, Types.TIMESTAMP);
+                    st.setNull(5, Types.TIME);  // FIX: Dùng TIME thay vì TIMESTAMP
                 }
+
                 st.setDouble(6, d.getOtHours());
                 st.setString(7, d.getStatus());
                 st.addBatch();
+                count++;
+
+                if (count % 1000 == 0) {
+                    int[] results = st.executeBatch();
+                }
             }
 
-            st.executeBatch();
+            // Execute remaining batch
+            if (count % 1000 != 0) {
+                int[] results = st.executeBatch();
+            }
+
+            // FIX: COMMIT transaction
+            con.commit();
+
+            // Restore original autoCommit
+            con.setAutoCommit(originalAutoCommit);
+
         } catch (Exception e) {
             e.printStackTrace();
+
+            // FIX: ROLLBACK nếu có lỗi
+            try {
+                if (con != null) {
+                    con.rollback();
+                }
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+
+            // FIX: Throw exception để caller biết có lỗi
+            throw new RuntimeException("Failed to upsert daily attendance", e);
+
+        } finally {
+            if (st != null) {
+                try {
+                    st.close();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
         }
     }
 
@@ -93,133 +142,5 @@ public class DailyAttendanceDAO extends DBContext {
             e.printStackTrace();
         }
         return list;
-    }
-
-    public List<DailyAttendance> getMonthlyAttendance(int year, int month, String department, String search, String sortBy) {
-        List<DailyAttendance> list = new ArrayList<>();
-
-        StringBuilder sql = new StringBuilder();
-        sql.append("SELECT da.*, e.emp_id, e.emp_code, e.name, e.department ");
-        sql.append("FROM daily_attendance da ");
-        sql.append("JOIN employee e ON da.emp_id = e.emp_id ");
-        sql.append("WHERE YEAR(da.date) = ? AND MONTH(da.date) = ? ");
-
-        List<Object> params = new ArrayList<>();
-        params.add(year);
-        params.add(month);
-        if (department != null && !department.isEmpty()) {
-            sql.append("AND e.department = ? ");
-            params.add(department);
-        }
-        if (search != null && !search.trim().isEmpty()) {
-            sql.append("AND (e.emp_code LIKE ? OR e.name LIKE ?) ");
-            String searchPattern = "%" + search.trim() + "%";
-            params.add(searchPattern);
-            params.add(searchPattern);
-        }
-        if ("name".equals(sortBy)) {
-            sql.append("ORDER BY e.name, da.date");
-        } else if ("department".equals(sortBy)) {
-            sql.append("ORDER BY e.department, e.emp_code, da.date");
-        } else {
-            sql.append("ORDER BY e.emp_code, da.date");
-        }
-
-        try (PreparedStatement st = con.prepareStatement(sql.toString())) {
-            for (int i = 0; i < params.size(); i++) {
-                st.setObject(i + 1, params.get(i));
-            }
-            try (ResultSet rs = st.executeQuery()) {
-                EmployeeDAO empDAO = new EmployeeDAO();
-                while (rs.next()) {
-                    Employee e = empDAO.getEmployeeByEmpId(rs.getInt("emp_id"));
-                    DailyAttendance d = new DailyAttendance(
-                            e,
-                            rs.getDate("date"),
-                            rs.getDouble("work_day"),
-                            rs.getTime("check_in_time"),
-                            rs.getTime("check_out_time"),
-                            rs.getDouble("ot_hours"),
-                            rs.getString("status")
-                    );
-                    list.add(d);
-                }
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return list;
-    }
-
-    public DailyAttendance getAttendanceByEmpCodeAndDate(String empCode, java.util.Date date) {
-        String sql = "SELECT da.* FROM daily_attendance da "
-                + "JOIN employee e ON da.emp_id = e.emp_id "
-                + "WHERE e.emp_code = ? AND da.date = ?";
-
-        try (PreparedStatement st = con.prepareStatement(sql)) {
-            st.setString(1, empCode);
-            st.setDate(2, new java.sql.Date(date.getTime()));
-
-            try (ResultSet rs = st.executeQuery()) {
-                if (rs.next()) {
-                    Employee e = new EmployeeDAO().getEmployeeByEmpCode(empCode);
-
-                    return new DailyAttendance(
-                            e,
-                            rs.getDate("date"),
-                            rs.getDouble("work_day"),
-                            rs.getTime("check_in_time"),
-                            rs.getTime("check_out_time"),
-                            rs.getDouble("ot_hours"),
-                            rs.getString("status")
-                    );
-                }
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        return null;
-    }
-
-
-    public int countEmployeesWithAttendance(int year, int month, String department, String search) {
-        StringBuilder sql = new StringBuilder();
-        sql.append("SELECT COUNT(DISTINCT e.emp_id) as total ");
-        sql.append("FROM employee e ");
-        sql.append("JOIN daily_attendance da ON e.emp_id = da.emp_id ");
-        sql.append("WHERE YEAR(da.date) = ? AND MONTH(da.date) = ? ");
-
-        List<Object> params = new ArrayList<>();
-        params.add(year);
-        params.add(month);
-
-        if (department != null && !department.isEmpty()) {
-            sql.append("AND e.department = ? ");
-            params.add(department);
-        }
-
-        if (search != null && !search.trim().isEmpty()) {
-            sql.append("AND (e.emp_code LIKE ? OR e.name LIKE ?) ");
-            String searchPattern = "%" + search.trim() + "%";
-            params.add(searchPattern);
-            params.add(searchPattern);
-        }
-
-        try (PreparedStatement st = con.prepareStatement(sql.toString())) {
-            for (int i = 0; i < params.size(); i++) {
-                st.setObject(i + 1, params.get(i));
-            }
-
-            try (ResultSet rs = st.executeQuery()) {
-                if (rs.next()) {
-                    return rs.getInt("total");
-                }
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        return 0;
     }
 }

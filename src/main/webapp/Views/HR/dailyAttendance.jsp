@@ -32,7 +32,7 @@
         <link rel="shortcut icon" type="image/x-icon" href="${pageContext.request.contextPath}/assets2/images/favicon.png" />
 
         <!-- PAGE TITLE HERE ============================================= -->
-        <title>Human Tech - Raw Attendance</title>
+        <title>Human Tech - Monthly Report</title>
 
         <!-- MOBILE SPECIFIC ============================================= -->
         <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -56,6 +56,7 @@
         <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/assets2/css/style.css">
         <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/assets2/css/dashboard.css">
         <link class="skin" rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/assets2/css/color/color-1.css">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
 
         <style>
             /* Sticky columns */
@@ -278,7 +279,7 @@
                                         <div class="col-md-2">
                                             <div class="form-group">
                                                 <label for="selectedMonth">Month</label>
-                                                <select name="month" id="selectedMonth" class="form-control">
+                                                <select name="month" id="selectedMonth" class="form-control" onchange="this.form.submit()">
                                                     <option value="1"  ${selectedMonth == 1 ? 'selected' : ''}>January</option>
                                                     <option value="2"  ${selectedMonth == 2 ? 'selected' : ''}>February</option>
                                                     <option value="3"  ${selectedMonth == 3 ? 'selected' : ''}>March</option>
@@ -299,11 +300,10 @@
                                         <div class="col-md-2">
                                             <div class="form-group">
                                                 <label for="selectedYear">Year</label>
-                                                <select name="year" id="selectedYear" class="form-control">
-                                                    <option value="2023" ${selectedYear == 2023 ? 'selected' : ''}>2023</option>
-                                                    <option value="2024" ${selectedYear == 2024 ? 'selected' : ''}>2024</option>
-                                                    <option value="2025" ${selectedYear == 2025 ? 'selected' : ''}>2025</option>
-                                                    <option value="2026" ${selectedYear == 2026 ? 'selected' : ''}>2026</option>
+                                                <select name="year" id="selectedYear" class="form-control" onchange="this.form.submit()">
+                                                    <c:forEach var="y" begin="${startYear}" end="${endYear}">
+                                                        <option value="${y}" ${selectedYear == y ? 'selected' : ''}>${y}</option>
+                                                    </c:forEach>
                                                 </select>
                                             </div>
                                         </div>
@@ -312,7 +312,7 @@
                                         <div class="col-md-2">
                                             <div class="form-group">
                                                 <label for="departmentFilter">Department</label>
-                                                <select name="department" id="departmentFilter" class="form-control">
+                                                <select name="department" id="departmentFilter" class="form-control" onchange="this.form.submit()">
                                                     <option value="">All Departments</option>
                                                     <c:forEach var="dept" items="${departments}">
                                                         <option value="${dept}" ${selectedDepartment == dept ? 'selected' : ''}>${dept}</option>
@@ -325,9 +325,16 @@
                                         <div class="col-md-3">
                                             <div class="form-group">
                                                 <label for="searchInput">Search</label>
-                                                <input type="text" name="search" id="searchInput" 
-                                                       value="${param.search}" class="form-control" 
-                                                       placeholder="Employee Code or Name">
+                                                <div class="input-group">
+                                                    <input type="text" name="search" id="searchInput" 
+                                                           value="${param.search}" class="form-control" 
+                                                           placeholder="Employee Code or Name">
+                                                    <div class="input-group-append">
+                                                        <button type="submit" class="btn btn-outline-secondary">
+                                                            <i class="fas fa-search"></i>
+                                                        </button>
+                                                    </div>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
@@ -336,7 +343,7 @@
                                     <div class="row">
                                         <div class="col-md-2">
                                             <div class="form-group">
-                                                <label for="pageSize">Per page</label>
+                                                <label for="pageSize">Records per page</label>
                                                 <select name="pageSize" id="pageSize" class="form-control" onchange="this.form.submit()">
                                                     <option value="10" ${pageSize == 10 || empty pageSize ? 'selected' : ''}>10</option>
                                                     <option value="25" ${pageSize == 25 ? 'selected' : ''}>25</option>
@@ -585,7 +592,6 @@
     <script src="${pageContext.request.contextPath}/assets2/vendors/switcher/switcher.js"></script>
 
     <script>
-                                                                        // Đợi jQuery load xong
                                                                         $(document).ready(function () {
                                                                             console.log('jQuery loaded');
                                                                             console.log('Legend panel exists:', $('#legendPanel').length);
@@ -599,8 +605,6 @@
                                                                                 alert('Legend panel not found!');
                                                                                 return;
                                                                             }
-
-                                                                            // Dùng slideToggle cho smooth animation
                                                                             panel.slideToggle(300);
                                                                         }
 
