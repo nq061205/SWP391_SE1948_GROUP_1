@@ -78,7 +78,7 @@ public class ApplyJobServlet extends HttpServlet {
             if (cDAO.insertCandidate(candidate)) {
                 request.setAttribute("successMessage", "Your application has been submitted successfully!");
             } else {
-                request.setAttribute("errorMessage", "Apply failed. Please try again.");
+                request.setAttribute("errorMessage", "Apply failed, Email has been approve in system. Please try again.");
             }
 
             request.getRequestDispatcher("Views/applyjob.jsp").forward(request, response);
