@@ -51,7 +51,7 @@
     </servlet>
     <servlet>
         <servlet-name>AccountList</servlet-name>
-        <servlet-class>controller.AccountList</servlet-class>
+        <servlet-class>controller.AccountListServlet</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>DepartmentListServlet</servlet-name>
