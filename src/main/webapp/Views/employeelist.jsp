@@ -222,6 +222,10 @@
                                                 <c:when test="${editEmp != null && editEmp.empCode eq el.empCode}">
                                             <form action="${pageContext.request.contextPath}/employeelistservlet" method="post">
                                                 <input type="hidden" name="page" value="${page}">
+                                                <c:if test="${not empty searchkey}">
+                                                    <input type="hidden" name="searchkey" value="${searchkey}">
+                                                    <input type="hidden" name="totalSearchResults" value="${totalSearchResults}">
+                                                </c:if>
                                                 <c:if test="${not empty gender}">
                                                     <input type="hidden" name="gender" value="${gender}">
                                                 </c:if>
@@ -240,21 +244,20 @@
                                                 <td>${loop.index+1}</td>
                                                 <td><input type="hidden" name="empCode" value="${el.empCode}" />${el.empCode}</td>
                                                 <td>${el.fullname}</td>
-                                                <td><input type="text" name="email" value="${el.email}" />
-                                                    <span style="color:red;">${emailError}</span>
+                                                <td><input type="email" name="email" value="${el.email}" />
                                                 </td>
                                                 <td>${el.gender}</td>
                                                 <td>
                                                     <input type="date" name="dob" value="${el.dob}"/>
-                                                    <span style="color:red;">${dobError}</span>
-                                            </td>
-                                                <td>${el.image}</td>
-                                                <td>
-                                                    <input type="text" name="editPositionTitle" value="${el.positionTitle}"/>
-                                                    <span style="color:red;">${posError}</span>
+                                                    <span style="color:red;">${dobErr}</span>
                                                 </td>
-                                                <td><input type="number" name="dependantCount" value="${el.dependantCount}"/>
-                                                    <span style="color:red;">${dependantError}</span>
+                                                <td>
+                                                    <img src="${el.image}" alt="Employee Image" style="width:60px; height:60px; object-fit:cover; border-radius:6px;">
+                                                </td>
+                                                <td>
+                                                    <input type="text" name="editPositionTitle" value="${el.positionTitle}" required/>
+                                                </td>
+                                                <td><input type="number" name="dependantCount" value="${el.dependantCount}" min="0"/>
                                                 </td>
                                                 <td>${el.paidLeaveDays}</td>
                                                 <td>
@@ -292,6 +295,29 @@
                                 </tbody>
                             </table>
                         </div>
+                        <c:url var="baseUrlWithSort" value="employeelistservlet">
+                            <c:if test="${not empty ageRange}">
+                                <c:param name="ageRange" value="${ageRange}" />
+                            </c:if>
+                            <c:if test="${not empty gender}">
+                                <c:param name="gender" value="${gender}" />
+                            </c:if>
+                            <c:if test="${not empty positionTitle}">
+                                <c:forEach var="pt" items="${positionTitle}">
+                                    <c:param name="positionTitle" value="${pt}" />
+                                </c:forEach>
+                            </c:if>
+                            <c:if test="${not empty searchkey}">
+                                <c:param name="searchkey" value="${searchkey}" />
+                            </c:if>
+                            <c:if test="${not empty sortBy}">
+                                <c:param name="sortBy" value="${sortBy}" />
+                            </c:if>
+                            <c:if test="${not empty order}">
+                                <c:param name="order" value="${order}" />
+                            </c:if>
+                        </c:url>
+                        <c:set var="urlPrefixWithSort" value="${baseUrlWithSort}${fn:contains(baseUrlWithSort, '?') ? '&' : '?'}" />
                         <nav class="mt-3">
                             <ul class="pagination justify-content-center">
                                 <c:set var="startPage" value="${page - 1}" />
@@ -311,20 +337,20 @@
                                     <c:set var="startPage" value="1" />
                                 </c:if>
                                 <li class="page-item ${page <= 1 ? 'disabled' : ''}">
-                                    <a class="page-link" href="${urlPrefix}page=${page-1}">Prev</a>
+                                    <a class="page-link" href="${urlPrefixWithSort}&page=${page-1}">Prev</a>
                                 </li>
 
                                 <c:forEach var="p" begin="${startPage}" end="${endPage}">
                                     <li class="page-item ${p == page ? 'active' : ''}">
-                                        <a class="page-link" href="${urlPrefix}page=${p}">${p}</a>
+                                        <a class="page-link" href="${urlPrefixWithSort}&page=${p}">${p}</a>
                                     </li>
                                 </c:forEach>
 
                                 <li class="page-item ${page >= totalPages ? 'disabled' : ''}">
-                                    <a class="page-link" href="${urlPrefix}page=${page+1}">Next</a>
+                                    <a class="page-link" href="${urlPrefixWithSort}&page=${page+1}">Next</a>
                                 </li>
                             </ul>
-                        </nav> 
+                        </nav>
                     </div>
                 </div>
             </div>
