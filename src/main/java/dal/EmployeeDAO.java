@@ -624,7 +624,7 @@ public class EmployeeDAO extends DBContext {
                 if (maxCode == null) {
                     return "E001";
                 }
-                String numberPart = maxCode.substring(3);
+                String numberPart = maxCode.substring(1);
                 int number = Integer.parseInt(numberPart);
                 number++;
                 return String.format("E%03d", number);
@@ -751,8 +751,8 @@ public class EmployeeDAO extends DBContext {
 
     public static void main(String[] args) {
         EmployeeDAO dao = new EmployeeDAO();
-
-        System.out.println(dao.getEmployeeByUsernamePassword("EMP001", "123"));
+        String username = dao.generateUserName();
+        System.out.println(username);
 
     }
 
