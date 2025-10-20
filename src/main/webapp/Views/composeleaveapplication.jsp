@@ -129,15 +129,14 @@
                                         <label for="enddate">To:</label>
                                         <input type="date" name="enddate" value="${enddate}" class="form-control" required/>
                                     </div>
-
+                                    <c:if  test="${not empty messageDate}">
+                                        <input type="text" name="messageDate" class="form-control"value="${messageDate}" />
+                                    </c:if>
                                     <c:if test="${paidLeaveDay>0}">
                                         <div class="form-group mb-3">
                                             <label for="paidLeaveDay">Reason:</label>
                                             <input type="checkbox" name="paidLeaveDay" value="ON" class="form-control"/>
                                         </div>
-                                    </c:if>
-                                    <c:if test="${messageDate!=null}">
-                                        <input type="text" class="form-control" value="${messageDate}">
                                     </c:if>
                                     <div class="form-group mb-3">
                                         <label for="content">Reason:</label>
