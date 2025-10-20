@@ -29,7 +29,6 @@ public class EditApplicationServlet extends HttpServlet {
             throws ServletException, IOException {
         OTRequestDAO otRequestDAO = new OTRequestDAO();
         LeaveRequestDAO leaveRequestDAO = new LeaveRequestDAO();
-        EmployeeDAO employeeDAO = new EmployeeDAO();
         HttpSession session = request.getSession();
         String type = request.getParameter("type");
         Employee user = (Employee) session.getAttribute("user");

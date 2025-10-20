@@ -61,6 +61,7 @@
         <!-- HEADER + NAVBAR -->
         <%@ include file="CommonItems/Header/dashboardHeader.jsp" %>
         <%@ include file="CommonItems/Navbar/empNavbar.jsp" %>
+        
         <main class="ttr-wrapper">
             <div class="container-fluid">
                 <div class="db-breadcrumb">
@@ -80,28 +81,28 @@
                             <div class="widget-inner">
                                 <form class="edit-profile m-b30" action="${pageContext.request.contextPath}/profile" method="POST" enctype="multipart/form-data">
                                     <div class="row">
-                                        <!-- Avatar -->
                                         <div class="col-md-3 text-center">
                                             <div class="profile-avatar mb-3">
                                                 <img src="${sessionScope.user.image}" alt="Avatar"  width="225" height="300">
                                             </div>
                                         </div>
 
-                                        <!-- Profile form -->
                                         <div class="col-md-9">
                                             <div class="form-group row">
                                                 <label class="col-sm-3 col-form-label">Fullname</label>
                                                 <div class="col-sm-9">
                                                     <input name="fullname" class="form-control" type="text" value="${sessionScope.user.fullname}"
-                                                           <c:if test="${click != 'save'}"> readonly required </c:if>
-                                                               >
-                                                    </div>
+                                                           <c:if test="${click != 'save'}"> readonly required </c:if>>
+                                                    <c:if test="${fullnameErr!=null}">
+                                                        <input style="color: red" type="text" class="form-control" value="${fullnameErr}">
+                                                    </c:if>
                                                 </div>
+                                            </div>
 
-                                                <div class="form-group row">
-                                                    <label class="col-sm-3 col-form-label">Position</label>
-                                                    <div class="col-sm-9">
-                                                        <input name="position" class="form-control" type="text" value="${sessionScope.user.positionTitle}" readonly>
+                                            <div class="form-group row">
+                                                <label class="col-sm-3 col-form-label">Position</label>
+                                                <div class="col-sm-9">
+                                                    <input name="position" class="form-control" type="text" value="${sessionScope.user.positionTitle}" readonly>
                                                 </div>
                                             </div>
 
@@ -134,27 +135,39 @@
                                                 <div class="col-sm-9">
                                                     <input name="dob" class="form-control" type="date" value="${sessionScope.user.dob}"
                                                            <c:if test="${click != 'save'}"> readonly </c:if>>
-                                                    </div>
+                                                    <c:if test="${dobErr!=null}">
+                                                        <input style="color: red" type="text" class="form-control" value="${dobErr}">
+                                                    </c:if>   
                                                 </div>
+                                            </div>
 
-                                                <div class="form-group row">
-                                                    <label class="col-sm-3 col-form-label">Phone</label>
-                                                    <div class="col-sm-9">
-                                                        <input name="phone" 
-                                                               class="form-control" type="text" value="${sessionScope.user.phone}" pattern="\d{10}" title="Phone must include 10 number" minlength="10" maxlength="10"
-                                                        <c:if test="${click != 'save'}"> readonly </c:if>>
-                                                    </div>
-                                                </div>
-
-                                                <div class="form-group row">
-                                                    <label class="col-sm-3 col-form-label"
-                                                    <c:if test="${click != 'save'}">  
-                                                        hidden 
-                                                    </c:if>
-                                                    >Image</label>
+                                            <div class="form-group row">
+                                                <label class="col-sm-3 col-form-label">Phone</label>
                                                 <div class="col-sm-9">
+                                                    <input name="phone" 
+                                                           class="form-control" type="text" value="${sessionScope.user.phone}" pattern="\d{10}" title="Phone must include 10 number" minlength="10" maxlength="10"
+                                                           <c:if test="${click != 'save'}"> readonly </c:if>>
+                                                    <c:if test="${phoneErr!=null}">
+                                                        <input style="color: red" type="text" class="form-control" value="${phoneErr}">
+                                                    </c:if>      
+                                                </div>
+                                            </div>
+
+                                            <div class="form-group row">
+                                                <label class="col-sm-3 col-form-label">Paid Leave Remain Days </label>
+                                                <div class="col-sm-9">
+                                                    <input name="paidLeaveDay" class="form-control" type="text" value="${sessionScope.user.paidLeaveDays}" readonly>
+                                                </div>
+                                            </div>
+
+                                            <div class="form-group row">
+                                                <label class="col-sm-3 col-form-label" <c:if test="${click != 'save'}">hidden</c:if> >Image</label>
+                                                    <div class="col-sm-9">
                                                     <c:if test="${click == 'save'}">
-                                                        <input type="file" class="form-control" name="image" value="${sessionScope.user.image}" placeholder="Upload your image" />
+                                                        <input type="file" class="form-control" name="image" accept="image/*" title="Upload your avatar" required/>
+                                                        <c:if test="${not empty avatarErr}">
+                                                            <div class="text-danger small mt-1">${avatarErr}</div>
+                                                        </c:if>
                                                     </c:if>
                                                     <c:if test="${click != 'save'}">
                                                         <input type="hidden" name="image" value="${sessionScope.user.image}">
@@ -178,8 +191,8 @@
                                         </div>
                                     </div>
                                 </form>
-                            </div> <!-- widget-inner -->
-                        </div> <!-- widget-box -->
+                            </div> 
+                        </div>
                     </div>
                 </div>
             </div>

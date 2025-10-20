@@ -210,6 +210,7 @@
                                                 Dependant Count<i class="fa fa-sort"></i>
                                             </a>
                                         </th>
+                                        <th>Paid leaves day</th>
                                         <th>Action</th>
                                     </tr>                                 
                                 </thead>
@@ -255,6 +256,7 @@
                                                 <td><input type="number" name="dependantCount" value="${el.dependantCount}"/>
                                                     <span style="color:red;">${dependantError}</span>
                                                 </td>
+                                                <td>${el.paidLeaveDays}</td>
                                                 <td>
                                                     <button type="submit" name="action" value="save" class="btn btn-success btn-sm">Save</button>
                                                     <a href="${pageContext.request.contextPath}/employeelistservlet" class="btn btn-secondary btn-sm">Cancel</a>
@@ -271,6 +273,7 @@
                                             <td>${el.image}</td>
                                             <td>${el.positionTitle}</td>
                                             <td>${el.dependantCount}</td>
+                                            <td>${el.paidLeaveDays}</td>
                                             <td>
                                                 <a href="${pageContext.request.contextPath}/${urlPrefix}type=edit&empCode=${el.empCode}&page=${page}" class="btn btn-sm btn-primary">Edit</a>
                                             </td>

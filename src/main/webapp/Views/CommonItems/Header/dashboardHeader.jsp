@@ -27,7 +27,7 @@
             <!-- header left menu start -->
             <ul class="ttr-header-navigation">
                 <li>
-                    <a href="../index.html" class="ttr-material-button ttr-submenu-toggle">HOME</a>
+                    <a href="${pageContext.request.contextPath}/homepage" class="ttr-material-button ttr-submenu-toggle">HOME</a>
                 </li>
                 <li>
                     <a href="#" class="ttr-material-button ttr-submenu-toggle">QUICK MENU <i class="fa fa-angle-down"></i></a>

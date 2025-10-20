@@ -17,6 +17,7 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 
 /**
  *
@@ -27,6 +28,12 @@ public class ApplicationDetailServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
     throws ServletException, IOException {
+        HttpSession session = request.getSession();
+        Employee user = (Employee) session.getAttribute("user");
+        if (user == null) {
+            response.sendRedirect("Views/login.jsp");
+            return;
+        }
         EmployeeDAO employeeDAO = new EmployeeDAO();
         OTRequestDAO OTDAO = new OTRequestDAO();
         LeaveRequestDAO leaveDAO = new LeaveRequestDAO();

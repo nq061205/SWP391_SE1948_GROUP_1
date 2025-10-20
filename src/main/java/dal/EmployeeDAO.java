@@ -63,8 +63,10 @@ public class EmployeeDAO extends DBContext {
                         rs.getString("position_title"),
                         rs.getString("image"),
                         rs.getInt("dependant_count"),
+                        rs.getInt("paid_leave_days"),
                         department,
-                        roleDAO.getRoleByEmpId(rs.getInt("emp_id"))
+                        roleDAO.getRoleByEmpId(rs.getInt("emp_id")),
+                        rs.getBoolean("status")
                 );
                 employee.setStatus(rs.getBoolean("status"));
             }
@@ -94,8 +96,10 @@ public class EmployeeDAO extends DBContext {
                             rs.getString("position_title"),
                             rs.getString("image"),
                             rs.getInt("dependant_count"),
+                            rs.getInt("paid_leave_days"),
                             department,
-                            roleDAO.getRoleByEmpId(rs.getInt("emp_id"))
+                            roleDAO.getRoleByEmpId(rs.getInt("emp_id")),
+                            rs.getBoolean("status")
                     );
                     employee.setStatus(rs.getBoolean("status"));
                     return employee;
@@ -127,6 +131,7 @@ public class EmployeeDAO extends DBContext {
                     emp.setPositionTitle(rs.getString("position_title"));
                     emp.setImage(rs.getString("image"));
                     emp.setDependantCount(rs.getInt("dependant_count"));
+                    emp.setPaidLeaveDays(rs.getInt("paid_leave_days"));
                     Department dept = deptDAO.getDepartmentByEmpId(rs.getInt("emp_id"));
                     emp.setDept(dept);
                     Role role = roleDAO.getRoleByEmpId(rs.getInt("emp_id"));
@@ -159,6 +164,7 @@ public class EmployeeDAO extends DBContext {
                 emp.setPositionTitle(rs.getString("position_title"));
                 emp.setImage(rs.getString("image"));
                 emp.setDependantCount(rs.getInt("dependant_count"));
+                emp.setPaidLeaveDays(rs.getInt("paid_leave_days"));
                 Department dept = deptDAO.getDepartmentByEmpId(rs.getInt("emp_id"));
                 emp.setDept(dept);
                 Role role = roleDAO.getRoleByEmpId(rs.getInt("emp_id"));
@@ -206,6 +212,7 @@ public class EmployeeDAO extends DBContext {
                 emp.setPositionTitle(rs.getString("position_title"));
                 emp.setImage(rs.getString("image"));
                 emp.setDependantCount(rs.getInt("dependant_count"));
+                emp.setPaidLeaveDays(rs.getInt("paid_leave_days"));
 
                 Department dept = getDepartmentByDeptID(rs.getString("dep_id"));
                 emp.setDept(dept);
@@ -266,6 +273,7 @@ public class EmployeeDAO extends DBContext {
                 emp.setDob(rs.getDate("dob"));
                 emp.setPhone(rs.getString("phone"));
                 emp.setPositionTitle(rs.getString("position_title"));
+                emp.setPaidLeaveDays(rs.getInt("paid_leave_days"));
 
                 Department dept = getDepartmentByDeptID(rs.getString("dep_id"));
                 emp.setDept(dept);
@@ -291,7 +299,7 @@ public class EmployeeDAO extends DBContext {
     }
 
     public void updateEmployee(Employee employee) {
-        String sql = "UPDATE Employee SET fullname=?,email=?,password=?,gender=?,dob=?,phone=?,position_title=?,image=?,dependant_count=?,dep_id=?,role_id=?,status=?  WHERE emp_code = ?";
+        String sql = "UPDATE Employee SET fullname=?,email=?,password=?,gender=?,dob=?,phone=?,position_title=?,image=?,dependant_count=?,paid_leave_days=?,dep_id=?,role_id=?,status=?  WHERE emp_code = ?";
         try (PreparedStatement ps = connection.prepareStatement(sql);) {
             ps.setString(1, employee.getFullname());
             ps.setString(2, employee.getEmail());
@@ -302,10 +310,11 @@ public class EmployeeDAO extends DBContext {
             ps.setString(7, employee.getPositionTitle());
             ps.setString(8, employee.getImage());
             ps.setInt(9, employee.getDependantCount());
-            ps.setString(10, employee.getDept().getDepId());
-            ps.setInt(11, employee.getRole().getRoleId());
-            ps.setBoolean(12, employee.isStatus());
-            ps.setString(13, employee.getEmpCode());
+            ps.setInt(10, employee.getPaidLeaveDays());
+            ps.setString(11, employee.getDept().getDepId());
+            ps.setInt(12, employee.getRole().getRoleId());
+            ps.setBoolean(13, employee.isStatus());
+            ps.setString(14, employee.getEmpCode());
             ps.executeUpdate();
         } catch (SQLException ex) {
             Logger.getLogger(EmployeeDAO.class.getName()).log(Level.SEVERE, null, ex);
@@ -410,6 +419,7 @@ public class EmployeeDAO extends DBContext {
                 emp.setPositionTitle(rs.getString("position_title"));
                 emp.setImage(rs.getString("image"));
                 emp.setDependantCount(rs.getInt("dependant_count"));
+                emp.setPaidLeaveDays(rs.getInt("paid_leave_days"));
                 emp.setStatus(rs.getBoolean("status"));
 
                 Department dept = getDepartmentByDeptID(rs.getString("dep_id"));
@@ -578,6 +588,7 @@ public class EmployeeDAO extends DBContext {
                 emp.setPositionTitle(rs.getString("position_title"));
                 emp.setImage(rs.getString("image"));
                 emp.setDependantCount(rs.getInt("dependant_count"));
+                emp.setPaidLeaveDays(rs.getInt("paid_leave_days"));
                 emp.setStatus(rs.getBoolean("status"));
                 Department dept = getDepartmentByDeptID(rs.getString("dep_id"));
                 emp.setDept(dept);
@@ -611,17 +622,17 @@ public class EmployeeDAO extends DBContext {
             while (rs.next()) {
                 String maxCode = rs.getString(1);
                 if (maxCode == null) {
-                    return "EMP001";
+                    return "E001";
                 }
                 String numberPart = maxCode.substring(3);
                 int number = Integer.parseInt(numberPart);
                 number++;
-                return String.format("EMP%03d", number);
+                return String.format("E%03d", number);
             }
         } catch (SQLException ex) {
             Logger.getLogger(EmployeeDAO.class.getName()).log(Level.SEVERE, null, ex);
         }
-        return "EMP001";
+        return "E001";
     }
 
     public String generatePassword() {
@@ -740,6 +751,8 @@ public class EmployeeDAO extends DBContext {
 
     public static void main(String[] args) {
         EmployeeDAO dao = new EmployeeDAO();
+
+        System.out.println(dao.getEmployeeByUsernamePassword("EMP001", "123"));
 
     }
 

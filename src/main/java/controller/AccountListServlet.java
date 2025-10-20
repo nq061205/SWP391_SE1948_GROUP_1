@@ -25,7 +25,7 @@ import model.Role;
  *
  * @author Admin
  */
-public class AccountList extends HttpServlet {
+public class AccountListServlet extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>

@@ -72,7 +72,7 @@
                         <li><a href="javascript:;">Home</a></li>
                         <li><a href="javascript:;">Products</a></li>
                         <li><a href="javascript:;">News</a></li>
-                        <li><a href="javascript:;">Careers</a></li>                       
+                        <li><a href="${pageContext.request.contextPath}/jobsite">Careers</a></li>                       
                     </ul>
                     <div class="nav-social-link">
                         <a href="javascript:;"><i class="fa fa-facebook"></i></a>
