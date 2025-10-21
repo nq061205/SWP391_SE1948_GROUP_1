@@ -32,6 +32,10 @@ public class EditApplicationServlet extends HttpServlet {
         HttpSession session = request.getSession();
         String type = request.getParameter("type");
         Employee user = (Employee) session.getAttribute("user");
+         if (user == null) {
+            response.sendRedirect("Views/login.jsp");
+            return;
+        }
         int id = Integer.parseInt(request.getParameter("id"));
         request.setAttribute("isEdit", "true");
         switch (type) {
