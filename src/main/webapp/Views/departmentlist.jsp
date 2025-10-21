@@ -122,12 +122,10 @@
                                         <td>${loop.index+1}</td>
                                         <td><input type="hidden" name="depId" value="${el.depId}">${el.depId}</td>
                                         <td>
-                                            <input type="text" name="depName" value="${el.depName}" />
-                                             <span style="color:red;">${depNameError}</span>
+                                            <input type="text" name="depName" value="${el.depName}" required />
                                         </td>
                                         <td>
-                                            <input type="text" name="description" value="${el.description}" />
-                                             <span style="color:red;">${descriptionError}</span>
+                                            <input type="text" name="description" value="${el.description}" required />
                                         </td>
                                         <td>
                                             <button type="submit" name="action" value="save" class="btn btn-success btn-sm">Save</button>
