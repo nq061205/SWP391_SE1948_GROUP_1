@@ -1,3 +1,4 @@
+
 <%-- 
     Document   : dashboard
     Created on : Oct 4, 2025, 4:14:15 PM
@@ -57,7 +58,6 @@
         <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/assets2/css/dashboard.css">
         <link class="skin" rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/assets2/css/color/color-1.css">
 
-        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
         <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css">
         <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.11.5/css/dataTables.bootstrap4.min.css">
         <style>
@@ -84,6 +84,50 @@
                 background-color: #e9ecef;
                 border-color: #dee2e6;
             }
+
+            /* Fix màu chữ cho Bootstrap Select dropdown */
+            .bootstrap-select .dropdown-toggle {
+                color: #000000 !important; /* Đổi từ #999 sang đen */
+            }
+
+            .bootstrap-select .dropdown-toggle .filter-option {
+                color: #000000 !important;
+            }
+
+            /* Fix màu chữ trong dropdown menu */
+            .bootstrap-select .dropdown-menu li a {
+                color: #000000 !important;
+            }
+
+            .bootstrap-select .dropdown-menu li a:hover {
+                background-color: #007bff !important;
+                color: #ffffff !important;
+            }
+
+            /* Fix cho text đã chọn */
+            .bootstrap-select .dropdown-toggle .filter-option-inner-inner {
+                color: #000000 !important;
+            }
+
+            /* Loading Modal Styles */
+            #processingModal .modal-content {
+                border-radius: 15px;
+                box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+            }
+
+            #processingModal .spinner-border {
+                border-width: 0.4rem;
+            }
+
+            #processingModal .progress {
+                border-radius: 10px;
+            }
+
+            #processingModal .modal-body {
+                padding: 3rem 2rem;
+            }
+
+
         </style>
 
     </head>
@@ -143,7 +187,7 @@
                                 </div>
 
                                 <!-- Upload Form -->
-                                <form action="upload-excel" method="post" enctype="multipart/form-data">
+                                <form action="raw-attendance" method="post" enctype="multipart/form-data">
                                     <div class="row">
                                         <div class="col-md-8">
                                             <div class="form-group">
@@ -223,13 +267,13 @@
                                     <!-- Confirm Import Buttons -->
                                     <div class="row">
                                         <div class="col-md-12 text-center">
-                                            <form action="upload-excel" method="post" class="d-inline mr-2">
+                                            <form action="raw-attendance" method="post" class="d-inline mr-2">
                                                 <input type="hidden" name="action" value="confirm">
                                                 <button type="submit" class="btn btn-success">
                                                     <i class="fa fa-check-circle"></i> Confirm Import
                                                 </button>
                                             </form>
-                                            <form action="upload-excel" method="post" class="d-inline">
+                                            <form action="raw-attendance" method="post" class="d-inline">
                                                 <input type="hidden" name="action" value="cancel">
                                                 <button type="submit" class="btn btn-secondary">
                                                     <i class="fa fa-times-circle"></i> Cancel Import
@@ -290,14 +334,14 @@
                                         </div>
                                         <div class="col-md-1">
                                             <div class="form-group">
-                                                <button type="submit" class="btn btn-primary w-100">
+                                                <button type="submit" class="btn btn-primary w-105">
                                                     <i class="fa fa-search"></i> Filter
                                                 </button>
                                             </div>
                                         </div>
                                         <div class="col-md-1">
                                             <div class="form-group">
-                                                <a href="raw-attendance" class="btn btn-secondary w-100">
+                                                <a href="raw-attendance" class="btn btn-secondary w-105">
                                                     <i class="fa fa-refresh"></i> Reset
                                                 </a>
                                             </div>
@@ -309,7 +353,8 @@
                                         <div class="col-md-3">
                                             <div class="form-group">
                                                 <label for="pageSize">Records per page</label>
-                                                <select name="pageSize" class="form-control" id="pageSize" onchange="resetPageAndSubmit()">
+                                                <select name="pageSize" class="form-control" id="pageSize" 
+                                                        onchange="changePageSize(this.value)">
                                                     <option value="5" ${pageSize == 5 ? 'selected' : ''}>5</option>
                                                     <option value="10" ${pageSize == 10 ? 'selected' : ''}>10</option>
                                                     <option value="15" ${pageSize == 15 ? 'selected' : ''}>15</option>
@@ -331,7 +376,7 @@
                                                 <thead class="thead-dark">
                                                     <tr>
                                                         <th width="50">Index</th>
-                                                        <th width="200">Employee ID</th>
+                                                        <th width="200">Employee Code</th>
                                                         <th width="200">Date (yyyy-MM-dd)</th>
                                                         <th>Check Time</th>
                                                         <th width="200">Check Type</th>
@@ -350,7 +395,7 @@
                                                                     <strong class="text-primary">
                                                                         <c:choose>
                                                                             <c:when test="${not empty record.emp and not empty record.emp.empId}">
-                                                                                ${record.emp.empId}
+                                                                                ${record.emp.empCode}
                                                                             </c:when>
                                                                             <c:otherwise>
                                                                                 <span class="text-muted">N/A</span>
@@ -382,87 +427,52 @@
                                         </div>
 
                                         <!-- Pagination Controls -->
+                                        <%-- Thay thế toàn bộ khối <nav> ... </nav> cũ bằng khối code này --%>
                                         <c:if test="${totalPages > 1}">
                                             <nav aria-label="Page navigation">
                                                 <ul class="pagination justify-content-center">
-                                                    <!-- Previous Button -->
                                                     <li class="page-item ${currentPage <= 1 ? 'disabled' : ''}">
-                                                        <c:choose>
-                                                            <c:when test="${currentPage <= 1}">
-                                                                <span class="page-link"><i class="fa fa-chevron-left"></i> Previous</span>
-                                                            </c:when>
-                                                            <c:otherwise>
-                                                                <a class="page-link" href="raw-attendance?page=${currentPage - 1}&pageSize=${pageSize}&search=${search}&fromDate=${fromDate}&toDate=${toDate}&filterType=${filterType}">
-                                                                    <i class="fa fa-chevron-left"></i> Previous
-                                                                </a>
-                                                            </c:otherwise>
-                                                        </c:choose>
+                                                        <c:url var="prevUrl" value="raw-attendance">
+                                                            <c:param name="page" value="${currentPage - 1}"/>
+                                                            <c:param name="pageSize" value="${pageSize}"/>
+                                                            <c:if test="${not empty search}"><c:param name="search" value="${search}"/></c:if>
+                                                            <c:if test="${not empty fromDate}"><c:param name="fromDate" value="${fromDate}"/></c:if>
+                                                            <c:if test="${not empty toDate}"><c:param name="toDate" value="${toDate}"/></c:if>
+                                                            <c:if test="${not empty filterType}"><c:param name="filterType" value="${filterType}"/></c:if>
+                                                        </c:url>
+                                                        <a class="page-link" href="${currentPage > 1 ? prevUrl : '#'}"><i class="fa fa-chevron-left"></i> Previous</a>
                                                     </li>
 
-                                                    <!-- Page Numbers -->
-                                                    <c:choose>
-                                                        <c:when test="${totalPages <= 7}">
-                                                            <!-- Show all pages if total pages <= 7 -->
-                                                            <c:forEach begin="1" end="${totalPages}" var="pageNum">
-                                                                <li class="page-item ${pageNum == currentPage ? 'active' : ''}">
-                                                                    <a class="page-link" href="raw-attendance?page=${pageNum}&pageSize=${pageSize}&search=${search}&fromDate=${fromDate}&toDate=${toDate}&filterType=${filterType}">
-                                                                        ${pageNum}
-                                                                    </a>
-                                                                </li>
-                                                            </c:forEach>
-                                                        </c:when>
-                                                        <c:otherwise>
-                                                            <!-- Show first page -->
-                                                            <li class="page-item ${1 == currentPage ? 'active' : ''}">
-                                                                <a class="page-link" href="raw-attendance?page=1&pageSize=${pageSize}&search=${search}&fromDate=${fromDate}&toDate=${toDate}&filterType=${filterType}">1</a>
+                                                    <c:forEach begin="1" end="${totalPages}" var="pageNum">
+                                                        <%-- Logic phức tạp để rút gọn số trang có thể giữ lại hoặc đơn giản hóa như sau --%>
+                                                        <c:if test="${pageNum == 1 || pageNum == totalPages || (pageNum >= currentPage - 2 && pageNum <= currentPage + 2)}">
+                                                            <li class="page-item ${pageNum == currentPage ? 'active' : ''}">
+                                                                <c:url var="pageUrl" value="raw-attendance">
+                                                                    <c:param name="page" value="${pageNum}"/>
+                                                                    <c:param name="pageSize" value="${pageSize}"/>
+                                                                    <c:if test="${not empty search}"><c:param name="search" value="${search}"/></c:if>
+                                                                    <c:if test="${not empty fromDate}"><c:param name="fromDate" value="${fromDate}"/></c:if>
+                                                                    <c:if test="${not empty toDate}"><c:param name="toDate" value="${toDate}"/></c:if>
+                                                                    <c:if test="${not empty filterType}"><c:param name="filterType" value="${filterType}"/></c:if>
+                                                                </c:url>
+                                                                <a class="page-link" href="${pageUrl}">${pageNum}</a>
                                                             </li>
-
-                                                            <!-- Show dots if current page > 4 -->
-                                                            <c:if test="${currentPage > 4}">
-                                                                <li class="page-item disabled">
-                                                                    <span class="page-link">...</span>
-                                                                </li>
+                                                        </c:if>
+                                                        <c:if test="${(pageNum == currentPage - 3 && pageNum > 1) || (pageNum == currentPage + 3 && pageNum < totalPages)}">
+                                                            <li class="page-item disabled"><span class="page-link">...</span></li>
                                                             </c:if>
+                                                        </c:forEach>
 
-                                                            <!-- Show pages around current page -->
-                                                            <c:forEach begin="${currentPage - 2 > 2 ? currentPage - 2 : 2}" 
-                                                                       end="${currentPage + 2 < totalPages - 1 ? currentPage + 2 : totalPages - 1}" 
-                                                                       var="pageNum">
-                                                                <li class="page-item ${pageNum == currentPage ? 'active' : ''}">
-                                                                    <a class="page-link" href="raw-attendance?page=${pageNum}&pageSize=${pageSize}&search=${search}&fromDate=${fromDate}&toDate=${toDate}&filterType=${filterType}">
-                                                                        ${pageNum}
-                                                                    </a>
-                                                                </li>
-                                                            </c:forEach>
-
-                                                            <!-- Show dots if current page < totalPages - 3 -->
-                                                            <c:if test="${currentPage < totalPages - 3}">
-                                                                <li class="page-item disabled">
-                                                                    <span class="page-link">...</span>
-                                                                </li>
-                                                            </c:if>
-
-                                                            <!-- Show last page -->
-                                                            <li class="page-item ${totalPages == currentPage ? 'active' : ''}">
-                                                                <a class="page-link" href="raw-attendance?page=${totalPages}&pageSize=${pageSize}&search=${search}&fromDate=${fromDate}&toDate=${toDate}&filterType=${filterType}">
-                                                                    ${totalPages}
-                                                                </a>
-                                                            </li>
-                                                        </c:otherwise>
-                                                    </c:choose>
-
-                                                    <!-- Next Button -->
                                                     <li class="page-item ${currentPage >= totalPages ? 'disabled' : ''}">
-                                                        <c:choose>
-                                                            <c:when test="${currentPage >= totalPages}">
-                                                                <span class="page-link">Next <i class="fa fa-chevron-right"></i></span>
-                                                                </c:when>
-                                                                <c:otherwise>
-                                                                <a class="page-link" href="raw-attendance?page=${currentPage + 1}&pageSize=${pageSize}&search=${search}&fromDate=${fromDate}&toDate=${toDate}&filterType=${filterType}">
-                                                                    Next <i class="fa fa-chevron-right"></i>
-                                                                </a>
-                                                            </c:otherwise>
-                                                        </c:choose>
+                                                        <c:url var="nextUrl" value="raw-attendance">
+                                                            <c:param name="page" value="${currentPage + 1}"/>
+                                                            <c:param name="pageSize" value="${pageSize}"/>
+                                                            <c:if test="${not empty search}"><c:param name="search" value="${search}"/></c:if>
+                                                            <c:if test="${not empty fromDate}"><c:param name="fromDate" value="${fromDate}"/></c:if>
+                                                            <c:if test="${not empty toDate}"><c:param name="toDate" value="${toDate}"/></c:if>
+                                                            <c:if test="${not empty filterType}"><c:param name="filterType" value="${filterType}"/></c:if>
+                                                        </c:url>
+                                                        <a class="page-link" href="${currentPage < totalPages ? nextUrl : '#'}">Next <i class="fa fa-chevron-right"></i></a>
                                                     </li>
                                                 </ul>
                                             </nav>
@@ -485,114 +495,224 @@
                         </div>
                     </div>
                 </div>
-                <input type="hidden" name="page" value="1">
+                <!-- Loading Modal -->
+                <!-- Loading Modal -->
+                <div class="modal fade" id="processingModal" data-backdrop="static" data-keyboard="false" tabindex="-1" role="dialog">
+                    <div class="modal-dialog modal-dialog-centered" role="document">
+                        <div class="modal-content">
+                            <div class="modal-body text-center py-5">
+                                <div class="spinner-border text-primary mb-4" role="status" style="width: 4rem; height: 4rem;">
+                                    <span class="sr-only">Processing...</span>
+                                </div>
+                                <h3 class="mb-3"><i class="fa fa-cog fa-spin"></i> Processing Import</h3>
 
-                </main>
-                </body>
+                                <!-- THÊM ID ĐỂ UPDATE MESSAGES -->
+                                <p class="text-muted mb-2 lead" id="processingMessage" style="min-height: 30px;">
+                                    <strong>Preparing to import...</strong>
+                                </p>
 
-                <script src="${pageContext.request.contextPath}/assets2/js/jquery.min.js"></script>
-                <script src="${pageContext.request.contextPath}/assets2/vendors/bootstrap/js/popper.min.js"></script>
-                <script src="${pageContext.request.contextPath}/assets2/vendors/bootstrap/js/bootstrap.min.js"></script>
-                <script src="${pageContext.request.contextPath}/assets2/vendors/bootstrap-select/bootstrap-select.min.js"></script>
-                <script src="${pageContext.request.contextPath}/assets2/vendors/bootstrap-touchspin/jquery.bootstrap-touchspin.js"></script>
-                <script src="${pageContext.request.contextPath}/assets2/vendors/magnific-popup/magnific-popup.js"></script>
-                <script src="${pageContext.request.contextPath}/assets2/vendors/counter/waypoints-min.js"></script>
-                <script src="${pageContext.request.contextPath}/assets2/vendors/counter/counterup.min.js"></script>
-                <script src="${pageContext.request.contextPath}/assets2/vendors/imagesloaded/imagesloaded.js"></script>
-                <script src="${pageContext.request.contextPath}/assets2/vendors/masonry/masonry.js"></script>
-                <script src="${pageContext.request.contextPath}/assets2/vendors/masonry/filter.js"></script>
-                <script src="${pageContext.request.contextPath}/assets2/vendors/owl-carousel/owl.carousel.js"></script>
-                <script src="${pageContext.request.contextPath}/assets2/vendors/scroll/scrollbar.min.js"></script>
-                <script src="${pageContext.request.contextPath}/assets2/js/functions.js"></script>
-                <script src="${pageContext.request.contextPath}/assets2/vendors/chart/chart.min.js"></script>
-                <script src="${pageContext.request.contextPath}/assets2/js/admin.js"></script>
-                <script src="${pageContext.request.contextPath}/assets2/vendors/calendar/moment.min.js"></script>
-                <script src="${pageContext.request.contextPath}/assets2/vendors/calendar/fullcalendar.js"></script>
-                <script src="${pageContext.request.contextPath}/assets2/vendors/switcher/switcher.js"></script>
+                                <div class="alert alert-warning mt-4 mb-0">
+                                    <i class="fa fa-exclamation-triangle"></i>
+                                    <strong>Please do not close this window or navigate away</strong>
+                                </div>
 
-                <script>
-                                                    $(document).ready(function () {
+                                <div class="progress mt-4" style="height: 30px;">
+                                    <div class="progress-bar progress-bar-striped progress-bar-animated bg-success" 
+                                         role="progressbar" style="width: 100%">
+                                        <strong>Processing...</strong>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
 
-                                                        $('#calendar').fullCalendar({
-                                                            header: {
-                                                                left: 'prev,next today',
-                                                                center: 'title',
-                                                                right: 'month,agendaWeek,agendaDay,listWeek'
-                                                            },
-                                                            defaultDate: '2019-03-12',
-                                                            navLinks: true, // can click day/week names to navigate views
 
-                                                            weekNumbers: true,
-                                                            weekNumbersWithinDays: true,
-                                                            weekNumberCalculation: 'ISO',
+        </main>
+    </body>
 
-                                                            editable: true,
-                                                            eventLimit: true, // allow "more" link when too many events
-                                                            events: [
-                                                                {
-                                                                    title: 'All Day Event',
-                                                                    start: '2019-03-01'
-                                                                },
-                                                                {
-                                                                    title: 'Long Event',
-                                                                    start: '2019-03-07',
-                                                                    end: '2019-03-10'
-                                                                },
-                                                                {
-                                                                    id: 999,
-                                                                    title: 'Repeating Event',
-                                                                    start: '2019-03-09T16:00:00'
-                                                                },
-                                                                {
-                                                                    id: 999,
-                                                                    title: 'Repeating Event',
-                                                                    start: '2019-03-16T16:00:00'
-                                                                },
-                                                                {
-                                                                    title: 'Conference',
-                                                                    start: '2019-03-11',
-                                                                    end: '2019-03-13'
-                                                                },
-                                                                {
-                                                                    title: 'Meeting',
-                                                                    start: '2019-03-12T10:30:00',
-                                                                    end: '2019-03-12T12:30:00'
-                                                                },
-                                                                {
-                                                                    title: 'Lunch',
-                                                                    start: '2019-03-12T12:00:00'
-                                                                },
-                                                                {
-                                                                    title: 'Meeting',
-                                                                    start: '2019-03-12T14:30:00'
-                                                                },
-                                                                {
-                                                                    title: 'Happy Hour',
-                                                                    start: '2019-03-12T17:30:00'
-                                                                },
-                                                                {
-                                                                    title: 'Dinner',
-                                                                    start: '2019-03-12T20:00:00'
-                                                                },
-                                                                {
-                                                                    title: 'Birthday Party',
-                                                                    start: '2019-03-13T07:00:00'
-                                                                },
-                                                                {
-                                                                    title: 'Click for Google',
-                                                                    url: 'http://google.com/',
-                                                                    start: '2019-03-28'
-                                                                }
-                                                            ]
-                                                        });
+    <script src="${pageContext.request.contextPath}/assets2/js/jquery.min.js"></script>
+    <script src="${pageContext.request.contextPath}/assets2/vendors/bootstrap/js/popper.min.js"></script>
+    <script src="${pageContext.request.contextPath}/assets2/vendors/bootstrap/js/bootstrap.min.js"></script>
+    <script src="${pageContext.request.contextPath}/assets2/vendors/bootstrap-select/bootstrap-select.min.js"></script>
+    <script src="${pageContext.request.contextPath}/assets2/vendors/bootstrap-touchspin/jquery.bootstrap-touchspin.js"></script>
+    <script src="${pageContext.request.contextPath}/assets2/vendors/magnific-popup/magnific-popup.js"></script>
+    <script src="${pageContext.request.contextPath}/assets2/vendors/counter/waypoints-min.js"></script>
+    <script src="${pageContext.request.contextPath}/assets2/vendors/counter/counterup.min.js"></script>
+    <script src="${pageContext.request.contextPath}/assets2/vendors/imagesloaded/imagesloaded.js"></script>
+    <script src="${pageContext.request.contextPath}/assets2/vendors/masonry/masonry.js"></script>
+    <script src="${pageContext.request.contextPath}/assets2/vendors/masonry/filter.js"></script>
+    <script src="${pageContext.request.contextPath}/assets2/vendors/owl-carousel/owl.carousel.js"></script>
+    <script src="${pageContext.request.contextPath}/assets2/vendors/scroll/scrollbar.min.js"></script>
+    <script src="${pageContext.request.contextPath}/assets2/js/functions.js"></script>
+    <script src="${pageContext.request.contextPath}/assets2/vendors/chart/chart.min.js"></script>
+    <script src="${pageContext.request.contextPath}/assets2/js/admin.js"></script>
+    <script src="${pageContext.request.contextPath}/assets2/vendors/calendar/moment.min.js"></script>
+    <script src="${pageContext.request.contextPath}/assets2/vendors/calendar/fullcalendar.js"></script>
+    <script src="${pageContext.request.contextPath}/assets2/vendors/switcher/switcher.js"></script>
 
-                                                    });
-                </script>
-                <script>
-                    function resetPageAndSubmit() {
-                        // Reset page về 1 khi thay đổi pageSize
-                        document.querySelector('input[name="page"]').value = '1';
-                        document.querySelector('form').submit();
-                    }
-                </script>
-                </html>
+    <script>
+                                                            $(document).ready(function () {
+
+                                                                $('#calendar').fullCalendar({
+                                                                    header: {
+                                                                        left: 'prev,next today',
+                                                                        center: 'title',
+                                                                        right: 'month,agendaWeek,agendaDay,listWeek'
+                                                                    },
+                                                                    defaultDate: '2019-03-12',
+                                                                    navLinks: true, // can click day/week names to navigate views
+
+                                                                    weekNumbers: true,
+                                                                    weekNumbersWithinDays: true,
+                                                                    weekNumberCalculation: 'ISO',
+
+                                                                    editable: true,
+                                                                    eventLimit: true, // allow "more" link when too many events
+                                                                    events: [
+                                                                        {
+                                                                            title: 'All Day Event',
+                                                                            start: '2019-03-01'
+                                                                        },
+                                                                        {
+                                                                            title: 'Long Event',
+                                                                            start: '2019-03-07',
+                                                                            end: '2019-03-10'
+                                                                        },
+                                                                        {
+                                                                            id: 999,
+                                                                            title: 'Repeating Event',
+                                                                            start: '2019-03-09T16:00:00'
+                                                                        },
+                                                                        {
+                                                                            id: 999,
+                                                                            title: 'Repeating Event',
+                                                                            start: '2019-03-16T16:00:00'
+                                                                        },
+                                                                        {
+                                                                            title: 'Conference',
+                                                                            start: '2019-03-11',
+                                                                            end: '2019-03-13'
+                                                                        },
+                                                                        {
+                                                                            title: 'Meeting',
+                                                                            start: '2019-03-12T10:30:00',
+                                                                            end: '2019-03-12T12:30:00'
+                                                                        },
+                                                                        {
+                                                                            title: 'Lunch',
+                                                                            start: '2019-03-12T12:00:00'
+                                                                        },
+                                                                        {
+                                                                            title: 'Meeting',
+                                                                            start: '2019-03-12T14:30:00'
+                                                                        },
+                                                                        {
+                                                                            title: 'Happy Hour',
+                                                                            start: '2019-03-12T17:30:00'
+                                                                        },
+                                                                        {
+                                                                            title: 'Dinner',
+                                                                            start: '2019-03-12T20:00:00'
+                                                                        },
+                                                                        {
+                                                                            title: 'Birthday Party',
+                                                                            start: '2019-03-13T07:00:00'
+                                                                        },
+                                                                        {
+                                                                            title: 'Click for Google',
+                                                                            url: 'http://google.com/',
+                                                                            start: '2019-03-28'
+                                                                        }
+                                                                    ]
+                                                                });
+
+                                                            });
+    </script>
+    <script>
+        function changePageSize(newPageSize) {
+            // Lấy URL hiện tại
+            const url = new URL(window.location.href);
+
+            // Set pageSize mới và reset page về 1
+            url.searchParams.set('pageSize', newPageSize);
+            url.searchParams.set('page', '1');
+
+            // Navigate đến URL mới (tự động giữ lại tất cả parameters khác)
+            window.location.href = url.toString();
+        }
+    </script>
+
+
+    <script>
+        let isProcessing = false;
+
+        $(document).ready(function () {
+            // Handle Confirm Import button click
+            $('form').on('submit', function (e) {
+                const action = $(this).find('input[name="action"]').val();
+
+                if (action === 'confirm') {
+                    e.preventDefault();
+
+                    const form = this;
+
+                    // Show loading modal
+                    $('#processingModal').modal({
+                        backdrop: 'static',
+                        keyboard: false
+                    });
+
+                    isProcessing = true;
+
+                    // Disable all buttons
+                    $('button, a.btn').prop('disabled', true).addClass('disabled');
+
+                    // Animate processing messages
+                    const messages = [
+                        '<i class="fa fa-check text-success"></i> Validating data...',
+                        '<i class="fa fa-database text-primary"></i> Importing raw attendance records...',
+                        '<i class="fa fa-users text-info"></i> Loading employee information...',
+                        '<i class="fa fa-calculator text-warning"></i> Calculating work hours...',
+                        '<i class="fa fa-clock-o text-primary"></i> Processing overtime requests...',
+                        '<i class="fa fa-check-circle text-success"></i> Finalizing daily attendance...'
+                    ];
+
+                    const messageElement = $('#processingMessage');
+                    let step = 0;
+
+                    // Update message every 500ms
+                    const messageInterval = setInterval(function () {
+                        if (step < messages.length) {
+                            messageElement.fadeOut(200, function () {
+                                $(this).html(messages[step]).fadeIn(200);
+                            });
+                            step++;
+                        } else {
+                            clearInterval(messageInterval);
+                        }
+                    }, 800);
+
+                    // DELAY SUBMIT ĐỂ MODAL HIỂN THỊ ÍT NHẤT 3 GIÂY
+                    setTimeout(function () {
+                        form.submit();
+                    }, 3000); // 3 seconds - đủ thời gian để user đọc messages
+                }
+            });
+        });
+
+        function changePageSize(newPageSize) {
+            if (isProcessing) {
+                alert('Please wait until processing is complete');
+                return;
+            }
+            const url = new URL(window.location.href);
+            url.searchParams.set('pageSize', newPageSize);
+            url.searchParams.set('page', '1');
+            window.location.href = url.toString();
+        }
+    </script>
+
+
+
+</html>

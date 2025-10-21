@@ -80,6 +80,5 @@ public class AttendanceRaw {
     public String toString() {
         return "AttendanceRaw{" + "id=" + id + ", employee=" + employee + ", date=" + date + ", checkTime=" + checkTime + ", checkType=" + checkType + '}';
     }
-    
 }
 
