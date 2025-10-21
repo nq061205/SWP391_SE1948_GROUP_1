@@ -50,7 +50,6 @@ public class HRManagerRecruitmentServlet extends HttpServlet {
     private void showPostReviewList(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         try {
-            // Check for messages from session
             String successMessage = (String) request.getSession().getAttribute("successMessage");
             String errorMessage = (String) request.getSession().getAttribute("errorMessage");
             
@@ -64,25 +63,134 @@ public class HRManagerRecruitmentServlet extends HttpServlet {
                 request.getSession().removeAttribute("errorMessage");
             }
             
-            List<RecruitmentPost> pendingAndRejectedPosts = recruitmentPostDAO.getPendingAndRejectedPosts();
-            boolean hasPendingOrRejected = (pendingAndRejectedPosts != null && !pendingAndRejectedPosts.isEmpty());
-            int totalPosts = (pendingAndRejectedPosts != null) ? pendingAndRejectedPosts.size() : 0;
-            int pendingCount = 0;
-            int rejectedCount = 0;
+            String pendingPageStr = request.getParameter("pendingPage");
+            String pendingPageSizeStr = request.getParameter("pendingPageSize");
+            String pendingSearchKeyword = request.getParameter("pendingSearch");
             
-            if (pendingAndRejectedPosts != null) {
-                for (RecruitmentPost post : pendingAndRejectedPosts) {
+            String rejectedPageStr = request.getParameter("rejectedPage");
+            String rejectedPageSizeStr = request.getParameter("rejectedPageSize");
+            String rejectedSearchKeyword = request.getParameter("rejectedSearch");
+            
+            int pendingCurrentPage = 1;
+            int pendingPageSize = 5;
+            int rejectedCurrentPage = 1;
+            int rejectedPageSize = 5;
+            
+            if (pendingPageStr != null && !pendingPageStr.trim().isEmpty()) {
+                try {
+                    pendingCurrentPage = Integer.parseInt(pendingPageStr);
+                    if (pendingCurrentPage < 1) pendingCurrentPage = 1;
+                } catch (NumberFormatException e) {
+                    pendingCurrentPage = 1;
+                }
+            }
+            
+            if (pendingPageSizeStr != null && !pendingPageSizeStr.trim().isEmpty()) {
+                try {
+                    pendingPageSize = Integer.parseInt(pendingPageSizeStr);
+                    if (pendingPageSize < 5) pendingPageSize = 5;
+                    if (pendingPageSize > 50) pendingPageSize = 50;
+                } catch (NumberFormatException e) {
+                    pendingPageSize = 5;
+                }
+            }
+            
+            if (rejectedPageStr != null && !rejectedPageStr.trim().isEmpty()) {
+                try {
+                    rejectedCurrentPage = Integer.parseInt(rejectedPageStr);
+                    if (rejectedCurrentPage < 1) rejectedCurrentPage = 1;
+                } catch (NumberFormatException e) {
+                    rejectedCurrentPage = 1;
+                }
+            }
+            
+            if (rejectedPageSizeStr != null && !rejectedPageSizeStr.trim().isEmpty()) {
+                try {
+                    rejectedPageSize = Integer.parseInt(rejectedPageSizeStr);
+                    if (rejectedPageSize < 5) rejectedPageSize = 5;
+                    if (rejectedPageSize > 50) rejectedPageSize = 50;
+                } catch (NumberFormatException e) {
+                    rejectedPageSize = 5;
+                }
+            }
+            
+            List<RecruitmentPost> allPosts = recruitmentPostDAO.getPendingAndRejectedPosts();
+            List<RecruitmentPost> allPendingPosts = new java.util.ArrayList<>();
+            List<RecruitmentPost> allRejectedPosts = new java.util.ArrayList<>();
+            
+            if (allPosts != null) {
+                for (RecruitmentPost post : allPosts) {
                     if ("Pending".equals(post.getStatus())) {
-                        pendingCount++;
+                        allPendingPosts.add(post);
                     } else if ("Rejected".equals(post.getStatus())) {
-                        rejectedCount++;
+                        allRejectedPosts.add(post);
                     }
                 }
             }
             
-            request.setAttribute("pendingAndRejectedPosts", pendingAndRejectedPosts);
-            request.setAttribute("hasPendingOrRejected", hasPendingOrRejected);
-            request.setAttribute("totalPosts", totalPosts);
+            List<RecruitmentPost> filteredPendingPosts = allPendingPosts;
+            if (pendingSearchKeyword != null && !pendingSearchKeyword.trim().isEmpty()) {
+                filteredPendingPosts = new java.util.ArrayList<>();
+                String keyword = pendingSearchKeyword.trim().toLowerCase();
+                for (RecruitmentPost post : allPendingPosts) {
+                    if (post.getTitle().toLowerCase().contains(keyword) ||
+                        (post.getDepartment() != null && post.getDepartment().getDepName().toLowerCase().contains(keyword))) {
+                        filteredPendingPosts.add(post);
+                    }
+                }
+            }
+            
+            List<RecruitmentPost> filteredRejectedPosts = allRejectedPosts;
+            if (rejectedSearchKeyword != null && !rejectedSearchKeyword.trim().isEmpty()) {
+                filteredRejectedPosts = new java.util.ArrayList<>();
+                String keyword = rejectedSearchKeyword.trim().toLowerCase();
+                for (RecruitmentPost post : allRejectedPosts) {
+                    if (post.getTitle().toLowerCase().contains(keyword) ||
+                        (post.getDepartment() != null && post.getDepartment().getDepName().toLowerCase().contains(keyword))) {
+                        filteredRejectedPosts.add(post);
+                    }
+                }
+            }
+            
+            int totalPendingPosts = filteredPendingPosts.size();
+            int pendingTotalPages = (int) Math.ceil((double) totalPendingPosts / pendingPageSize);
+            if (pendingTotalPages < 1) pendingTotalPages = 1;
+            if (pendingCurrentPage > pendingTotalPages) pendingCurrentPage = pendingTotalPages;
+            
+            int pendingStartIndex = (pendingCurrentPage - 1) * pendingPageSize;
+            int pendingEndIndex = Math.min(pendingStartIndex + pendingPageSize, totalPendingPosts);
+            List<RecruitmentPost> pendingPosts = new java.util.ArrayList<>();
+            if (!filteredPendingPosts.isEmpty()) {
+                pendingPosts = filteredPendingPosts.subList(pendingStartIndex, pendingEndIndex);
+            }
+            
+            int totalRejectedPosts = filteredRejectedPosts.size();
+            int rejectedTotalPages = (int) Math.ceil((double) totalRejectedPosts / rejectedPageSize);
+            if (rejectedTotalPages < 1) rejectedTotalPages = 1;
+            if (rejectedCurrentPage > rejectedTotalPages) rejectedCurrentPage = rejectedTotalPages;
+            
+            int rejectedStartIndex = (rejectedCurrentPage - 1) * rejectedPageSize;
+            int rejectedEndIndex = Math.min(rejectedStartIndex + rejectedPageSize, totalRejectedPosts);
+            List<RecruitmentPost> rejectedPosts = new java.util.ArrayList<>();
+            if (!filteredRejectedPosts.isEmpty()) {
+                rejectedPosts = filteredRejectedPosts.subList(rejectedStartIndex, rejectedEndIndex);
+            }
+            
+            int pendingCount = allPendingPosts.size();
+            int rejectedCount = allRejectedPosts.size();
+            
+            request.setAttribute("pendingPosts", pendingPosts);
+            request.setAttribute("rejectedPosts", rejectedPosts);
+            request.setAttribute("totalPendingPosts", totalPendingPosts);
+            request.setAttribute("totalRejectedPosts", totalRejectedPosts);
+            request.setAttribute("pendingCurrentPage", pendingCurrentPage);
+            request.setAttribute("pendingTotalPages", pendingTotalPages);
+            request.setAttribute("pendingPageSize", pendingPageSize);
+            request.setAttribute("pendingSearchKeyword", pendingSearchKeyword != null ? pendingSearchKeyword : "");
+            request.setAttribute("rejectedCurrentPage", rejectedCurrentPage);
+            request.setAttribute("rejectedTotalPages", rejectedTotalPages);
+            request.setAttribute("rejectedPageSize", rejectedPageSize);
+            request.setAttribute("rejectedSearchKeyword", rejectedSearchKeyword != null ? rejectedSearchKeyword : "");
             request.setAttribute("pendingCount", pendingCount);
             request.setAttribute("rejectedCount", rejectedCount);
             request.setAttribute("currentPage", "Post Review");
