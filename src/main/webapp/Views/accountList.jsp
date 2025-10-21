@@ -105,6 +105,12 @@
                                 </c:if>      
                                 <label class="form-label"><strong>Status:</strong></label>
                                 <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="status" value="All" 
+                                           ${status == null || status == 'All' ? 'checked' : ''} id="statusAll" 
+                                           onclick="this.form.submit()">
+                                    <label class="form-check-label" for="statusAll">All</label>
+                                </div>
+                                <div class="form-check">
                                     <input class="form-check-input" type="radio" name="status" value="true" 
                                            ${status == 'true' ? 'checked' : ''} id="statusActive" onclick="this.form.submit()">
                                     <label class="form-check-label" for="statusActive">Active</label>
