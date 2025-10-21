@@ -48,6 +48,22 @@ public class Employee {
         this.status = status;
     }
 
+        public Employee(int empId, String empCode, String fullname, String email, String password, boolean gender, Date dob, String phone, String positionTitle, String image, int dependantCount, Department dept, Role role) {
+        this.empId = empId;
+        this.empCode = empCode;
+        this.fullname = fullname;
+        this.email = email;
+        this.password = password;
+        this.gender = gender;
+        this.dob = dob;
+        this.phone = phone;
+        this.positionTitle = positionTitle;
+        this.image = image;
+        this.dependantCount = dependantCount;
+        this.dept = dept;
+        this.role = role;
+        this.status = status;
+    }
     public void setDept(Department dept) {
         this.dept = dept;
     }

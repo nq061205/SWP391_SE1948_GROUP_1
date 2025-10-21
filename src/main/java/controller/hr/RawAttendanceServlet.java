@@ -1,3 +1,4 @@
+
 /*
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Servlet.java to edit this template
@@ -5,19 +6,36 @@
 package controller.hr;
 
 import dal.AttendanceRawDAO;
+import helper.AttendanceService;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.MultipartConfig;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.Part;
+import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.List;
 import model.AttendanceRaw;
+import model.Employee;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellType;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 /**
  *
  * @author admin
  */
+@MultipartConfig( // THÊM NÀY
+        fileSizeThreshold = 1024 * 1024 * 1,
+        maxFileSize = 1024 * 1024 * 10,
+        maxRequestSize = 1024 * 1024 * 15
+)
 public class RawAttendanceServlet extends HttpServlet {
 
     /**
@@ -58,6 +76,142 @@ public class RawAttendanceServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        loadAttendanceData(request, response);
+    }
+
+    @Override
+    protected void doPost(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        request.getSession().setMaxInactiveInterval(1800); // 30 minutes
+
+        String action = request.getParameter("action");
+
+        if ("cancel".equals(action)) {
+            request.getSession().removeAttribute("importList");
+            request.setAttribute("success", "Import cancelled.");
+            loadAttendanceData(request, response);  // GỌI METHOD CHUNG
+            return;
+        }
+
+        if ("confirm".equals(action)) {
+            List<AttendanceRaw> list = (List<AttendanceRaw>) request.getSession().getAttribute("importList");
+            if (list != null && !list.isEmpty()) {
+                AttendanceRawDAO dao = null;
+                try {
+                    dao = new AttendanceRawDAO();
+                    dao.insertRawBatch(list);
+                    AttendanceService attendanceService = new AttendanceService();
+                    attendanceService.processDailyAttendance(list);
+                    request.getSession().removeAttribute("importList");
+                    request.setAttribute("success", "Successfully imported " + list.size() + " records!");
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    request.setAttribute("error", "Error importing: " + e.getMessage());
+                } finally {
+                    if (dao != null) {
+                        dao.close();
+                    }
+                }
+            }
+            loadAttendanceData(request, response);  // GỌI METHOD CHUNG
+            return;
+        }
+
+        // Handle file upload
+        Part filePart = request.getPart("file");
+        if (filePart == null || filePart.getSize() == 0) {
+            request.setAttribute("error", "No file uploaded.");
+            loadAttendanceData(request, response);  // GỌI METHOD CHUNG
+            return;
+        }
+
+        List<AttendanceRaw> list = new ArrayList<>();
+
+        try (InputStream inputStream = filePart.getInputStream(); Workbook workbook = new XSSFWorkbook(inputStream)) {
+
+            Sheet sheet = workbook.getSheetAt(0);
+
+            for (int i = 1; i <= sheet.getLastRowNum(); i++) {
+                Row row = sheet.getRow(i);
+                if (row == null) {
+                    continue;
+                }
+
+                // --- Cột 0: Employee ID ---
+                Cell empCell = row.getCell(0);
+                int empId = 0;
+                if (empCell != null) {
+                    if (empCell.getCellType() == CellType.NUMERIC) {
+                        empId = (int) empCell.getNumericCellValue();
+                    } else if (empCell.getCellType() == CellType.STRING) {
+                        String text = empCell.getStringCellValue().trim();
+                        if (!text.isEmpty()) {
+                            empId = Integer.parseInt(text);
+                        }
+                    }
+                }
+
+                // --- Cột 1: Date (yyyy-MM-dd) ---
+                Cell dateCell = row.getCell(1);
+                java.sql.Date sqlDate = null;
+                if (dateCell != null) {
+                    if (dateCell.getCellType() == CellType.NUMERIC) {
+                        java.util.Date d = dateCell.getDateCellValue();
+                        sqlDate = new java.sql.Date(d.getTime());
+                    } else {
+                        String text = dateCell.getStringCellValue().trim();
+                        if (!text.isEmpty()) {
+                            java.util.Date d = java.sql.Date.valueOf(text);
+                            sqlDate = new java.sql.Date(d.getTime());
+                        }
+                    }
+                }
+
+                // --- Cột 2: Check Time (HH:mm:ss) ---
+                Cell timeCell = row.getCell(2);
+                java.sql.Time sqlTime = null;
+                if (timeCell != null) {
+                    if (timeCell.getCellType() == CellType.STRING) {
+                        String text = timeCell.getStringCellValue().trim();
+                        if (!text.isEmpty()) {
+                            sqlTime = java.sql.Time.valueOf(text);
+                        }
+                    } else if (timeCell.getCellType() == CellType.NUMERIC) {
+                        java.util.Date d = timeCell.getDateCellValue();
+                        sqlTime = new java.sql.Time(d.getTime());
+                    }
+                }
+
+                // --- Cột 3: Check Type (IN/OUT) ---
+                Cell checkTypeCell = row.getCell(3);
+                String checkType = (checkTypeCell != null) ? checkTypeCell.getStringCellValue().trim() : "";
+
+                // --- Tạo đối tượng và thêm vào list ---
+                Employee e = new Employee();
+                e.setEmpId(empId);
+                list.add(new AttendanceRaw(e, sqlDate, sqlTime, checkType));
+            }
+
+            request.getSession().setAttribute("importList", list);
+            List<AttendanceRaw> previewList = list.size() > 10 ? list.subList(0, 10) : list;
+            request.setAttribute("preview", previewList);
+            request.setAttribute("success", "File uploaded successfully! Review " + list.size() + " records before import.");
+
+            loadAttendanceData(request, response);  // GỌI METHOD CHUNG
+
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            request.setAttribute("error", "Error reading file: " + ex.getMessage());
+            loadAttendanceData(request, response);  // GỌI METHOD CHUNG
+        }
+    }
+
+    /**
+     * Method chung để load attendance data và forward đến JSP
+     */
+    private void loadAttendanceData(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+
         String pageParam = request.getParameter("page");
         String pageSizeParam = request.getParameter("pageSize");
         String search = request.getParameter("search");
@@ -67,21 +221,13 @@ public class RawAttendanceServlet extends HttpServlet {
 
         int page = 1;
         int pageSize = 10;
-        boolean pageSizeChanged = false;
 
         try {
+            if (pageSizeParam != null && !pageSizeParam.trim().isEmpty()) {
+                pageSize = Integer.parseInt(pageSizeParam);
+            }
             if (pageParam != null && !pageParam.trim().isEmpty()) {
                 page = Integer.parseInt(pageParam);
-            }
-            if (pageSizeParam != null && !pageSizeParam.trim().isEmpty()) {
-                int newPageSize = Integer.parseInt(pageSizeParam);
-                if (newPageSize != pageSize) {
-                    pageSizeChanged = true;
-                    pageSize = newPageSize;
-                    page = 1; 
-                } else {
-                    pageSize = newPageSize;
-                }
             }
         } catch (NumberFormatException e) {
             page = 1;
@@ -100,8 +246,10 @@ public class RawAttendanceServlet extends HttpServlet {
         toDate = (toDate != null && !toDate.trim().isEmpty()) ? toDate.trim() : null;
         filterType = (filterType != null && !filterType.trim().isEmpty()) ? filterType.trim() : null;
 
-        AttendanceRawDAO rawDAO = new AttendanceRawDAO();
+        AttendanceRawDAO rawDAO = null;
         try {
+            rawDAO = new AttendanceRawDAO();
+
             long totalRecords = rawDAO.countRawRecords(search, fromDate, toDate, filterType);
             int totalPages = (totalRecords > 0) ? (int) Math.ceil((double) totalRecords / pageSize) : 1;
 
@@ -110,7 +258,6 @@ public class RawAttendanceServlet extends HttpServlet {
             }
 
             int offset = (page - 1) * pageSize;
-
             List<AttendanceRaw> rawList = rawDAO.getRawRecords(offset, pageSize, search, fromDate, toDate, filterType);
 
             request.setAttribute("rawList", rawList);
@@ -124,30 +271,18 @@ public class RawAttendanceServlet extends HttpServlet {
             request.setAttribute("filterType", filterType != null ? filterType : "");
 
             request.getRequestDispatcher("Views/HR/rawAttendance.jsp").forward(request, response);
+
         } catch (Exception e) {
             e.printStackTrace();
+            request.setAttribute("error", "Error loading data: " + e.getMessage());
+            request.getRequestDispatcher("Views/HR/rawAttendance.jsp").forward(request, response);
+        } finally {
+            if (rawDAO != null) {
+                rawDAO.close();
+            }
         }
     }
 
-    /**
-     * Handles the HTTP <code>POST</code> method.
-     *
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
-     */
-    @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-        doGet(request, response);
-    }
-
-    /**
-     * Returns a short description of the servlet.
-     *
-     * @return a String containing servlet description
-     */
     @Override
     public String getServletInfo() {
         return "Short description";

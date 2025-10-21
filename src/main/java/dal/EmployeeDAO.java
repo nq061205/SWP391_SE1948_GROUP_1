@@ -706,6 +706,7 @@ public class EmployeeDAO extends DBContext {
         return sb.toString();
     }
 
+    
     public void createEmployee(String username, String password, String fullname, String email, boolean gender, String phone) {
         String sql = "INSERT INTO Employee(emp_code,password,fullname,email,gender,phone) values(?,?,?,?,?,?)";
         try (PreparedStatement ps = connection.prepareStatement(sql);) {
@@ -743,6 +744,86 @@ public class EmployeeDAO extends DBContext {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    public long countEmployees(String search, String department) {
+        long count = 0;
+        String sql = "SELECT COUNT(*) FROM Employee WHERE 1=1 ";
+        List<Object> params = new ArrayList<>();
+        if (search != null && !search.isEmpty()) {
+            sql += "AND (emp_code LIKE ? OR fullname LIKE ?) ";
+            params.add("%" + search + "%");
+            params.add("%" + search + "%");
+        }
+        if (department != null && !department.isEmpty()) {
+            sql += "AND dep_id = ? ";
+            params.add(department);
+        }
+        try (Connection conn = DBContext.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
+            int idx = 1;
+            for (Object param : params) {
+                ps.setObject(idx++, param);
+            }
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    count = rs.getLong(1);
+                }
+            }
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+        return count;
+    }
+
+    public List<Employee> getEmployees(int offset, int pageSize, String search, String department) {
+        List<Employee> list = new ArrayList<>();
+        String sql = "SELECT * FROM Employee WHERE 1=1 ";
+        List<Object> params = new ArrayList<>();
+        if (search != null && !search.isEmpty()) {
+            sql += "AND (emp_code LIKE ? OR fullname LIKE ?) ";
+            params.add("%" + search + "%");
+            params.add("%" + search + "%");
+        }
+        if (department != null && !department.isEmpty()) {
+            sql += "AND dep_id = ? ";
+            params.add(department);
+        }
+        sql += "ORDER BY emp_id ASC LIMIT ? OFFSET ?";
+        params.add(pageSize);
+        params.add(offset);
+
+        try (Connection conn = DBContext.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
+            int idx = 1;
+            for (Object param : params) {
+                ps.setObject(idx++, param);
+            }
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    Department departmentObj = deptDAO.getDepartmentByEmpId(rs.getInt("emp_id"));
+                    Role roleObj = roleDAO.getRoleByEmpId(rs.getInt("emp_id"));
+                    Employee employee = new Employee(
+                            rs.getInt("emp_id"),
+                            rs.getString("emp_code"),
+                            rs.getString("fullname"),
+                            rs.getString("email"),
+                            rs.getString("password"),
+                            rs.getBoolean("gender"),
+                            rs.getDate("dob"),
+                            rs.getString("phone"),
+                            rs.getString("position_title"),
+                            rs.getString("image"),
+                            rs.getInt("dependant_count"),
+                            departmentObj,
+                            roleObj
+                    );
+                    employee.setStatus(rs.getBoolean("status"));
+                    list.add(employee);
+                }
+            }
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+        return list;
     }
 
     public int countFilterEmployee(Boolean gender, String[] positionTitle, String ageRange) {
@@ -810,9 +891,12 @@ public class EmployeeDAO extends DBContext {
 
     public static void main(String[] args) {
         EmployeeDAO dao = new EmployeeDAO();
-        String username = dao.generateUserName();
-        System.out.println(username);
-
+        String sortBy = "emp_code";
+        String order = "desc";
+        int page = 1;
+        int quantityofpage = 5;
+        List<Employee> empList = dao.ManageEmployeeWithPaging(null, page, quantityofpage, null, null, null, sortBy, order);
+        System.out.println(empList);
     }
 
 }
