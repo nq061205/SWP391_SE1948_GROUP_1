@@ -27,7 +27,7 @@
         <link rel="shortcut icon" type="image/x-icon" href="assets/images/favicon.png" />
 
         <!-- PAGE TITLE HERE ============================================= -->
-        <title>EduChamp : Education HTML Template </title>
+        <title>Human Tech</title>
 
         <!-- MOBILE SPECIFIC ============================================= -->
         <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -56,7 +56,7 @@
             <div id="loading-icon-bx"></div>
             <div class="account-form">
                 <div class="account-head" style="background-image:url(${pageContext.request.contextPath}/assets1/images/background/bg2.jpg);">
-                    <a href="index.html"><img src="${pageContext.request.contextPath}/assets1/images/logo-white-2.png" alt=""></a>
+                    <a href="index.html"><img src="/HRMSystem/assets1/images/logo-white.png"  width="400" height="100" alt=""></a>
                 </div>
                 <div class="account-form-inner">
                     <div class="account-container">

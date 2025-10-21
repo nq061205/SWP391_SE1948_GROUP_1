@@ -17,7 +17,6 @@
         <div class="ttr-logo-box">
             <div>
                 <a href="index.html" class="ttr-logo">
-                    <img class="ttr-logo-mobile" alt="" src="${pageContext.request.contextPath}/HRMSystem/assets1/images/logo-white.png" width="30" height="30">
                     <img class="ttr-logo-desktop" alt="" src="/HRMSystem/assets1/images/logo-white.png" width="160" height="27">
                 </a>
             </div>
