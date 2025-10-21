@@ -9,7 +9,7 @@
     <div class="ttr-sidebar-wrapper content-scroll">
         <!-- side menu logo start -->
         <div class="ttr-sidebar-logo">
-            <a href="#"><img alt="" src="assets/images/logo.png" width="122" height="27"></a>
+            <a href="#"><img alt="" src="/HRMSystem/assets1/images/logo-white.png" width="100" height="50"></a>
             <div class="ttr-sidebar-toggle-button">
                 <i class="ti-arrow-left"></i>
             </div>
