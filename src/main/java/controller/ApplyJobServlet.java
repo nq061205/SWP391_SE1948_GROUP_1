@@ -37,16 +37,22 @@ public class ApplyJobServlet extends HttpServlet {
         String email = request.getParameter("email").trim();
         String phone = request.getParameter("phone").trim();
         String postId = request.getParameter("postId");
+        request.setAttribute("postId", postId);
+        request.setAttribute("name", name);
+        request.setAttribute("email", email);
+        request.setAttribute("phone", phone);
         Part filePart = request.getPart("cvFile");
-        long fileSize = filePart.getSize(); 
-        long maxFileSize = 5 * 1024 * 1024; 
+        if (filePart != null && filePart.getSubmittedFileName() != null) {
+            request.setAttribute("fileName", Paths.get(filePart.getSubmittedFileName()).getFileName().toString());
+        }
+        long fileSize = filePart.getSize();
+        long maxFileSize = 5 * 1024 * 1024;
 
         if (fileSize > maxFileSize) {
             request.setAttribute("errorMessage", "CV file is too large! Maximum size allowed is 5 MB.");
             request.getRequestDispatcher("Views/applyjob.jsp").forward(request, response);
             return;
         }
-        request.setAttribute("postId", postId);
 
         try {
 
