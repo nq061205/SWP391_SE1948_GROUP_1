@@ -34,7 +34,7 @@ CREATE TABLE Employee (
     position_title VARCHAR(100),
     image VARCHAR(255),
     dependant_count INT DEFAULT 0,
-    paid_leave_days DECIMAL(5,2) DEFAULT 12.00,   -- Số ngày nghỉ có lương
+    paid_leave_days int DEFAULT 0,   -- Số ngày nghỉ có lương
     dep_id VARCHAR(5),
     role_id INT,
     status BOOLEAN DEFAULT TRUE,

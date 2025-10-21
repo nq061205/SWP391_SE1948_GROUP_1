@@ -15,11 +15,11 @@
         <meta name="robots" content="" />
 
         <!-- DESCRIPTION -->
-        <meta name="description" content="EduChamp : Reset Password Page" />
+        <meta name="description" content="Human Tech" />
 
         <!-- OG -->
         <meta property="og:title" content="Reset Password" />
-        <meta property="og:description" content="Reset your EduChamp account password" />
+        <meta property="og:description" content="Reset your Human Tech account password" />
 
         <!-- FAVICONS ICON ============================================= -->
         <link rel="icon" href="${pageContext.request.contextPath}/assets1/images/favicon.ico" type="image/x-icon" />
