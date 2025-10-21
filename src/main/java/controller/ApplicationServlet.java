@@ -39,7 +39,7 @@ public class ApplicationServlet extends HttpServlet {
             return;
         }
         EmployeeDAO empDAO = new EmployeeDAO();
-        Employee emp = empDAO.getEmployeeByEmpId(1);
+        Employee emp = empDAO.getEmployeeByEmpId(user.getEmpId());
         String typeApplication = request.getParameter("typeapplication");
         if ("leave".equalsIgnoreCase(typeApplication)) {
             doLeaveRequestApplication(request, response, emp);

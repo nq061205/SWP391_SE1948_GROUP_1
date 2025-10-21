@@ -17,10 +17,10 @@
         <meta name="robots" content="" />
 
         <!-- DESCRIPTION -->
-        <meta name="description" content="EduChamp : Education HTML Template" />
+        <meta name="description" content="Human Tech" />
 
         <!-- OG -->
-        <meta property="og:title" content="EduChamp : Education HTML Template" />
+        <meta property="og:title" content="Human Tech" />
         <meta property="og:description" content="Profile" />
         <meta property="og:image" content="" />
         <meta name="format-detection" content="telephone=no">
@@ -104,6 +104,12 @@
                                     <input type="hidden" name="order" value="${order}">
                                 </c:if>      
                                 <label class="form-label"><strong>Status:</strong></label>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="status" value="All" 
+                                           ${status == null || status == 'All' ? 'checked' : ''} id="statusAll" 
+                                           onclick="this.form.submit()">
+                                    <label class="form-check-label" for="statusAll">All</label>
+                                </div>
                                 <div class="form-check">
                                     <input class="form-check-input" type="radio" name="status" value="true" 
                                            ${status == 'true' ? 'checked' : ''} id="statusActive" onclick="this.form.submit()">

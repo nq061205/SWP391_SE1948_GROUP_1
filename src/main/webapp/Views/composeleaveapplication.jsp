@@ -12,11 +12,11 @@
         <meta name="robots" content="" />
 
         <!-- DESCRIPTION -->
-        <meta name="description" content="EduChamp : Education HTML Template" />
-
+        <meta name="description" content="Human Tech" />
+Edu
         <!-- OG -->
-        <meta property="og:title" content="EduChamp : Education HTML Template" />
-        <meta property="og:description" content="EduChamp : Education HTML Template" />
+        <meta property="og:title" content="Human Tech" />
+        <meta property="og:description" content="Human Tech" />
         <meta property="og:image" content="" />
         <meta name="format-detection" content="telephone=no">
 
@@ -130,13 +130,7 @@
                                         <input type="date" name="enddate" value="${enddate}" class="form-control" required/>
                                     </div>
                                     <c:if  test="${not empty messageDate}">
-                                        <input type="text" name="messageDate" class="form-control"value="${messageDate}" />
-                                    </c:if>
-                                    <c:if test="${paidLeaveDay>0}">
-                                        <div class="form-group mb-3">
-                                            <label for="paidLeaveDay">Reason:</label>
-                                            <input type="checkbox" name="paidLeaveDay" value="ON" class="form-control"/>
-                                        </div>
+                                        <input type="text" name="messageDate" style="color: red" class="form-control"value="${messageDate}" />
                                     </c:if>
                                     <div class="form-group mb-3">
                                         <label for="content">Reason:</label>

@@ -16,11 +16,11 @@
         <meta name="robots" content="" />
 
         <!-- DESCRIPTION -->
-        <meta name="description" content="EduChamp : Education HTML Template" />
+        <meta name="description" content="Human Tech" />
 
         <!-- OG -->
-        <meta property="og:title" content="EduChamp : Education HTML Template" />
-        <meta property="og:description" content="EduChamp : Education HTML Template" />
+        <meta property="og:title" content="Human Tech" />
+        <meta property="og:description" content="Human Tech" />
         <meta property="og:image" content="" />
         <meta name="format-detection" content="telephone=no">
 
