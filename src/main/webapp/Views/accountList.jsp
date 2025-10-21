@@ -256,7 +256,11 @@
                                                     <img src="${el.image}" alt="" style="width:60px; height:60px; object-fit:cover; border-radius:5px;">
                                                 </td>
                                                 <td>
-                                                    ${el.dept.depName}
+                                                    <select name="editDepId">
+                                                        <c:forEach var="d" items="${sessionScope.deptList}">
+                                                            <option value="${d.depId}">${d.depName}</option>
+                                                        </c:forEach>
+                                                    </select>
                                                 </td>
                                                 <td>
                                                     <select name="editRoleId">

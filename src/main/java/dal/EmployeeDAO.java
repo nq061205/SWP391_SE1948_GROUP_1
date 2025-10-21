@@ -436,25 +436,13 @@ public class EmployeeDAO extends DBContext {
         return empList;
     }
 
-    public int countSearchRecordOfEmployee(String searchkey) {
-        String sql = "Select count(*) from Employee WHERE emp_code LIKE ? OR fullname LIKE ?";
-        try (PreparedStatement ps = connection.prepareStatement(sql);) {
-            ps.setString(1, "%" + searchkey + "%");
-            ps.setString(2, "%" + searchkey + "%");
-            ResultSet rs = ps.executeQuery();
-            while (rs.next()) {
-                return rs.getInt(1);
-            }
-        } catch (SQLException ex) {
-            Logger.getLogger(EmployeeDAO.class.getName()).log(Level.SEVERE, null, ex);
-        }
-
-        return 0;
-    }
-
-    public int countFilterRecordOfEmployee(Boolean status, String[] deptIds, String[] roleIds) {
+    public int countSearchAndFilterEmployee(String searchKey, Boolean status, String[] deptIds, String[] roleIds) {
         try {
             StringBuilder sql = new StringBuilder("SELECT COUNT(*) FROM Employee WHERE 1=1");
+
+            if (searchKey != null && !searchKey.trim().isEmpty()) {
+                sql.append(" AND (emp_code LIKE ? OR fullname LIKE ?)");
+            }
 
             if (status != null) {
                 sql.append(" AND status = ?");
@@ -484,15 +472,21 @@ public class EmployeeDAO extends DBContext {
 
             PreparedStatement ps = connection.prepareStatement(sql.toString());
             int index = 1;
+
+  
+            if (searchKey != null && !searchKey.trim().isEmpty()) {
+                ps.setString(index++, "%" + searchKey + "%");
+                ps.setString(index++, "%" + searchKey + "%");
+            }
             if (status != null) {
                 ps.setBoolean(index++, status);
             }
-
             if (deptIds != null) {
                 for (String depId : deptIds) {
                     ps.setString(index++, depId);
                 }
             }
+
             if (roleIds != null) {
                 for (String roleId : roleIds) {
                     ps.setInt(index++, Integer.parseInt(roleId));
@@ -500,7 +494,7 @@ public class EmployeeDAO extends DBContext {
             }
 
             ResultSet rs = ps.executeQuery();
-            while (rs.next()) {
+            if (rs.next()) {
                 return rs.getInt(1);
             }
         } catch (SQLException ex) {

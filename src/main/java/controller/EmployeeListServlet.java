@@ -66,6 +66,7 @@ public class EmployeeListServlet extends HttpServlet {
         int currentPage = 1;
         int totalPages = 0;
         int totalResults = 0;
+        String oldSearchKey = (String) ses.getAttribute("oldSearchKey");
         Integer oldPosCount = (Integer) ses.getAttribute("oldPosCount");
         String oldAgeRange = (String) ses.getAttribute("oldAgeRange");
         Boolean oldGender = (Boolean) ses.getAttribute("oldGender");
@@ -76,7 +77,9 @@ public class EmployeeListServlet extends HttpServlet {
         boolean isFilterChanged
                 = (oldPosCount == null ? newPosCount != 0 : !oldPosCount.equals(newPosCount))
                 || (oldAgeRange == null ? newAgeRange != null : !oldAgeRange.equals(newAgeRange))
-                || (oldGender == null ? newGender != null : !oldGender.equals(newGender));
+                || (oldGender == null ? newGender != null : !oldGender.equals(newGender))
+                || (oldSearchKey == null ? searchkey != null && !searchkey.isEmpty()
+                        : !oldSearchKey.equals(searchkey));
         if (isFilterChanged) {
             currentPage = 1;
         } else {
@@ -89,20 +92,18 @@ public class EmployeeListServlet extends HttpServlet {
             }
         }
         List<String> positionList = empDAO.getAllPosition();
-        List<Employee> empList = empDAO.manageEmployeeForHR(searchkey, currentPage, quantityOfPage, gender, positionTitle, ageRange, sortBy, order);
+
         if (searchkey != null && !searchkey.trim().isEmpty()) {
-            totalResults = empDAO.countSearchRecordOfEmployee(searchkey);
-            totalPages = (int) Math.ceil((double) totalResults / quantityOfPage);
+            totalResults = empDAO.countSearchAndFilterEmployee(searchkey, gender, positionTitle, positionTitle);
         } else if (gender != null || (positionTitle != null) || (ageRange != null)) {
-            totalResults = empDAO.countFilterEmployee(gender, positionTitle, ageRange);
-            totalPages = (int) Math.ceil((double) totalResults / quantityOfPage);
+            totalResults = empDAO.countSearchAndFilterEmployee(searchkey, gender, positionTitle, positionTitle);
         } else if (sortBy != null) {
             totalResults = empDAO.countAllRecordOfEmployee();
-            totalPages = (int) Math.ceil((double) totalResults / quantityOfPage);
         } else {
             totalResults = empDAO.countAllRecordOfEmployee();
-            totalPages = (int) Math.ceil((double) totalResults / quantityOfPage);
         }
+        totalPages = (int) Math.ceil((double) totalResults / quantityOfPage);
+        List<Employee> empList = empDAO.manageEmployeeForHR(searchkey, currentPage, quantityOfPage, gender, positionTitle, ageRange, sortBy, order);
 
         if ("edit".equalsIgnoreCase(type) && empCode != null) {
             Employee editEmp = empDAO.getEmployeeByEmpCode(empCode);
@@ -122,6 +123,7 @@ public class EmployeeListServlet extends HttpServlet {
         request.setAttribute("page", currentPage);
 
         ses.setAttribute("oldPosCount", newPosCount);
+        ses.setAttribute("oldSearchKey", searchkey);
         ses.setAttribute("oldAgeRange", newAgeRange);
         ses.setAttribute("oldGender", newGender);
         ses.setAttribute("empList", empList);
@@ -185,7 +187,7 @@ public class EmployeeListServlet extends HttpServlet {
                 List<Employee> empList = empDAO.manageEmployeeForHR(searchkey, currentPage, quantityOfPage, gender, positionTitleArray, ageRange, sortBy, order);
                 int totalResults = empDAO.countAllRecordOfEmployee();
                 int totalPages = (int) Math.ceil((double) totalResults / quantityOfPage);
-                int totalSearchRecords = empDAO.countSearchRecordOfEmployee(searchkey);
+                int totalSearchRecords = empDAO.countSearchAndFilterEmployee(searchkey,null, null, null);
 
                 request.setAttribute("editEmp", emp);
                 ses.setAttribute("empList", empList);
@@ -212,7 +214,7 @@ public class EmployeeListServlet extends HttpServlet {
             }
             List<Employee> empList = empDAO.manageEmployeeForHR(searchkey, currentPage, quantityOfPage, gender, positionTitleArray, ageRange, sortBy, order);
             int totalResults = empDAO.countAllRecordOfEmployee();
-            int totalSearchRecords = empDAO.countSearchRecordOfEmployee(searchkey);
+            int totalSearchRecords = empDAO.countSearchAndFilterEmployee(searchkey,null, null, null);;
             int totalPages = (int) Math.ceil((double) totalResults / quantityOfPage);
 
             ses.setAttribute("empList", empList);
