@@ -106,13 +106,12 @@ public class RecoveryPasswordServlet extends HttpServlet {
         String email = (String) session.getAttribute("resetEmail");
         session.removeAttribute("resetEmail");
         session.removeAttribute("resetToken");
-
         EmployeeDAO lDao = new EmployeeDAO();
         Employee emp = lDao.getEmployeeByEmail(email);
         if (emp != null) {
             lDao.updatePassword(emp.getEmpCode(), newPassword);
             request.setAttribute("successMessage", "Password reset successfully! Please login again.");
-            request.getRequestDispatcher("Views/recoverypassword.jsp").forward(request, response);
+            request.getRequestDispatcher("Views/login.jsp").forward(request, response);
         } else {
             request.setAttribute("errorMessage", "Account not found. Please try again.");
             request.getRequestDispatcher("Views/recoverypassword.jsp").forward(request, response);
