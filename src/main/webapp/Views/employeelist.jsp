@@ -103,6 +103,12 @@
                                 </c:if>      
                                 <label class="form-label"><strong>Gender:</strong></label>
                                 <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="gender" value="All" 
+                                           ${gender == null || gender == 'All' ? 'checked' : ''} id="genderAll" 
+                                           onclick="this.form.submit()">
+                                    <label class="form-check-label" for="genderAll">All</label>
+                                </div>
+                                <div class="form-check">
                                     <input class="form-check-input" type="radio" name="gender" value="true" 
                                            ${gender == 'true' ? 'checked' : ''} id="Male" onclick="this.form.submit()">
                                     <label class="form-check-label" for="Male">Male</label>
@@ -116,6 +122,13 @@
 
                             <div class="mb-3">
                                 <label class="form-label"><strong>Age:</strong></label>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="ageRange" value="All" 
+                                           ${ageRange == null || ageRange == 'All' ? 'checked' : ''}
+                                           onclick="this.form.submit()">
+                                    <label class="form-check-label">All</label>
+                                </div>
+
                                 <div class="form-check">
                                     <input class="form-check-input" type="radio" name="ageRange" value="under25"
                                            ${ageRange == 'under25' ? 'checked' : ''} onclick="this.form.submit()">
