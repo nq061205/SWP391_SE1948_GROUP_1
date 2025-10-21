@@ -5,6 +5,7 @@
 package controller.hr;
 
 import dal.DailyAttendanceDAO;
+import dal.DeptDAO;
 import dal.EmployeeDAO;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -16,12 +17,14 @@ import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.YearMonth;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 import model.DailyAttendance;
-import model.Employee;
+import model.*;
 
 /**
  *
@@ -67,42 +70,47 @@ public class DailyAttendanceServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        String monthParam = request.getParameter("month");
-        String yearParam = request.getParameter("year");
-        String department = request.getParameter("department");
-        String search = request.getParameter("search");
-        String pageParam = request.getParameter("page");
-        String pageSizeParam = request.getParameter("pageSize");
-
-        LocalDate now = LocalDate.now();
-        int selectedMonth = (monthParam != null && !monthParam.isEmpty()) ? Integer.parseInt(monthParam) : now.getMonthValue();
-        int selectedYear = (yearParam != null && !yearParam.isEmpty()) ? Integer.parseInt(yearParam) : now.getYear();
-        int startYear = 2020;
-        int endYear = now.getYear();
-
-        int page = 1;
-        int pageSize = 20;
+        DeptDAO deptDAO = null;
+        EmployeeDAO employeeDAO = null;
+        DailyAttendanceDAO dailyDAO = null;
         try {
-            if (pageParam != null && !pageParam.trim().isEmpty()) {
-                page = Integer.parseInt(pageParam);
-            }
-            if (pageSizeParam != null && !pageSizeParam.trim().isEmpty()) {
-                pageSize = Integer.parseInt(pageSizeParam);
-            }
-        } catch (NumberFormatException ex) {
-            page = 1;
-            pageSize = 20;
-        }
-        if (page < 1) {
-            page = 1;
-        }
-        if (pageSize < 1 || pageSize > 100) {
-            pageSize = 20;
-        }
+            String monthParam = request.getParameter("month");
+            String yearParam = request.getParameter("year");
+            String department = request.getParameter("department");
+            String search = request.getParameter("search");
+            String pageParam = request.getParameter("page");
+            String pageSizeParam = request.getParameter("pageSize");
 
-        try {
-            EmployeeDAO employeeDAO = new EmployeeDAO();
-            
+            deptDAO = new DeptDAO();
+            List<Department> departments = deptDAO.getAllDepartment();
+
+            LocalDate now = LocalDate.now();
+            int selectedMonth = (monthParam != null && !monthParam.isEmpty()) ? Integer.parseInt(monthParam) : now.getMonthValue();
+            int selectedYear = (yearParam != null && !yearParam.isEmpty()) ? Integer.parseInt(yearParam) : now.getYear();
+            int startYear = 2020;
+            int endYear = now.getYear();
+
+            int page = 1;
+            int pageSize = 20;
+            try {
+                if (pageParam != null && !pageParam.trim().isEmpty()) {
+                    page = Integer.parseInt(pageParam);
+                }
+                if (pageSizeParam != null && !pageSizeParam.trim().isEmpty()) {
+                    pageSize = Integer.parseInt(pageSizeParam);
+                }
+            } catch (NumberFormatException ex) {
+                page = 1;
+                pageSize = 20;
+            }
+            if (page < 1) {
+                page = 1;
+            }
+            if (pageSize < 1 || pageSize > 100) {
+                pageSize = 20;
+            }
+
+            employeeDAO = new EmployeeDAO();
             long totalRecords = employeeDAO.countEmployees(search, department);
             int totalPages = (totalRecords > 0) ? (int) Math.ceil((double) totalRecords / pageSize) : 1;
             if (page > totalPages && totalPages > 0) {
@@ -111,15 +119,29 @@ public class DailyAttendanceServlet extends HttpServlet {
             int offset = (page - 1) * pageSize;
 
             List<Employee> employees = employeeDAO.getEmployees(offset, pageSize, search, department);
-
             List<Integer> empIds = employees.stream().map(e -> e.getEmpId()).collect(Collectors.toList());
-            DailyAttendanceDAO dailyDAO = new DailyAttendanceDAO();
+
+            dailyDAO = new DailyAttendanceDAO();
             List<DailyAttendance> dailyList = dailyDAO.getAttendanceByEmpIds(empIds, selectedMonth, selectedYear);
 
             Map<Integer, List<DailyAttendance>> groupedAttendance = new LinkedHashMap<>();
             for (DailyAttendance d : dailyList) {
                 int empId = d.getEmployee().getEmpId();
                 groupedAttendance.computeIfAbsent(empId, k -> new ArrayList<>()).add(d);
+            }
+
+            // Tính tổng công và tổng OT cho từng nhân viên
+            Map<Integer, Double> totalWorkDaysMap = new HashMap<>();
+            Map<Integer, Double> totalOTHoursMap = new HashMap<>();
+            for (Map.Entry<Integer, List<DailyAttendance>> entry : groupedAttendance.entrySet()) {
+                double totalWork = 0;
+                double totalOT = 0;
+                for (DailyAttendance d : entry.getValue()) {
+                    totalWork += d.getWorkDay();
+                    totalOT += d.getOtHours();
+                }
+                totalWorkDaysMap.put(entry.getKey(), totalWork);
+                totalOTHoursMap.put(entry.getKey(), totalOT);
             }
 
             YearMonth yearMonth = YearMonth.of(selectedYear, selectedMonth);
@@ -133,10 +155,13 @@ public class DailyAttendanceServlet extends HttpServlet {
                 }
             }
 
+            request.setAttribute("departments", departments);
             request.setAttribute("employees", employees);
             request.setAttribute("groupedAttendance", groupedAttendance);
             request.setAttribute("daysInMonth", daysInMonth);
             request.setAttribute("weekendDays", weekendDays);
+            request.setAttribute("totalWorkDaysMap", totalWorkDaysMap);
+            request.setAttribute("totalOTHoursMap", totalOTHoursMap);
 
             request.setAttribute("currentPage", page);
             request.setAttribute("pageSize", pageSize);
@@ -156,6 +181,28 @@ public class DailyAttendanceServlet extends HttpServlet {
             ex.printStackTrace();
             request.setAttribute("error", "Error loading data: " + ex.getMessage());
             request.getRequestDispatcher("Views/HR/dailyAttendance.jsp").forward(request, response);
+        } finally {
+            if (deptDAO != null) {
+                try {
+                    deptDAO.close();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+            if (employeeDAO != null) {
+                try {
+                    employeeDAO.close();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+            if (dailyDAO != null) {
+                try {
+                    dailyDAO.close();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
         }
     }
 
