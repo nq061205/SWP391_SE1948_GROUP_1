@@ -50,7 +50,7 @@
         <servlet-class>controller.hr.DownloadRawTemplateServlet</servlet-class>
     </servlet>
     <servlet>
-        <servlet-name>AccountList</servlet-name>
+        <servlet-name>AccountListServlet</servlet-name>
         <servlet-class>controller.AccountListServlet</servlet-class>
     </servlet>
     <servlet>
@@ -187,7 +187,7 @@
         <url-pattern>/download-template</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
-        <servlet-name>AccountList</servlet-name>
+        <servlet-name>AccountListServlet</servlet-name>
         <url-pattern>/accountlist</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
