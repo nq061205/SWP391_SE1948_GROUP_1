@@ -54,7 +54,6 @@ public class HRRecruitmentServlet extends HttpServlet {
     private void showApprovedPostsList(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         try {
-            // Check for messages from session
             String successMessage = (String) request.getSession().getAttribute("successMessage");
             String errorMessage = (String) request.getSession().getAttribute("errorMessage");
             
@@ -68,25 +67,130 @@ public class HRRecruitmentServlet extends HttpServlet {
                 request.getSession().removeAttribute("errorMessage");
             }
             
-            List<RecruitmentPost> approvedPosts = recruitmentPostDAO.getApprovedPosts();
-            List<RecruitmentPost> pendingAndRejectedPosts = recruitmentPostDAO.getPendingAndRejectedPosts();
-            List<Department> departments = recruitmentPostDAO.getDepartments();
-            System.out.println("Servlet - departments size: " + departments.size());
+            String pageStr = request.getParameter("page");
+            String pageSizeStr = request.getParameter("pageSize");
+            String searchKeyword = request.getParameter("search");
             
-            int totalPosts = (approvedPosts != null) ? approvedPosts.size() : 0;
+            String notifPageStr = request.getParameter("notifPage");
+            String notifPageSizeStr = request.getParameter("notifPageSize");
+            String notifSearchKeyword = request.getParameter("notifSearch");
+            
+            int currentPage = 1;
+            int pageSize = 10;
+            int notifCurrentPage = 1;
+            int notifPageSize = 5;
+            
+            if (pageStr != null && !pageStr.trim().isEmpty()) {
+                try {
+                    currentPage = Integer.parseInt(pageStr);
+                    if (currentPage < 1) currentPage = 1;
+                } catch (NumberFormatException e) {
+                    currentPage = 1;
+                }
+            }
+            
+            if (pageSizeStr != null && !pageSizeStr.trim().isEmpty()) {
+                try {
+                    pageSize = Integer.parseInt(pageSizeStr);
+                    if (pageSize < 5) pageSize = 5;
+                    if (pageSize > 100) pageSize = 100;
+                } catch (NumberFormatException e) {
+                    pageSize = 10;
+                }
+            }
+            
+            if (notifPageStr != null && !notifPageStr.trim().isEmpty()) {
+                try {
+                    notifCurrentPage = Integer.parseInt(notifPageStr);
+                    if (notifCurrentPage < 1) notifCurrentPage = 1;
+                } catch (NumberFormatException e) {
+                    notifCurrentPage = 1;
+                }
+            }
+            
+            if (notifPageSizeStr != null && !notifPageSizeStr.trim().isEmpty()) {
+                try {
+                    notifPageSize = Integer.parseInt(notifPageSizeStr);
+                    if (notifPageSize < 5) notifPageSize = 5;
+                    if (notifPageSize > 50) notifPageSize = 50;
+                } catch (NumberFormatException e) {
+                    notifPageSize = 5;
+                }
+            }
+            
+            List<RecruitmentPost> allApprovedPosts = recruitmentPostDAO.getApprovedPosts();
+            List<RecruitmentPost> allPendingAndRejectedPosts = recruitmentPostDAO.getPendingAndRejectedPosts();
+            List<Department> departments = recruitmentPostDAO.getDepartments();
+            
+            List<RecruitmentPost> filteredApprovedPosts = allApprovedPosts;
+            if (searchKeyword != null && !searchKeyword.trim().isEmpty()) {
+                filteredApprovedPosts = new java.util.ArrayList<>();
+                String keyword = searchKeyword.trim().toLowerCase();
+                for (RecruitmentPost post : allApprovedPosts) {
+                    if (post.getTitle().toLowerCase().contains(keyword) ||
+                        (post.getDepartment() != null && post.getDepartment().getDepName().toLowerCase().contains(keyword))) {
+                        filteredApprovedPosts.add(post);
+                    }
+                }
+            }
+            
+            List<RecruitmentPost> filteredPendingAndRejected = allPendingAndRejectedPosts;
+            if (notifSearchKeyword != null && !notifSearchKeyword.trim().isEmpty()) {
+                filteredPendingAndRejected = new java.util.ArrayList<>();
+                String keyword = notifSearchKeyword.trim().toLowerCase();
+                for (RecruitmentPost post : allPendingAndRejectedPosts) {
+                    if (post.getTitle().toLowerCase().contains(keyword) ||
+                        (post.getDepartment() != null && post.getDepartment().getDepName().toLowerCase().contains(keyword))) {
+                        filteredPendingAndRejected.add(post);
+                    }
+                }
+            }
+            
+            int totalPosts = (filteredApprovedPosts != null) ? filteredApprovedPosts.size() : 0;
+            int totalPages = (int) Math.ceil((double) totalPosts / pageSize);
+            if (totalPages < 1) totalPages = 1;
+            if (currentPage > totalPages) currentPage = totalPages;
+            
+            int startIndex = (currentPage - 1) * pageSize;
+            int endIndex = Math.min(startIndex + pageSize, totalPosts);
+            List<RecruitmentPost> approvedPosts = new java.util.ArrayList<>();
+            if (filteredApprovedPosts != null && !filteredApprovedPosts.isEmpty()) {
+                approvedPosts = filteredApprovedPosts.subList(startIndex, endIndex);
+            }
+            
+            int totalNotifPosts = (filteredPendingAndRejected != null) ? filteredPendingAndRejected.size() : 0;
+            int totalNotifPages = (int) Math.ceil((double) totalNotifPosts / notifPageSize);
+            if (totalNotifPages < 1) totalNotifPages = 1;
+            if (notifCurrentPage > totalNotifPages) notifCurrentPage = totalNotifPages;
+            
+            int notifStartIndex = (notifCurrentPage - 1) * notifPageSize;
+            int notifEndIndex = Math.min(notifStartIndex + notifPageSize, totalNotifPosts);
+            
+            List<RecruitmentPost> pendingAndRejectedPosts = new java.util.ArrayList<>();
+            if (filteredPendingAndRejected != null && !filteredPendingAndRejected.isEmpty()) {
+                pendingAndRejectedPosts = filteredPendingAndRejected.subList(notifStartIndex, notifEndIndex);
+            }
             
             boolean hasApprovedPosts = (approvedPosts != null && !approvedPosts.isEmpty());
-            boolean hasPendingOrRejected = (pendingAndRejectedPosts != null && !pendingAndRejectedPosts.isEmpty());
+            boolean hasPendingOrRejected = (totalNotifPosts > 0);
             boolean hasDepartments = (departments != null && !departments.isEmpty());
             
             request.setAttribute("approvedPosts", approvedPosts);
             request.setAttribute("pendingAndRejectedPosts", pendingAndRejectedPosts);
             request.setAttribute("departments", departments);
             request.setAttribute("totalPosts", totalPosts);
+            request.setAttribute("currentPage", currentPage);
+            request.setAttribute("totalPages", totalPages);
+            request.setAttribute("pageSize", pageSize);
+            request.setAttribute("searchKeyword", searchKeyword != null ? searchKeyword : "");
+            request.setAttribute("totalNotifPosts", totalNotifPosts);
+            request.setAttribute("notifCurrentPage", notifCurrentPage);
+            request.setAttribute("notifTotalPages", totalNotifPages);
+            request.setAttribute("notifPageSize", notifPageSize);
+            request.setAttribute("notifSearchKeyword", notifSearchKeyword != null ? notifSearchKeyword : "");
             request.setAttribute("hasApprovedPosts", hasApprovedPosts);
             request.setAttribute("hasPendingOrRejected", hasPendingOrRejected);
             request.setAttribute("hasDepartments", hasDepartments);
-            request.setAttribute("currentPage", "Recruitment Management");
             request.setAttribute("pageTitle", "Approved Posts List");
             
             request.getRequestDispatcher("/Views/HR/recruitmentManagement.jsp").forward(request, response);
@@ -168,8 +272,8 @@ public class HRRecruitmentServlet extends HttpServlet {
                 validationErrors.append("Job description is required. ");
             }
             
-            if (depId == null || depId.trim().isEmpty()) {
-                validationErrors.append("Department is required. ");
+            if (depId == null || depId.trim().isEmpty() || depId.equals("")) {
+                validationErrors.append("Please select a department. ");
             }
             
             if (validationErrors.length() > 0) {
@@ -271,8 +375,8 @@ public class HRRecruitmentServlet extends HttpServlet {
                 validationErrors.append("Job description is required. ");
             }
             
-            if (depId == null || depId.trim().isEmpty()) {
-                validationErrors.append("Department is required. ");
+            if (depId == null || depId.trim().isEmpty() || depId.equals("")) {
+                validationErrors.append("Please select a department. ");
             }
             
             if (validationErrors.length() > 0) {
