@@ -164,7 +164,7 @@
                                                 <label class="col-sm-3 col-form-label" <c:if test="${click != 'save'}">hidden</c:if> >Image</label>
                                                     <div class="col-sm-9">
                                                     <c:if test="${click == 'save'}">
-                                                        <input type="file" class="form-control" name="image" accept="image/*" title="Upload your avatar" required/>
+                                                        <input type="file" class="form-control" name="image" accept="image/*" title="Upload your avatar" value="${sessionScope.user.image}" required/>
                                                         <c:if test="${not empty avatarErr}">
                                                             <div class="text-danger small mt-1">${avatarErr}</div>
                                                         </c:if>
