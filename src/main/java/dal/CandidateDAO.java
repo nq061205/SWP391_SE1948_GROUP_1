@@ -227,11 +227,11 @@
         }
 
         public boolean insertCandidate(Candidate c) {
-            String checkSql = "SELECT candidate_id FROM candidate WHERE email = ?";
+            String checkSql = "SELECT candidate_id FROM candidate WHERE email = ? and result is null";
             String insertSql = "INSERT INTO candidate (name, email, phone, cv, post_id, applied_at, result) "
                     + "VALUES (?, ?, ?, ?, ?, CURRENT_TIMESTAMP, NULL)";
             String updateSql = "UPDATE candidate SET name=?, phone=?, cv=?, post_id=?, applied_at=CURRENT_TIMESTAMP "
-                    + "WHERE email=? and result = null";
+                    + "WHERE email=? and result is null";
             try (Connection conn = DBContext.getConnection()) {
                 try (PreparedStatement checkPs = conn.prepareStatement(checkSql)) {
                     checkPs.setString(1, c.getEmail());
