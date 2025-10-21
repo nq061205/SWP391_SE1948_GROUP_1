@@ -37,8 +37,7 @@ public class EmailUtil {
         try {
             String resetLink = "http://localhost:8080/HRMSystem/recovery?token=" + token;
             String subject = "Password Reset Request";
-            String content = "<p>Click <a href='" + resetLink + "'>here</a> to reset your password.</p>"
-                    + "<p><b>Note:</b> This link will expire in 5 minutes.</p>";
+            String content = "<p>Click <a href='" + resetLink + "'>here</a> to reset your password.</p>";
             sendEmail(toEmail, subject, content);
         } catch (MessagingException ex) {
             Logger.getLogger(EmailUtil.class.getName()).log(Level.SEVERE, null, ex);

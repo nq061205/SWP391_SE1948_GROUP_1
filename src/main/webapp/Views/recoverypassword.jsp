@@ -92,13 +92,6 @@
                                 ${errorMessage}
                             </div>
                         </c:if>
-
-                        <c:if test="${not empty successMessage}">
-                            <div class="alert alert-success text-center" role="alert" 
-                                 style="color: #fff; background-color: #2ecc71; padding: 10px; border-radius: 8px; margin-bottom: 15px;">
-                                ${successMessage}
-                            </div>
-                        </c:if>
                     </div>
                 </div>
             </div>
