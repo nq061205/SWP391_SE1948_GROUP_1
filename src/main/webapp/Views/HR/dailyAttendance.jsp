@@ -315,7 +315,7 @@
                                                 <select name="department" id="departmentFilter" class="form-control" onchange="this.form.submit()">
                                                     <option value="">All Departments</option>
                                                     <c:forEach var="dept" items="${departments}">
-                                                        <option value="${dept}" ${selectedDepartment == dept ? 'selected' : ''}>${dept}</option>
+                                                        <option value="${dept.depId}" ${selectedDepartment == dept.depId ? 'selected' : ''}>${dept.depName}</option>
                                                     </c:forEach>
                                                 </select>
                                             </div>
@@ -327,8 +327,8 @@
                                                 <label for="searchInput">Search</label>
                                                 <div class="input-group">
                                                     <input type="text" name="search" id="searchInput" 
-                                                           value="${param.search}" class="form-control" 
-                                                           placeholder="Employee Code or Name">
+                                                           value="${search}" class="form-control" 
+                                                           placeholder="Search by Employee Code or Name...">
                                                     <div class="input-group-append">
                                                         <button type="submit" class="btn btn-outline-secondary">
                                                             <i class="fas fa-search"></i>
@@ -345,8 +345,8 @@
                                             <div class="form-group">
                                                 <label for="pageSize">Records per page</label>
                                                 <select name="pageSize" id="pageSize" class="form-control" onchange="this.form.submit()">
-                                                    <option value="10" ${pageSize == 20 || empty pageSize ? 'selected' : ''}>20</option>
-                                                    <option value="25" ${pageSize == 30 ? 'selected' : ''}>30</option>
+                                                    <option value="20" ${pageSize == 20 || empty pageSize ? 'selected' : ''}>20</option>
+                                                    <option value="30" ${pageSize == 30 ? 'selected' : ''}>30</option>
                                                     <option value="50" ${pageSize == 50 ? 'selected' : ''}>50</option>
                                                 </select>
                                             </div>
@@ -360,7 +360,6 @@
                                             </div>
                                         </div>
                                     </div>
-
                                     <input type="hidden" name="page" value="${currentPage}">
                                 </form>
 
@@ -375,7 +374,7 @@
                                     </div>
                                     <div class="col-md-6 text-right">
                                         <small class="text-muted">
-                                            <strong>${monthName} ${selectedYear}</strong>
+                                            <strong>${selectedMonth} ${selectedYear}</strong>
                                             <c:if test="${not empty selectedDepartment}"> | ${selectedDepartment}</c:if>
                                             </small>
                                         </div>
@@ -391,7 +390,7 @@
                                                         <th rowspan="2" class="employee-col">Code</th>
                                                         <th rowspan="2" class="name-col">Employee</th>
                                                         <th rowspan="2" class="dept-col">Department</th>
-                                                        <th colspan="${daysInMonth}" class="text-center">${monthName} ${selectedYear}</th>
+                                                        <th colspan="${daysInMonth}" class="text-center">${selectedMonth} ${selectedYear}</th>
                                                         <th rowspan="2" class="summary-col">Days</th>
                                                         <th rowspan="2" class="summary-col">OT</th>
                                                     </tr>
@@ -418,8 +417,8 @@
                                                             <!-- Department -->
                                                             <td class="dept-col bg-light">
                                                                 <small class="text-muted">
-                                                                    <c:if test="${not empty employee.department}">
-                                                                        ${employee.department.depName}
+                                                                    <c:if test="${not empty employee.dept}">
+                                                                        ${employee.dept.depName}
                                                                     </c:if>
                                                                 </small>
                                                             </td>
@@ -453,20 +452,12 @@
                                                             <!-- Summary -->
                                                             <td class="summary-col text-center">
                                                                 <strong class="text-primary">
-                                                                    <c:set var="totalWorkDays" value="0" />
-                                                                    <c:forEach var="att" items="${attendanceList}">
-                                                                        <c:set var="totalWorkDays" value="${totalWorkDays + att.workDay}" />
-                                                                    </c:forEach>
-                                                                    <fmt:formatNumber value="${totalWorkDays}" maxFractionDigits="1"/>
+                                                                    <fmt:formatNumber value="${totalWorkDaysMap[employee.empId]}" maxFractionDigits="1"/>
                                                                 </strong>
                                                             </td>
                                                             <td class="summary-col text-center">
                                                                 <strong class="text-warning">
-                                                                    <c:set var="totalOTHours" value="0" />
-                                                                    <c:forEach var="att" items="${attendanceList}">
-                                                                        <c:set var="totalOTHours" value="${totalOTHours + att.otHours}" />
-                                                                    </c:forEach>
-                                                                    <fmt:formatNumber value="${totalOTHours}" maxFractionDigits="1"/>h
+                                                                    <fmt:formatNumber value="${totalOTHoursMap[employee.empId]}" maxFractionDigits="1"/>h
                                                                 </strong>
                                                             </td>
                                                         </tr>
@@ -626,7 +617,4 @@
                                                         }, 5000);
                                                     });
     </script>
-
-
-
 </html>
