@@ -57,8 +57,14 @@ public class EmployeeListServlet extends HttpServlet {
                 empDAO.createEmployee(username, password, fullname, email, true, phone);
             }
         }
+        if ("All".equalsIgnoreCase(ageRange)) {
+            ageRange=null;
+        }
         Boolean gender = null;
-        if (genderStr != null && !genderStr.trim().isEmpty()) {
+        if ("All".equalsIgnoreCase(genderStr)) {
+            gender=null;
+        }
+        else if (genderStr != null && !genderStr.trim().isEmpty()) {
             gender = Boolean.parseBoolean(genderStr);
         }
         String[] positionTitle = request.getParameterValues("positionTitle");
