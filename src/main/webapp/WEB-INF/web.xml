@@ -34,10 +34,6 @@
         <servlet-class>controller.DeleteApplicationServlet</servlet-class>
     </servlet>
     <servlet>
-        <servlet-name>UploadExcelServlet</servlet-name>
-        <servlet-class>controller.hr.UploadExcelServlet</servlet-class>
-    </servlet>
-    <servlet>
         <servlet-name>HRRecruitmentServlet</servlet-name>
         <servlet-class>controller.hr.HRRecruitmentServlet</servlet-class>
     </servlet>
@@ -110,10 +106,6 @@
         <servlet-name>ForgetPassword</servlet-name>
         <url-pattern>/forgetpassword</url-pattern>
     </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>UploadExcelServlet</servlet-name>
-        <url-pattern>/upload-excel</url-pattern>
-    </servlet-mapping>
     <servlet>
         <servlet-name>RecoveryPassword</servlet-name>
         <servlet-class>controller.RecoveryPassword</servlet-class>
@@ -153,10 +145,6 @@
     <servlet-mapping>
         <servlet-name>DeleteApplicationServlet</servlet-name>
         <url-pattern>/deleteapplication</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>UploadExcelServlet</servlet-name>
-        <url-pattern>/uploadExcel</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>HRRecruitmentServlet</servlet-name>

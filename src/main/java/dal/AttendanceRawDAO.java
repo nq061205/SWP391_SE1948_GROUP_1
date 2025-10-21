@@ -97,16 +97,11 @@ public class AttendanceRawDAO extends DBContext {
             for (Object param : params) {
                 st.setObject(paramIndex++, param);
             }
-
-            System.out.println("Count SQL: " + sql.toString()); // DEBUG
-            System.out.println("Count Parameters: " + params); // DEBUG
-
             try (ResultSet rs = st.executeQuery()) {
                 if (rs.next()) {
                     count = rs.getLong(1);
                 }
             }
-            System.out.println("Total count: " + count); // DEBUG
         } catch (Exception e) {
             e.printStackTrace();
         }
