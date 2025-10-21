@@ -147,11 +147,13 @@
                                                 <i class="fa fa-pencil"></i>
                                             </a>
                                         </c:if>
+                                        <c:if test="${application.status eq 'Pending'}">
                                         <form action="${pageContext.request.contextPath}/deleteapplication?type=LEAVE&id=${application.leaveId}" method="post" style="display:inline;">
                                             <button type="submit" class="icon-circle" data-toggle="tooltip" title="Delete" onclick="return confirm('Do you confirm delete this application');">
                                                 <i class="fa fa-trash-o"></i>
                                             </button>
                                         </form>
+                                            </c:if>
                                         <a href="${pageContext.request.contextPath}/detail?leaveId=${application.leaveId}" class="icon-circle" data-toggle="tooltip" title="More detail">
                                             <i class="fa fa-info"></i>
                                         </a>

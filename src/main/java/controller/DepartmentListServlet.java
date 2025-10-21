@@ -105,10 +105,9 @@ public class DepartmentListServlet extends HttpServlet {
                 dept.setDescription(description);
                 depDAO.updateDepartment(dept);
             }
-        }
-        else if ("add".equalsIgnoreCase(action)) {
+        } else if ("add".equalsIgnoreCase(action)) {
             Department dept = new Department();
-            dept.setDepId(addDepId);
+            dept.setDepId(addDepId.toUpperCase());
             dept.setDepName(addDepName);
             dept.setDescription(addDescription);
             depDAO.createDepartment(dept);

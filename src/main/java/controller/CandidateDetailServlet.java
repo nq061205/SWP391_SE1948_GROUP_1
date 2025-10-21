@@ -1,4 +1,4 @@
-/*
+    /*
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Servlet.java to edit this template
  */
@@ -64,14 +64,14 @@ public class CandidateDetailServlet extends HttpServlet {
             throws ServletException, IOException {
         try {
             String id = request.getParameter("id");
-            if (id == null) {
+            int candidateId = Integer.parseInt(id);
+            CandidateDAO cDao = new CandidateDAO();
+            if (id == null || cDao.getCandidateById(candidateId) == null) {
                 response.sendRedirect("candidatelist");
                 return;
             }
             HttpSession session = request.getSession();
-            int candidateId = Integer.parseInt(id);
-            CandidateDAO eDao = new CandidateDAO();
-            request.setAttribute("candidate", eDao.getCandidateById(candidateId));
+            request.setAttribute("candidate", cDao.getCandidateById(candidateId));
             request.getRequestDispatcher("Views/candidatedetail.jsp").forward(request, response);
         } catch (NumberFormatException e) {
             response.sendRedirect("candidatelist");

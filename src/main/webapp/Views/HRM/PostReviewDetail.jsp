@@ -28,7 +28,7 @@
 
     <body class="ttr-opened-sidebar ttr-pinned-sidebar">
         <jsp:include page="../CommonItems/Header/dashboardHeader.jsp" />
-        <jsp:include page="../CommonItems/Navbar/adminNavbar.jsp" />
+        <jsp:include page="../CommonItems/Navbar/empNavbar.jsp" />
 
         <main class="ttr-wrapper">
             <div class="container-fluid">
@@ -40,7 +40,7 @@
                         <li>Detail</li>
                     </ul>
                 </div>
-                
+
                 <c:if test="${not empty errorMessage}">
                     <div class="alert alert-danger alert-dismissible fade show" role="alert">
                         <strong><i class="fa fa-exclamation-triangle"></i> Error!</strong> ${errorMessage}
@@ -49,7 +49,7 @@
                         </button>
                     </div>
                 </c:if>
-                
+
                 <div class="row">
                     <div class="col-lg-12 m-b30">
                         <div class="mb-3">
@@ -57,7 +57,7 @@
                                 <i class="fa fa-arrow-left"></i> Back to Review List
                             </a>
                         </div>
-                        
+
                         <c:choose>
                             <c:when test="${hasPost}">
                                 <div class="widget-box">
@@ -102,7 +102,7 @@
                                                 </c:if>
                                             </div>
                                         </div>
-                                        
+
                                         <div class="row mb-4">
                                             <div class="col-lg-6">
                                                 <div class="card">
@@ -174,7 +174,7 @@
                                                     </div>
                                                 </div>
                                             </div>
-                                            
+
                                             <div class="col-lg-6">
                                                 <div class="card">
                                                     <div class="card-header bg-light">
@@ -229,7 +229,7 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        
+
                                         <div class="row">
                                             <div class="col-lg-12">
                                                 <div class="card">
@@ -256,13 +256,10 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        
+
                                         <div class="row mt-4">
                                             <div class="col-lg-12">
                                                 <div class="text-center">
-                                                    <a href="${pageContext.request.contextPath}/postreview" class="btn btn-secondary btn-lg">
-                                                        <i class="fa fa-arrow-left"></i> Back to Review List
-                                                    </a>
                                                     <c:if test="${isPending}">
                                                         <form action="${pageContext.request.contextPath}/postreview" method="post" style="display:inline;" 
                                                               onsubmit="return confirm('Are you sure you want to approve this post: ${post.title}?');">
@@ -303,8 +300,8 @@
                             </c:otherwise>
                         </c:choose>
                     </div>
-                
-            </div>
+
+                </div>
         </main>
 
         <script src="${pageContext.request.contextPath}/assets2/js/jquery.min.js"></script>
@@ -332,40 +329,40 @@
                 background-color: #f8f9fa;
                 border-radius: 5px;
             }
-            
+
             .content-display p {
                 margin-bottom: 15px;
             }
-            
-            .content-display h1, .content-display h2, .content-display h3, 
+
+            .content-display h1, .content-display h2, .content-display h3,
             .content-display h4, .content-display h5, .content-display h6 {
                 color: #333;
                 margin-bottom: 10px;
                 margin-top: 20px;
             }
-            
+
             .content-display ul, .content-display ol {
                 margin-bottom: 15px;
                 padding-left: 25px;
             }
-            
+
             .content-display li {
                 margin-bottom: 8px;
             }
-            
+
             .card-header {
                 border-bottom: 2px solid #dee2e6;
             }
-            
+
             .card-body hr {
                 margin: 0.75rem 0;
                 border-color: #e9ecef;
             }
-            
+
             .alert {
                 border-width: 2px;
             }
-            
+
             .btn-lg {
                 padding: 0.75rem 1.5rem;
                 font-size: 1rem;

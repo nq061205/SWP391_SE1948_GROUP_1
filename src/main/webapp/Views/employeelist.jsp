@@ -58,7 +58,7 @@
 
         <!-- HEADER + NAVBAR -->
         <%@ include file="CommonItems/Header/dashboardHeader.jsp" %>
-        <%@ include file="CommonItems/Navbar/hrNavbar.jsp" %>
+        <%@ include file="CommonItems/Navbar/empNavbar.jsp" %>
         <input type="hidden" name="typeApplication" value="leaverequest" />
         <main class="ttr-wrapper">
             <div class="container-fluid">
@@ -66,6 +66,7 @@
                     <h4 class="breadcrumb-title">Employee Listing</h4>
                     <ul class="db-breadcrumb-list">
                         <li><a href="${pageContext.request.contextPath}/Views/HR/hrDashboard.jsp"><i class="fa fa-home"></i> Home</a></li>
+                        <li><a href="${pageContext.request.contextPath}/employeelistservlet">Employee list</a></li>
                     </ul>
                 </div>
                 <c:url var="baseUrl" value="employeelistservlet">
@@ -84,6 +85,7 @@
                         <c:param name="searchkey" value="${searchkey}" />
                     </c:if>
                 </c:url>
+                <c:set var="urlPrefix" value="${baseUrl}${fn:contains(baseUrl, '?') ? '&' : '?'}" />
 
 
                 <div class="row">
@@ -175,55 +177,42 @@
                             </form>
 
                         </div>
-                        <div class="row">
-                            <div class="col-md-4">
-                                <c:if test="${not empty searchkey}">
-                                    <p>Found <strong>${totalSearchResults}</strong> employee with search key is <strong>${searchkey}</strong></p>  
-                                </c:if>
-                            </div>
-
-                            <div class="col-md-8" style="display: flex; align-items: center; gap: 15px;">
-                                <p style="margin: 1%;">Sort by:</p>
-                                <div style="display: flex; gap: 20px;">
-                                    <c:set var="urlPrefix" value="${baseUrl}${fn:contains(baseUrl, '?') ? '&' : '?'}" />
-                                    Code:
-                                    <div style="display: flex; flex-direction: column; line-height: 1.2;">
-                                        <a href="${urlPrefix}sortBy=emp_code&order=asc&page=${page}" class="sort-link">ASC</a>
-                                        <a href="${urlPrefix}sortBy=emp_code&order=desc&page=${page}" class="sort-link">DESC</a>
-                                    </div>
-                                    Name:
-                                    <div style="display: flex; flex-direction: column; line-height: 1.2;">
-                                        <a href="${urlPrefix}sortBy=fullname&order=asc&page=${page}" class="sort-link">ASC</a>
-                                        <a href="${urlPrefix}sortBy=fullname&order=desc&page=${page}" class="sort-link">DESC</a>
-                                    </div>
-                                    Age:
-                                    <div style="display: flex; flex-direction: column; line-height: 1.2;">
-                                        <a href="${urlPrefix}sortBy=dob&order=desc&page=${page}" class="sort-link">ASC</a>
-                                        <a href="${urlPrefix}sortBy=dob&order=asc&page=${page}" class="sort-link">DESC</a>
-                                    </div>
-                                    DependantCount:
-                                    <div style="display: flex; flex-direction: column; line-height: 1.2;">
-                                        <a href="${urlPrefix}sortBy=dependant_count&order=asc&page=${page}" class="sort-link">ASC</a>
-                                        <a href="${urlPrefix}sortBy=dependant_count&order=desc&page=${page}" class="sort-link">DESC</a>
-                                    </div>
-                                </div>
-
-                            </div>
-                        </div>
-                        <div class="table-responsive">
-                            <table class="table table-striped table-bordered table-hover align-middle text-center">
+                        <c:if test="${not empty searchkey}">
+                            <p>Found <strong>${totalSearchResults}</strong> employee with search key is <strong>${searchkey}</strong></p>  
+                        </c:if>
+                        <div class="table-responsive" style="overflow-x:auto;">
+                            <table class="table table-striped table-bordered table-hover align-middle text-center" 
+                                   style="table-layout: fixed; width: 100%; border-collapse: collapse;">
+                                <c:set var="nextOrder" value="${order == 'asc' ? 'desc' : 'asc'}" />
                                 <thead class="thead-dark" >
                                     <tr>
-                                        <th>ID</th>
-                                        <th>Employee Code</th>
-                                        <th>Full Name</th>
-                                        <th>Email</th>
-                                        <th>Gender</th>
-                                        <th>Dob</th>
+                                        <th style="width: 50px;">STT</th>
+                                        <th style="cursor:pointer;width: 120px">
+                                            <a href="${urlPrefix}sortBy=emp_code&order=${nextOrder}&page=${page}" class="sort">
+                                                Emp Code<i class="fa fa-sort"></i>
+                                            </a>
+                                        </th>
+                                        <th style="cursor:pointer;width: 120px">
+                                            <a href="${urlPrefix}sortBy=fullname&order=${nextOrder}&page=${page}" class="sort">         
+                                                Full Name<i class="fa fa-sort"></i>
+                                            </a>
+                                        </th>
+                                        <th style="width: 100px">Email</th>
+                                        <th style="width:80px">Gender</th>
+                                        <th style="cursor:pointer;">
+                                            <a href="${urlPrefix}sortBy=dob&order=${nextOrder}&page=${page}" class="sort">
+                                                Dob<i class="fa fa-sort"></i>
+                                            </a>
+                                        </th>
                                         <th>Image</th>
-                                        <th>Position_Title</th>
-                                        <th>DependantCount</th>
-                                        <th>Action</th>
+                                        <th style="width:105px">Position Title</th>
+                                        <th style="cursor:pointer;width: 100px">
+                                            <a href="${urlPrefix}sortBy=dependant_count&order=${nextOrder}&page=${page}" class="sort">
+                                                Dependant Count<i class="fa fa-sort"></i>
+                                            </a>
+                                        </th>
+                                        <th>Paid leaves day</th>
+                                        <th style="width:80px">Action</th>
                                     </tr>                                 
                                 </thead>
                                 <tbody>
@@ -234,19 +223,48 @@
                                                 <c:when test="${editEmp != null && editEmp.empCode eq el.empCode}">
                                             <form action="${pageContext.request.contextPath}/employeelistservlet" method="post">
                                                 <input type="hidden" name="page" value="${page}">
+                                                <c:if test="${not empty searchkey}">
+                                                    <input type="hidden" name="searchkey" value="${searchkey}">
+                                                    <input type="hidden" name="totalSearchResults" value="${totalSearchResults}">
+                                                </c:if>
+                                                <c:if test="${not empty gender}">
+                                                    <input type="hidden" name="gender" value="${gender}">
+                                                </c:if>
+                                                <c:if test="${not empty ageRange}">
+                                                    <input type="hidden" name="ageRange" value="${ageRange}">
+                                                </c:if>
+                                                <c:if test="${not empty positionTitle}">
+                                                    <c:forEach var="pt" items="${positionTitle}">
+                                                        <input type="hidden" name="positionTitle" value="${pt}">
+                                                    </c:forEach>
+                                                </c:if>
+                                                <c:if test="${not empty sortBy}">
+                                                    <input type="hidden" name="sortBy" value="${sortBy}">
+                                                    <input type="hidden" name="order" value="${order}">
+                                                </c:if>
                                                 <td>${loop.index+1}</td>
                                                 <td><input type="hidden" name="empCode" value="${el.empCode}" />${el.empCode}</td>
                                                 <td>${el.fullname}</td>
-                                                <td><input type="text" name="email" value="${el.email}" /></td>
+                                                <td style="overflow-wrap: break-word;"><input style="width:80px" type="email" name="email" value="${el.email}" />
+                                                </td>
                                                 <td>${el.gender}</td>
                                                 <td>
-                                                    <input type="date" name="dob" value="${el.dob}"/>
+                                                    <input style="width:55px" type="date" name="dob" value="${el.dob}"/>
+                                                    <span style="color:red;">${dobErr}</span>
                                                 </td>
-                                                <td>${el.image}</td>
                                                 <td>
-                                                    <input type="text" name="positionTitle" value="${el.positionTitle}"/>
+                                                    <img style="width:65px" src="${el.image}" alt="Employee Image" style="width:60px; height:60px; object-fit:cover; border-radius:6px;">
                                                 </td>
-                                                <td><input type="number" name="dependantCount" value="${el.dependantCount}"/></td>
+                                                <td style="overflow-wrap: break-word;">
+                                                    <select name="editPositionTitle">
+                                                        <c:forEach var="d" items="${sessionScope.positionList}">
+                                                            <option value="${d}">${d}</option>
+                                                        </c:forEach>
+                                                    </select>
+                                                </td>
+                                                <td><input style="width:65px"  type="number" name="dependantCount" value="${el.dependantCount}" min="0"/>
+                                                </td>
+                                                <td>${el.paidLeaveDays}</td>
                                                 <td>
                                                     <button type="submit" name="action" value="save" class="btn btn-success btn-sm">Save</button>
                                                     <a href="${pageContext.request.contextPath}/employeelistservlet" class="btn btn-secondary btn-sm">Cancel</a>
@@ -257,62 +275,89 @@
                                             <td>${loop.index+1}</td>
                                             <td>${el.empCode}</td>
                                             <td>${el.fullname}</td>
-                                            <td>${el.email}</td>
+                                            <td style="overflow-wrap: break-word;">${el.email}</td>
                                             <td>${el.gender ?'Male' :'Female'}</td>
                                             <td>${el.dob}</td>                                           
-                                            <td>${el.image}</td>
-                                            <td>${el.positionTitle}</td>
-                                            <td>${el.dependantCount}</td>
                                             <td>
-                                                <a href="${pageContext.request.contextPath}/employeelistservlet?type=edit&empCode=${el.empCode}&page=${page}" class="btn btn-sm btn-primary">Edit</a>
+                                                <img style="width:65px" src="${el.image}" alt="Employee Image" style="width:60px; height:60px; object-fit:cover; border-radius:6px;">
+                                            </td>
+                                            <td style="overflow-wrap: break-word;">${el.positionTitle}</td>
+                                            <td>${el.dependantCount}</td>
+                                            <td>${el.paidLeaveDays}</td>
+                                            <td>
+                                                <a href="${pageContext.request.contextPath}/${urlPrefix}type=edit&empCode=${el.empCode}&page=${page}" class="btn btn-sm btn-primary">Edit</a>
                                             </td>
 
                                         </c:otherwise>
                                     </c:choose>
                                     </tr>
                                 </c:forEach>
+                                <c:if test="${not empty message}">
+                                    <tr>
+                                        <td colspan="10" style="text-align:center; color:red; font-weight:bold;">
+                                            No results found!
+                                        </td>
+                                    </tr>
+                                </c:if>
                                 </tbody>
                             </table>
                         </div>
-                        <c:set var="maxPagesToShow" value="3" />
-                        <c:set var="halfPagesToShow" value="${(maxPagesToShow-1) / 2}" />
-
-                        <c:set var="startPage" value="${page - halfPagesToShow}" />
-                        <c:set var="endPage" value="${page + halfPagesToShow}" />
-
-                        <c:if test="${startPage < 1}"><c:set var="startPage" value="1" /></c:if>
-                        <c:if test="${endPage > totalPages}"><c:set var="endPage" value="${totalPages}" /></c:if>
-
-                            <div class="pagination">
-
-                            <c:if test="${page > 1}">
-                                <a href="${urlPrefix}page=${page - 1}<c:if test='${not empty sortBy}'>&sortBy=${sortBy}&order=${order}</c:if>">&laquo;Prev</a>
+                        <c:url var="baseUrlWithSort" value="employeelistservlet">
+                            <c:if test="${not empty ageRange}">
+                                <c:param name="ageRange" value="${ageRange}" />
                             </c:if>
-
-                            <c:if test="${startPage > 1}">
-                                <a href="${urlPrefix}page=1<c:if test='${not empty sortBy}'>&sortBy=${sortBy}&order=${order}</c:if>">1</a>
-                                    <span>...</span>
+                            <c:if test="${not empty gender}">
+                                <c:param name="gender" value="${gender}" />
                             </c:if>
-
-                            <c:forEach var="i" begin="${startPage}" end="${endPage}">
-                                <c:choose>
-                                    <c:when test="${i == page}">
-                                        <span class="current">${i}</span>
-                                    </c:when>
-                                    <c:otherwise>
-                                        <a href="${urlPrefix}page=${i}<c:if test='${not empty sortBy}'>&sortBy=${sortBy}&order=${order}</c:if>">${i}</a>
-                                    </c:otherwise>
-                                </c:choose>
-                            </c:forEach>
-
-                            <c:if test="${endPage < totalPages}">
-                                <span>...</span>
-                                <a href="${urlPrefix}page=${totalPages}<c:if test='${not empty sortBy}'>&sortBy=${sortBy}&order=${order}</c:if>">${totalPages}</a>
+                            <c:if test="${not empty positionTitle}">
+                                <c:forEach var="pt" items="${positionTitle}">
+                                    <c:param name="positionTitle" value="${pt}" />
+                                </c:forEach>
                             </c:if>
-                            <c:if test="${page < totalPages}">
-                                <a href="${urlPrefix}page=${page + 1}<c:if test='${not empty sortBy}'>&sortBy=${sortBy}&order=${order}</c:if>">Next &raquo;</a>
+                            <c:if test="${not empty searchkey}">
+                                <c:param name="searchkey" value="${searchkey}" />
                             </c:if>
-                        </div>
+                            <c:if test="${not empty sortBy}">
+                                <c:param name="sortBy" value="${sortBy}" />
+                            </c:if>
+                            <c:if test="${not empty order}">
+                                <c:param name="order" value="${order}" />
+                            </c:if>
+                        </c:url>
+                        <c:set var="urlPrefixWithSort" value="${baseUrlWithSort}${fn:contains(baseUrlWithSort, '?') ? '&' : '?'}" />
+                        <nav class="mt-3">
+                            <ul class="pagination justify-content-center">
+                                <c:set var="startPage" value="${page - 1}" />
+                                <c:set var="endPage" value="${page + 1}" />
+
+                                <c:if test="${startPage < 1}">
+                                    <c:set var="endPage" value="${endPage + (1 - startPage)}" />
+                                    <c:set var="startPage" value="1" />
+                                </c:if>
+
+                                <c:if test="${endPage > totalPages}">
+                                    <c:set var="startPage" value="${startPage - (endPage - totalPages)}" />
+                                    <c:set var="endPage" value="${totalPages}" />
+                                </c:if>
+
+                                <c:if test="${startPage < 1}">
+                                    <c:set var="startPage" value="1" />
+                                </c:if>
+                                <li class="page-item ${page <= 1 ? 'disabled' : ''}">
+                                    <a class="page-link" href="${urlPrefixWithSort}&page=${page-1}">Prev</a>
+                                </li>
+
+                                <c:forEach var="p" begin="${startPage}" end="${endPage}">
+                                    <li class="page-item ${p == page ? 'active' : ''}">
+                                        <a class="page-link" href="${urlPrefixWithSort}&page=${p}">${p}</a>
+                                    </li>
+                                </c:forEach>
+
+                                <li class="page-item ${page >= totalPages ? 'disabled' : ''}">
+                                    <a class="page-link" href="${urlPrefixWithSort}&page=${page+1}">Next</a>
+                                </li>
+                            </ul>
+                        </nav>
                     </div>
                 </div>
             </div>
@@ -402,21 +447,14 @@
             text-align: center;
             vertical-align: middle;
         }
-        .sort-link {
-            display: inline-block;
-            padding: 6px 12px;
-            margin: 2px;
-            background-color: #4CAF50; /* màu nền */
-            color: white; /* màu chữ */
-            text-decoration: none; /* bỏ gạch chân */
-            border-radius: 5px; /* bo tròn góc */
-            font-weight: bold;
-            transition: background-color 0.3s, transform 0.2s;
+        .sort {
+            text-decoration: none;
+            color:white;
         }
-
-        .sort-link:hover {
-            background-color: #45a049; /* màu khi hover */
-            transform: scale(1.05); /* phóng to nhẹ khi hover */
+        .sort:hover {
+            text-decoration: none; /* Không gạch chân khi hover */
+            color: white;          /* Không đổi màu chữ */
+            background: none;      /* Không đổi màu nền */
         }
         .pagination {
             display: flex;

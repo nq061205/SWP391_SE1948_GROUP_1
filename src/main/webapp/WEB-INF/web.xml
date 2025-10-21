@@ -11,7 +11,7 @@
     </servlet>
     <servlet>
         <servlet-name>ChangePassword</servlet-name>
-        <servlet-class>controller.ChangePassword</servlet-class>
+        <servlet-class>controller.ChangePasswordServlet</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>ApplicationServlet</servlet-name>
@@ -46,8 +46,8 @@
         <servlet-class>controller.hr.DownloadRawTemplateServlet</servlet-class>
     </servlet>
     <servlet>
-        <servlet-name>AccountList</servlet-name>
-        <servlet-class>controller.AccountList</servlet-class>
+        <servlet-name>AccountListServlet</servlet-name>
+        <servlet-class>controller.AccountListServlet</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>DepartmentListServlet</servlet-name>
@@ -67,11 +67,11 @@
     </servlet>
     <servlet>
         <servlet-name>ForgetPassword</servlet-name>
-        <servlet-class>controller.ForgetPassword</servlet-class>
+        <servlet-class>controller.ForgetPasswordServlet</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>RecoveryPassword</servlet-name>
-        <servlet-class>controller.RecoveryPassword</servlet-class>
+        <servlet-class>controller.RecoveryPasswordServlet</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>ProfileServlet</servlet-name>
@@ -94,6 +94,18 @@
         <servlet-name>EmployeeListServlet</servlet-name>
         <servlet-class>controller.EmployeeListServlet</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>ApplyJobServlet</servlet-name>
+        <servlet-class>controller.ApplyJobServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>JobSiteServlet</servlet-name>
+        <servlet-class>controller.JobSiteServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>DashboardServlet</servlet-name>
+        <servlet-class>controller.DashboardServlet</servlet-class>
+    </servlet>
     <servlet-mapping>
         <servlet-name>HomePageServlet</servlet-name>
         <url-pattern>/homepage</url-pattern>
@@ -108,7 +120,7 @@
     </servlet-mapping>
     <servlet>
         <servlet-name>RecoveryPassword</servlet-name>
-        <servlet-class>controller.RecoveryPassword</servlet-class>
+        <servlet-class>controller.RecoveryPasswordServlet</servlet-class>
     </servlet>
     <servlet-mapping>
         <servlet-name>RecoveryPassword</servlet-name>
@@ -163,7 +175,7 @@
         <url-pattern>/download-template</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
-        <servlet-name>AccountList</servlet-name>
+        <servlet-name>AccountListServlet</servlet-name>
         <url-pattern>/accountlist</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
@@ -194,6 +206,18 @@
     <servlet-mapping>
         <servlet-name>EmployeeListServlet</servlet-name>
         <url-pattern>/employeelistservlet</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>ApplyJobServlet</servlet-name>
+        <url-pattern>/applyjob</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>DashboardServlet</servlet-name>
+        <url-pattern>/dashboard</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>JobSiteServlet</servlet-name>
+        <url-pattern>/jobsite</url-pattern>
     </servlet-mapping>
     <session-config>
         <session-timeout>30</session-timeout>

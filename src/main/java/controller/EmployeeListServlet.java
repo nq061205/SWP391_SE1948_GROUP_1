@@ -30,41 +30,6 @@ import model.Employee;
  */
 public class EmployeeListServlet extends HttpServlet {
 
-    /**
-     * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
-     * methods.
-     *
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
-     */
-    protected void processRequest(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-        response.setContentType("text/html;charset=UTF-8");
-        try (PrintWriter out = response.getWriter()) {
-            /* TODO output your page here. You may use following sample code. */
-            out.println("<!DOCTYPE html>");
-            out.println("<html>");
-            out.println("<head>");
-            out.println("<title>Servlet EmployeeListServlet</title>");
-            out.println("</head>");
-            out.println("<body>");
-            out.println("<h1>Servlet EmployeeListServlet at " + request.getContextPath() + "</h1>");
-            out.println("</body>");
-            out.println("</html>");
-        }
-    }
-
-    // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
-    /**
-     * Handles the HTTP <code>GET</code> method.
-     *
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
-     */
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -75,19 +40,22 @@ public class EmployeeListServlet extends HttpServlet {
         String order = request.getParameter("order");
         String type = request.getParameter("type");
         String empCode = request.getParameter("empCode");
+
         String ageRange = request.getParameter("ageRange");
         String genderStr = request.getParameter("gender");
         CandidateDAO canDAO = new CandidateDAO();
-        List<Integer> idList =canDAO.getAllPassCandidateID("Pass");
+        List<Integer> idList = canDAO.getAllPassCandidateID("Pass");
         List<Candidate> canList = canDAO.getAllPassedCandidates(idList);
-        for (int i =0;i<canList.size();i++) {
-            Candidate can = canList.get(i);
-            String username=empDAO.generateUserName();
-            String password=empDAO.generatePassword();
-            String email =can.getEmail();
-            String fullname = can.getName();
-            String phone = can.getPhone();
-            empDAO.createEmployee(username, password, fullname, email, true, phone);
+        for (int i = 0; i < canList.size(); i++) {
+            if (!empDAO.existsByEmail(canList.get(i).getEmail())) {
+                Candidate can = canList.get(i);
+                String username = empDAO.generateUserName();
+                String password = empDAO.generatePassword();
+                String email = can.getEmail();
+                String fullname = can.getName();
+                String phone = can.getPhone();
+                empDAO.createEmployee(username, password, fullname, email, true, phone);
+            }
         }
         Boolean gender = null;
         if (genderStr != null && !genderStr.trim().isEmpty()) {
@@ -96,78 +64,147 @@ public class EmployeeListServlet extends HttpServlet {
         String[] positionTitle = request.getParameterValues("positionTitle");
         int quantityOfPage = 5;
         int currentPage = 1;
-        String currentPageStr = request.getParameter("page");
-        if (currentPageStr != null && !currentPageStr.trim().isEmpty()) {
-            try {
-                currentPage = Integer.parseInt(currentPageStr);
-            } catch (NumberFormatException e) {
-            }
-        }
-        int totalSearchResults = 0;
-        int totalFilterResults = 0;
         int totalPages = 0;
         int totalResults = 0;
+        String oldSearchKey = (String) ses.getAttribute("oldSearchKey");
+        Integer oldPosCount = (Integer) ses.getAttribute("oldPosCount");
+        String oldAgeRange = (String) ses.getAttribute("oldAgeRange");
+        Boolean oldGender = (Boolean) ses.getAttribute("oldGender");
+        int newPosCount = (positionTitle == null ? 0 : positionTitle.length);
+        Boolean newGender = gender;
+        String newAgeRange = ageRange;
+        String currentPageStr = request.getParameter("page");
+        boolean isFilterChanged
+                = (oldPosCount == null ? newPosCount != 0 : !oldPosCount.equals(newPosCount))
+                || (oldAgeRange == null ? newAgeRange != null : !oldAgeRange.equals(newAgeRange))
+                || (oldGender == null ? newGender != null : !oldGender.equals(newGender))
+                || (oldSearchKey == null ? searchkey != null && !searchkey.isEmpty()
+                        : !oldSearchKey.equals(searchkey));
+        if (isFilterChanged) {
+            currentPage = 1;
+        } else {
+            if (currentPageStr != null && !currentPageStr.trim().isEmpty()) {
+                try {
+                    currentPage = Integer.parseInt(currentPageStr);
+                } catch (NumberFormatException e) {
+                    currentPage = 1;
+                }
+            }
+        }
         List<String> positionList = empDAO.getAllPosition();
-        List<Employee> empList = empDAO.manageEmployeeForHR(searchkey, currentPage, quantityOfPage, gender, positionTitle, ageRange, sortBy, order);
+
         if (searchkey != null && !searchkey.trim().isEmpty()) {
-            totalSearchResults = empDAO.countSearchRecordOfEmployee(searchkey);
-            totalPages = (int) Math.ceil((double) totalSearchResults / quantityOfPage);
+            totalResults = empDAO.countSearchAndFilterEmployee(searchkey, gender, positionTitle, ageRange);
         } else if (gender != null || (positionTitle != null) || (ageRange != null)) {
-            totalFilterResults = empList.size();
-            totalPages = (int) Math.ceil((double) totalFilterResults / quantityOfPage);
+            totalResults = empDAO.countSearchAndFilterEmployee(searchkey, gender, positionTitle, ageRange);
         } else if (sortBy != null) {
             totalResults = empDAO.countAllRecordOfEmployee();
-            totalPages = (int) Math.ceil((double) totalResults / quantityOfPage);
         } else {
             totalResults = empDAO.countAllRecordOfEmployee();
-            totalPages = (int) Math.ceil((double) totalResults / quantityOfPage);
         }
+        totalPages = (int) Math.ceil((double) totalResults / quantityOfPage);
+        List<Employee> empList = empDAO.manageEmployeeForHR(searchkey, currentPage, quantityOfPage, gender, positionTitle, ageRange, sortBy, order);
 
         if ("edit".equalsIgnoreCase(type) && empCode != null) {
             Employee editEmp = empDAO.getEmployeeByEmpCode(empCode);
             request.setAttribute("editEmp", editEmp);
+        }
+        if (empList == null || empList.isEmpty()) {
+            request.setAttribute("message", "No results found!");
         }
         request.setAttribute("searchkey", searchkey);
         request.setAttribute("gender", gender);
         request.setAttribute("ageRange", ageRange);
         request.setAttribute("positionTitle", positionTitle);
         request.setAttribute("sortBy", sortBy);
-        request.setAttribute("totalResults", totalResults);
-        request.setAttribute("totalFilterResults", totalFilterResults);
-        request.setAttribute("totalSearchResults", totalSearchResults);
+        request.setAttribute("order", order);
+        request.setAttribute("totalSearchResults", totalResults);
         request.setAttribute("totalPages", totalPages);
         request.setAttribute("page", currentPage);
+
+        ses.setAttribute("oldPosCount", newPosCount);
+        ses.setAttribute("oldSearchKey", searchkey);
+        ses.setAttribute("oldAgeRange", newAgeRange);
+        ses.setAttribute("oldGender", newGender);
         ses.setAttribute("empList", empList);
         ses.setAttribute("positionList", positionList);
         empDAO.close();
         request.getRequestDispatcher("Views/employeelist.jsp").forward(request, response);
     }
 
-    /**
-     * Handles the HTTP <code>POST</code> method.
-     *
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
-     */
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+
         HttpSession ses = request.getSession();
         String action = request.getParameter("action");
         EmployeeDAO empDAO = new EmployeeDAO();
-        String empCode = request.getParameter("empCode");
-        String dobStr = request.getParameter("dob");
-        Date dob = Date.valueOf(dobStr);
-        String positionTitle = request.getParameter("positionTitle");
-        String dependant_count = request.getParameter("dependantCount");
 
-        int dependantcount = Integer.parseInt(dependant_count);
+        int quantityOfPage = 5;
+        int currentPage = 1;
+        String currentPageStr = request.getParameter("page");
+        if (currentPageStr != null && !currentPageStr.trim().isEmpty()) {
+            try {
+                currentPage = Integer.parseInt(currentPageStr);
+            } catch (NumberFormatException ignored) {
+            }
+        }
+
+        String searchkey = request.getParameter("searchkey");
+        String ageRange = request.getParameter("ageRange");
+        String genderStr = request.getParameter("gender");
+        Boolean gender = (genderStr == null || genderStr.trim().isEmpty()) ? null : Boolean.parseBoolean(genderStr);
+        String sortBy = request.getParameter("sortBy");
+        String order = request.getParameter("order");
+        String[] positionTitleArray = request.getParameterValues("positionTitle");
 
         if ("save".equalsIgnoreCase(action)) {
-            String email = request.getParameter("email");
+
+            String empCode = request.getParameter("empCode");
             Employee emp = empDAO.getEmployeeByEmpCode(empCode);
+
+            String dependant_count = request.getParameter("dependantCount");
+            String dobStr = request.getParameter("dob");
+            String email = request.getParameter("email");
+            String positionTitle = request.getParameter("editPositionTitle");
+
+            boolean validate = false;
+            int dependantcount = 0;
+            Date dob = null;
+            dependantcount = Integer.parseInt(dependant_count);
+            if (dobStr != null && !dobStr.isBlank()) {
+                try {
+                    dob = Date.valueOf(dobStr);
+                    if (dob.after(Date.valueOf(LocalDate.now()))) {
+                        request.setAttribute("dobErr", "Date of birth cannot be in the future");
+                        validate = true;
+                    }
+                } catch (IllegalArgumentException e) {
+                }
+            }
+
+            if (validate) {
+                List<Employee> empList = empDAO.manageEmployeeForHR(searchkey, currentPage, quantityOfPage, gender, positionTitleArray, ageRange, sortBy, order);
+                int totalResults = empDAO.countAllRecordOfEmployee();
+                int totalPages = (int) Math.ceil((double) totalResults / quantityOfPage);
+                int totalSearchRecords = empDAO.countSearchAndFilterEmployee(searchkey,gender, positionTitleArray, ageRange);
+
+                request.setAttribute("editEmp", emp);
+                ses.setAttribute("empList", empList);
+                request.setAttribute("page", currentPage);
+                request.setAttribute("totalPages", totalPages);
+                request.setAttribute("searchkey", searchkey);
+                request.setAttribute("gender", gender);
+                request.setAttribute("ageRange", ageRange);
+                request.setAttribute("sortBy", sortBy);
+                request.setAttribute("order", order);
+                request.setAttribute("positionTitle", positionTitleArray);
+                request.setAttribute("totalSearchResults", totalSearchRecords);
+
+                request.getRequestDispatcher("Views/employeelist.jsp").forward(request, response);
+                return;
+            }
+
             if (emp != null) {
                 emp.setEmail(email);
                 emp.setDob(dob);
@@ -175,35 +212,24 @@ public class EmployeeListServlet extends HttpServlet {
                 emp.setDependantCount(dependantcount);
                 empDAO.updateEmployee(emp);
             }
-        }
-        int quantityOfPage = 5;
-        int currentPage = 1;
+            List<Employee> empList = empDAO.manageEmployeeForHR(searchkey, currentPage, quantityOfPage, gender, positionTitleArray, ageRange, sortBy, order);
+            int totalResults = empDAO.countAllRecordOfEmployee();
+            int totalSearchRecords = empDAO.countSearchAndFilterEmployee(searchkey,null, null, null);;
+            int totalPages = (int) Math.ceil((double) totalResults / quantityOfPage);
 
-        String currentPageStr = request.getParameter("page");
-        String searchkey = request.getParameter("searchkey");
-        String ageRange = request.getParameter("ageRange");
-        String genderStr = request.getParameter("gender");
-        Boolean gender = null;
-        if (genderStr != null && !genderStr.trim().isEmpty()) {
-            gender = Boolean.parseBoolean(genderStr);
+            ses.setAttribute("empList", empList);
+            request.setAttribute("page", currentPage);
+            request.setAttribute("totalPages", totalPages);
+            request.setAttribute("searchkey", searchkey);
+            request.setAttribute("gender", gender);
+            request.setAttribute("ageRange", ageRange);
+            request.setAttribute("sortBy", sortBy);
+            request.setAttribute("order", order);
+            request.setAttribute("positionTitle", positionTitleArray);
+            request.setAttribute("totalSearchResults", totalSearchRecords);
+
+            request.getRequestDispatcher("Views/employeelist.jsp").forward(request, response);
         }
-        String sortBy = request.getParameter("sortBy");
-        String order = request.getParameter("order");
-        String[] positionTitleArray = request.getParameterValues("positionTitle");
-        if (currentPageStr != null && !currentPageStr.trim().isEmpty()) {
-            try {
-                currentPage = Integer.parseInt(currentPageStr);
-            } catch (NumberFormatException e) {
-            }
-        }
-        List<Employee> empList = empDAO.manageEmployeeForHR(searchkey, currentPage, quantityOfPage, gender, positionTitleArray, ageRange, sortBy, order);
-        ses.setAttribute("empList", empList);
-        int totalResults = empDAO.countAllRecordOfEmployee();
-        int totalPages = (int) Math.ceil((double) totalResults / quantityOfPage);
-        request.setAttribute("page", currentPage);
-        request.setAttribute("totalPages", totalPages);
-        empDAO.close();
-        response.sendRedirect("employeelistservlet?page=" + currentPage);
     }
 
     /**
