@@ -260,9 +260,6 @@
                                         <div class="row mt-4">
                                             <div class="col-lg-12">
                                                 <div class="text-center">
-                                                    <a href="${pageContext.request.contextPath}/postreview" class="btn btn-secondary btn-lg">
-                                                        <i class="fa fa-arrow-left"></i> Back to Review List
-                                                    </a>
                                                     <c:if test="${isPending}">
                                                         <form action="${pageContext.request.contextPath}/postreview" method="post" style="display:inline;" 
                                                               onsubmit="return confirm('Are you sure you want to approve this post: ${post.title}?');">

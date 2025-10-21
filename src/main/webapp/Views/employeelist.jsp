@@ -180,38 +180,39 @@
                         <c:if test="${not empty searchkey}">
                             <p>Found <strong>${totalSearchResults}</strong> employee with search key is <strong>${searchkey}</strong></p>  
                         </c:if>
-                        <div class="table-responsive">
-                            <table class="table table-striped table-bordered table-hover align-middle text-center" style="width:100%">
+                        <div class="table-responsive" style="overflow-x:auto;">
+                            <table class="table table-striped table-bordered table-hover align-middle text-center" 
+                                   style="table-layout: fixed; width: 100%; border-collapse: collapse;">
                                 <c:set var="nextOrder" value="${order == 'asc' ? 'desc' : 'asc'}" />
                                 <thead class="thead-dark" >
                                     <tr>
-                                        <th>STT</th>
-                                        <th style="cursor:pointer;">
+                                        <th style="width: 50px;">STT</th>
+                                        <th style="cursor:pointer;width: 120px">
                                             <a href="${urlPrefix}sortBy=emp_code&order=${nextOrder}&page=${page}" class="sort">
-                                                Employee Code<i class="fa fa-sort"></i>
+                                                Emp Code<i class="fa fa-sort"></i>
                                             </a>
                                         </th>
-                                        <th style="cursor:pointer;">
+                                        <th style="cursor:pointer;width: 120px">
                                             <a href="${urlPrefix}sortBy=fullname&order=${nextOrder}&page=${page}" class="sort">         
                                                 Full Name<i class="fa fa-sort"></i>
                                             </a>
                                         </th>
-                                        <th>Email</th>
-                                        <th>Gender</th>
+                                        <th style="width: 100px">Email</th>
+                                        <th style="width:80px">Gender</th>
                                         <th style="cursor:pointer;">
                                             <a href="${urlPrefix}sortBy=dob&order=${nextOrder}&page=${page}" class="sort">
                                                 Dob<i class="fa fa-sort"></i>
                                             </a>
                                         </th>
                                         <th>Image</th>
-                                        <th>Position Title</th>
-                                        <th style="cursor:pointer;">
+                                        <th style="width:105px">Position Title</th>
+                                        <th style="cursor:pointer;width: 100px">
                                             <a href="${urlPrefix}sortBy=dependant_count&order=${nextOrder}&page=${page}" class="sort">
                                                 Dependant Count<i class="fa fa-sort"></i>
                                             </a>
                                         </th>
                                         <th>Paid leaves day</th>
-                                        <th>Action</th>
+                                        <th style="width:80px">Action</th>
                                     </tr>                                 
                                 </thead>
                                 <tbody>
@@ -244,20 +245,24 @@
                                                 <td>${loop.index+1}</td>
                                                 <td><input type="hidden" name="empCode" value="${el.empCode}" />${el.empCode}</td>
                                                 <td>${el.fullname}</td>
-                                                <td><input type="email" name="email" value="${el.email}" />
+                                                <td style="overflow-wrap: break-word;"><input style="width:80px" type="email" name="email" value="${el.email}" />
                                                 </td>
                                                 <td>${el.gender}</td>
                                                 <td>
-                                                    <input type="date" name="dob" value="${el.dob}"/>
+                                                    <input style="width:55px" type="date" name="dob" value="${el.dob}"/>
                                                     <span style="color:red;">${dobErr}</span>
                                                 </td>
                                                 <td>
-                                                    <img src="${el.image}" alt="Employee Image" style="width:60px; height:60px; object-fit:cover; border-radius:6px;">
+                                                    <img style="width:65px" src="${el.image}" alt="Employee Image" style="width:60px; height:60px; object-fit:cover; border-radius:6px;">
                                                 </td>
-                                                <td>
-                                                    <input type="text" name="editPositionTitle" value="${el.positionTitle}" required/>
+                                                <td style="overflow-wrap: break-word;">
+                                                    <select name="editPositionTitle">
+                                                        <c:forEach var="d" items="${sessionScope.positionList}">
+                                                            <option value="${d}">${d}</option>
+                                                        </c:forEach>
+                                                    </select>
                                                 </td>
-                                                <td><input type="number" name="dependantCount" value="${el.dependantCount}" min="0"/>
+                                                <td><input style="width:65px"  type="number" name="dependantCount" value="${el.dependantCount}" min="0"/>
                                                 </td>
                                                 <td>${el.paidLeaveDays}</td>
                                                 <td>
@@ -270,11 +275,13 @@
                                             <td>${loop.index+1}</td>
                                             <td>${el.empCode}</td>
                                             <td>${el.fullname}</td>
-                                            <td>${el.email}</td>
+                                            <td style="overflow-wrap: break-word;">${el.email}</td>
                                             <td>${el.gender ?'Male' :'Female'}</td>
                                             <td>${el.dob}</td>                                           
-                                            <td>${el.image}</td>
-                                            <td>${el.positionTitle}</td>
+                                            <td>
+                                                <img style="width:65px" src="${el.image}" alt="Employee Image" style="width:60px; height:60px; object-fit:cover; border-radius:6px;">
+                                            </td>
+                                            <td style="overflow-wrap: break-word;">${el.positionTitle}</td>
                                             <td>${el.dependantCount}</td>
                                             <td>${el.paidLeaveDays}</td>
                                             <td>

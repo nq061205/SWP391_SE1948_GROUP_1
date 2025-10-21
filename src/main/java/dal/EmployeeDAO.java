@@ -436,7 +436,7 @@ public class EmployeeDAO extends DBContext {
         return empList;
     }
 
-    public int countSearchAndFilterEmployee(String searchKey, Boolean status, String[] deptIds, String[] roleIds) {
+    public int countSearchAndFilterAccount(String searchKey, Boolean status, String[] deptIds, String[] roleIds) {
         try {
             StringBuilder sql = new StringBuilder("SELECT COUNT(*) FROM Employee WHERE 1=1");
 
@@ -473,7 +473,6 @@ public class EmployeeDAO extends DBContext {
             PreparedStatement ps = connection.prepareStatement(sql.toString());
             int index = 1;
 
-  
             if (searchKey != null && !searchKey.trim().isEmpty()) {
                 ps.setString(index++, "%" + searchKey + "%");
                 ps.setString(index++, "%" + searchKey + "%");
@@ -490,6 +489,72 @@ public class EmployeeDAO extends DBContext {
             if (roleIds != null) {
                 for (String roleId : roleIds) {
                     ps.setInt(index++, Integer.parseInt(roleId));
+                }
+            }
+
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                return rs.getInt(1);
+            }
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
+        return 0;
+    }
+
+    public int countSearchAndFilterEmployee(String searchKey, Boolean gender, String[] posTitle, String ageRange) {
+        try {
+            StringBuilder sql = new StringBuilder("SELECT COUNT(*) FROM Employee WHERE 1=1");
+
+            if (searchKey != null && !searchKey.trim().isEmpty()) {
+                sql.append(" AND (emp_code LIKE ? OR fullname LIKE ?)");
+            }
+
+            if (gender != null) {
+                sql.append(" AND gender = ?");
+            }
+
+            if (posTitle != null && posTitle.length > 0) {
+                sql.append(" AND dep_id IN (");
+                for (int i = 0; i < posTitle.length; i++) {
+                    sql.append("?");
+                    if (i < posTitle.length - 1) {
+                        sql.append(",");
+                    }
+                }
+                sql.append(")");
+            }
+
+            if (ageRange != null) {
+                switch (ageRange) {
+                    case "under25":
+                        sql.append(" AND TIMESTAMPDIFF(YEAR, dob, CURDATE()) < 25 ");
+                        break;
+                    case "25to30":
+                        sql.append(" AND TIMESTAMPDIFF(YEAR, dob, CURDATE()) BETWEEN 25 AND 30 ");
+                        break;
+                    case "31to40":
+                        sql.append(" AND TIMESTAMPDIFF(YEAR, dob, CURDATE()) BETWEEN 31 AND 40 ");
+                        break;
+                    case "above40":
+                        sql.append(" AND TIMESTAMPDIFF(YEAR, dob, CURDATE()) > 40 ");
+                        break;
+                }
+            }
+
+            PreparedStatement ps = connection.prepareStatement(sql.toString());
+            int index = 1;
+
+            if (searchKey != null && !searchKey.trim().isEmpty()) {
+                ps.setString(index++, "%" + searchKey + "%");
+                ps.setString(index++, "%" + searchKey + "%");
+            }
+            if (gender != null) {
+                ps.setBoolean(index++, gender);
+            }
+            if (posTitle != null) {
+                for (String pos : posTitle) {
+                    ps.setString(index++, pos);
                 }
             }
 
