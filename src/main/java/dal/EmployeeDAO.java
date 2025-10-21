@@ -891,12 +891,9 @@ public class EmployeeDAO extends DBContext {
 
     public static void main(String[] args) {
         EmployeeDAO dao = new EmployeeDAO();
-        String sortBy = "emp_code";
-        String order = "desc";
-        int page = 1;
-        int quantityofpage = 5;
-        List<Employee> empList = dao.ManageEmployeeWithPaging(null, page, quantityofpage, null, null, null, sortBy, order);
-        System.out.println(empList);
+        
+        List<Employee> e = dao.getEmployees(0, 5, null, null);
+        System.out.println(e.size());
     }
 
 }

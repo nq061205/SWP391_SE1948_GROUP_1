@@ -10,6 +10,7 @@ import java.sql.ResultSet;
 import java.sql.Types;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 import model.DailyAttendance;
 import model.Employee;
 
@@ -240,7 +241,6 @@ public class DailyAttendanceDAO extends DBContext {
         if (empIds == null || empIds.isEmpty()) {
             return list;
         }
-
         StringBuilder inClause = new StringBuilder();
         for (int i = 0; i < empIds.size(); i++) {
             inClause.append("?");
@@ -248,7 +248,6 @@ public class DailyAttendanceDAO extends DBContext {
                 inClause.append(",");
             }
         }
-
         String sql = "SELECT * FROM daily_attendance WHERE emp_id IN (" + inClause + ") "
                 + "AND MONTH(date) = ? AND YEAR(date) = ? "
                 + "ORDER BY emp_id ASC, date ASC";
@@ -284,7 +283,11 @@ public class DailyAttendanceDAO extends DBContext {
 
     public static void main(String[] args) {
         DailyAttendanceDAO dailyDAO = new DailyAttendanceDAO();
-        List<DailyAttendance> list = dailyDAO.getAttendance(0, 5, null, null, 12, 2025);
+        EmployeeDAO empDAO = new EmployeeDAO();
+        List<Employee> employees = empDAO.getEmployees(0, 5, null, null);
+
+        List<Integer> empIds = employees.stream().map(e -> e.getEmpId()).collect(Collectors.toList());
+        List<DailyAttendance> list = dailyDAO.getAttendanceByEmpIds(empIds, 10, 2025);
         System.out.println(list.size());
     }
 }
