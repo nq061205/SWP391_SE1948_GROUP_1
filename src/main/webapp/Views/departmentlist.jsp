@@ -57,7 +57,7 @@
 
         <!-- HEADER + NAVBAR -->
         <%@ include file="CommonItems/Header/dashboardHeader.jsp" %>
-        <%@ include file="CommonItems/Navbar/adminNavbar.jsp" %>
+        <%@ include file="CommonItems/Navbar/empNavbar.jsp" %>
         <input type="hidden" name="typeApplication" value="leaverequest" />
         <main class="ttr-wrapper">
             <div class="container-fluid">
@@ -65,6 +65,7 @@
                     <h4 class="breadcrumb-title">Department Listing</h4>
                     <ul class="db-breadcrumb-list">
                         <li><a href="${pageContext.request.contextPath}/Views/Admin/adminDashboard.jsp"><i class="fa fa-home"></i>Home</a></li>
+                        <li><a href="${pageContext.request.contextPath}/departmentlistservlet">Department list</a></li>
                     </ul>
                 </div>
                 <button class="btn btn-primary mb-3" data-bs-toggle="modal" data-bs-target="#addModal">
@@ -120,8 +121,12 @@
                                     <form action="${pageContext.request.contextPath}/departmentlistservlet" method="post">
                                         <td>${loop.index+1}</td>
                                         <td><input type="hidden" name="depId" value="${el.depId}">${el.depId}</td>
-                                        <td><input type="text" name="depName" value="${el.depName}" /></td>
-                                        <td><input type="text" name="description" value="${el.description}" /></td>
+                                        <td>
+                                            <input type="text" name="depName" value="${el.depName}" required />
+                                        </td>
+                                        <td>
+                                            <input type="text" name="description" value="${el.description}" required />
+                                        </td>
                                         <td>
                                             <button type="submit" name="action" value="save" class="btn btn-success btn-sm">Save</button>
                                             <a href="${pageContext.request.contextPath}/departmentlistservlet" class="btn btn-secondary btn-sm">Cancel</a>

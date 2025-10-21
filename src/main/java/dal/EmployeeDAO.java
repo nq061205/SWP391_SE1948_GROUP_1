@@ -63,8 +63,10 @@ public class EmployeeDAO extends DBContext {
                         rs.getString("position_title"),
                         rs.getString("image"),
                         rs.getInt("dependant_count"),
+                        rs.getInt("paid_leave_days"),
                         department,
-                        roleDAO.getRoleByEmpId(rs.getInt("emp_id"))
+                        roleDAO.getRoleByEmpId(rs.getInt("emp_id")),
+                        rs.getBoolean("status")
                 );
                 employee.setStatus(rs.getBoolean("status"));
             }
@@ -94,8 +96,10 @@ public class EmployeeDAO extends DBContext {
                             rs.getString("position_title"),
                             rs.getString("image"),
                             rs.getInt("dependant_count"),
+                            rs.getInt("paid_leave_days"),
                             department,
-                            roleDAO.getRoleByEmpId(rs.getInt("emp_id"))
+                            roleDAO.getRoleByEmpId(rs.getInt("emp_id")),
+                            rs.getBoolean("status")
                     );
                     employee.setStatus(rs.getBoolean("status"));
                     return employee;
@@ -127,6 +131,7 @@ public class EmployeeDAO extends DBContext {
                     emp.setPositionTitle(rs.getString("position_title"));
                     emp.setImage(rs.getString("image"));
                     emp.setDependantCount(rs.getInt("dependant_count"));
+                    emp.setPaidLeaveDays(rs.getInt("paid_leave_days"));
                     Department dept = deptDAO.getDepartmentByEmpId(rs.getInt("emp_id"));
                     emp.setDept(dept);
                     Role role = roleDAO.getRoleByEmpId(rs.getInt("emp_id"));
@@ -159,6 +164,7 @@ public class EmployeeDAO extends DBContext {
                 emp.setPositionTitle(rs.getString("position_title"));
                 emp.setImage(rs.getString("image"));
                 emp.setDependantCount(rs.getInt("dependant_count"));
+                emp.setPaidLeaveDays(rs.getInt("paid_leave_days"));
                 Department dept = deptDAO.getDepartmentByEmpId(rs.getInt("emp_id"));
                 emp.setDept(dept);
                 Role role = roleDAO.getRoleByEmpId(rs.getInt("emp_id"));
@@ -191,9 +197,8 @@ public class EmployeeDAO extends DBContext {
     public List<Employee> getAllEmployees() {
         empList = new ArrayList<>();
         String sql = "SELECT * FROM Employee";
-        try {
-            PreparedStatement ps = connection.prepareStatement(sql);
-            ResultSet rs = ps.executeQuery();
+        try (PreparedStatement ps = connection.prepareStatement(sql); ResultSet rs = ps.executeQuery();) {
+
             while (rs.next()) {
                 Employee emp = new Employee();
                 emp.setEmpId(rs.getInt("emp_id"));
@@ -207,6 +212,7 @@ public class EmployeeDAO extends DBContext {
                 emp.setPositionTitle(rs.getString("position_title"));
                 emp.setImage(rs.getString("image"));
                 emp.setDependantCount(rs.getInt("dependant_count"));
+                emp.setPaidLeaveDays(rs.getInt("paid_leave_days"));
 
                 Department dept = getDepartmentByDeptID(rs.getString("dep_id"));
                 emp.setDept(dept);
@@ -225,9 +231,7 @@ public class EmployeeDAO extends DBContext {
     public List<String> getAllPosition() {
         List<String> positionList = new ArrayList<>();
         String sql = "SELECT DISTINCT position_title FROM Employee WHERE position_title IS NOT NULL;";
-        try {
-            PreparedStatement ps = connection.prepareStatement(sql);
-            ResultSet rs = ps.executeQuery();
+        try (PreparedStatement ps = connection.prepareStatement(sql); ResultSet rs = ps.executeQuery();) {
             while (rs.next()) {
                 positionList.add(rs.getString("position_title"));
             }
@@ -240,8 +244,7 @@ public class EmployeeDAO extends DBContext {
     public Department getDepartmentByDeptID(String deptID) {
         Department dept = new Department();
         String sql = "SELECT * FROM Department WHERE dep_id = ?";
-        try {
-            PreparedStatement ps = connection.prepareStatement(sql);
+        try (PreparedStatement ps = connection.prepareStatement(sql);) {
             ps.setString(1, deptID);
             ResultSet rs = ps.executeQuery();
             if (rs.next()) {
@@ -258,8 +261,7 @@ public class EmployeeDAO extends DBContext {
     public Employee getEmployeeByEmployeeName(String empName) {
         Employee emp = new Employee();
         String sql = "select * from Employee where fullname =? ";
-        try {
-            PreparedStatement ps = connection.prepareStatement(sql);
+        try (PreparedStatement ps = connection.prepareStatement(sql);) {
             ps.setString(1, empName);
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
@@ -271,6 +273,7 @@ public class EmployeeDAO extends DBContext {
                 emp.setDob(rs.getDate("dob"));
                 emp.setPhone(rs.getString("phone"));
                 emp.setPositionTitle(rs.getString("position_title"));
+                emp.setPaidLeaveDays(rs.getInt("paid_leave_days"));
 
                 Department dept = getDepartmentByDeptID(rs.getString("dep_id"));
                 emp.setDept(dept);
@@ -287,8 +290,7 @@ public class EmployeeDAO extends DBContext {
 
     public void deleteEmployee(String empCode) {
         String sql = "DELETE FROM Employee where emp_code=?";
-        try {
-            PreparedStatement ps = connection.prepareStatement(sql);
+        try (PreparedStatement ps = connection.prepareStatement(sql);) {
             ps.setString(1, empCode);
             ps.executeUpdate();
         } catch (SQLException ex) {
@@ -297,9 +299,8 @@ public class EmployeeDAO extends DBContext {
     }
 
     public void updateEmployee(Employee employee) {
-        String sql = "UPDATE Employee SET fullname=?,email=?,password=?,gender=?,dob=?,phone=?,position_title=?,image=?,dep_id=?,role_id=?,status=?  WHERE emp_code = ?";
-        try {
-            PreparedStatement ps = connection.prepareStatement(sql);
+        String sql = "UPDATE Employee SET fullname=?,email=?,password=?,gender=?,dob=?,phone=?,position_title=?,image=?,dependant_count=?,paid_leave_days=?,dep_id=?,role_id=?,status=?  WHERE emp_code = ?";
+        try (PreparedStatement ps = connection.prepareStatement(sql);) {
             ps.setString(1, employee.getFullname());
             ps.setString(2, employee.getEmail());
             ps.setString(3, employee.getPassword());
@@ -308,10 +309,12 @@ public class EmployeeDAO extends DBContext {
             ps.setString(6, employee.getPhone());
             ps.setString(7, employee.getPositionTitle());
             ps.setString(8, employee.getImage());
-            ps.setString(9, employee.getDept().getDepId());
-            ps.setInt(10, employee.getRole().getRoleId());
-            ps.setBoolean(11, employee.isStatus());
-            ps.setString(12, employee.getEmpCode());
+            ps.setInt(9, employee.getDependantCount());
+            ps.setInt(10, employee.getPaidLeaveDays());
+            ps.setString(11, employee.getDept().getDepId());
+            ps.setInt(12, employee.getRole().getRoleId());
+            ps.setBoolean(13, employee.isStatus());
+            ps.setString(14, employee.getEmpCode());
             ps.executeUpdate();
         } catch (SQLException ex) {
             Logger.getLogger(EmployeeDAO.class.getName()).log(Level.SEVERE, null, ex);
@@ -380,8 +383,7 @@ public class EmployeeDAO extends DBContext {
         }
 
         sql.append(" LIMIT ? OFFSET ?");
-        try {
-            PreparedStatement ps = connection.prepareStatement(sql.toString());
+        try (PreparedStatement ps = connection.prepareStatement(sql.toString());) {
             int index = 1;
             if (searchkey != null && !searchkey.trim().isEmpty()) {
                 ps.setString(index++, "%" + searchkey + "%");
@@ -417,6 +419,7 @@ public class EmployeeDAO extends DBContext {
                 emp.setPositionTitle(rs.getString("position_title"));
                 emp.setImage(rs.getString("image"));
                 emp.setDependantCount(rs.getInt("dependant_count"));
+                emp.setPaidLeaveDays(rs.getInt("paid_leave_days"));
                 emp.setStatus(rs.getBoolean("status"));
 
                 Department dept = getDepartmentByDeptID(rs.getString("dep_id"));
@@ -433,26 +436,13 @@ public class EmployeeDAO extends DBContext {
         return empList;
     }
 
-    public int countSearchRecordOfEmployee(String searchkey) {
-        String sql = "Select count(*) from Employee WHERE emp_code LIKE ? OR fullname LIKE ?";
-        try {
-            PreparedStatement ps = connection.prepareStatement(sql);
-            ps.setString(1, "%" + searchkey + "%");
-            ps.setString(2, "%" + searchkey + "%");
-            ResultSet rs = ps.executeQuery();
-            while (rs.next()) {
-                return rs.getInt(1);
-            }
-        } catch (SQLException ex) {
-            Logger.getLogger(EmployeeDAO.class.getName()).log(Level.SEVERE, null, ex);
-        }
-
-        return 0;
-    }
-
-    public int countFilterRecordOfEmployee(Boolean status, String[] deptIds, String[] roleIds) {
+    public int countSearchAndFilterAccount(String searchKey, Boolean status, String[] deptIds, String[] roleIds) {
         try {
             StringBuilder sql = new StringBuilder("SELECT COUNT(*) FROM Employee WHERE 1=1");
+
+            if (searchKey != null && !searchKey.trim().isEmpty()) {
+                sql.append(" AND (emp_code LIKE ? OR fullname LIKE ?)");
+            }
 
             if (status != null) {
                 sql.append(" AND status = ?");
@@ -482,15 +472,20 @@ public class EmployeeDAO extends DBContext {
 
             PreparedStatement ps = connection.prepareStatement(sql.toString());
             int index = 1;
+
+            if (searchKey != null && !searchKey.trim().isEmpty()) {
+                ps.setString(index++, "%" + searchKey + "%");
+                ps.setString(index++, "%" + searchKey + "%");
+            }
             if (status != null) {
                 ps.setBoolean(index++, status);
             }
-
             if (deptIds != null) {
                 for (String depId : deptIds) {
                     ps.setString(index++, depId);
                 }
             }
+
             if (roleIds != null) {
                 for (String roleId : roleIds) {
                     ps.setInt(index++, Integer.parseInt(roleId));
@@ -498,7 +493,73 @@ public class EmployeeDAO extends DBContext {
             }
 
             ResultSet rs = ps.executeQuery();
-            while (rs.next()) {
+            if (rs.next()) {
+                return rs.getInt(1);
+            }
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
+        return 0;
+    }
+
+    public int countSearchAndFilterEmployee(String searchKey, Boolean gender, String[] posTitle, String ageRange) {
+        try {
+            StringBuilder sql = new StringBuilder("SELECT COUNT(*) FROM Employee WHERE 1=1");
+
+            if (searchKey != null && !searchKey.trim().isEmpty()) {
+                sql.append(" AND (emp_code LIKE ? OR fullname LIKE ?)");
+            }
+
+            if (gender != null) {
+                sql.append(" AND gender = ?");
+            }
+
+            if (posTitle != null && posTitle.length > 0) {
+                sql.append(" AND dep_id IN (");
+                for (int i = 0; i < posTitle.length; i++) {
+                    sql.append("?");
+                    if (i < posTitle.length - 1) {
+                        sql.append(",");
+                    }
+                }
+                sql.append(")");
+            }
+
+            if (ageRange != null) {
+                switch (ageRange) {
+                    case "under25":
+                        sql.append(" AND TIMESTAMPDIFF(YEAR, dob, CURDATE()) < 25 ");
+                        break;
+                    case "25to30":
+                        sql.append(" AND TIMESTAMPDIFF(YEAR, dob, CURDATE()) BETWEEN 25 AND 30 ");
+                        break;
+                    case "31to40":
+                        sql.append(" AND TIMESTAMPDIFF(YEAR, dob, CURDATE()) BETWEEN 31 AND 40 ");
+                        break;
+                    case "above40":
+                        sql.append(" AND TIMESTAMPDIFF(YEAR, dob, CURDATE()) > 40 ");
+                        break;
+                }
+            }
+
+            PreparedStatement ps = connection.prepareStatement(sql.toString());
+            int index = 1;
+
+            if (searchKey != null && !searchKey.trim().isEmpty()) {
+                ps.setString(index++, "%" + searchKey + "%");
+                ps.setString(index++, "%" + searchKey + "%");
+            }
+            if (gender != null) {
+                ps.setBoolean(index++, gender);
+            }
+            if (posTitle != null) {
+                for (String pos : posTitle) {
+                    ps.setString(index++, pos);
+                }
+            }
+
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
                 return rs.getInt(1);
             }
         } catch (SQLException ex) {
@@ -586,6 +647,7 @@ public class EmployeeDAO extends DBContext {
                 emp.setPositionTitle(rs.getString("position_title"));
                 emp.setImage(rs.getString("image"));
                 emp.setDependantCount(rs.getInt("dependant_count"));
+                emp.setPaidLeaveDays(rs.getInt("paid_leave_days"));
                 emp.setStatus(rs.getBoolean("status"));
                 Department dept = getDepartmentByDeptID(rs.getString("dep_id"));
                 emp.setDept(dept);
@@ -602,9 +664,7 @@ public class EmployeeDAO extends DBContext {
 
     public int countAllRecordOfEmployee() {
         String sql = "Select count(*) from Employee";
-        try {
-            PreparedStatement ps = connection.prepareStatement(sql);
-            ResultSet rs = ps.executeQuery();
+        try (PreparedStatement ps = connection.prepareStatement(sql); ResultSet rs = ps.executeQuery();) {
             while (rs.next()) {
                 return rs.getInt(1);
             }
@@ -617,23 +677,21 @@ public class EmployeeDAO extends DBContext {
 
     public String generateUserName() {
         String sql = "SELECT MAX(emp_code) FROM Employee";
-        try {
-            PreparedStatement ps = connection.prepareStatement(sql);
-            ResultSet rs = ps.executeQuery();
+        try (PreparedStatement ps = connection.prepareStatement(sql); ResultSet rs = ps.executeQuery();) {
             while (rs.next()) {
                 String maxCode = rs.getString(1);
                 if (maxCode == null) {
-                    return "EMP001";
+                    return "E001";
                 }
-                String numberPart = maxCode.substring(3);
+                String numberPart = maxCode.substring(1);
                 int number = Integer.parseInt(numberPart);
                 number++;
-                return String.format("EMP%03d", number);
+                return String.format("E%03d", number);
             }
         } catch (SQLException ex) {
             Logger.getLogger(EmployeeDAO.class.getName()).log(Level.SEVERE, null, ex);
         }
-        return "EMP001";
+        return "E001";
     }
 
     public String generatePassword() {
@@ -648,10 +706,10 @@ public class EmployeeDAO extends DBContext {
         return sb.toString();
     }
 
+    
     public void createEmployee(String username, String password, String fullname, String email, boolean gender, String phone) {
         String sql = "INSERT INTO Employee(emp_code,password,fullname,email,gender,phone) values(?,?,?,?,?,?)";
-        try {
-            PreparedStatement ps = connection.prepareStatement(sql);
+        try (PreparedStatement ps = connection.prepareStatement(sql);) {
             ps.setString(1, username);
             ps.setString(2, password);
             ps.setString(3, fullname);
@@ -663,6 +721,19 @@ public class EmployeeDAO extends DBContext {
             Logger.getLogger(EmployeeDAO.class.getName()).log(Level.SEVERE, null, ex);
         }
 
+    }
+
+    public boolean existsByEmail(String email) {
+        String sql = "SELECT * FROM Employee WHERE email = ?";
+        try (Connection conn = getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, email);
+            try (ResultSet rs = ps.executeQuery()) {
+                return rs.next();
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
     }
 
     public void close() {
@@ -753,6 +824,69 @@ public class EmployeeDAO extends DBContext {
             ex.printStackTrace();
         }
         return list;
+    }
+
+    public int countFilterEmployee(Boolean gender, String[] positionTitle, String ageRange) {
+        int count = 0;
+        try {
+            StringBuilder sql = new StringBuilder("SELECT COUNT(*) FROM Employee WHERE 1=1");
+
+            if (gender != null) {
+                sql.append(" AND gender = ?");
+            }
+
+            if (positionTitle != null && positionTitle.length > 0) {
+                sql.append(" AND position_title IN (");
+                for (int i = 0; i < positionTitle.length; i++) {
+                    sql.append("?");
+                    if (i < positionTitle.length - 1) {
+                        sql.append(", ");
+                    }
+                }
+                sql.append(")");
+            }
+
+            if (ageRange != null && !ageRange.trim().isEmpty()) {
+                switch (ageRange) {
+                    case "under25":
+                        sql.append(" AND TIMESTAMPDIFF(YEAR, dob, CURDATE()) < 25");
+                        break;
+                    case "25to30":
+                        sql.append(" AND TIMESTAMPDIFF(YEAR, dob, CURDATE()) BETWEEN 25 AND 30");
+                        break;
+                    case "31to40":
+                        sql.append(" AND TIMESTAMPDIFF(YEAR, dob, CURDATE()) BETWEEN 31 AND 40");
+                        break;
+                    case "above40":
+                        sql.append(" AND TIMESTAMPDIFF(YEAR, dob, CURDATE()) > 40");
+                        break;
+                }
+            }
+
+            PreparedStatement ps = connection.prepareStatement(sql.toString());
+            int index = 1;
+
+            if (gender != null) {
+                ps.setBoolean(index++, gender);
+            }
+
+            if (positionTitle != null && positionTitle.length > 0) {
+                for (String pos : positionTitle) {
+                    ps.setString(index++, pos);
+                }
+            }
+
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                count = rs.getInt(1);
+            }
+
+            rs.close();
+            ps.close();
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
+        return count;
     }
 
     public static void main(String[] args) {

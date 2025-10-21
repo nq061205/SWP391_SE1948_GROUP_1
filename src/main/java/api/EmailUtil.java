@@ -9,8 +9,8 @@ import java.util.logging.Logger;
 public class EmailUtil {
 
     public static void sendEmail(String toEmail, String subject, String messageText) throws MessagingException {
-        final String fromEmail = "hgduy03@gmail.com";
-        final String password = "senn vmvb rqiu zbdg";
+        final String fromEmail = "hmduy015@gmail.com";
+        final String password = "lkqk jsfe jseh fpax";
 
         Properties props = new Properties();
         props.put("mail.smtp.host", "smtp.gmail.com");

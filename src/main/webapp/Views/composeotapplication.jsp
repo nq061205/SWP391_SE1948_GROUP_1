@@ -92,10 +92,10 @@
                                         <label for="type">Date:</label>
                                         <input type="date" name="date" value="${date}" class="form-control" required/>
                                     </div>
-
+                                    
                                     <div class="form-group mb-3">
                                         <label for="type">Overtime hours:</label>
-                                        <input type="number" name="othour" value="${othour}" class="form-control" min="0" max="4"/>
+                                        <input type="number" name="hours" value="${hours}" step="0.5" class="form-control" min="0.5" max="4" required/>
                                     </div>
 
                                     <div class="text-right">
@@ -132,17 +132,5 @@
         <script src="${pageContext.request.contextPath}/assets2/vendors/summernote/summernote.js"></script>
         <script src="${pageContext.request.contextPath}/assets2/vendors/file-upload/imageuploadify.min.js"></script>
         <script src='${pageContext.request.contextPath}/assets2/vendors/switcher/switcher.js'></script>
-        <!-- include plugin -->
-        <script>
-            $(document).ready(function () {
-                $('.summernote').summernote({
-                    height: 300,
-                    tabsize: 2
-                });
-
-                $('input[type="file"]').imageuploadify();
-            });
-        </script>
-
     </body>
 </html>

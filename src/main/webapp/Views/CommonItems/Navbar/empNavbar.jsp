@@ -10,88 +10,104 @@
         <!-- side menu logo start -->
         <div class="ttr-sidebar-logo">
             <a href="#"><img alt="" src="assets/images/logo.png" width="122" height="27"></a>
-            <!-- <div class="ttr-sidebar-pin-button" title="Pin/Unpin Menu">
-                    <i class="material-icons ttr-fixed-icon">gps_fixed</i>
-                    <i class="material-icons ttr-not-fixed-icon">gps_not_fixed</i>
-            </div> -->
             <div class="ttr-sidebar-toggle-button">
                 <i class="ti-arrow-left"></i>
             </div>
         </div>
         <!-- side menu logo end -->
+
         <!-- sidebar menu start -->
         <nav class="ttr-sidebar-navi">
             <ul>
+                <!-- Dashboard -->
                 <li>
-                    <a href="${pageContext.request.contextPath}/Views/profile.jsp" class="ttr-material-button">
-                        <span class="ttr-icon"><i class="ti-book"></i></span>
+                    <a href="${pageContext.request.contextPath}/dashboard" class="ttr-material-button">
+                        <span class="ttr-icon"><i class="ti-dashboard"></i></span>
+                        <span class="ttr-label">Dashboard</span>
+                    </a>
+                </li>
+
+                <!-- Profile -->
+                <li>
+                    <a href="${pageContext.request.contextPath}/profile" class="ttr-material-button">
+                        <span class="ttr-icon"><i class="ti-user"></i></span>
                         <span class="ttr-label">Profile</span>
                     </a>
                 </li>
+
+                <!-- Applications -->
                 <li>
                     <a href="${pageContext.request.contextPath}/Views/listapplication.jsp" class="ttr-material-button">
-                        <span class="ttr-icon"><i class="ti-email"></i></span>
+                        <span class="ttr-icon"><i class="ti-write"></i></span>
                         <span class="ttr-label">Application</span>
                         <span class="ttr-arrow-icon"><i class="fa fa-angle-down"></i></span>
                     </a>
                     <ul>
-                        <li>
-                            <a href="${pageContext.request.contextPath}/application?typeapplication=leave" class="ttr-material-button"><span class="ttr-label">Leave request</span></a>
-                        </li>
-                        <li>
-                            <a href="${pageContext.request.contextPath}/application?typeapplication=ot" class="ttr-material-button"><span class="ttr-label">Overtime request</span></a>
-                        </li>
-                        <li>
-                            <a href="${pageContext.request.contextPath}/compose?type=LEAVE" class="ttr-material-button"><span class="ttr-label">Send leave application</span></a>
-                        </li>
-                        <li>
-                            <a href="${pageContext.request.contextPath}/compose?type=OT" class="ttr-material-button"><span class="ttr-label">Send overtime application</span></a>
-                        </li>
+                        <li><a href="${pageContext.request.contextPath}/application?typeapplication=leave" class="ttr-material-button"><span class="ttr-label">Leave request</span></a></li>
+                        <li><a href="${pageContext.request.contextPath}/application?typeapplication=ot" class="ttr-material-button"><span class="ttr-label">Overtime request</span></a></li>
+                        <li><a href="${pageContext.request.contextPath}/compose?type=LEAVE" class="ttr-material-button"><span class="ttr-label">Send leave application</span></a></li>
+                        <li><a href="${pageContext.request.contextPath}/compose?type=OT" class="ttr-material-button"><span class="ttr-label">Send overtime application</span></a></li>
                     </ul>
                 </li>
+
+                <!-- Candidate List -->
                 <li>
-                    <a href="#" class="ttr-material-button">
-                        <span class="ttr-icon"><i class="ti-calendar"></i></span>
-                        <span class="ttr-label">Attendance</span>
-                        <span class="ttr-arrow-icon"><i class="fa fa-angle-down"></i></span>
+                    <a href="${pageContext.request.contextPath}/candidatelist" class="ttr-material-button">
+                        <span class="ttr-icon"><i class="ti-id-badge"></i></span>
+                        <span class="ttr-label">Candidate List</span>
                     </a>
                 </li>
+
+                <!-- Account List -->
                 <li>
-                    <a href="bookmark.html" class="ttr-material-button">
-                        <span class="ttr-icon"><i class="ti-bookmark-alt"></i></span>
-                        <span class="ttr-label">Bookmarks</span>
+                    <a href="${pageContext.request.contextPath}/accountlist" class="ttr-material-button">
+                        <span class="ttr-icon"><i class="ti-lock"></i></span>
+                        <span class="ttr-label">Account List</span>
                     </a>
                 </li>
+
+                <!-- Employee List -->
                 <li>
-                    <a href="review.html" class="ttr-material-button">
-                        <span class="ttr-icon"><i class="ti-comments"></i></span>
-                        <span class="ttr-label">Review</span>
+                    <a href="${pageContext.request.contextPath}/employeelistservlet" class="ttr-material-button">
+                        <span class="ttr-icon"><i class="ti-briefcase"></i></span>
+                        <span class="ttr-label">Employee List</span>
                     </a>
                 </li>
+
+                <!-- Department List -->
                 <li>
-                    <a href="add-listing.html" class="ttr-material-button">
-                        <span class="ttr-icon"><i class="ti-layout-accordion-list"></i></span>
-                        <span class="ttr-label">Add listing</span>
+                    <a href="${pageContext.request.contextPath}/departmentlistservlet" class="ttr-material-button">
+                        <span class="ttr-icon"><i class="ti-home"></i></span>
+                        <span class="ttr-label">Department List</span>
                     </a>
                 </li>
+
+                <!-- HR Recruitment -->
                 <li>
-                    <a href="#" class="ttr-material-button">
+                    <a href="${pageContext.request.contextPath}/hrrecruitment" class="ttr-material-button">
                         <span class="ttr-icon"><i class="ti-user"></i></span>
-                        <span class="ttr-label">My Profile</span>
-                        <span class="ttr-arrow-icon"><i class="fa fa-angle-down"></i></span>
+                        <span class="ttr-label">HR Recruitment</span>
                     </a>
-                    <ul>
-                        <li>
-                            <a href="user-profile.html" class="ttr-material-button"><span class="ttr-label">User Profile</span></a>
-                        </li>
-                        <li>
-                            <a href="teacher-profile.html" class="ttr-material-button"><span class="ttr-label">Teacher Profile</span></a>
-                        </li>
-                    </ul>
                 </li>
+
+                <!-- HRM Recruitment -->
+                <li>
+                    <a href="${pageContext.request.contextPath}/hrmanagerrecruitment" class="ttr-material-button">
+                        <span class="ttr-icon"><i class="ti-user"></i></span>
+                        <span class="ttr-label">HRM Recruitment</span>
+                    </a>
+                </li>
+
+                <!-- Raw Attendance -->
+                <li>
+                    <a href="${pageContext.request.contextPath}/raw-attendance" class="ttr-material-button">
+                        <span class="ttr-icon"><i class="ti-time"></i></span>
+                        <span class="ttr-label">Raw Attendance</span>
+                    </a>
+                </li>
+
                 <li class="ttr-seperate"></li>
             </ul>
-            <!-- sidebar menu end -->
         </nav>
         <!-- sidebar menu end -->
     </div>

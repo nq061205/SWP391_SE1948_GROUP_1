@@ -244,14 +244,6 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        
-                                        <div class="row mt-4">
-                                            <div class="col-lg-12 text-center">
-                                                <a href="${pageContext.request.contextPath}/hrrecruitment" class="btn btn-secondary">
-                                                    <i class="fa fa-arrow-left"></i> Back to List
-                                                </a>
-                                            </div>
-                                        </div>
                                     </div>
                                 </div>
                             </c:when>
