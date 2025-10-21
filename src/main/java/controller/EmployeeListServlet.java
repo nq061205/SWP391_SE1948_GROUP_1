@@ -94,9 +94,9 @@ public class EmployeeListServlet extends HttpServlet {
         List<String> positionList = empDAO.getAllPosition();
 
         if (searchkey != null && !searchkey.trim().isEmpty()) {
-            totalResults = empDAO.countSearchAndFilterEmployee(searchkey, gender, positionTitle, positionTitle);
+            totalResults = empDAO.countSearchAndFilterEmployee(searchkey, gender, positionTitle, ageRange);
         } else if (gender != null || (positionTitle != null) || (ageRange != null)) {
-            totalResults = empDAO.countSearchAndFilterEmployee(searchkey, gender, positionTitle, positionTitle);
+            totalResults = empDAO.countSearchAndFilterEmployee(searchkey, gender, positionTitle, ageRange);
         } else if (sortBy != null) {
             totalResults = empDAO.countAllRecordOfEmployee();
         } else {
@@ -187,7 +187,7 @@ public class EmployeeListServlet extends HttpServlet {
                 List<Employee> empList = empDAO.manageEmployeeForHR(searchkey, currentPage, quantityOfPage, gender, positionTitleArray, ageRange, sortBy, order);
                 int totalResults = empDAO.countAllRecordOfEmployee();
                 int totalPages = (int) Math.ceil((double) totalResults / quantityOfPage);
-                int totalSearchRecords = empDAO.countSearchAndFilterEmployee(searchkey,null, null, null);
+                int totalSearchRecords = empDAO.countSearchAndFilterEmployee(searchkey,gender, positionTitleArray, ageRange);
 
                 request.setAttribute("editEmp", emp);
                 ses.setAttribute("empList", empList);

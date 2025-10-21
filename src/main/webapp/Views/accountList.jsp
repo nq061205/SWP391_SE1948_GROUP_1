@@ -181,38 +181,40 @@
                                 <p>Found <strong>${totalSearchResults}</strong> products with search key is <strong>${searchkey}</strong></p>  
                             </c:if>
                         </div>
-                        <div class="table-responsive">
-                            <table class="table table-striped table-bordered table-hover align-middle text-center">
+                        <div class="table-responsive" style="overflow-x:auto;">
+                            <table class="table table-striped table-bordered table-hover align-middle text-center" 
+                                   style="table-layout: fixed; width: 100%; border-collapse: collapse;">
+                                <c:set var="order" value="${order != null ? order : 'asc'}" />
                                 <c:set var="nextOrder" value="${order == 'asc' ? 'desc' : 'asc'}" />
 
                                 <thead class="thead-dark" >
                                     <tr>
-                                        <th>STT</th>
-                                        <th style="cursor:pointer;">
+                                        <th style="width: 50px;">STT</th>
+                                        <th style="cursor:pointer;width: 120px">
                                             <a class="sort" href="${urlPrefix}sortBy=emp_code&order=${nextOrder}&page=${page}">
-                                                Employee Code <i class="fa fa-sort"></i>
+                                                Emp Code <i class="fa fa-sort"></i>
                                             </a>
                                         </th>
-                                        <th style="cursor:pointer;">
+                                        <th style="cursor:pointer;width: 120px">
                                             <a class="sort" href="${urlPrefix}sortBy=fullname&order=${nextOrder}&page=${page}">
                                                 Full Name<i class="fa fa-sort"></i>
                                             </a>
                                         </th>
-                                        <th style="cursor:pointer;">
+                                        <th style="cursor:pointer;width: 100px">
                                             <a class="sort" href="${urlPrefix}sortBy=email&order=${nextOrder}&page=${page}">
                                                 Email<i class="fa fa-sort"></i>
                                             </a>
                                         </th>
                                         <th>Image</th> 
-                                        <th style="cursor:pointer;">
+                                        <th style="cursor:pointer;width: 140px">
                                             <a class="sort" href="${urlPrefix}sortBy=dep_id&order=${nextOrder}&page=${page}">
                                                 Department<i class="fa fa-sort"></i>
                                             </a>
                                         </th>
-                                        <th>Role</th> 
-                                        <th>Status</th>
-                                        <th>Edit</th>
-                                        <th>Action</th>
+                                        <th style="width: 85px">Role</th> 
+                                        <th style="width: 70px">Status</th>
+                                        <th style="width: 60px">Edit</th>
+                                        <th style="width: 90px">Action</th>
                                     </tr>                                 
                                 </thead>
                                 <tbody>
@@ -246,58 +248,58 @@
                                                     <input type="hidden" name="order" value="${order}">
                                                 </c:if>
 
-                                                <td>${loop.index+1}</td>
-                                                <td><input type="hidden" name="empCode" value="${el.empCode}" />${el.empCode}</td>
-                                                <td>${el.fullname}</td>
-                                                <td>
-                                                    <input type="email" name="email" value="${el.email}" />
+                                                <td style="overflow-wrap: break-word;">${loop.index+1}</td>
+                                                <td style="overflow-wrap: break-word;"><input type="hidden" name="empCode" value="${el.empCode}" />${el.empCode}</td>
+                                                <td style="overflow-wrap: break-word;">${el.fullname}</td>
+                                                <td style="overflow-wrap: break-word;">
+                                                    <input style="width:80px" type="email" name="email" value="${el.email}" />
                                                 </td>
-                                                <td>
+                                                <td style="overflow-wrap: break-word;">
                                                     <img src="${el.image}" alt="" style="width:60px; height:60px; object-fit:cover; border-radius:5px;">
                                                 </td>
-                                                <td>
+                                                <td style="overflow-wrap: break-word;">
                                                     <select name="editDepId">
                                                         <c:forEach var="d" items="${sessionScope.deptList}">
                                                             <option value="${d.depId}">${d.depName}</option>
                                                         </c:forEach>
                                                     </select>
                                                 </td>
-                                                <td>
+                                                <td style="overflow-wrap: break-word;">
                                                     <select name="editRoleId">
                                                         <c:forEach var="r" items="${sessionScope.roleList}">
                                                             <option value="${r.roleId}">${r.roleName}</option>
                                                         </c:forEach>
                                                     </select>
                                                 </td>
-                                                <td>${el.status ?'Active' :'Inactive'}</td>
-                                                <td>
+                                                <td style="overflow-wrap: break-word;">${el.status ?'Active' :'Inactive'}</td>
+                                                <td style="overflow-wrap: break-word;">
                                                     <button type="submit" name="action" value="save" class="btn btn-success btn-sm">Save</button>
                                                     <a href="${pageContext.request.contextPath}/accountlist" class="btn btn-secondary btn-sm">Cancel</a>
                                                 </td>
-                                                <td>
-                                                    <button type="submit" name="action" value="toggle"
+                                                <td style="overflow-wrap: break-word;">
+                                                    <button style="width: 75px" type="submit" name="action" value="toggle"
                                                             class="btn ${el.status ? 'btn-danger' : 'btn-success'}">
-                                                        ${el.status ? 'Deactivate' : 'Activate'}
+                                                        ${el.status ? 'Deactive' : 'Active'}
                                                     </button>
                                                 </td>
                                             </form>
                                         </c:when>
                                         <c:otherwise>
 
-                                            <td>${loop.index+1}</td>
-                                            <td>${el.empCode}</td>
-                                            <td>${el.fullname}</td>
-                                            <td>${el.email}</td>
-                                            <td>
+                                            <td style="overflow-wrap: break-word;">${loop.index+1}</td>
+                                            <td style="overflow-wrap: break-word;">${el.empCode}</td>
+                                            <td style="overflow-wrap: break-word;">${el.fullname}</td>
+                                            <td style="overflow-wrap: break-word;">${el.email}</td>
+                                            <td style="overflow-wrap: break-word;">
                                                 <img src="${el.image}" alt="" style="width:60px; height:60px; object-fit:cover; border-radius:5px;">
                                             </td>
-                                            <td>${el.dept.depName}</td>
-                                            <td>${el.role.roleName}</td>
-                                            <td>${el.status ? 'Active' :'Inactive'}</td>
-                                            <td>
+                                            <td style="overflow-wrap: break-word;">${el.dept.depName}</td>
+                                            <td style="overflow-wrap: break-word;">${el.role.roleName}</td>
+                                            <td style="overflow-wrap: break-word;">${el.status ? 'Active' :'Inactive'}</td>
+                                            <td style="overflow-wrap: break-word;">
                                                 <a href="${pageContext.request.contextPath}/${urlPrefix}type=edit&empCode=${el.empCode}&page=${page}" class="btn btn-sm btn-primary">Edit</a>
                                             </td>
-                                            <td>
+                                            <td style="overflow-wrap: break-word;">
                                                 <form action="accountlist" method="post">
                                                     <input type="hidden" name="action" value="toggle">
                                                     <input type="hidden" name="empCode" value="${el.empCode}">
@@ -323,9 +325,9 @@
                                                         <input type="hidden" name="sortBy" value="${sortBy}">
                                                         <input type="hidden" name="order" value="${order}">
                                                     </c:if>
-                                                    <button type="submit"
+                                                    <button style="width: 75px" type="submit"
                                                             class="btn ${el.status ? 'btn-danger' : 'btn-success'}">
-                                                        ${el.status ? 'Deactivate' : 'Activate'}
+                                                        ${el.status ? 'Deactive' : 'Active'}
                                                     </button>
                                                 </form>
                                             </td>                                            
