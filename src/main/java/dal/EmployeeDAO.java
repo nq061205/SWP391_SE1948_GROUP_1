@@ -515,7 +515,7 @@ public class EmployeeDAO extends DBContext {
             }
 
             if (posTitle != null && posTitle.length > 0) {
-                sql.append(" AND dep_id IN (");
+                sql.append(" AND position_title IN (");
                 for (int i = 0; i < posTitle.length; i++) {
                     sql.append("?");
                     if (i < posTitle.length - 1) {

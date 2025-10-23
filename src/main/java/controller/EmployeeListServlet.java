@@ -70,8 +70,8 @@ public class EmployeeListServlet extends HttpServlet {
         String[] positionTitle = request.getParameterValues("positionTitle");
         int quantityOfPage = 5;
         int currentPage = 1;
-        int totalPages = 0;
-        int totalResults = 0;
+        int totalPages;
+        int totalResults;
         String oldSearchKey = (String) ses.getAttribute("oldSearchKey");
         Integer oldPosCount = (Integer) ses.getAttribute("oldPosCount");
         String oldAgeRange = (String) ses.getAttribute("oldAgeRange");
