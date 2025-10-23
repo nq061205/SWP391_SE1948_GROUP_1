@@ -13,7 +13,6 @@
 
         <!-- DESCRIPTION -->
         <meta name="description" content="Human Tech" />
-Edu
         <!-- OG -->
         <meta property="og:title" content="Human Tech" />
         <meta property="og:description" content="Human Tech" />

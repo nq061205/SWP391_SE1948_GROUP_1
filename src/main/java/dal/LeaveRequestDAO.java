@@ -33,67 +33,69 @@ public class LeaveRequestDAO extends DBContext {
         }
     }
 
-    public ArrayList<LeaveRequest> getLeaveRequestByEmpId(int emp_id) {
-        ArrayList<LeaveRequest> list = new ArrayList<>();
-        try {
-            String sql = "SELECT * FROM hrm.leave_request where emp_id = ?";
-            PreparedStatement stm = connection.prepareStatement(sql);
-            stm.setInt(1, emp_id);
-            ResultSet rs = stm.executeQuery();
+   public ArrayList<LeaveRequest> getLeaveRequestByEmpId(int emp_id) {
+    ArrayList<LeaveRequest> list = new ArrayList<>();
+    String sql = "SELECT * FROM hrm.leave_request WHERE emp_id = ?";
+    try (Connection cn = DBContext.getConnection();
+         PreparedStatement stm = cn.prepareStatement(sql)) {
+        stm.setInt(1, emp_id);
+        try (ResultSet rs = stm.executeQuery()) {
             Employee employee = employeeDAO.getEmployeeByEmpId(emp_id);
             while (rs.next()) {
                 list.add(new LeaveRequest(
-                        rs.getInt("leave_id"),
-                        employee,
-                        rs.getString("leave_type"),
-                        rs.getString("reason"),
-                        rs.getDouble("day_requested"),
-                        rs.getDate("start_date"),
-                        rs.getDate("end_date"),
-                        employeeDAO.getEmployeeByEmpId(rs.getInt("approved_by")),
-                        rs.getTimestamp("approved_at"),
-                        rs.getString("status"),
-                        rs.getString("note"),
-                        rs.getTimestamp("created_at"),
-                        rs.getTimestamp("updated_at")
+                    rs.getInt("leave_id"),
+                    employee,
+                    rs.getString("leave_type"),
+                    rs.getString("reason"),
+                    rs.getDouble("day_requested"),
+                    rs.getDate("start_date"),
+                    rs.getDate("end_date"),
+                    employeeDAO.getEmployeeByEmpId(rs.getInt("approved_by")),
+                    rs.getTimestamp("approved_at"),
+                    rs.getString("status"),
+                    rs.getString("note"),
+                    rs.getTimestamp("created_at"),
+                    rs.getTimestamp("updated_at")
                 ));
             }
-        } catch (SQLException ex) {
-            ex.printStackTrace();
         }
-        return list;
+    } catch (SQLException ex) {
+        ex.printStackTrace();
     }
+    return list;
+}
 
     public LeaveRequest getLeaveRequestByLeaveId(int leave_id, int emp_id) {
-        try {
-            String sql = "SELECT * FROM hrm.leave_request where leave_id = ?";
-            PreparedStatement stm = connection.prepareStatement(sql);
-            stm.setInt(1, leave_id);
-            ResultSet rs = stm.executeQuery();
+    String sql = "SELECT * FROM hrm.leave_request WHERE leave_id = ?";
+    try (Connection cn = DBContext.getConnection();
+         PreparedStatement stm = cn.prepareStatement(sql)) {
+        stm.setInt(1, leave_id);
+        try (ResultSet rs = stm.executeQuery()) {
             Employee employee = employeeDAO.getEmployeeByEmpId(emp_id);
             if (rs.next()) {
-                LeaveRequest leaveRequest = new LeaveRequest(
-                        rs.getInt("leave_id"),
-                        employee,
-                        rs.getString("leave_type"),
-                        rs.getString("reason"),
-                        rs.getDouble("day_requested"),
-                        rs.getDate("start_date"),
-                        rs.getDate("end_date"),
-                        employeeDAO.getEmployeeByEmpId(rs.getInt("approved_by")),
-                        rs.getTimestamp("approved_at"),
-                        rs.getString("status"),
-                        rs.getString("note"),
-                        rs.getTimestamp("created_at"),
-                        rs.getTimestamp("updated_at")
+                return new LeaveRequest(
+                    rs.getInt("leave_id"),
+                    employee,
+                    rs.getString("leave_type"),
+                    rs.getString("reason"),
+                    rs.getDouble("day_requested"),
+                    rs.getDate("start_date"),
+                    rs.getDate("end_date"),
+                    employeeDAO.getEmployeeByEmpId(rs.getInt("approved_by")),
+                    rs.getTimestamp("approved_at"),
+                    rs.getString("status"),
+                    rs.getString("note"),
+                    rs.getTimestamp("created_at"),
+                    rs.getTimestamp("updated_at")
                 );
-                return leaveRequest;
             }
-        } catch (SQLException ex) {
-            ex.printStackTrace();
         }
-        return null;
+    } catch (SQLException ex) {
+        ex.printStackTrace();
     }
+    return null;
+}
+
 
     public int composeLeaveRequest(int emp_id, String leave_type, String reason,
             Date startDate, Date endDate, int approvedBy) {
@@ -188,11 +190,11 @@ public class LeaveRequestDAO extends DBContext {
 
         if (startDate != null) {
             sql.append(" AND lr.created_at >= ?");
-            params.add(java.sql.Timestamp.valueOf(startDate.toLocalDate().atStartOfDay()));
+            params.add(Timestamp.valueOf(startDate.toLocalDate().atStartOfDay()));
         }
         if (endDate != null) {
             sql.append(" AND lr.created_at <= ?");
-            params.add(java.sql.Timestamp.valueOf(endDate.toLocalDate().plusDays(1).atStartOfDay()));
+            params.add(Timestamp.valueOf(endDate.toLocalDate().plusDays(1).atStartOfDay()));
         }
 
         try (Connection cn = DBContext.getConnection(); PreparedStatement ps = cn.prepareStatement(sql.toString())) {

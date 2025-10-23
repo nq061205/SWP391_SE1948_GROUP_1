@@ -134,7 +134,8 @@
                                                 <label class="col-sm-3 col-form-label">Day of birth</label>
                                                 <div class="col-sm-9">
                                                     <input name="dob" class="form-control" type="date" value="${sessionScope.user.dob}"
-                                                           <c:if test="${click != 'save'}"> readonly </c:if>>
+                                                           <c:if test="${click != 'save'}"> readonly required"</c:if>
+                                                           >
                                                     <c:if test="${dobErr!=null}">
                                                         <input style="color: red" type="text" class="form-control" value="${dobErr}">
                                                     </c:if>   
@@ -145,8 +146,9 @@
                                                 <label class="col-sm-3 col-form-label">Phone</label>
                                                 <div class="col-sm-9">
                                                     <input name="phone" 
-                                                           class="form-control" type="text" value="${sessionScope.user.phone}" pattern="\d{10}" title="Phone must include 10 number" minlength="10" maxlength="10"
-                                                           <c:if test="${click != 'save'}"> readonly </c:if>>
+                                                           class="form-control" type="text" value="${sessionScope.user.phone}" title="Phone must include 10 number" minlength="10" maxlength="10"
+                                                    <c:if test="${click != 'save'}"> readonly required</c:if>
+                                                    >
                                                     <c:if test="${phoneErr!=null}">
                                                         <input style="color: red" type="text" class="form-control" value="${phoneErr}">
                                                     </c:if>      
@@ -164,7 +166,7 @@
                                                 <label class="col-sm-3 col-form-label" <c:if test="${click != 'save'}">hidden</c:if> >Image</label>
                                                     <div class="col-sm-9">
                                                     <c:if test="${click == 'save'}">
-                                                        <input type="file" class="form-control" name="image" accept="image/*" title="Upload your avatar" value="${sessionScope.user.image}" required/>
+                                                        <input type="file" class="form-control" name="image" accept="image/*" title="Upload your avatar"/>
                                                         <c:if test="${not empty avatarErr}">
                                                             <div class="text-danger small mt-1">${avatarErr}</div>
                                                         </c:if>

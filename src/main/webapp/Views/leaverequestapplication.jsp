@@ -81,7 +81,7 @@
 
                                 <div class="input-group" style="max-width:260px;">
                                     <input type="text" name="search" value="${fn:escapeXml(param.search)}"
-                                           class="form-control filter-h" placeholder="Search..." />
+                                           class="form-control filter-h" placeholder="Search by status, leave type, reason, date..." />
                                     <button class="btn btn-warning filter-h" type="submit">
                                         <i class="fa fa-search"></i>
                                     </button>
@@ -143,17 +143,15 @@
 
                                     <ul class="mailbox-toolbar">
                                         <c:if test="${application.status eq 'Pending'}">
-                                            <a href="${pageContext.request.contextPath}/editapplication?type=LEAVE&id=${application.leaveId}" class="icon-circle" data-toggle="tooltip" title="Edit">
+                                            <a href="${pageContext.request.contextPath}/ d=${application.leaveId}" class="icon-circle" data-toggle="tooltip" title="Edit">
                                                 <i class="fa fa-pencil"></i>
                                             </a>
+                                            <form action="${pageContext.request.contextPath}/deleteapplication?type=LEAVE&id=${application.leaveId}" method="post" style="display:inline;">
+                                                <button type="submit" class="icon-circle" data-toggle="tooltip" title="Delete" onclick="return confirm('Do you confirm delete this application');">
+                                                    <i class="fa fa-trash-o"></i>
+                                                </button>
+                                            </form>
                                         </c:if>
-                                        <c:if test="${application.status eq 'Pending'}">
-                                        <form action="${pageContext.request.contextPath}/deleteapplication?type=LEAVE&id=${application.leaveId}" method="post" style="display:inline;">
-                                            <button type="submit" class="icon-circle" data-toggle="tooltip" title="Delete" onclick="return confirm('Do you confirm delete this application');">
-                                                <i class="fa fa-trash-o"></i>
-                                            </button>
-                                        </form>
-                                            </c:if>
                                         <a href="${pageContext.request.contextPath}/detail?leaveId=${application.leaveId}" class="icon-circle" data-toggle="tooltip" title="More detail">
                                             <i class="fa fa-info"></i>
                                         </a>
@@ -166,8 +164,6 @@
             </div>
             <c:url var="baseUrl" value="/application">
                 <c:param name="typeapplication" value="LEAVE"/>
-                <c:param name="size" value="${size}"/>
-
                 <c:if test="${not empty param.search}">
                     <c:param name="search" value="${param.search}"/>
                 </c:if>
@@ -234,9 +230,9 @@
         <script src="${pageContext.request.contextPath}/assets2/js/admin.js"></script>
         <script src='${pageContext.request.contextPath}/assets2/vendors/switcher/switcher.js'></script>
         <script>
-                                                $(document).ready(function () {
-                                                    $('[data-toggle="tooltip"]').tooltip();
-                                                });
+                                                    $(document).ready(function () {
+                                                        $('[data-toggle="tooltip"]').tooltip();
+                                                    });
         </script>
         <style>
             .icon-circle {
