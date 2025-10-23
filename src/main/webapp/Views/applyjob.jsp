@@ -56,7 +56,7 @@
                     <div class="container">
                         <ul class="list-inline">
                             <li><a href="${pageContext.request.contextPath}/homepage">Home</a></li>
-                            <li>Apply Job</li>
+                            <li><a href="${pageContext.request.contextPath}/jobsite">Apply Job</a></li>
                         </ul>
                     </div>
                 </div>

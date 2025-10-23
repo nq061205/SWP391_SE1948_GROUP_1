@@ -1,5 +1,6 @@
 package controller;
 
+import api.EmailUtil;
 import dal.CandidateDAO;
 import dal.RecruitmentPostDAO;
 import java.io.IOException;
@@ -35,6 +36,10 @@ public class ApplyJobServlet extends HttpServlet {
 
         String name = request.getParameter("name").trim();
         String email = request.getParameter("email").trim();
+        if(EmailUtil.isValidEmail(email) == false){
+            request.setAttribute("errorMessage", "Email does not exist");
+            return;
+        }
         String phone = request.getParameter("phone").trim();
         String postId = request.getParameter("postId");
         request.setAttribute("postId", postId);
