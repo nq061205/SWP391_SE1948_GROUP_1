@@ -272,7 +272,6 @@
                                             </small>
                                         </div>
                                     </div>
-
                                     <!-- Monthly Attendance Calendar -->
                                 <c:choose>
                                     <c:when test="${not empty employees}">

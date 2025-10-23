@@ -1,4 +1,3 @@
-
 <%-- 
     Document   : candidateDetail
     Created on : Oct 11, 2025

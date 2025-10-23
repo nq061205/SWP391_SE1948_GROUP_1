@@ -92,7 +92,7 @@
         public List<Candidate> getAllCandidateByKeyWord(String key, String result) {
             List<Candidate> candidateList = new ArrayList<>();
             if (key == null || key.trim().isEmpty()) {
-                return getAllCandidate("alls");
+                return getAllCandidate(result);
             }
             String sql = "";
             if (result.equals("pending")) {
