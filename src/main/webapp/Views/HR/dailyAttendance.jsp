@@ -6,6 +6,8 @@
 
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+
 
 <!DOCTYPE html>
 <html>
@@ -54,130 +56,10 @@
 
         <!-- STYLESHEETS ============================================= -->
         <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/assets2/css/style.css">
+        <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/assets2/css/daily-attendance-style.css">
         <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/assets2/css/dashboard.css">
         <link class="skin" rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/assets2/css/color/color-1.css">
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
-
-        <style>
-            /* Sticky columns */
-            .employee-col {
-                position: sticky;
-                left: 0;
-                z-index: 10;
-                background: #fff;
-                min-width: 80px;
-                border-right: 2px solid #dee2e6;
-            }
-
-            .name-col {
-                position: sticky;
-                left: 80px;
-                z-index: 10;
-                background: #fff;
-                min-width: 150px;
-                border-right: 2px solid #dee2e6;
-            }
-
-            .dept-col {
-                position: sticky;
-                left: 230px;
-                z-index: 10;
-                background: #fff;
-                min-width: 100px;
-                border-right: 3px solid #495057;
-            }
-
-            .summary-col {
-                position: sticky;
-                right: 0;
-                z-index: 5;
-                background: #f8f9fa;
-                min-width: 75px;
-                border-left: 2px solid #dee2e6;
-            }
-
-            .day-header {
-                width: 38px;
-                min-width: 38px;
-                font-size: 0.7rem;
-                padding: 4px 2px;
-            }
-
-            .day-cell {
-                width: 38px;
-                min-width: 38px;
-                height: 48px;
-                cursor: pointer;
-            }
-
-            .day-cell:hover:not(.weekend-cell) {
-                opacity: 0.85;
-                box-shadow: 0 0 5px rgba(0,0,0,0.3);
-            }
-
-            /* Work day text - FONT ĐEN BÌNH THƯỜNG, KHÔNG SHADOW */
-            .work-day-text {
-                font-weight: normal;
-                font-size: 0.85rem;
-                color: #000;
-            }
-
-            /* Status Colors */
-            .status-Present {
-                background-color: #28a745 !important;
-            }
-
-            .status-Absent {
-                background-color: #dc3545 !important;
-            }
-
-            .status-Leave {
-                background-color: #17a2b8 !important;
-            }
-
-            .status-Holiday {
-                background-color: #6c757d !important;
-            }
-
-            .weekend-cell {
-                background-color: #343a40 !important;
-            }
-
-            .weekend-cell .work-day-text {
-                color: #6c757d !important;
-            }
-
-            .legend-box {
-                width: 35px;
-                height: 35px;
-                border-radius: 4px;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                font-weight: 600;
-                color: #fff;
-                margin: 0 auto;
-                text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
-            }
-
-            /* Fix nút lệch */
-            .wc-title {
-                display: flex;
-                align-items: center;
-                justify-content: space-between;
-            }
-
-            .wc-title h4 {
-                margin: 0;
-            }
-
-            @media print {
-                .btn, .form-group, .card, .pagination {
-                    display: none !important;
-                }
-            }
-        </style>
-
     </head>
 
     <body class="ttr-opened-sidebar ttr-pinned-sidebar">
@@ -220,9 +102,19 @@
                                     <button class="btn btn-info btn-sm mr-2" onclick="toggleLegend()">
                                         <i class="fa fa-info-circle"></i> Legend
                                     </button>
-                                    <button class="btn btn-success btn-sm" onclick="exportAttendance()">
-                                        <i class="fa fa-download"></i> Export
-                                    </button>
+                                    <div class="btn-group">
+                                        <button type="button" class="btn btn-success btn-sm dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                            <i class="fa fa-download"></i> Export
+                                        </button>
+                                        <div class="dropdown-menu dropdown-menu-right">
+                                            <a class="dropdown-item" href="#" onclick="exportAttendance('excel')">
+                                                <i class="fa fa-file-excel-o text-success"></i> Export to Excel
+                                            </a>
+                                            <a class="dropdown-item" href="#" onclick="exportAttendance('pdf')">
+                                                <i class="fa fa-file-pdf-o text-danger"></i> Export to PDF
+                                            </a>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                             <div class="widget-inner">
@@ -246,7 +138,7 @@
                                                 <small class="d-block mt-1">Absent</small>
                                             </div>
                                             <div class="col text-center">
-                                                <div class="legend-box status-Leave rounded">1</div>
+                                                <div class="legend-box status-Leave rounded">0/1</div>
                                                 <small class="d-block mt-1">Leave</small>
                                             </div>
                                             <div class="col text-center">
@@ -279,7 +171,7 @@
                                         <div class="col-md-2">
                                             <div class="form-group">
                                                 <label for="selectedMonth">Month</label>
-                                                <select name="month" id="selectedMonth" class="form-control" onchange="this.form.submit()">
+                                                <select name="month" id="selectedMonth" class="form-control" onchange="applyFilter()">
                                                     <option value="1"  ${selectedMonth == 1 ? 'selected' : ''}>January</option>
                                                     <option value="2"  ${selectedMonth == 2 ? 'selected' : ''}>February</option>
                                                     <option value="3"  ${selectedMonth == 3 ? 'selected' : ''}>March</option>
@@ -300,7 +192,7 @@
                                         <div class="col-md-2">
                                             <div class="form-group">
                                                 <label for="selectedYear">Year</label>
-                                                <select name="year" id="selectedYear" class="form-control" onchange="this.form.submit()">
+                                                <select name="year" id="selectedYear" class="form-control" onchange="applyFilter()">
                                                     <c:forEach var="y" begin="${startYear}" end="${endYear}">
                                                         <option value="${y}" ${selectedYear == y ? 'selected' : ''}>${y}</option>
                                                     </c:forEach>
@@ -312,7 +204,7 @@
                                         <div class="col-md-2">
                                             <div class="form-group">
                                                 <label for="departmentFilter">Department</label>
-                                                <select name="department" id="departmentFilter" class="form-control" onchange="this.form.submit()">
+                                                <select name="department" id="departmentFilter" class="form-control" onchange="applyFilter()">
                                                     <option value="">All Departments</option>
                                                     <c:forEach var="dept" items="${departments}">
                                                         <option value="${dept.depId}" ${selectedDepartment == dept.depId ? 'selected' : ''}>${dept.depName}</option>
@@ -321,6 +213,7 @@
                                             </div>
                                         </div>
                                         <div class="col-md-3"></div>
+
                                         <!-- Search -->
                                         <div class="col-md-3">
                                             <div class="form-group">
@@ -328,9 +221,9 @@
                                                 <div class="input-group">
                                                     <input type="text" name="search" id="searchInput" 
                                                            value="${search}" class="form-control" 
-                                                           placeholder="Search by Employee Code or Name...">
+                                                           placeholder="Search by Code or Name...">
                                                     <div class="input-group-append">
-                                                        <button type="submit" class="btn btn-outline-secondary">
+                                                        <button type="submit" onclick="resetPageBeforeSubmit()" class="btn btn-outline-secondary">
                                                             <i class="fas fa-search"></i>
                                                         </button>
                                                     </div>
@@ -344,7 +237,7 @@
                                         <div class="col-md-2">
                                             <div class="form-group">
                                                 <label for="pageSize">Records per page</label>
-                                                <select name="pageSize" id="pageSize" class="form-control" onchange="this.form.submit()">
+                                                <select name="pageSize" id="pageSize" class="form-control" onchange="changePageSize(this.value)">
                                                     <option value="20" ${pageSize == 20 || empty pageSize ? 'selected' : ''}>20</option>
                                                     <option value="30" ${pageSize == 30 ? 'selected' : ''}>30</option>
                                                     <option value="50" ${pageSize == 50 ? 'selected' : ''}>50</option>
@@ -406,15 +299,12 @@
                                                 <tbody>
                                                     <c:forEach var="employee" items="${employees}">
                                                         <tr>
-                                                            <!-- Employee Code -->
                                                             <td class="employee-col bg-light">
                                                                 <strong class="text-primary">${employee.empCode}</strong>
                                                             </td>
-                                                            <!-- Employee Name -->
                                                             <td class="name-col bg-light">
                                                                 <small>${employee.fullname}</small>
                                                             </td>
-                                                            <!-- Department -->
                                                             <td class="dept-col bg-light">
                                                                 <small class="text-muted">
                                                                     <c:if test="${not empty employee.dept}">
@@ -422,29 +312,23 @@
                                                                     </c:if>
                                                                 </small>
                                                             </td>
-                                                            <!-- Daily Attendance -->
                                                             <c:set var="attendanceList" value="${groupedAttendance[employee.empId]}" />
                                                             <c:forEach begin="1" end="${daysInMonth}" var="day">
-                                                                <c:set var="attendance" value="" />
-                                                                <c:forEach var="att" items="${attendanceList}">
-                                                                    <c:if test="${att.date.day == day}">
-                                                                        <c:set var="attendance" value="${att}" />
-                                                                    </c:if>
-                                                                </c:forEach>
+                                                                <c:set var="attendance" value="${attendanceByDay[employee.empId][day]}" />
                                                                 <c:set var="isWeekend" value="${weekendDays.contains(day)}" />
-                                                                <td class="day-cell text-center ${isWeekend ? 'weekend-cell' : (attendance != '' ? 'status-'.concat(attendance.status) : '')}" 
+
+                                                                <td class="day-cell ${isWeekend ? 'weekend-cell' : (attendance != null ? 'status-'.concat(attendance.status) : '')}" 
                                                                     title="Click to view details">
                                                                     <c:choose>
                                                                         <c:when test="${isWeekend}">
                                                                             <span class="work-day-text">-</span>
                                                                         </c:when>
                                                                         <c:otherwise>
-                                                                            <span class="work-day-text">
-                                                                                <c:if test="${attendance != ''}">
-                                                                                    <fmt:formatNumber value="${attendance.workDay}" maxFractionDigits="1"/>
-                                                                                    <c:if test="${attendance.otHours > 0}"> T</c:if>
-                                                                                </c:if>
-                                                                            </span>
+                                                                            <c:if test="${attendance != null}">
+                                                                                <span class="work-day-text">
+                                                                                    <fmt:formatNumber value="${attendance.workDay}" pattern="#.##"/><c:if test="${attendance.otHours > 0}">T</c:if>
+                                                                                    </span>
+                                                                            </c:if>
                                                                         </c:otherwise>
                                                                     </c:choose>
                                                                 </td>
@@ -462,12 +346,73 @@
                                                             </td>
                                                         </tr>
                                                     </c:forEach>
-
                                                 </tbody>
                                             </table>
                                         </div>
-                                        <!-- Pagination giữ nguyên như cũ -->
-                                        ...
+                                        <c:if test="${totalPages > 1}">
+                                            <nav aria-label="Page navigation" class="mt-3">
+                                                <ul class="pagination justify-content-center">
+                                                    <!-- Previous -->
+                                                    <li class="page-item ${currentPage <= 1 ? 'disabled' : ''}">
+                                                        <a class="page-link" href="?page=${currentPage - 1}&month=${selectedMonth}&year=${selectedYear}&department=${selectedDepartment}&search=${param.search}&sortBy=${param.sortBy}&pageSize=${pageSize}">
+                                                            <i class="fa fa-chevron-left"></i>
+                                                        </a>
+                                                    </li>
+
+                                                    <!-- Page Numbers -->
+                                                    <c:choose>
+                                                        <c:when test="${totalPages <= 7}">
+                                                            <c:forEach begin="1" end="${totalPages}" var="pageNum">
+                                                                <li class="page-item ${pageNum == currentPage ? 'active' : ''}">
+                                                                    <a class="page-link" href="?page=${pageNum}&month=${selectedMonth}&year=${selectedYear}&department=${selectedDepartment}&search=${param.search}&sortBy=${param.sortBy}&pageSize=${pageSize}">
+                                                                        ${pageNum}
+                                                                    </a>
+                                                                </li>
+                                                            </c:forEach>
+                                                        </c:when>
+                                                        <c:otherwise>
+                                                            <!-- First -->
+                                                            <li class="page-item ${1 == currentPage ? 'active' : ''}">
+                                                                <a class="page-link" href="?page=1&month=${selectedMonth}&year=${selectedYear}&department=${selectedDepartment}&search=${param.search}&sortBy=${param.sortBy}&pageSize=${pageSize}">1</a>
+                                                            </li>
+
+                                                            <c:if test="${currentPage > 4}">
+                                                                <li class="page-item disabled"><span class="page-link">...</span></li>
+                                                                </c:if>
+
+                                                            <!-- Middle -->
+                                                            <c:forEach begin="${currentPage - 2 > 2 ? currentPage - 2 : 2}" 
+                                                                       end="${currentPage + 2 < totalPages - 1 ? currentPage + 2 : totalPages - 1}" 
+                                                                       var="pageNum">
+                                                                <li class="page-item ${pageNum == currentPage ? 'active' : ''}">
+                                                                    <a class="page-link" href="?page=${pageNum}&month=${selectedMonth}&year=${selectedYear}&department=${selectedDepartment}&search=${param.search}&sortBy=${param.sortBy}&pageSize=${pageSize}">
+                                                                        ${pageNum}
+                                                                    </a>
+                                                                </li>
+                                                            </c:forEach>
+
+                                                            <c:if test="${currentPage < totalPages - 3}">
+                                                                <li class="page-item disabled"><span class="page-link">...</span></li>
+                                                                </c:if>
+
+                                                            <!-- Last -->
+                                                            <li class="page-item ${totalPages == currentPage ? 'active' : ''}">
+                                                                <a class="page-link" href="?page=${totalPages}&month=${selectedMonth}&year=${selectedYear}&department=${selectedDepartment}&search=${param.search}&sortBy=${param.sortBy}&pageSize=${pageSize}">
+                                                                    ${totalPages}
+                                                                </a>
+                                                            </li>
+                                                        </c:otherwise>
+                                                    </c:choose>
+
+                                                    <!-- Next -->
+                                                    <li class="page-item ${currentPage >= totalPages ? 'disabled' : ''}">
+                                                        <a class="page-link" href="?page=${currentPage + 1}&month=${selectedMonth}&year=${selectedYear}&department=${selectedDepartment}&search=${param.search}&sortBy=${param.sortBy}&pageSize=${pageSize}">
+                                                            <i class="fa fa-chevron-right"></i>
+                                                        </a>
+                                                    </li>
+                                                </ul>
+                                            </nav>
+                                        </c:if>
                                     </c:when>
                                     <c:otherwise>
                                         <div class="text-center py-5">
@@ -531,15 +476,16 @@
     <script src="${pageContext.request.contextPath}/assets2/vendors/switcher/switcher.js"></script>
 
     <script>
+                                                    var isProcessing = false;
+
                                                     $(document).ready(function () {
-                                                        console.log('jQuery loaded');
-                                                        console.log('Legend panel exists:', $('#legendPanel').length);
+                                                        setTimeout(function () {
+                                                            $('.alert').fadeOut('slow');
+                                                        }, 5000);
                                                     });
 
                                                     function toggleLegend() {
-                                                        console.log('toggleLegend called');
                                                         var panel = $('#legendPanel');
-
                                                         if (panel.length === 0) {
                                                             alert('Legend panel not found!');
                                                             return;
@@ -547,74 +493,53 @@
                                                         panel.slideToggle(300);
                                                     }
 
-                                                    function showDayDetail(empCode, empName, day) {
-                                                        $('#detailModal').modal('show');
-                                                        $('#detailContent').html('<div class="text-center"><i class="fa fa-spinner fa-spin"></i> Loading...</div>');
-
-                                                        $.ajax({
-                                                            url: 'daily-attendance',
-                                                            type: 'GET',
-                                                            data: {
-                                                                action: 'getDetail',
-                                                                empCode: empCode,
-                                                                day: day,
-                                                                month: '${selectedMonth}',
-                                                                year: '${selectedYear}'
-                                                            },
-                                                            success: function (data) {
-                                                                var html = '<table class="table table-sm table-borderless">';
-                                                                html += '<tr><th width="40%">Employee:</th><td>' + empName + ' (' + empCode + ')</td></tr>';
-                                                                html += '<tr><th>Date:</th><td>' + data.date + '</td></tr>';
-                                                                html += '<tr><th>Work Day:</th><td><span class="badge badge-primary">' + data.workDay + '</span></td></tr>';
-                                                                html += '<tr><th>Status:</th><td><span class="badge badge-' + getStatusClass(data.status) + '">' + data.status + '</span></td></tr>';
-
-                                                                if (data.checkInTime) {
-                                                                    html += '<tr><th>Check In:</th><td>' + data.checkInTime + '</td></tr>';
-                                                                }
-                                                                if (data.checkOutTime) {
-                                                                    html += '<tr><th>Check Out:</th><td>' + data.checkOutTime + '</td></tr>';
-                                                                }
-                                                                if (data.otHours > 0) {
-                                                                    html += '<tr><th>OT Hours:</th><td><span class="badge badge-warning">' + data.otHours + 'h</span></td></tr>';
-                                                                }
-                                                                if (data.isLocked) {
-                                                                    html += '<tr><th>Status:</th><td><span class="badge badge-danger"><i class="fa fa-lock"></i> Locked</span></td></tr>';
-                                                                }
-
-                                                                html += '</table>';
-                                                                $('#detailContent').html(html);
-                                                            },
-                                                            error: function (xhr, status, error) {
-                                                                console.error('AJAX Error:', status, error);
-                                                                $('#detailContent').html('<p class="text-danger text-center">Error loading details</p>');
-                                                            }
-                                                        });
+                                                    function changePageSize(newPageSize) {
+                                                        if (isProcessing) {
+                                                            alert('Please wait until processing is complete');
+                                                            return;
+                                                        }
+                                                        const form = document.getElementById('filterForm');
+                                                        if (!form) {
+                                                            alert('Error: Form not found');
+                                                            return;
+                                                        }
+                                                        const pageInput = form.querySelector('input[name="page"]');
+                                                        if (pageInput) {
+                                                            pageInput.value = 1;
+                                                        }
+                                                        form.submit();
                                                     }
 
-                                                    function getStatusClass(status) {
-                                                        switch (status) {
-                                                            case 'Present':
-                                                                return 'success';
-                                                            case 'Absent':
-                                                                return 'danger';
-                                                            case 'Leave':
-                                                                return 'info';
-                                                            case 'Holiday':
-                                                                return 'secondary';
-                                                            default:
-                                                                return 'light';
+                                                    function resetPageBeforeSubmit() {
+                                                        const form = document.getElementById('filterForm');
+                                                        if (form) {
+                                                            form.querySelector('input[name="page"]').value = 1;
                                                         }
                                                     }
 
-                                                    function exportAttendance() {
-                                                        var form = $('#filterForm');
-                                                        window.location.href = 'daily-attendance?action=export&' + form.serialize();
+                                                    function applyFilter() {
+                                                        const form = document.getElementById('filterForm');
+                                                        if (!form)
+                                                            return;
+                                                        form.querySelector('input[name="page"]').value = 1;
+                                                        form.submit();
                                                     }
 
-                                                    $(document).ready(function () {
-                                                        setTimeout(function () {
-                                                            $('.alert').fadeOut('slow');
-                                                        }, 5000);
-                                                    });
+                                                    function exportAttendance(format) {
+                                                        var form = $('#filterForm');
+                                                        if (!form.length) {
+                                                            alert('Form not found!');
+                                                            return;
+                                                        }
+                                                        var params = form.serialize();
+                                                        var url;
+                                                        if (format === 'excel') {
+                                                            url = 'export-attendance-excel?' + params;
+                                                        } else if (format === 'pdf') {
+                                                            url = 'export-attendance-pdf?' + params;
+                                                        }
+                                                        window.location.href = url;
+                                                    }
+
     </script>
 </html>

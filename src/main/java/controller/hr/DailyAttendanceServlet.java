@@ -124,13 +124,24 @@ public class DailyAttendanceServlet extends HttpServlet {
             dailyDAO = new DailyAttendanceDAO();
             List<DailyAttendance> dailyList = dailyDAO.getAttendanceByEmpIds(empIds, selectedMonth, selectedYear);
 
+            Map<Integer, Map<Integer, DailyAttendance>> attendanceByDay = new HashMap<>();
+
+            for (DailyAttendance att : dailyList) {
+                int empId = att.getEmployee().getEmpId();
+
+                java.sql.Date sqlDate = att.getDate();
+                LocalDate localDate = sqlDate.toLocalDate();
+                int dayOfMonth = localDate.getDayOfMonth();
+
+                attendanceByDay.computeIfAbsent(empId, k -> new HashMap<>()).put(dayOfMonth, att);
+            }
+
             Map<Integer, List<DailyAttendance>> groupedAttendance = new LinkedHashMap<>();
             for (DailyAttendance d : dailyList) {
                 int empId = d.getEmployee().getEmpId();
                 groupedAttendance.computeIfAbsent(empId, k -> new ArrayList<>()).add(d);
             }
 
-            // Tính tổng công và tổng OT cho từng nhân viên
             Map<Integer, Double> totalWorkDaysMap = new HashMap<>();
             Map<Integer, Double> totalOTHoursMap = new HashMap<>();
             for (Map.Entry<Integer, List<DailyAttendance>> entry : groupedAttendance.entrySet()) {
@@ -158,6 +169,7 @@ public class DailyAttendanceServlet extends HttpServlet {
             request.setAttribute("departments", departments);
             request.setAttribute("employees", employees);
             request.setAttribute("groupedAttendance", groupedAttendance);
+            request.setAttribute("attendanceByDay", attendanceByDay); 
             request.setAttribute("daysInMonth", daysInMonth);
             request.setAttribute("weekendDays", weekendDays);
             request.setAttribute("totalWorkDaysMap", totalWorkDaysMap);
