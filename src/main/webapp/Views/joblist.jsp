@@ -11,7 +11,7 @@
     <meta name="author" content="Human Tech" />
     <meta name="robots" content="index, follow" />
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Career Opportunities | Human Tech</title>
+    <title>Career Opportunities</title>
 
     <!-- FAVICONS ICON ============================================= -->
     <link rel="icon" href="${pageContext.request.contextPath}/assets1/images/favicon.ico" type="image/x-icon" />
