@@ -25,7 +25,7 @@
     <link rel="shortcut icon" type="image/x-icon" href="${pageContext.request.contextPath}/assets1/images/favicon.png"/>
 
     <!-- PAGE TITLE HERE ============================================= -->
-    <title>Forget Password | EduChamp</title>
+    <title>Forget Password | HumanTech</title>
 
     <!-- MOBILE SPECIFIC ============================================= -->
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -51,7 +51,7 @@
         <div class="account-head"
              style="background-image:url(${pageContext.request.contextPath}/assets1/images/background/bg2.jpg);">
             <a href="index.html">
-                <img src="${pageContext.request.contextPath}/assets1/images/logo-white-2.png" alt="">
+                <img src="${pageContext.request.contextPath}/assets1/images/logo-white.png" alt="">
             </a>
         </div>
 

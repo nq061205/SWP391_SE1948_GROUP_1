@@ -33,6 +33,16 @@ public class EmailUtil {
         Transport.send(msg);
     }
 
+    public static boolean isValidEmail(String email) {
+        try {
+            InternetAddress emailAddr = new InternetAddress(email);
+            emailAddr.validate();
+            return true;
+        } catch (AddressException ex) {
+            return false;
+        }
+    }
+
     public static void sendResetLink(String toEmail, String token) {
         try {
             String resetLink = "http://localhost:8080/HRMSystem/recovery?token=" + token;
