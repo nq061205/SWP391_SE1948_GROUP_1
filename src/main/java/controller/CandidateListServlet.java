@@ -109,6 +109,9 @@ public class CandidateListServlet extends HttpServlet {
         CandidateDAO cDAO = new CandidateDAO();
         HttpSession ses = request.getSession();
         String tab = request.getParameter("tab");
+        if (tab == null) {
+            tab = (String) ses.getAttribute("tab"); 
+        }
         List<Candidate> searchResult;
         if ("approve".equals(tab)) {
             searchResult = cDAO.getAllCandidateByKeyWord(keyword, "approve");
@@ -117,6 +120,7 @@ public class CandidateListServlet extends HttpServlet {
         } else {
             searchResult = cDAO.getAllCandidateByKeyWord(keyword, "pending");
         }
+
         int totalPage = (int) Math.ceil((double) searchResult.size() / 5);
         List<Candidate> pagedList = cDAO.getCandidateByPage(searchResult, 1, 5);
 
@@ -125,6 +129,7 @@ public class CandidateListServlet extends HttpServlet {
         ses.setAttribute("pages", 1);
         ses.setAttribute("total", totalPage);
         ses.setAttribute("keyword", keyword);
+        ses.setAttribute("tab", tab);
 
         request.getRequestDispatcher("Views/candidatelist.jsp").forward(request, response);
     }
