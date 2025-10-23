@@ -77,7 +77,7 @@ public class ApplicationServlet extends HttpServlet {
         }
 
         int page = parseIntOrDefault(request.getParameter("page"), 1);
-        int size = Math.max(1, Math.min(parseIntOrDefault(request.getParameter("size"), 10), 50));
+        int size = 10;
         int offset = (page - 1) * size;
 
         int empId = user.getEmpId();
@@ -103,7 +103,7 @@ public class ApplicationServlet extends HttpServlet {
         request.setAttribute("user", user);
 
         request.getRequestDispatcher("Views/leaverequestapplication.jsp").forward(request, response);
-    }
+    }   
 
     protected void doOTRequestApplication(HttpServletRequest request, HttpServletResponse response, Employee user)
             throws ServletException, IOException {
@@ -128,7 +128,7 @@ public class ApplicationServlet extends HttpServlet {
         }
 
         int page = parseIntOrDefault(request.getParameter("page"), 1);
-        int size = parseIntOrDefault(request.getParameter("size"), 10);
+        int size = 10;
         int offset = (page - 1) * size;
 
         int empId = user.getEmpId();

@@ -158,8 +158,6 @@
             </div>
             <c:url var="baseUrl" value="/application">
                 <c:param name="typeapplication" value="OT"/>
-                <c:param name="size" value="${size}"/>
-
                 <c:if test="${not empty param.search}">
                     <c:param name="search" value="${param.search}"/>
                 </c:if>

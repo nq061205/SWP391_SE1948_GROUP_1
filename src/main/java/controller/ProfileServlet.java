@@ -16,6 +16,7 @@ import java.io.File;
 import java.io.InputStream;
 import java.time.LocalDate;
 import java.util.*;
+import javax.imageio.ImageIO;
 
 /**
  *
@@ -50,14 +51,13 @@ public class ProfileServlet extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
-        EmployeeDAO employeeDAO = new EmployeeDAO();
         HttpSession session = request.getSession();
         Employee user = (Employee) session.getAttribute("user");
         if (user == null) {
             response.sendRedirect("Views/login.jsp");
             return;
         }
-
+        EmployeeDAO employeeDAO = new EmployeeDAO();
         String click = request.getParameter("click");
         request.setAttribute("click", click);
 
@@ -110,10 +110,11 @@ public class ProfileServlet extends HttpServlet {
             }
 
             String avatarRelativePath = null;
-            if (filePart != null && filePart.getSize() > 0) {
-                avatarRelativePath = saveAvatar(filePart, getServletContext());
+            if (filePart == null || filePart.getSize() == 0) {
+                avatarRelativePath = user.getImage();
+            } else {
+                avatarRelativePath = saveAvatar(filePart, getServletContext(), user.getEmpCode());
             }
-
             employeeDAO.updateEmployeeInformation(
                     user.getEmpId(),
                     fullname.trim(),
@@ -139,9 +140,6 @@ public class ProfileServlet extends HttpServlet {
     }
 
     private String validateFullname(String fullname) {
-        if (fullname == null || fullname.trim().isEmpty()) {
-            return "Full name is required";
-        }
         String fn = fullname.trim();
         if (fn.length() < 2 || fn.length() > 50) {
             return "Full name must be 2–50 characters";
@@ -153,42 +151,21 @@ public class ProfileServlet extends HttpServlet {
     }
 
     private String validatePhone(String phone) {
-        if (phone == null || phone.trim().isEmpty()) {
-            return "Phone is required";
-        }
         String p = phone.trim();
-        if (!(p.matches("^(0)(3|5|7|8|9)\\d{8}$"))) {
+        if (!(p.matches("^(0)(3|5|7|8|9)\\d+$"))) {
             return "Invalid mobile number";
         }
         return null;
     }
 
     private String validateAvatarPart(Part filePart) {
-        if (filePart == null || filePart.getSize() == 0) {
-            return null;
-        }
         if (filePart.getSize() > MAX_AVATAR_SIZE) {
             return "Avatar must be ≤ 2MB";
-        }
-        String ct = filePart.getContentType();
-        if (ct == null || !ALLOWED_CONTENT_TYPES.contains(ct.toLowerCase())) {
-            return "Avatar must be JPG/PNG/GIF/WEBP";
-        }
-        try (InputStream is = filePart.getInputStream()) {
-            if (javax.imageio.ImageIO.read(is) == null) {
-                return "Invalid image file";
-            }
-        } catch (IOException e) {
-            return "Cannot read uploaded image";
         }
         return null;
     }
 
-    private String saveAvatar(Part filePart, ServletContext ctx) throws IOException {
-        if (filePart == null || filePart.getSize() == 0) {
-            return null;
-        }
-
+    private String saveAvatar(Part filePart, ServletContext ctx, String empCode) throws IOException {
         String ct = filePart.getContentType().toLowerCase();
         String ext = "";
         switch (ct) {
@@ -207,7 +184,7 @@ public class ProfileServlet extends HttpServlet {
             default:
                 ext = "";
         }
-        String safeName = UUID.randomUUID().toString().replace("-", "") + ext;
+        String safeName = "ht_" + empCode + ext;
 
         String uploadPath = ctx.getRealPath("/images/avatar");
         File uploadDir = new File(uploadPath);

@@ -263,11 +263,12 @@ public class OTRequestDAO extends DBContext {
 
     public List<OTRequest> getApprovedOTBetween(Date minDate, Date maxDate) {
         List<OTRequest> list = new ArrayList<>();
-        String sql = "SELECT * FROM ot_request WHERE status = 'Approved' AND date BETWEEN ? AND ?";
+        String sql = "SELECT * FROM hrm.ot_request WHERE status = 'Approved' AND date BETWEEN ? AND ?";
 
-        try (PreparedStatement st = connection.prepareStatement(sql)) {
+        try (Connection cn = DBContext.getConnection(); PreparedStatement st = cn.prepareStatement(sql)) {
             st.setDate(1, minDate);
             st.setDate(2, maxDate);
+
             try (ResultSet rs = st.executeQuery()) {
                 while (rs.next()) {
                     Employee e = employeeDAO.getEmployeeByEmpId(rs.getInt("emp_id"));
@@ -286,7 +287,7 @@ public class OTRequestDAO extends DBContext {
                     list.add(o);
                 }
             }
-        } catch (Exception e) {
+        } catch (SQLException e) {
             e.printStackTrace();
         }
         return list;
