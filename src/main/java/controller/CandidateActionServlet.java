@@ -41,7 +41,7 @@ public class CandidateActionServlet extends HttpServlet {
                 EmailUtil.sendEmail(thisCandidate.getEmail(), "CV result notification", "Congratuation " + thisCandidate.getName() + " has pass our cv stage, please go to interview tommorow");
                 cDAO.updateResultCandidate(1, candidateid);
             } else {
-                EmailUtil.sendEmail(thisCandidate.getEmail(), "CV result notification", "You have not met the requirements of our Human Tech group, sorry " + thisCandidate.getName());
+                EmailUtil.sendEmail(thisCandidate.getEmail(), "CV result notification", "get out of our company " + thisCandidate.getName());
                 cDAO.updateResultCandidate(0, candidateid);
             }
             if (candidate == null) {

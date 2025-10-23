@@ -106,6 +106,18 @@
         <servlet-name>DashboardServlet</servlet-name>
         <servlet-class>controller.DashboardServlet</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>ExportAttendanceServlet</servlet-name>
+        <servlet-class>controller.hr.ExportAttendanceServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>ExportAttendanceExcelServlet</servlet-name>
+        <servlet-class>controller.hr.ExportAttendanceExcelServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>ExportAttendancePDFServlet</servlet-name>
+        <servlet-class>controller.hr.ExportAttendancePDFServlet</servlet-class>
+    </servlet>
     <servlet-mapping>
         <servlet-name>HomePageServlet</servlet-name>
         <url-pattern>/homepage</url-pattern>
@@ -218,6 +230,18 @@
     <servlet-mapping>
         <servlet-name>JobSiteServlet</servlet-name>
         <url-pattern>/jobsite</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>ExportAttendanceServlet</servlet-name>
+        <url-pattern>/export-attendance</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>ExportAttendanceExcelServlet</servlet-name>
+        <url-pattern>/export-attendance-excel</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>ExportAttendancePDFServlet</servlet-name>
+        <url-pattern>/export-attendance-pdf</url-pattern>
     </servlet-mapping>
     <session-config>
         <session-timeout>30</session-timeout>
