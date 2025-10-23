@@ -30,7 +30,7 @@
         <link rel="shortcut icon" type="image/x-icon" href="${pageContext.request.contextPath}/assets2/images/favicon.png" />
 
         <!-- PAGE TITLE HERE ============================================= -->
-        <title>EduChamp : Education HTML Template</title>
+        <title>My Profile</title>
 
         <!-- MOBILE SPECIFIC ============================================= -->
         <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -164,7 +164,7 @@
                                                 <label class="col-sm-3 col-form-label" <c:if test="${click != 'save'}">hidden</c:if> >Image</label>
                                                     <div class="col-sm-9">
                                                     <c:if test="${click == 'save'}">
-                                                        <input type="file" class="form-control" name="image" accept="image/*" title="Upload your avatar" required/>
+                                                        <input type="file" class="form-control" name="image" accept="image/*" title="Upload your avatar" value="${sessionScope.user.image}" required/>
                                                         <c:if test="${not empty avatarErr}">
                                                             <div class="text-danger small mt-1">${avatarErr}</div>
                                                         </c:if>

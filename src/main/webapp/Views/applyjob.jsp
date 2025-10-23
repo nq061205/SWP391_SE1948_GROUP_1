@@ -19,7 +19,7 @@
         <link rel="shortcut icon" type="image/x-icon" href="${pageContext.request.contextPath}/assets1/images/favicon.png" />
 
         <!-- PAGE TITLE HERE ============================================= -->
-        <title>Apply for a Job | Human Tech</title>
+        <title>Apply Job</title>
 
         <!-- MOBILE SPECIFIC ============================================= -->
         <meta name="viewport" content="width=device-width, initial-scale=1">
