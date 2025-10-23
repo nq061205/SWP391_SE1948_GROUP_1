@@ -13,6 +13,7 @@
 
         <!-- DESCRIPTION -->
         <meta name="description" content="Human Tech" />
+Edu
         <!-- OG -->
         <meta property="og:title" content="Human Tech" />
         <meta property="og:description" content="Human Tech" />
@@ -24,7 +25,7 @@
         <link rel="shortcut icon" type="image/x-icon" href="${pageContext.request.contextPath}/assets2/images/favicon.png" />
 
         <!-- PAGE TITLE HERE ============================================= -->
-        <title>Leave Request Application</title>
+        <title>EduChamp : Education HTML Template </title>
 
         <!-- MOBILE SPECIFIC ============================================= -->
         <meta name="viewport" content="width=device-width, initial-scale=1">

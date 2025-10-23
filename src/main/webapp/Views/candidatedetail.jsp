@@ -13,7 +13,7 @@
 <html lang="en">
     <head>
         <meta charset="utf-8">
-        <title>Candidate Detail</title>
+        <title>Candidate Detail - HRM System</title>
         <meta name="viewport" content="width=device-width, initial-scale=1">
 
         <!-- Base CSS -->

@@ -280,10 +280,10 @@ public class LeaveRequestDAO extends DBContext {
                     ps.setInt(i++, (Integer) p);
                 } else if (p instanceof String) {
                     ps.setString(i++, (String) p);
-                } else if (p instanceof Date) {
-                    ps.setDate(i++, (Date) p);
-                } else if (p instanceof Timestamp) {
-                    ps.setTimestamp(i++, (Timestamp) p);
+                } else if (p instanceof java.sql.Date) {
+                    ps.setDate(i++, (java.sql.Date) p);
+                } else if (p instanceof java.sql.Timestamp) {
+                    ps.setTimestamp(i++, (java.sql.Timestamp) p);
                 }
             }
 
