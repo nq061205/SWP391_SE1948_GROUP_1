@@ -9,12 +9,16 @@ import dal.LeaveRequestDAO;
 import dal.EmployeeDAO;
 import model.*;
 import java.io.IOException;
+import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import java.sql.Date;
+import java.sql.SQLException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -25,12 +29,6 @@ public class ComposeApplicationServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        HttpSession session = request.getSession();
-        Employee user = (Employee) session.getAttribute("user");
-        if (user == null) {
-            response.sendRedirect("Views/login.jsp");
-            return;
-        }
         String type = request.getParameter("type");
         if ("LEAVE".equalsIgnoreCase(type)) {
             request.getRequestDispatcher("Views/composeleaveapplication.jsp").forward(request, response);
@@ -49,13 +47,14 @@ public class ComposeApplicationServlet extends HttpServlet {
         String appType = type.trim().toUpperCase();
         request.setAttribute("type", appType);
         HttpSession session = request.getSession();
-        Employee user = (Employee) session.getAttribute("user");
+        Employee user = (Employee)session.getAttribute("user");
         switch (appType) {
             case "LEAVE": {
                 String leaveType = request.getParameter("type_leave");
                 String content = request.getParameter("content");
                 String startStr = request.getParameter("startdate");
                 String endStr = request.getParameter("enddate");
+
                 try {
                     Date startDate = Date.valueOf(startStr);
                     Date endDate = Date.valueOf(endStr);
@@ -64,27 +63,25 @@ public class ComposeApplicationServlet extends HttpServlet {
                     request.setAttribute("startdate", startDate);
                     request.setAttribute("enddate", endDate);
                     request.setAttribute("content", content);
-                    int approvedBy = 0;
-                    if (empDAO.getEmployeeByEmail(email) == null) {
-                        request.setAttribute("messageEmail", "Email is not available");
-                        request.getRequestDispatcher("Views/composeleaveapplication.jsp").forward(request, response);
-                    } else if (endDate.before(startDate)) {
-                        request.setAttribute("email", email);
-                        request.setAttribute("messageDate", "End date must after start date");
-                        request.getRequestDispatcher("Views/composeleaveapplication.jsp").forward(request, response);
-                    } else {
+                    int approvedBy;
+                    if (empDAO.getEmployeeByEmail(email) != null) {
                         Employee approver = empDAO.getEmployeeByEmail(request.getParameter("email"));
                         approvedBy = approver.getEmpId();
-                        leaveDAO.composeLeaveRequest(
-                                user.getEmpId(),
-                                leaveType,
-                                content,
-                                startDate,
-                                endDate,
-                                approvedBy
-                        );
-                        request.getRequestDispatcher("Views/applicationsuccess.jsp").forward(request, response);
+                    } else {
+                        request.setAttribute("message", "Email is not available.");
+                        request.getRequestDispatcher("Views/composeleaveapplication.jsp").forward(request, response);
+                        return;
                     }
+                    leaveDAO.composeLeaveRequest(
+                            user.getEmpId(),
+                            leaveType,
+                            content,
+                            startDate,
+                            endDate,
+                            approvedBy
+                    );
+                    request.getRequestDispatcher("Views/applicationsuccess.jsp").forward(request, response);
+                    return;
                 } catch (IllegalArgumentException ex) {
                 }
                 break;
@@ -92,15 +89,15 @@ public class ComposeApplicationServlet extends HttpServlet {
 
             case "OT": {
                 String dateStr = request.getParameter("date");
-                String hoursStr = request.getParameter("hours");
+                String hoursStr = request.getParameter("othour");
                 try {
                     Date otDate = Date.valueOf(dateStr);
+                    double otHours = Double.parseDouble(hoursStr);
                     String email = request.getParameter("email");
-                    Double otHours = Double.parseDouble(hoursStr);
 
                     request.setAttribute("email", email);
                     request.setAttribute("date", otDate);
-                    request.setAttribute("hours", hoursStr);
+                    request.setAttribute("othour", otHours);
                     int approvedBy;
                     if (empDAO.getEmployeeByEmail(request.getParameter("email")) != null) {
                         Employee approver = empDAO.getEmployeeByEmail(request.getParameter("email"));
