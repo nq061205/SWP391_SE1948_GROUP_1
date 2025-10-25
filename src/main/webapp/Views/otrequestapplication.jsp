@@ -66,96 +66,114 @@
             </script>
         </c:if>
         <main class="ttr-wrapper">
-            <div class="container-fluid">
-                <div class="db-breadcrumb">
-                    <h4 class="breadcrumb-title">Application</h4>
-                    <ul class="db-breadcrumb-list">
-                        <li><a href="${pageContext.request.contextPath}/application?typeapplication=ot"><i class="fa fa-home"></i>Overtime Request</a></li>
-                    </ul>
-                </div>
-                <div class="row">
-                    <div class="col-lg-12">
-                        <div class="filter-row mb-3">
-                            <form action="${pageContext.request.contextPath}/application" method="get" class="d-flex align-items-center flex-nowrap w-100" style="gap:12px;">
-                                <input type="hidden" name="typeapplication" value="OT"/>
-                                <div class="input-group">
-                                    <input type="text" name="search" value="${fn:escapeXml(param.search)}"
-                                           class="form-control" placeholder="Search by date, hours, status..." style="width:260px;">
-                                    <div class="input-group-append">
-                                        <button class="btn btn-primary" type="submit"><i class="fa fa-search"></i></button>
-                                    </div>
-                                </div>
-                                <select name="status" class="form-control filter-h" onchange="this.form.submit()">
+            <div class="filter-row mb-3">
+                            <form action="${pageContext.request.contextPath}/application" method="get"
+                                  class="d-flex align-items-center flex-nowrap w-100" style="gap:12px;">
+                                <input type="hidden" name="typeapplication" value="LEAVE"/>
+
+                                <select name="status" class="form-control filter-h" style="width:160px;" onchange="this.form.submit()">
                                     <option value="">All Status</option>
                                     <option value="Pending"  ${param.status == 'Pending'  ? 'selected' : ''}>Pending</option>
                                     <option value="Approved" ${param.status == 'Approved' ? 'selected' : ''}>Approved</option>
                                     <option value="Rejected" ${param.status == 'Rejected' ? 'selected' : ''}>Rejected</option>
                                 </select>
-                                <input type="date" name="startDate" value="${param.startDate}" class="form-control filter-h" style="width:170px;" />
-                                <span class="mr-2">to</span>
-                                <input type="date" name="endDate"   value="${param.endDate}"   class="form-control filter-h" style="width:170px;" />
-                                <button type="submit" class="btn btn-outline-secondary mr-2">Apply</button>
-                                <a class="btn btn-light"
-                                   href="${pageContext.request.contextPath}/application?typeapplication=OT">Clear</a>
+
+                                <select name="type" class="form-control filter-h" style="width:170px;" onchange="this.form.submit()">
+                                    <option value="">All Type</option>
+                                    <option value="Annual Leave" ${param.type == 'Annual Leave' ? 'selected' : ''}>Annual Leave</option>
+                                    <option value="Sick"    ${param.type == 'Sick'    ? 'selected' : ''}>Sick</option>
+                                    <option value="Unpaid"  ${param.type == 'Unpaid'  ? 'selected' : ''}>Unpaid</option>
+                                    <option value="Maternity" ${param.type == 'Maternity' ? 'selected' : ''}>Maternity</option>
+                                    <option value="Other"   ${param.type == 'Other'   ? 'selected' : ''}>Other</option>
+                                </select>
+
+                                <input type="date" name="startDate" value="${param.startDate}"
+                                       class="form-control filter-h" style="width:170px;">
+                                <span class="sep">to</span>
+                                <input type="date" name="endDate" value="${param.endDate}"
+                                       class="form-control filter-h" style="width:170px;">
+
+                                <button type="submit" class="btn btn-outline-secondary filter-h">Apply</button>
+                                <a href="${pageContext.request.contextPath}/application?typeapplication=LEAVE"
+                                   class="btn btn-warning filter-h">Clear</a>
                             </form>
                         </div>
-                        <div class="mail-box-list">
-                            <c:forEach var="application" items="${listapplication}">
-                                <div class="mail-list-info ${empty application.approvedBy ? '' : 'unread'}">
+            <div class="table-responsive" style="overflow-x:auto;">
+                <table class="table table-striped table-bordered table-hover align-middle text-center" 
+                       style="table-layout: fixed; width: 100%; border-collapse: collapse;">
+                    <thead class="thead-dark" >
+                        <tr>
+                            <th style="width: 50px;">
+                                No
+                            </th>
+                            <th style="width: 120px">
+                                Receiver
+                            </th>
+                            <th style="width: 120px">
+                                Email
+                            </th>
+                            <th style="width:80px">
+                                Status
+                            </th>
+                            <th style="width:80px">
+                                Overtime hours
+                            </th>
+                            <th style="width:80px">
+                                Day Overtime
+                            </th>
+                            <th style="width:120px">
+                                Day Created
+                            </th>
+                            <th style="cursor:pointer;width: 100px">
+                                Action
 
-                                    <div class="mail-list-title">
-                                        <h6>${user.fullname}</h6>
-                                    </div>
-
-                                    <div class="mail-list-title-info">
-                                        <p>
-                                            overtime request — ${application.otHours} hours
-                                            (
-                                            Status:
-                                            <span style="font-weight: bold;
-                                                  color:
-                                                  <c:choose>
-                                                      <c:when test="${application.status eq 'Approved'}">green</c:when>
-                                                      <c:when test="${application.status eq 'Rejected'}">red</c:when>
-                                                      <c:otherwise>goldenrod</c:otherwise>
-                                                  </c:choose>;
-                                                  ">
-                                                ${application.status}
-                                            </span>
-                                            )
-                                        </p>
-                                    </div>
-
-                                    <div class="mail-list-time">
-                                        <span>${application.createdAt}</span>
-                                    </div>
-
-                                    <ul class="mailbox-toolbar">
-                                        <c:if test="${application.status eq 'Pending'}">
-                                            <a href="${pageContext.request.contextPath}/editapplication?type=OT&id=${application.otId}" class="icon-circle" data-toggle="tooltip" title="Edit">
-                                                <i class="fa fa-pencil"></i>
+                            </th>
+                        </tr>                                 
+                    </thead>
+                    <tbody>
+                        <c:forEach var="list" items="${listapplication}" varStatus ="loop">
+                            <tr>
+                                <td>${(page - 1) * 10 +loop.index+1}</td>
+                                <td>${list.approvedBy.fullname}</td>
+                                <td>${list.approvedBy.email}</td>
+                                <td
+                                    style="font-weight: bold;
+                                    color:
+                                    <c:choose>
+                                        <c:when test="${list.status eq 'Approved'}">green</c:when>
+                                        <c:when test="${list.status eq 'Rejected'}">red</c:when>
+                                        <c:otherwise>goldenrod</c:otherwise>
+                                    </c:choose>;
+                                    "
+                                    >${list.status}</td>
+                                <td>${list.otHours}</td>
+                                <td>${list.date}</td>
+                                <td>${list.createdAt}</td>
+                                <td>
+                                    <c:choose>
+                                        <c:when test="${not list.status.equalsIgnoreCase('Pending')}">
+                                            <a href="${pageContext.request.contextPath}/detail?otId=${list.otId}" class="icon-circle" title="More detail">
+                                                <i class="fa fa-info"></i>
                                             </a>
-                                        </c:if>
-                                        <c:if test="${application.status eq 'Pending'}">
-                                            <form action="${pageContext.request.contextPath}/deleteapplication?type=OT&id=${application.otId}"" method="post" style="display:inline;">
-                                                <input type="hidden" name="OTRequestId" value="${application.otId}" />
-                                                <button type="submit" class="icon-circle" data-toggle="tooltip" title="Delete" onclick="return confirm('Do you confirm delete this application');">
-                                                    <i class="fa fa-trash-o"></i>
-                                                </button>
-                                            </form>
-                                        </c:if>
-                                        <a href="${pageContext.request.contextPath}/detail?OTId=${application.otId}" class="icon-circle" data-toggle="tooltip" title="More detail">
-                                            <i class="fa fa-info"></i>
-                                        </a>
-                                    </ul>
-
-                                </div>
-                            </c:forEach>
-                        </div>
-
-
-                    </div>
-                </div>
+                                        </c:when>
+                                        <c:otherwise>
+                                            <a href="${pageContext.request.contextPath}/editapplication?type=OT&id=${list.otId}" class="icon-circle" data-toggle="tooltip" title="Edit">
+                                                <i class="fa fa-pencil"></i>
+                                            </a>   
+                                        </c:otherwise>
+                                    </c:choose>
+                                </td>
+                            </tr>
+                        </c:forEach>
+                        <c:if test="${not empty message}">
+                            <tr>
+                                <td colspan="10" style="text-align:center; color:red; font-weight:bold;">
+                                    No results found!
+                                </td>
+                            </tr>
+                        </c:if>
+                    </tbody>
+                </table>
             </div>
             <c:url var="baseUrl" value="/application">
                 <c:param name="typeapplication" value="OT"/>
