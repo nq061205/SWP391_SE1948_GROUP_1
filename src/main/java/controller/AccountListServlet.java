@@ -110,6 +110,12 @@ public class AccountListServlet extends HttpServlet {
                 }
             }
         }
+        if (deptId!= null && deptId[0].isEmpty()) {
+            deptId=null;
+        }
+        if (roleId!= null && roleId[0].isEmpty()) {
+            roleId=null;
+        }
 
         int totalResults = 0;
         if (searchkey != null && !searchkey.trim().isEmpty()) {

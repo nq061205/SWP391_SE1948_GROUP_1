@@ -97,6 +97,10 @@ public class EmployeeListServlet extends HttpServlet {
                 }
             }
         }
+         if (positionTitle!= null && positionTitle[0].isEmpty()) {
+            positionTitle=null;
+        }
+
         List<String> positionList = empDAO.getAllPosition();
 
         if (searchkey != null && !searchkey.trim().isEmpty()) {
