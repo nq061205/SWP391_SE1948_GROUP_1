@@ -118,6 +118,14 @@
         <servlet-name>ExportAttendancePDFServlet</servlet-name>
         <servlet-class>controller.hr.ExportAttendancePDFServlet</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>UpdateAccountServlet</servlet-name>
+        <servlet-class>controller.UpdateAccountServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>UpdateAccountServlet</servlet-name>
+        <url-pattern>/updateaccount</url-pattern>
+    </servlet-mapping>
     <servlet-mapping>
         <servlet-name>HomePageServlet</servlet-name>
         <url-pattern>/homepage</url-pattern>
@@ -130,10 +138,6 @@
         <servlet-name>ForgetPassword</servlet-name>
         <url-pattern>/forgetpassword</url-pattern>
     </servlet-mapping>
-    <servlet>
-        <servlet-name>RecoveryPassword</servlet-name>
-        <servlet-class>controller.RecoveryPasswordServlet</servlet-class>
-    </servlet>
     <servlet-mapping>
         <servlet-name>RecoveryPassword</servlet-name>
         <url-pattern>/recovery</url-pattern>
@@ -243,6 +247,7 @@
         <servlet-name>ExportAttendancePDFServlet</servlet-name>
         <url-pattern>/export-attendance-pdf</url-pattern>
     </servlet-mapping>
+    
     <session-config>
         <session-timeout>30</session-timeout>
     </session-config>

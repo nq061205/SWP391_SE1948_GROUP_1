@@ -256,93 +256,32 @@
                             </tr>                                 
                         </thead>
                         <tbody>
-
-                            <c:forEach var="el" items="${sessionScope.empList}" varStatus ="loop">
+                            <c:forEach var="el" items="${sessionScope.empList}" varStatus="loop">
                                 <tr>
-                                    <c:choose>
-                                        <c:when test="${editEmp != null && editEmp.empCode eq el.empCode}">
-                                    <form action="${pageContext.request.contextPath}/accountlist" method="post">
-                                        <input type="hidden" name="page" value="${page}">
-                                        <input type="hidden" name="newstatus" value="${!el.status}">
-                                        <input type="hidden" name="status" value="${status}">
-                                        <c:if test="${not empty searchkey}">
-                                            <input type="hidden" name="searchkey" value="${searchkey}">
-                                        </c:if>
-                                        <c:if test="${status != null}">
-                                            <input type="hidden" name="status" value="${status}">
-                                        </c:if>
-                                        <c:if test="${not empty deptId}">
-                                            <c:forEach var="d" items="${deptId}">
-                                                <input type="hidden" name="deptId" value="${d}">
-                                            </c:forEach>
-                                        </c:if>
-                                        <c:if test="${not empty roleId}">
-                                            <c:forEach var="r" items="${roleId}">
-                                                <input type="hidden" name="roleId" value="${r}">
-                                            </c:forEach>
-                                        </c:if>
-                                        <c:if test="${not empty sortBy}">
-                                            <input type="hidden" name="sortBy" value="${sortBy}">
-                                            <input type="hidden" name="order" value="${order}">
-                                        </c:if>
-
-                                        <td style="overflow-wrap: break-word;">${loop.index+1}</td>
-                                        <td style="overflow-wrap: break-word;"><input type="hidden" name="empCode" value="${el.empCode}" />${el.empCode}</td>
-                                        <td style="overflow-wrap: break-word;">${el.fullname}</td>
-                                        <td style="overflow-wrap: break-word;">
-                                            <input style="width:80px" type="email" name="email" value="${el.email}" />
-                                        </td>
-                                        <td style="overflow-wrap: break-word;">
-                                            <img src="${el.image}" alt="" style="width:60px; height:60px; object-fit:cover; border-radius:5px;">
-                                        </td>
-                                        <td style="overflow-wrap: break-word;">
-                                            <select name="editDepId">
-                                                <c:forEach var="d" items="${sessionScope.deptList}">
-                                                    <option value="${d.depId}">${d.depName}</option>
-                                                </c:forEach>
-                                            </select>
-                                        </td>
-                                        <td style="overflow-wrap: break-word;">
-                                            <select name="editRoleId">
-                                                <c:forEach var="r" items="${sessionScope.roleList}">
-                                                    <option value="${r.roleId}">${r.roleName}</option>
-                                                </c:forEach>
-                                            </select>
-                                        </td>
-                                        <td style="overflow-wrap: break-word;">${el.status ?'Active' :'Inactive'}</td>
-                                        <td style="overflow-wrap: break-word;">
-                                            <button type="submit" name="action" value="save" class="btn btn-success btn-sm">Save</button>
-                                            <a href="${pageContext.request.contextPath}/accountlist" class="btn btn-secondary btn-sm">Cancel</a>
-                                        </td>
-                                        <td style="overflow-wrap: break-word;">
-                                            <button style="width: 90px" type="submit" name="action" value="toggle"
-                                                    class="btn ${el.status ? 'btn-danger' : 'btn-success'}">
-                                                ${el.status ? 'Deactive' : 'Active'}
-                                            </button>
-                                        </td>
-                                    </form>
-                                </c:when>
-                                <c:otherwise>
-
-                                    <td style="overflow-wrap: break-word;">${loop.index+1}</td>
-                                    <td style="overflow-wrap: break-word;">${el.empCode}</td>
-                                    <td style="overflow-wrap: break-word;">${el.fullname}</td>
+                                    <td>${loop.index + 1}</td>
+                                    <td>${el.empCode}</td>
+                                    <td>${el.fullname}</td>
                                     <td style="overflow-wrap: break-word;">${el.email}</td>
-                                    <td style="overflow-wrap: break-word;">
-                                        <img src="${el.image}" alt="" style="width:60px; height:60px; object-fit:cover; border-radius:5px;">
+                                    <td>
+                                        <img src="${el.image}" alt="Employee Image"
+                                             style="width:60px; height:60px; object-fit:cover; border-radius:5px;">
                                     </td>
                                     <td style="overflow-wrap: break-word;">${el.dept.depName}</td>
                                     <td style="overflow-wrap: break-word;">${el.role.roleName}</td>
-                                    <td style="overflow-wrap: break-word;">${el.status ? 'Active' :'Inactive'}</td>
-                                    <td style="overflow-wrap: break-word;">
-                                        <a href="${pageContext.request.contextPath}/${urlPrefix}type=edit&empCode=${el.empCode}&page=${page}" class="btn btn-sm btn-primary">Edit</a>
+                                    <td>${el.status ? 'Active' : 'Inactive'}</td>
+                                    <td>
+                                        <a href="${pageContext.request.contextPath}/updateaccount?empCode=${el.empCode}"
+                                           class="btn btn-sm btn-primary">
+                                            Edit
+                                        </a>
                                     </td>
-                                    <td style="overflow-wrap: break-word;">
+                                    <td>
                                         <form action="accountlist" method="post">
                                             <input type="hidden" name="action" value="toggle">
                                             <input type="hidden" name="empCode" value="${el.empCode}">
                                             <input type="hidden" name="newstatus" value="${!el.status}">
                                             <input type="hidden" name="page" value="${page}">
+
                                             <c:if test="${not empty searchkey}">
                                                 <input type="hidden" name="searchkey" value="${searchkey}">
                                             </c:if>
@@ -363,23 +302,24 @@
                                                 <input type="hidden" name="sortBy" value="${sortBy}">
                                                 <input type="hidden" name="order" value="${order}">
                                             </c:if>
-                                            <button style="width: 90px;text-align: center" type="submit"
+
+                                            <button style="width: 90px; text-align:center;"
+                                                    type="submit"
                                                     class="btn ${el.status ? 'btn-danger' : 'btn-success'}">
                                                 ${el.status ? 'Deactive' : 'Active'}
                                             </button>
                                         </form>
-                                    </td>                                            
-                                </c:otherwise>
-                            </c:choose>
-                            </tr>
-                        </c:forEach>
-                        <c:if test="${not empty message}">
-                            <tr>
-                                <td colspan="10" style="text-align:center; color:red; font-weight:bold;">
-                                    No results found!
-                                </td>
-                            </tr>
-                        </c:if>
+                                    </td>
+                                </tr>
+                            </c:forEach>
+
+                            <c:if test="${not empty message}">
+                                <tr>
+                                    <td colspan="10" style="text-align:center; color:red; font-weight:bold;">
+                                        No results found!
+                                    </td>
+                                </tr>
+                            </c:if>
                         </tbody>
                     </table>
                 </div>
