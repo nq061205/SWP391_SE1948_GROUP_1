@@ -1,0 +1,209 @@
+
+.day-cell {
+    width: 50px;
+    height: 50px;
+    min-width: 50px;
+    min-height: 50px;
+    max-width: 50px;
+    max-height: 50px;
+    padding: 0 !important;
+    cursor: pointer;
+    text-align: center;
+    vertical-align: middle;
+    line-height: 50px;
+}
+.work-day-text {
+    display: inline-block;
+    font-weight: 600;
+    font-size: 0.9rem;
+    white-space: nowrap;
+    line-height: normal;
+    vertical-align: middle;
+}
+.status-Present {
+    background-color: #28a745 !important;
+}
+
+.status-Present .work-day-text {
+    color: #fff !important;
+}
+
+.status-Absent {
+    background-color: #dc3545 !important;
+}
+
+.status-Absent .work-day-text {
+    color: #fff !important;
+}
+
+.status-Leave {
+    background-color: #17a2b8 !important;
+}
+
+.status-Leave .work-day-text {
+    color: #fff !important;
+}
+
+.status-Holiday {
+    background-color: #6c757d !important;
+}
+
+.status-Holiday .work-day-text {
+    color: #fff !important;
+}
+
+.weekend-cell {
+    background-color: #343a40 !important;
+}
+
+.weekend-cell .work-day-text {
+    color: #adb5bd !important;
+}
+
+.day-cell:hover:not(.weekend-cell) {
+    opacity: 0.9;
+    box-shadow: inset 0 0 0 2px rgba(255,255,255,0.5);
+}
+
+.employee-col {
+    position: sticky;
+    left: 0;
+    z-index: 10;
+    background: #fff;
+    min-width: 80px;
+    border-right: 2px solid #dee2e6;
+    white-space: nowrap;
+    padding: 8px !important;
+}
+
+.name-col {
+    position: sticky;
+    left: 80px;
+    z-index: 10;
+    background: #fff;
+    min-width: 150px;
+    border-right: 2px solid #dee2e6;
+    white-space: nowrap;
+    padding: 8px !important;
+}
+
+.dept-col {
+    position: sticky;
+    left: 230px;
+    z-index: 10;
+    background: #fff;
+    min-width: 100px;
+    border-right: 3px solid #495057;
+    white-space: nowrap;
+    padding: 8px !important;
+}
+
+.summary-col {
+    position: sticky;
+    right: 0;
+    z-index: 5;
+    background: #f8f9fa;
+    min-width: 75px;
+    border-left: 2px solid #dee2e6;
+    white-space: nowrap;
+    padding: 8px !important;
+    text-align: center;
+}
+.day-header {
+    width: 50px;
+    height: 50px;
+    min-width: 50px;
+    min-height: 50px;
+    max-width: 50px;
+    max-height: 50px;
+    padding: 4px 2px !important;
+    font-size: 0.75rem;
+    line-height: 1.2;
+    text-align: center;
+    vertical-align: middle;
+}
+
+.day-header small {
+    font-size: 0.65rem;
+    display: block;
+    margin-top: 2px;
+}
+
+.table-responsive {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+.table {
+    width: auto !important;
+    table-layout: auto;
+}
+
+.wc-title {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.wc-title h4 {
+    margin: 0;
+}
+
+.legend-box {
+    width: 35px;
+    height: 35px;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+    color: #fff;
+    margin: 0 auto;
+    text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
+}
+
+.bootstrap-select .dropdown-toggle,
+.bootstrap-select .dropdown-toggle .filter-option,
+.bootstrap-select .dropdown-toggle .filter-option-inner-inner {
+    color: #000000 !important;
+}
+
+.bootstrap-select .dropdown-menu li a {
+    color: #000000 !important;
+}
+
+.bootstrap-select .dropdown-menu li a:hover {
+    background-color: #007bff !important;
+    color: #ffffff !important;
+}
+
+/* ========== LOADING MODAL ========== */
+#processingModal .modal-content {
+    border-radius: 15px;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+}
+
+#processingModal .spinner-border {
+    border-width: 0.4rem;
+}
+
+#processingModal .progress {
+    border-radius: 10px;
+}
+
+#processingModal .modal-body {
+    padding: 3rem 2rem;
+}
+
+@media print {
+    .btn, .form-group, .card, .pagination {
+        display: none !important;
+    }
+
+    .employee-col,
+    .name-col,
+    .dept-col,
+    .summary-col {
+        position: static !important;
+    }
+}

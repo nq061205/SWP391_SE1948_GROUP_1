@@ -26,7 +26,7 @@
         <link rel="shortcut icon" type="image/x-icon" href="${pageContext.request.contextPath}/assets1/images/favicon.png" />
 
         <!-- PAGE TITLE HERE ============================================= -->
-        <title>Reset Password | EduChamp</title>
+        <title>Reset Password</title>
 
         <!-- MOBILE SPECIFIC ============================================= -->
         <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -92,13 +92,6 @@
                                 ${errorMessage}
                             </div>
                         </c:if>
-
-                        <c:if test="${not empty successMessage}">
-                            <div class="alert alert-success text-center" role="alert" 
-                                 style="color: #fff; background-color: #2ecc71; padding: 10px; border-radius: 8px; margin-bottom: 15px;">
-                                ${successMessage}
-                            </div>
-                        </c:if>
                     </div>
                 </div>
             </div>
@@ -124,5 +117,5 @@
 
 
     </body>
-
 </html>
+

@@ -1,3 +1,4 @@
+
 <%-- 
     Document   : listapplication
     Created on : Oct 5, 2025, 10:46:57 PM
@@ -31,7 +32,7 @@
         <link rel="shortcut icon" type="image/x-icon" href="${pageContext.request.contextPath}/assets2/images/favicon.png" />
 
         <!-- PAGE TITLE HERE ============================================= -->
-        <title>Human Tech : Overtime Application</title>
+        <title>Overtime Application</title>
 
         <!-- MOBILE SPECIFIC ============================================= -->
         <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -158,8 +159,6 @@
             </div>
             <c:url var="baseUrl" value="/application">
                 <c:param name="typeapplication" value="OT"/>
-                <c:param name="size" value="${size}"/>
-
                 <c:if test="${not empty param.search}">
                     <c:param name="search" value="${param.search}"/>
                 </c:if>
