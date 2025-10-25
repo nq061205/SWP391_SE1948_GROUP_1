@@ -91,15 +91,13 @@
                                     application have been sent
                                 </p> 
 
-                                <!-- Tóm tắt nhanh (hiển thị nếu có dữ liệu) -->
                                 <div class="row g-3 justify-content-center mb-4">
 
-                                    <!-- Ví dụ thêm: thời gian, ca làm, số giờ OT... nếu servlet set attribute -->
                                 <c:if test="${not empty startdate}">
                                     <div class="col-auto">
                                         <div class="kv">
                                             <i class="ti-calendar"></i>
-                                            <span><strong>Từ ngày:</strong> ${startdate}</span>
+                                            <span><strong>From:</strong> ${startdate}</span>
                                         </div>
                                     </div>
                                 </c:if>
@@ -107,7 +105,7 @@
                                     <div class="col-auto">
                                         <div class="kv">
                                             <i class="ti-calendar"></i>
-                                            <span><strong>Đến ngày:</strong> ${enddate}</span>
+                                            <span><strong>To:</strong> ${enddate}</span>
                                         </div>
                                     </div>
                                 </c:if>
@@ -115,7 +113,7 @@
                                     <div class="col-auto">
                                         <div class="kv">
                                             <i class="ti-time"></i>
-                                            <span><strong>Số giờ OT:</strong> ${othour}</span>
+                                            <span><strong>The OT Hours:</strong> ${othour}</span>
                                         </div>
                                     </div>
                                 </c:if>
@@ -123,11 +121,6 @@
 
                             <!-- Nút điều hướng -->
                             <div class="btn-wrap d-flex flex-column flex-sm-row justify-content-center gap-2">
-<!--                                <a href="${pageContext.request.contextPath}/Views/"
-                                   class="btn btn-primary">
-                                    <i class="ti-list"></i> Xem lịch
-                                </a>-->
-
                                 <c:choose>
                                     <c:when test="${type eq 'LEAVE'}">
                                         <a href="${pageContext.request.contextPath}/application?typeapplication=LEAVE"
@@ -150,7 +143,6 @@
                                 </c:choose>
                             </div>
 
-                            <!-- Gợi ý nhỏ -->
                             <p class="text-muted mt-3 mb-0" style="font-size:.925rem">
                                 You will receive your notify when have a new status
                             </p>

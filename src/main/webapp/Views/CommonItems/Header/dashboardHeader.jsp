@@ -121,7 +121,9 @@
                     </div>
                 </li>
                 <li>
-                    <a href="#" class="ttr-material-button ttr-submenu-toggle"><span class="ttr-user-avatar"><img alt="" src="${sessionScope.user.image}" width="32" height="32"></span></a>
+                    <a href="#" class="ttr-material-button ttr-submenu-toggle"><span class="ttr-user-avatar"><img
+                                src="${pageContext.request.contextPath}/${sessionScope.user.image}?v=${pageContext.session.id}"
+                                alt="Avatar" width="225" height="300"></span></a>
                     <div class="ttr-header-submenu">
                         <ul>
                             <li><a href="${pageContext.request.contextPath}/profile">My profile</a></li>

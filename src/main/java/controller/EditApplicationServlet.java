@@ -53,7 +53,7 @@ public class EditApplicationServlet extends HttpServlet {
                 OTRequest otRequest = otRequestDAO.getOTRequestByOTId(id);
                 request.setAttribute("email", otRequest.getApprovedBy().getEmail());
                 request.setAttribute("date", otRequest.getDate());
-                request.setAttribute("othour", otRequest.getOtHours());
+                request.setAttribute("hours", otRequest.getOtHours());
                 request.setAttribute("id", otRequest.getOtId());
                 request.getRequestDispatcher("Views/composeotapplication.jsp").forward(request, response);
                 break;
