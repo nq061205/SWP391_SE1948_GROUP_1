@@ -123,14 +123,12 @@ public class ExportAttendancePDFServlet extends HttpServlet {
         } finally {
             if (employeeDAO != null) {
                 try {
-                    employeeDAO.close();
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
             }
             if (dailyDAO != null) {
                 try {
-                    dailyDAO.close();
                 } catch (Exception e) {
                     e.printStackTrace();
                 }

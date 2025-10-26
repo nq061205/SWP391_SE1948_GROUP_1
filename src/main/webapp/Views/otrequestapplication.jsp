@@ -104,7 +104,7 @@
                     <thead class="thead-dark" >
                         <tr>
                             <th style="width: 50px;">
-                                No
+                                No.
                             </th>
                             <th style="width: 120px">
                                 Receiver
