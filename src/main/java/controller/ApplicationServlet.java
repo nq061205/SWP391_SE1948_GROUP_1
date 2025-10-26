@@ -94,7 +94,6 @@ public class ApplicationServlet extends HttpServlet {
         request.setAttribute("size", size);
         request.setAttribute("totalPages", totalPages);
 
-        request.setAttribute("search", search);
         request.setAttribute("status", status);
         request.setAttribute("type", type);
         request.setAttribute("startDate", startDate == null ? null : startDate.toString());
@@ -145,7 +144,6 @@ public class ApplicationServlet extends HttpServlet {
         request.setAttribute("size", size);
         request.setAttribute("totalPages", totalPages);
 
-        request.setAttribute("search", search);
         request.setAttribute("status", status);
         request.setAttribute("startDate", startDate == null ? null : startDate.toString());
         request.setAttribute("endDate", endDate == null ? null : endDate.toString());

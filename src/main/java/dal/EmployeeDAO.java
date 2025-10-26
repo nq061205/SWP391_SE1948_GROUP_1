@@ -4,6 +4,7 @@
  */
 package dal;
 
+import helper.PasswordEncryption;
 import model.Department;
 import model.Employee;
 import model.Role;
@@ -111,33 +112,36 @@ public class EmployeeDAO extends DBContext {
         return null;
     }
 
-    public Employee getEmployeeByUsernamePassword(String username, String pass) {
-        String sql = "SELECT * FROM Employee WHERE binary emp_code = ? AND binary password = ? and status = true";
+    public Employee getEmployeeByUsernamePassword(String username, String plainPassword) {
+        String sql = "SELECT * FROM Employee WHERE emp_code = ? AND status = true";
         try (PreparedStatement stm = connection.prepareStatement(sql)) {
             stm.setString(1, username);
-            stm.setString(2, pass);
-
             try (ResultSet rs = stm.executeQuery()) {
                 if (rs.next()) {
-                    Employee emp = new Employee();
-                    emp.setEmpId(rs.getInt("emp_id"));
-                    emp.setEmpCode(rs.getString("emp_code"));
-                    emp.setFullname(rs.getString("fullname"));
-                    emp.setEmail(rs.getString("email"));
-                    emp.setPassword(rs.getString("password"));
-                    emp.setGender(rs.getBoolean("gender"));
-                    emp.setDob(rs.getDate("dob"));
-                    emp.setPhone(rs.getString("phone"));
-                    emp.setPositionTitle(rs.getString("position_title"));
-                    emp.setImage(rs.getString("image"));
-                    emp.setDependantCount(rs.getInt("dependant_count"));
-                    emp.setPaidLeaveDays(rs.getInt("paid_leave_days"));
-                    Department dept = deptDAO.getDepartmentByEmpId(rs.getInt("emp_id"));
-                    emp.setDept(dept);
-                    Role role = roleDAO.getRoleByEmpId(rs.getInt("emp_id"));
-                    emp.setRole(role);
-                    emp.setStatus(rs.getBoolean("status"));
-                    return emp;
+                    String hashedPassword = rs.getString("password");
+
+                    // ✅ Kiểm tra mật khẩu nhập có khớp hash không
+                    if (PasswordEncryption.checkPassword(plainPassword, hashedPassword)) {
+                        Employee emp = new Employee();
+                        emp.setEmpId(rs.getInt("emp_id"));
+                        emp.setEmpCode(rs.getString("emp_code"));
+                        emp.setFullname(rs.getString("fullname"));
+                        emp.setEmail(rs.getString("email"));
+                        emp.setPassword(hashedPassword);
+                        emp.setGender(rs.getBoolean("gender"));
+                        emp.setDob(rs.getDate("dob"));
+                        emp.setPhone(rs.getString("phone"));
+                        emp.setPositionTitle(rs.getString("position_title"));
+                        emp.setImage(rs.getString("image"));
+                        emp.setDependantCount(rs.getInt("dependant_count"));
+                        emp.setPaidLeaveDays(rs.getInt("paid_leave_days"));
+                        Department dept = deptDAO.getDepartmentByEmpId(rs.getInt("emp_id"));
+                        emp.setDept(dept);
+                        Role role = roleDAO.getRoleByEmpId(rs.getInt("emp_id"));
+                        emp.setRole(role);
+                        emp.setStatus(rs.getBoolean("status"));
+                        return emp;
+                    }
                 }
             }
         } catch (SQLException ex) {
@@ -515,7 +519,7 @@ public class EmployeeDAO extends DBContext {
             }
 
             if (posTitle != null && posTitle.length > 0) {
-                sql.append(" AND dep_id IN (");
+                sql.append(" AND position_title IN (");
                 for (int i = 0; i < posTitle.length; i++) {
                     sql.append("?");
                     if (i < posTitle.length - 1) {
@@ -706,7 +710,6 @@ public class EmployeeDAO extends DBContext {
         return sb.toString();
     }
 
-    
     public void createEmployee(String username, String password, String fullname, String email, boolean gender, String phone) {
         String sql = "INSERT INTO Employee(emp_code,password,fullname,email,gender,phone) values(?,?,?,?,?,?)";
         try (PreparedStatement ps = connection.prepareStatement(sql);) {
@@ -889,11 +892,80 @@ public class EmployeeDAO extends DBContext {
         return count;
     }
 
+    public List<Employee> getEmailReceiverByRole(String requesterRole) {
+        List<Employee> receivers = new ArrayList<>();
+        String approverRole = null;
+
+        switch (requesterRole) {
+            case "Employee":
+                approverRole = "Dept Manager";
+                break;
+            case "Dept Manager":
+                approverRole = "HR Manager";
+                break;
+            case "HR":
+                approverRole = "HR Manager";
+                break;
+            case "HR Manager":
+                approverRole = "Admin";
+                break;
+            case "Admin":
+                approverRole = "Admin";
+                break;
+            default:
+                return receivers;
+        }
+
+        String sql = ""
+                + "SELECT e.emp_id, e.emp_code, e.fullname, e.email, e.password, e.gender, "
+                + "e.dob, e.phone, e.position_title, e.image, e.dependant_count, "
+                + "e.paid_leave_days, e.dep_id, e.role_id, e.status "
+                + "FROM employee e "
+                + "JOIN role r ON e.role_id = r.role_id "
+                + "WHERE r.role_name = ? "
+                + "";
+
+        try (Connection conn = DBContext.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            ps.setString(1, approverRole);
+
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    Employee emp = new Employee();
+                    emp.setEmpId(rs.getInt("emp_id"));
+                    emp.setEmpCode(rs.getString("emp_code"));
+                    emp.setFullname(rs.getString("fullname"));
+                    emp.setEmail(rs.getString("email"));
+                    emp.setPassword(rs.getString("password"));
+                    emp.setGender(rs.getBoolean("gender"));
+                    emp.setDob(rs.getDate("dob"));
+                    emp.setPhone(rs.getString("phone"));
+                    emp.setPositionTitle(rs.getString("position_title"));
+                    emp.setImage(rs.getString("image"));
+                    emp.setDependantCount(rs.getInt("dependant_count"));
+                    emp.setPaidLeaveDays(rs.getInt("paid_leave_days"));
+                    emp.setStatus(rs.getBoolean("status"));
+
+                    emp.setRole(roleDAO.getRoleByEmpId(rs.getInt("emp_id")));
+                    emp.setDept(deptDAO.getDepartmentByDepartmentId(rs.getString("dep_id")));
+
+                    receivers.add(emp);
+                }
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return receivers;
+    }
+
     public static void main(String[] args) {
         EmployeeDAO dao = new EmployeeDAO();
-        
-        List<Employee> e = dao.getEmployees(0, 5, null, null);
-        System.out.println(e.size());
+
+        for (Employee employee : dao.getEmailReceiverByRole("HR")) {
+            System.out.println(employee);
+        }
     }
 
 }

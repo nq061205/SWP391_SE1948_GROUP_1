@@ -132,6 +132,7 @@ public class DeptDAO extends DBContext {
         }
         return departments;
     }
+
     public void createDepartment(Department department) {
         String sql = "INSERT INTO department VALUES(?,?,?)";
         try {
@@ -143,8 +144,9 @@ public class DeptDAO extends DBContext {
         } catch (SQLException ex) {
             Logger.getLogger(DeptDAO.class.getName()).log(Level.SEVERE, null, ex);
         }
-        
+
     }
+
     public void updateDepartment(Department department) {
         String sql = "UPDATE department SET dep_name=?,description=? where dep_id=?";
         try {

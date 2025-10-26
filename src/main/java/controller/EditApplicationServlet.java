@@ -27,15 +27,15 @@ public class EditApplicationServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        OTRequestDAO otRequestDAO = new OTRequestDAO();
-        LeaveRequestDAO leaveRequestDAO = new LeaveRequestDAO();
         HttpSession session = request.getSession();
         String type = request.getParameter("type");
         Employee user = (Employee) session.getAttribute("user");
-         if (user == null) {
+        if (user == null) {
             response.sendRedirect("Views/login.jsp");
             return;
         }
+        OTRequestDAO otRequestDAO = new OTRequestDAO();
+        LeaveRequestDAO leaveRequestDAO = new LeaveRequestDAO();
         int id = Integer.parseInt(request.getParameter("id"));
         request.setAttribute("isEdit", "true");
         switch (type) {
@@ -53,7 +53,7 @@ public class EditApplicationServlet extends HttpServlet {
                 OTRequest otRequest = otRequestDAO.getOTRequestByOTId(id);
                 request.setAttribute("email", otRequest.getApprovedBy().getEmail());
                 request.setAttribute("date", otRequest.getDate());
-                request.setAttribute("othour", otRequest.getOtHours());
+                request.setAttribute("hours", otRequest.getOtHours());
                 request.setAttribute("id", otRequest.getOtId());
                 request.getRequestDispatcher("Views/composeotapplication.jsp").forward(request, response);
                 break;
@@ -105,7 +105,6 @@ public class EditApplicationServlet extends HttpServlet {
             }
         } catch (Exception e) {
             e.printStackTrace();
-            response.getWriter().println("Error updating application: " + e.getMessage());
         }
     }
 }

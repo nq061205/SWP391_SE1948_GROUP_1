@@ -5,6 +5,7 @@
 package controller;
 
 import dal.EmployeeDAO;
+import helper.PasswordEncryption;
 import model.Employee;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -110,7 +111,7 @@ public class RecoveryPasswordServlet extends HttpServlet {
         EmployeeDAO lDao = new EmployeeDAO();
         Employee emp = lDao.getEmployeeByEmail(email);
         if (emp != null) {
-            lDao.updatePassword(emp.getEmpCode(), newPassword);
+            lDao.updatePassword(emp.getEmpCode(), PasswordEncryption.encryptPassword(newPassword));
             request.setAttribute("successMessage", "Password reset successfully! Please login again.");
             request.getRequestDispatcher("Views/forgetpassword.jsp").forward(request, response);
         } else {
@@ -119,11 +120,7 @@ public class RecoveryPasswordServlet extends HttpServlet {
         }
     }
 
-    /**
-     * Returns a short description of the servlet.
-     *
-     * @return a String containing servlet description
-     */
+
     @Override
     public String getServletInfo() {
         return "Short description";

@@ -85,16 +85,14 @@
                 border-color: #dee2e6;
             }
 
-            /* Fix màu chữ cho Bootstrap Select dropdown */
             .bootstrap-select .dropdown-toggle {
-                color: #000000 !important; /* Đổi từ #999 sang đen */
+                color: #000000 !important; 
             }
 
             .bootstrap-select .dropdown-toggle .filter-option {
                 color: #000000 !important;
             }
 
-            /* Fix màu chữ trong dropdown menu */
             .bootstrap-select .dropdown-menu li a {
                 color: #000000 !important;
             }
@@ -104,12 +102,10 @@
                 color: #ffffff !important;
             }
 
-            /* Fix cho text đã chọn */
             .bootstrap-select .dropdown-toggle .filter-option-inner-inner {
                 color: #000000 !important;
             }
 
-            /* Loading Modal Styles */
             #processingModal .modal-content {
                 border-radius: 15px;
                 box-shadow: 0 10px 40px rgba(0,0,0,0.2);
@@ -126,15 +122,13 @@
             #processingModal .modal-body {
                 padding: 3rem 2rem;
             }
-
-
         </style>
 
     </head>
 
     <body class="ttr-opened-sidebar ttr-pinned-sidebar">
         <%@ include file="../CommonItems/Header/dashboardHeader.jsp" %>
-        <%@ include file="../CommonItems/Navbar/empNavbar.jsp" %>
+        <%@ include file="../CommonItems/Navbar/hrNavbar.jsp" %>
         <main class="ttr-wrapper">
             <div class="container-fluid">
                 <div class="db-breadcrumb">
@@ -364,7 +358,6 @@
                                         </div>
                                     </div>
 
-                                    <!-- Hidden fields to maintain current page -->
                                     <input type="hidden" name="page" value="${currentPage}">
                                 </form>
 
@@ -427,7 +420,6 @@
                                         </div>
 
                                         <!-- Pagination Controls -->
-                                        <%-- Thay thế toàn bộ khối <nav> ... </nav> cũ bằng khối code này --%>
                                         <c:if test="${totalPages > 1}">
                                             <nav aria-label="Page navigation">
                                                 <ul class="pagination justify-content-center">
@@ -444,7 +436,6 @@
                                                     </li>
 
                                                     <c:forEach begin="1" end="${totalPages}" var="pageNum">
-                                                        <%-- Logic phức tạp để rút gọn số trang có thể giữ lại hoặc đơn giản hóa như sau --%>
                                                         <c:if test="${pageNum == 1 || pageNum == totalPages || (pageNum >= currentPage - 2 && pageNum <= currentPage + 2)}">
                                                             <li class="page-item ${pageNum == currentPage ? 'active' : ''}">
                                                                 <c:url var="pageUrl" value="raw-attendance">
@@ -496,7 +487,6 @@
                     </div>
                 </div>
                 <!-- Loading Modal -->
-                <!-- Loading Modal -->
                 <div class="modal fade" id="processingModal" data-backdrop="static" data-keyboard="false" tabindex="-1" role="dialog">
                     <div class="modal-dialog modal-dialog-centered" role="document">
                         <div class="modal-content">
@@ -526,8 +516,6 @@
                         </div>
                     </div>
                 </div>
-
-
         </main>
     </body>
 
@@ -629,21 +617,6 @@
 
                                                             });
     </script>
-    <script>
-        function changePageSize(newPageSize) {
-            // Lấy URL hiện tại
-            const url = new URL(window.location.href);
-
-            // Set pageSize mới và reset page về 1
-            url.searchParams.set('pageSize', newPageSize);
-            url.searchParams.set('page', '1');
-
-            // Navigate đến URL mới (tự động giữ lại tất cả parameters khác)
-            window.location.href = url.toString();
-        }
-    </script>
-
-
     <script>
         let isProcessing = false;
 

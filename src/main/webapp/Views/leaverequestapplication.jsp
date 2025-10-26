@@ -65,27 +65,10 @@
             </script>
         </c:if>
         <main class="ttr-wrapper">
-            <div class="container-fluid">
-                <div class="db-breadcrumb">
-                    <h4 class="breadcrumb-title">Application</h4>
-                    <ul class="db-breadcrumb-list">
-                        <li><a href="${pageContext.request.contextPath}/application?typeapplication=leave"><i class="fa fa-home"></i>Leave Request</a></li>
-                    </ul>
-                </div>
-                <div class="row">
-                    <div class="col-lg-12">
-                        <div class="filter-row mb-3">
+            <div class="filter-row mb-3">
                             <form action="${pageContext.request.contextPath}/application" method="get"
                                   class="d-flex align-items-center flex-nowrap w-100" style="gap:12px;">
                                 <input type="hidden" name="typeapplication" value="LEAVE"/>
-
-                                <div class="input-group" style="max-width:260px;">
-                                    <input type="text" name="search" value="${fn:escapeXml(param.search)}"
-                                           class="form-control filter-h" placeholder="Search..." />
-                                    <button class="btn btn-warning filter-h" type="submit">
-                                        <i class="fa fa-search"></i>
-                                    </button>
-                                </div>
 
                                 <select name="status" class="form-control filter-h" style="width:160px;" onchange="this.form.submit()">
                                     <option value="">All Status</option>
@@ -114,60 +97,85 @@
                                    class="btn btn-warning filter-h">Clear</a>
                             </form>
                         </div>
-                        <div class="mail-box-list">
-                            <c:forEach var="application" items="${listapplication}">
-                                <div class="mail-list-info ${empty application.approvedBy ? '' : 'unread'}">
-                                    <div class="mail-list-title">
-                                        <h6>${user.fullname}</h6>
-                                    </div>
-                                    <div class="mail-list-title-info">
-                                        <p>   </p>
-                                        <p>
-                                            ${application.leaveType}—
-                                            Status:
-                                            <span style="font-weight: bold;
-                                                  color:
-                                                  <c:choose>
-                                                      <c:when test="${application.status eq 'Approved'}">green</c:when>
-                                                      <c:when test="${application.status eq 'Rejected'}">red</c:when>
-                                                      <c:otherwise>goldenrod</c:otherwise>
-                                                  </c:choose>;
-                                                  ">
-                                                ${application.status} (${application.dayRequested} days)
-                                            </span>
-                                        </p>
-                                    </div>
-                                    <div class="mail-list-time">
-                                        <span>${application.createdAt}</span>
-                                    </div>
+            <div class="table-responsive" style="overflow-x:auto;">
+                <table class="table table-striped table-bordered table-hover align-middle text-center" 
+                       style="table-layout: fixed; width: 100%; border-collapse: collapse;">
+                    <thead class="thead-dark" >
+                        <tr>
+                            <th style="width: 50px;">
+                                No
+                            </th>
+                            <th style="width: 120px">
+                                Receiver
+                            </th>
+                            <th style="width: 120px">
+                                Email
+                            </th>
+                            <th style="width: 100px">
+                                Leave Type
+                            </th>
+                            <th style="width:80px">
+                                Status
+                            </th>
+                            <th style="width:80px">
+                                Day Request
+                            </th>
+                            <th style="width:120px">
+                                Day Created
+                            </th>
+                            <th style="cursor:pointer;width: 100px">
+                                Action
 
-                                    <ul class="mailbox-toolbar">
-                                        <c:if test="${application.status eq 'Pending'}">
-                                            <a href="${pageContext.request.contextPath}/editapplication?type=LEAVE&id=${application.leaveId}" class="icon-circle" data-toggle="tooltip" title="Edit">
-                                                <i class="fa fa-pencil"></i>
+                            </th>
+                        </tr>                                 
+                    </thead>
+                    <tbody>
+                        <c:forEach var="list" items="${listapplication}" varStatus ="loop">
+                            <tr>
+                                <td>${(page - 1) * 10 +loop.index+1}</td>
+                                <td>${list.approvedBy.fullname}</td>
+                                <td>${list.approvedBy.email}</td>
+                                <td>${list.leaveType}</td>
+                                <td
+                                    style="font-weight: bold;
+                                    color:
+                                    <c:choose>
+                                        <c:when test="${list.status eq 'Approved'}">green</c:when>
+                                        <c:when test="${list.status eq 'Rejected'}">red</c:when>
+                                        <c:otherwise>goldenrod</c:otherwise>
+                                    </c:choose>;
+                                    "
+                                    >${list.status}</td>
+                                <td>${list.dayRequested}</td>
+                                <td>${list.createdAt}</td>
+                                <td>
+                                    <c:choose>
+                                        <c:when test="${not list.status.equalsIgnoreCase('Pending')}">
+                                            <a href="${pageContext.request.contextPath}/detail?leaveId=${list.leaveId}" class="icon-circle" title="More detail">
+                                                <i class="fa fa-info"></i>
                                             </a>
-                                        </c:if>
-                                        <c:if test="${application.status eq 'Pending'}">
-                                        <form action="${pageContext.request.contextPath}/deleteapplication?type=LEAVE&id=${application.leaveId}" method="post" style="display:inline;">
-                                            <button type="submit" class="icon-circle" data-toggle="tooltip" title="Delete" onclick="return confirm('Do you confirm delete this application');">
-                                                <i class="fa fa-trash-o"></i>
-                                            </button>
-                                        </form>
-                                            </c:if>
-                                        <a href="${pageContext.request.contextPath}/detail?leaveId=${application.leaveId}" class="icon-circle" data-toggle="tooltip" title="More detail">
-                                            <i class="fa fa-info"></i>
-                                        </a>
-                                    </ul>
-                                </div>
-                            </c:forEach>
-                        </div>
-                    </div>
-                </div>
+                                        </c:when>
+                                        <c:otherwise>
+                                            <a href="${pageContext.request.contextPath}/editapplication?type=LEAVE&id=${list.leaveId}" class="icon-circle" data-toggle="tooltip" title="Edit">
+                                                <i class="fa fa-pencil"></i>
+                                            </a>   
+                                        </c:otherwise>
+                                    </c:choose>
+                                </td>
+                            </tr>
+                        </c:forEach>
+                        <c:if test="${not empty message}">
+                            <tr>
+                                <td colspan="10" style="text-align:center; color:red; font-weight:bold;">
+                                    No results found!
+                                </td>
+                            </tr>
+                        </c:if>
+                    </tbody>
+                </table>
             </div>
             <c:url var="baseUrl" value="/application">
                 <c:param name="typeapplication" value="LEAVE"/>
-                <c:param name="size" value="${size}"/>
-
                 <c:if test="${not empty param.search}">
                     <c:param name="search" value="${param.search}"/>
                 </c:if>
@@ -234,9 +242,9 @@
         <script src="${pageContext.request.contextPath}/assets2/js/admin.js"></script>
         <script src='${pageContext.request.contextPath}/assets2/vendors/switcher/switcher.js'></script>
         <script>
-                                                $(document).ready(function () {
-                                                    $('[data-toggle="tooltip"]').tooltip();
-                                                });
+                                                    $(document).ready(function () {
+                                                        $('[data-toggle="tooltip"]').tooltip();
+                                                    });
         </script>
         <style>
             .icon-circle {

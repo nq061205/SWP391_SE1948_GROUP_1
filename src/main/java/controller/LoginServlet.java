@@ -6,6 +6,7 @@ package controller;
 
 import api.GoogleLogin;
 import dal.EmployeeDAO;
+import helper.PasswordEncryption;
 import model.Employee;
 import model.GoogleAccount;
 import java.io.IOException;
@@ -62,35 +63,44 @@ public class LoginServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-            String emp_code = request.getParameter("emp_code");
-            String password = request.getParameter("password");
-            String remember = request.getParameter("remember");
-            EmployeeDAO lDao = new EmployeeDAO();
-            HttpSession session = request.getSession();
-            Employee employee = lDao.getEmployeeByUsernamePassword(emp_code, password);
-            if (employee != null) {
-                session.setAttribute("user", employee);
-                if ("on".equals(remember)) {
-                    Cookie cookieUser = new Cookie("rememberUser", emp_code);
-                    cookieUser.setMaxAge(7 * 24 * 60 * 60);
-                    response.addCookie(cookieUser);
 
-                    Cookie cookiePass = new Cookie("rememberPass", password);
-                    cookiePass.setMaxAge(7 * 24 * 60 * 60);
-                    response.addCookie(cookiePass);
-                } else {
-                    Cookie ckUser = new Cookie("rememberUser", "");
-                    ckUser.setMaxAge(0);
-                    response.addCookie(ckUser);
-                    Cookie ckPass = new Cookie("rememberPass", "");
-                    ckPass.setMaxAge(0);
-                    response.addCookie(ckPass);
-                }
-                response.sendRedirect("dashboard");
+        String emp_code = request.getParameter("emp_code");
+        String password = request.getParameter("password");
+        String remember = request.getParameter("remember");
+        EmployeeDAO lDao = new EmployeeDAO();
+        HttpSession session = request.getSession();
+        Employee e = lDao.getEmployeeByEmpCode(emp_code);
+        if (e == null) {
+            request.setAttribute("errorMessage", "Employee Code or Password invalid");
+            request.getRequestDispatcher("Views/login.jsp").forward(request, response);
+            return;
+        }
+        String passEncoded = e.getPassword();
+        if (PasswordEncryption.checkPassword(password, passEncoded)) {
+            session.setAttribute("user", e);
+            if ("on".equals(remember)) {
+                Cookie cookieUser = new Cookie("rememberUser", emp_code);
+                cookieUser.setMaxAge(7 * 24 * 60 * 60);
+                response.addCookie(cookieUser);
+
+                Cookie cookiePass = new Cookie("rememberPass", password);
+                cookiePass.setMaxAge(7 * 24 * 60 * 60);
+                response.addCookie(cookiePass);
             } else {
-                request.setAttribute("errorMessage", "Employee Code or Password invalid");
-                request.getRequestDispatcher("Views/login.jsp").forward(request, response);
-        } 
+                Cookie ckUser = new Cookie("rememberUser", "");
+                ckUser.setMaxAge(0);
+                response.addCookie(ckUser);
+
+                Cookie ckPass = new Cookie("rememberPass", "");
+                ckPass.setMaxAge(0);
+                response.addCookie(ckPass);
+            }
+
+            response.sendRedirect("dashboard");
+        } else {
+            request.setAttribute("errorMessage", "Employee Code or Password invalid");
+            request.getRequestDispatcher("Views/login.jsp").forward(request, response);
+        }
     }
 
     @Override

@@ -82,14 +82,14 @@ public class RawAttendanceServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        request.getSession().setMaxInactiveInterval(1800); // 30 minutes
+        request.getSession().setMaxInactiveInterval(1800); 
 
         String action = request.getParameter("action");
 
         if ("cancel".equals(action)) {
             request.getSession().removeAttribute("importList");
             request.setAttribute("success", "Import cancelled.");
-            loadAttendanceData(request, response);  // GỌI METHOD CHUNG
+            loadAttendanceData(request, response);
             return;
         }
 
@@ -113,7 +113,7 @@ public class RawAttendanceServlet extends HttpServlet {
                     }
                 }
             }
-            loadAttendanceData(request, response);  // GỌI METHOD CHUNG
+            loadAttendanceData(request, response); 
             return;
         }
 
@@ -121,7 +121,7 @@ public class RawAttendanceServlet extends HttpServlet {
         Part filePart = request.getPart("file");
         if (filePart == null || filePart.getSize() == 0) {
             request.setAttribute("error", "No file uploaded.");
-            loadAttendanceData(request, response);  // GỌI METHOD CHUNG
+            loadAttendanceData(request, response); 
             return;
         }
 
@@ -186,7 +186,6 @@ public class RawAttendanceServlet extends HttpServlet {
                 Cell checkTypeCell = row.getCell(3);
                 String checkType = (checkTypeCell != null) ? checkTypeCell.getStringCellValue().trim() : "";
 
-                // --- Tạo đối tượng và thêm vào list ---
                 Employee e = new Employee();
                 e.setEmpId(empId);
                 list.add(new AttendanceRaw(e, sqlDate, sqlTime, checkType));
@@ -197,18 +196,16 @@ public class RawAttendanceServlet extends HttpServlet {
             request.setAttribute("preview", previewList);
             request.setAttribute("success", "File uploaded successfully! Review " + list.size() + " records before import.");
 
-            loadAttendanceData(request, response);  // GỌI METHOD CHUNG
+            loadAttendanceData(request, response);  
 
         } catch (Exception ex) {
             ex.printStackTrace();
             request.setAttribute("error", "Error reading file: " + ex.getMessage());
-            loadAttendanceData(request, response);  // GỌI METHOD CHUNG
+            loadAttendanceData(request, response);  
         }
     }
 
-    /**
-     * Method chung để load attendance data và forward đến JSP
-     */
+
     private void loadAttendanceData(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
