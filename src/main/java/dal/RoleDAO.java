@@ -19,82 +19,63 @@ import java.util.logging.Logger;
  */
 public class RoleDAO extends DBContext {
 
-    private Connection connection;
-    private List<Role> roleList;
-
-    public RoleDAO() {
-        try {
-            connection = new DBContext().getConnection();
-        } catch (Exception e) {
-        }
-    }
-
     public List<Role> getAllRoles() {
-        roleList = new ArrayList<>();
+        List<Role> roleList = new ArrayList<>();
         String sql = "select * from Role";
-        try {
-            PreparedStatement ps = connection.prepareStatement(sql);
-            ResultSet rs = ps.executeQuery();
+        try (Connection conn = DBContext.getConnection(); 
+             PreparedStatement ps = conn.prepareStatement(sql); 
+             ResultSet rs = ps.executeQuery()) {
+            
             while (rs.next()) {
                 Role role = new Role();
                 role.setRoleId(rs.getInt("role_id"));
                 role.setRoleName(rs.getString("role_name"));
                 roleList.add(role);
             }
-        } catch (SQLException ex) {
+        } catch (Exception ex) {
             Logger.getLogger(RoleDAO.class.getName()).log(Level.SEVERE, null, ex);
         }
         return roleList;
     }
 
     public Role getRoleByEmpId(int emp_id) {
-        Role role = new Role();
-        try {
-            String sql = "select * from role join employee on role.role_id = employee.role_id where emp_id = ?";
-            PreparedStatement stm = connection.prepareStatement(sql);
+        String sql = "select r.role_id, r.role_name from role r join employee e on r.role_id = e.role_id where e.emp_id = ?";
+        try (Connection conn = DBContext.getConnection(); 
+             PreparedStatement stm = conn.prepareStatement(sql)) {
+            
             stm.setInt(1, emp_id);
-            ResultSet rs = stm.executeQuery();
-            if (rs.next()) {
-                role = new Role(
-                        rs.getInt("role_id"),
-                        rs.getString("role_name")
-                );
-                return role;
+            try (ResultSet rs = stm.executeQuery()) {
+                if (rs.next()) {
+                    return new Role(
+                            rs.getInt("role_id"),
+                            rs.getString("role_name")
+                    );
+                }
             }
-        } catch (SQLException ex) {
+        } catch (Exception ex) {
             ex.printStackTrace();
         }
         return null;
     }
 
     public Role getRoleByRoleId(int roleId) {
-        Role role = new Role();
-        try {
-            String sql = "select * from role where role_id = ?";
-            PreparedStatement stm = connection.prepareStatement(sql);
+        String sql = "select * from role where role_id = ?";
+        try (Connection conn = DBContext.getConnection(); 
+             PreparedStatement stm = conn.prepareStatement(sql)) {
+            
             stm.setInt(1, roleId);
-            ResultSet rs = stm.executeQuery();
-            if (rs.next()) {
-                role = new Role(
-                        rs.getInt("role_id"),
-                        rs.getString("role_name")
-                );
-                return role;
+            try (ResultSet rs = stm.executeQuery()) {
+                if (rs.next()) {
+                    return new Role(
+                            rs.getInt("role_id"),
+                            rs.getString("role_name")
+                    );
+                }
             }
-        } catch (SQLException ex) {
+        } catch (Exception ex) {
             ex.printStackTrace();
         }
         return null;
-    }
-
-    public void close() {
-        try {
-            if (connection != null && !connection.isClosed()) {
-                connection.close();
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
     }
 
     public static void main(String[] args) {
