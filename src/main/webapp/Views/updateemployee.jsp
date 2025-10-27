@@ -30,7 +30,7 @@
         <link rel="shortcut icon" type="image/x-icon" href="${pageContext.request.contextPath}/assets2/images/favicon.png" />
 
         <!-- PAGE TITLE HERE ============================================= -->
-        <title>Update Account</title>
+        <title>Update Employee</title>
 
         <!-- MOBILE SPECIFIC ============================================= -->
         <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -65,10 +65,10 @@
         <main class="ttr-wrapper">
             <div class="container-fluid">
                 <div class="db-breadcrumb">
-                    <h4 class="breadcrumb-title">Account information</h4>
+                    <h4 class="breadcrumb-title">Employee Information</h4>
                     <ul class="db-breadcrumb-list">
                         <li><a href="#"><i class="fa fa-home"></i>Home</a></li>
-                        <li>Account information</li>
+                        <li>Employee Information</li>
                     </ul>
                 </div>	
 
@@ -76,10 +76,10 @@
                     <div class="col-lg-12 m-b30">
                         <div class="widget-box">
                             <div class="wc-title">
-                                <h4>Account information</h4>
+                                <h4>Employee information</h4>
                             </div>
                             <div class="widget-inner">
-                                <form class="edit-profile m-b30" action="${pageContext.request.contextPath}/updateaccount" method="POST">
+                                <form class="edit-profile m-b30" action="${pageContext.request.contextPath}/updateemployee" method="POST">
                                     <div class="row">
                                         <div class="col-md-3 text-center">
                                             <div class="profile-avatar mb-3">
@@ -104,53 +104,51 @@
                                             <div class="form-group row">
                                                 <label class="col-sm-3 col-form-label">Email:</label>
                                                 <div class="col-sm-9">
-                                                    <input name="email" class="form-control" name="email" type="email" value="${sessionScope.emp.email}">
+                                                    <input name="email" class="form-control"  type="email" value="${sessionScope.emp.email}">
                                                 </div>
                                             </div>
                                             <div class="form-group row mt-2">
-                                                <label class="col-sm-3 col-form-label">Department:</label>
+                                                <label class="col-sm-3 col-form-label">Gender:</label>
                                                 <div class="col-sm-9">
-                                                    <select name="deptId" class="form-control">
-                                                        <c:forEach var="dept" items="${departments}">
-                                                            <option value="${dept.depId}" 
-                                                                    <c:if test="${dept.depId == sessionScope.emp.dept.depId}">selected</c:if>>
-                                                                ${dept.depName}
+                                                    <input class="form-control" type="text" value="${sessionScope.emp.gender ?'Male':'Female'}" readonly>
+                                                </div>
+                                            </div>
+                                            <div class="form-group row mt-2">
+                                                <label class="col-sm-3 col-form-label">Date of birth:</label>
+                                                <div class="col-sm-9">
+                                                    <input class="form-control" name="dob" type="date" value="${sessionScope.emp.dob}" >
+                                                    <p>${dobErr}</p>
+                                                </div>
+                                            </div>
+                                            <div class="form-group row mt-2">
+                                                <label class="col-sm-3 col-form-label">Position Title:</label>
+                                                <div class="col-sm-9">
+                                                    <select name="positionTitle" class="form-control">
+                                                        <c:forEach var="pos" items="${posList}">
+                                                            <option value="${pos}" 
+                                                                    <c:if test="${pos == sessionScope.emp.positionTitle}">selected</c:if>>
+                                                                ${pos}
                                                             </option>
                                                         </c:forEach>
                                                     </select>
                                                 </div>
                                             </div>
                                             <div class="form-group row mt-2">
-                                                <label class="col-sm-3 col-form-label">Role:</label>
+                                                <label class="col-sm-3 col-form-label">Paid leaves day:</label>
                                                 <div class="col-sm-9">
-                                                    <select name="roleId" class="form-control">
-                                                        <c:forEach var="role" items="${roles}">
-                                                            <option value="${role.roleId}" 
-                                                                    <c:if test="${role.roleId == sessionScope.emp.role.roleId}">selected</c:if>>
-                                                                ${role.roleName}
-                                                            </option>
-                                                        </c:forEach>
-                                                    </select>
+                                                    <input class="form-control" name="paidleaveday" type="number" value="${sessionScope.emp.paidLeaveDays}" readonly >
                                                 </div>
                                             </div>
-                                            <div class="form-group row mt-2">
-                                                <label class="col-sm-3 col-form-label">Status:</label>
-                                                <div class="col-sm-9">
-                                                    <input class="form-control" type="text" value="${sessionScope.emp.status ? 'Active' :'Inactive'}" readonly>
-                                                </div>
-                                            </div>
-
-
                                             <div class="form-group row mt-4">
                                                 <div class="col-sm-9 offset-sm-3">
                                                     <button type="button" class="btn btn-secondary"
-                                                            onclick="window.location.href = '${pageContext.request.contextPath}/accountlist'">
+                                                            onclick="window.location.href = '${pageContext.request.contextPath}/employeelist'">
                                                         ← Back
                                                     </button>
                                                     <button type="submit" name="button" value="save"class="btn btn-primary"
                                                             onclick="return confirm('Do you confirm save change?');"
                                                             >Save</button>
-                                                        <p>${message}</p>
+                                                    <p>${message}</p>
                                                 </div>
                                             </div>
                                         </div>

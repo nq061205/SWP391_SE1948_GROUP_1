@@ -84,7 +84,7 @@ public class AccountListServlet extends HttpServlet {
         String order = request.getParameter("order");
         String type = request.getParameter("type");
         String empCode = request.getParameter("empCode");
-        int quantityOfPage = 3;
+        int quantityOfPage = 5;
         int currentPage = 1;
         String oldSearchKey = (String) ses.getAttribute("oldSearchKey");
         Integer oldDeptCount = (Integer) ses.getAttribute("oldDeptCount");
@@ -229,7 +229,6 @@ public class AccountListServlet extends HttpServlet {
             request.setAttribute("searchkey", searchkey);
 
             request.getRequestDispatcher("Views/accountList.jsp").forward(request, response);
-            return;
         }
     }
 

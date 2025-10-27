@@ -4,32 +4,24 @@
  */
 package controller;
 
-import dal.DeptDAO;
 import dal.EmployeeDAO;
-import dal.RoleDAO;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
-import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.LinkedHashMap;
+import java.sql.Date;
+import java.time.LocalDate;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import model.Department;
 import model.Employee;
-import model.Role;
 
 /**
  *
  * @author Admin
  */
-public class UpdateAccountServlet extends HttpServlet {
+public class UpdateEmployeeServlet extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -48,10 +40,10 @@ public class UpdateAccountServlet extends HttpServlet {
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
-            out.println("<title>Servlet UpdateAccountServlet</title>");
+            out.println("<title>Servlet UpdateEmployeeServlet</title>");
             out.println("</head>");
             out.println("<body>");
-            out.println("<h1>Servlet UpdateAccountServlet at " + request.getContextPath() + "</h1>");
+            out.println("<h1>Servlet UpdateEmployeeServlet at " + request.getContextPath() + "</h1>");
             out.println("</body>");
             out.println("</html>");
         }
@@ -72,32 +64,13 @@ public class UpdateAccountServlet extends HttpServlet {
         HttpSession ses = request.getSession();
         String empCode = request.getParameter("empCode");
         EmployeeDAO empDAO = new EmployeeDAO();
-        RoleDAO rDAO = new RoleDAO();
-        DeptDAO dDAO = new DeptDAO();
-        String deptID = request.getParameter("deptId");
-        String roleIDStr = request.getParameter("roleId");
-        Department dept = dDAO.getDepartmentByDepartmentId(deptID);
-        int roleID = 0;
-        if (roleIDStr != null) {
-            roleID = Integer.parseInt(roleIDStr);
-        }
-        List<Department> departments = dDAO.getAllDepartment();
-        List<Role> roleList = rDAO.getAllRoles();
-        Map<String, Role> uniqueRolesMap = new LinkedHashMap<>();
-        for (Role r : roleList) {
-            uniqueRolesMap.putIfAbsent(r.getRoleName(), r);
-        }
 
-        List<Role> uniqueRoles = new ArrayList<>(uniqueRolesMap.values());
+        List<String> posList = empDAO.getAllPosition();
 
-        Role role = rDAO.getRoleByRoleId(roleID);
+        request.setAttribute("posList", posList);
         Employee emp = empDAO.getEmployeeByEmpCode(empCode);
-        request.setAttribute("departments", departments);
-        request.setAttribute("roles", uniqueRoles);
         ses.setAttribute("emp", emp);
-        ses.setAttribute("dept", dept);
-        ses.setAttribute("role", role);
-        request.getRequestDispatcher("Views/updateAccount.jsp").forward(request, response);
+        request.getRequestDispatcher("Views/updateemployee.jsp").forward(request, response);
     }
 
     /**
@@ -112,43 +85,47 @@ public class UpdateAccountServlet extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         HttpSession ses = request.getSession();
-        String button = request.getParameter("button");
+        EmployeeDAO empDAO = new EmployeeDAO();
         String empCode = request.getParameter("empCode");
         String email = request.getParameter("email");
-        String deptID = request.getParameter("deptId");
-        String roleIdStr = request.getParameter("roleId");
-        EmployeeDAO dao = new EmployeeDAO();
-        RoleDAO rDAO = new RoleDAO();
-        DeptDAO dDAO = new DeptDAO();
-        int roleID = 0;
-        try {
-            roleID = Integer.parseInt(roleIdStr);
-        } catch (NumberFormatException e) {
+        String dobStr = request.getParameter("dob");
+        boolean validate = false;
+        Date dob = null;
+        if (dobStr != null && !dobStr.isBlank()) {
+            try {
+                dob = Date.valueOf(dobStr);
+                LocalDate today = LocalDate.now();
+                if (dob.after(Date.valueOf(LocalDate.now()))) {
+                    request.setAttribute("dobErr", "Date of birth cannot be in the future");
+                    validate = true;
+                } else {
+                    LocalDate dobLocal = dob.toLocalDate();
+                    LocalDate minAgeDate = today.minusYears(18);
+                    if (dobLocal.isAfter(minAgeDate)) {
+                        request.setAttribute("dobErr", "Employee must be at least 18 years old");
+                        validate = true;
+                    }
+                }
 
+            } catch (IllegalArgumentException e) {
+            }
         }
-        Employee editEmp = dao.getEmployeeByEmpCode(empCode);
-        if (editEmp != null && "save".equalsIgnoreCase(button)) {
-            editEmp.setEmail(email);
-            Department dept = dDAO.getDepartmentByDepartmentId(deptID);
-            editEmp.setDept(dept);
-            Role role = rDAO.getRoleByRoleId(roleID);
-            editEmp.setRole(role);
-            dao.updateEmployee(editEmp);
+        String positionTitle = request.getParameter("positionTitle");
+        String button = request.getParameter("button");
+        Employee emp = empDAO.getEmployeeByEmpCode(empCode);
+        if ("save".equalsIgnoreCase(button) && validate == false) {
+            emp.setEmail(email);
+            emp.setDob(dob);
+            emp.setPositionTitle(positionTitle);
+            empDAO.updateEmployee(emp);
             request.setAttribute("message", "Update successfully!");
         }
-        List<Department> departments = dDAO.getAllDepartment();
-        List<Role> roleList = rDAO.getAllRoles();
-        Map<String, Role> uniqueRolesMap = new LinkedHashMap<>();
-        for (Role r : roleList) {
-            uniqueRolesMap.putIfAbsent(r.getRoleName(), r);
-        }
+        List<String> posList = empDAO.getAllPosition();
 
-        List<Role> uniqueRoles = new ArrayList<>(uniqueRolesMap.values());
+        request.setAttribute("posList", posList);
+        ses.setAttribute("emp", emp);
+        request.getRequestDispatcher("Views/updateemployee.jsp").forward(request, response);
 
-        request.setAttribute("departments", departments);
-        request.setAttribute("roles", uniqueRoles);
-        ses.setAttribute("emp", editEmp);
-        request.getRequestDispatcher("Views/updateAccount.jsp").forward(request, response);
     }
 
     /**

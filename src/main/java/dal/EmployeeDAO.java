@@ -56,7 +56,6 @@ public class EmployeeDAO extends DBContext {
         emp.setPhone(rs.getString("phone"));
         emp.setPositionTitle(rs.getString("position_title"));
         emp.setImage(rs.getString("image"));
-        emp.setDependantCount(rs.getInt("dependant_count"));
         emp.setPaidLeaveDays(rs.getInt("paid_leave_days"));
         emp.setStatus(rs.getBoolean("status"));
         emp.setDept(dept);
@@ -235,7 +234,7 @@ public class EmployeeDAO extends DBContext {
     }
 
     public void updateEmployee(Employee employee) {
-        String sql = "UPDATE Employee SET fullname=?,email=?,password=?,gender=?,dob=?,phone=?,position_title=?,image=?,dependant_count=?,paid_leave_days=?,dep_id=?,role_id=?,status=?  WHERE emp_code = ?";
+        String sql = "UPDATE Employee SET fullname=?,email=?,password=?,gender=?,dob=?,phone=?,position_title=?,image=?,paid_leave_days=?,dep_id=?,role_id=?,status=?  WHERE emp_code = ?";
         try (Connection conn = DBContext.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql);) {
             
@@ -247,12 +246,11 @@ public class EmployeeDAO extends DBContext {
             ps.setString(6, employee.getPhone());
             ps.setString(7, employee.getPositionTitle());
             ps.setString(8, employee.getImage());
-            ps.setInt(9, employee.getDependantCount());
-            ps.setInt(10, employee.getPaidLeaveDays());
-            ps.setString(11, employee.getDept().getDepId());
-            ps.setInt(12, employee.getRole().getRoleId());
-            ps.setBoolean(13, employee.isStatus());
-            ps.setString(14, employee.getEmpCode());
+            ps.setInt(9, employee.getPaidLeaveDays());
+            ps.setString(10, employee.getDept().getDepId());
+            ps.setInt(11, employee.getRole().getRoleId());
+            ps.setBoolean(12, employee.isStatus());
+            ps.setString(13, employee.getEmpCode());
             ps.executeUpdate();
         } catch (Exception ex) {
             Logger.getLogger(EmployeeDAO.class.getName()).log(Level.SEVERE, null, ex);
@@ -796,9 +794,6 @@ public class EmployeeDAO extends DBContext {
     public static void main(String[] args) {
         EmployeeDAO dao = new EmployeeDAO();
 
-        for (Employee employee : dao.getEmailReceiverByRole("HR")) {
-            System.out.println(employee);
-        }
     }
 
 }

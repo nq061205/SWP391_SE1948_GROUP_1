@@ -122,6 +122,14 @@
         <servlet-name>UpdateAccountServlet</servlet-name>
         <servlet-class>controller.UpdateAccountServlet</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>UpdateEmployeeServlet</servlet-name>
+        <servlet-class>controller.UpdateEmployeeServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>UpdateDepartmentServlet</servlet-name>
+        <servlet-class>controller.UpdateDepartmentServlet</servlet-class>
+    </servlet>
     <servlet-mapping>
         <servlet-name>UpdateAccountServlet</servlet-name>
         <url-pattern>/updateaccount</url-pattern>
@@ -196,7 +204,7 @@
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>DepartmentListServlet</servlet-name>
-        <url-pattern>/departmentlistservlet</url-pattern>
+        <url-pattern>/departmentlist</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>CandidateListServlet</servlet-name>
@@ -221,7 +229,7 @@
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>EmployeeListServlet</servlet-name>
-        <url-pattern>/employeelistservlet</url-pattern>
+        <url-pattern>/employeelist</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>ApplyJobServlet</servlet-name>
@@ -247,7 +255,14 @@
         <servlet-name>ExportAttendancePDFServlet</servlet-name>
         <url-pattern>/export-attendance-pdf</url-pattern>
     </servlet-mapping>
-    
+    <servlet-mapping>
+        <servlet-name>UpdateEmployeeServlet</servlet-name>
+        <url-pattern>/updateemployee</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>UpdateDepartmentServlet</servlet-name>
+        <url-pattern>/updatedepartment</url-pattern>
+    </servlet-mapping>
     <session-config>
         <session-timeout>30</session-timeout>
     </session-config>

@@ -227,7 +227,7 @@
 
                         <thead class="thead-dark" >
                             <tr>
-                                <th style="width: 50px;">STT</th>
+                                <th style="width: 50px;">No</th>
                                 <th style="cursor:pointer;width: 120px">
                                     <a class="sort" href="${urlPrefix}sortBy=emp_code&order=${nextOrder}&page=${page}">
                                         Emp Code <i class="fa fa-sort"></i>

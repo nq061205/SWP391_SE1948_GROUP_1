@@ -84,10 +84,10 @@
                     <h4 class="breadcrumb-title">Employee Listing</h4>
                     <ul class="db-breadcrumb-list">
                         <li><a href="${pageContext.request.contextPath}/Views/HR/hrDashboard.jsp"><i class="fa fa-home"></i> Home</a></li>
-                        <li><a href="${pageContext.request.contextPath}/employeelistservlet">Employee list</a></li>
+                        <li><a href="${pageContext.request.contextPath}/employeelist">Employee list</a></li>
                     </ul>
                 </div>
-                <c:url var="baseUrl" value="employeelistservlet">
+                <c:url var="baseUrl" value="employeelist">
                     <c:if test="${not empty ageRange}">
                         <c:param name="ageRange" value="${ageRange}" />
                     </c:if>
@@ -109,7 +109,7 @@
                 <div class="row align-items-stretch">
 
                     <div class="col-md-4">
-                        <form action="${pageContext.request.contextPath}/employeelistservlet" method="get"
+                        <form action="${pageContext.request.contextPath}/employeelist" method="get"
                               class="d-flex align-items-center justify-content-between h-100">
                             <input type="hidden" name="page" value="${page}">
                             <c:if test="${not empty sortBy}">
@@ -132,7 +132,7 @@
 
 
                     <div class="col-md-8 custom-col">
-                        <form action="${pageContext.request.contextPath}/employeelistservlet" method="get"
+                        <form action="${pageContext.request.contextPath}/employeelist" method="get"
                               class="d-flex align-items-center justify-content-between flex-nowrap gap-3 h-100">
 
                             <input type="hidden" name="page" value="${page}">
@@ -173,7 +173,7 @@
                                 <button type="submit" class="btn btn-primary">
                                     <i class="fa fa-filter"></i> Apply
                                 </button>
-                                <a href="${pageContext.request.contextPath}/employeelistservlet" class="btn btn-secondary">
+                                <a href="${pageContext.request.contextPath}/employeelist" class="btn btn-secondary">
                                     <i class="fa fa-times"></i> Clear
                                 </a>
                             </div>
@@ -183,129 +183,80 @@
                 <c:if test="${not empty searchkey}">
                     <p>Found <strong>${totalSearchResults}</strong> employee with search key is <strong>${searchkey}</strong></p>  
                 </c:if>
-                <div class="table-responsive" style="overflow-x:auto;">
+                <div class="table-responsive" style="overflow-x:auto;"> 
                     <table class="table table-striped table-bordered table-hover align-middle text-center" 
-                           style="table-layout: fixed; width: 100%; border-collapse: collapse;">
-                        <c:set var="nextOrder" value="${order == 'asc' ? 'desc' : 'asc'}" />
-                        <thead class="thead-dark" >
-                            <tr>
-                                <th style="width: 50px;">STT</th>
-                                <th style="cursor:pointer;width: 120px">
-                                    <a href="${urlPrefix}sortBy=emp_code&order=${nextOrder}&page=${page}" class="sort">
-                                        Emp Code<i class="fa fa-sort"></i>
+                           style="table-layout: fixed; width: 100%; border-collapse: collapse;"> 
+                        <c:set var="nextOrder" value="${order == 'asc' ? 'desc' : 'asc'}" /> 
+                        <thead class="thead-dark"> 
+                            <tr> 
+                                <th style="width: 50px;">No</th> 
+                                <th style="cursor:pointer;width: 120px"> 
+                                    <a href="${urlPrefix}sortBy=emp_code&order=${nextOrder}&page=${page}" class="sort"> 
+                                        Emp Code<i class="fa fa-sort"></i> 
+                                    </a> 
+                                </th> 
+                                <th style="cursor:pointer;width: 120px"> 
+                                    <a href="${urlPrefix}sortBy=fullname&order=${nextOrder}&page=${page}" class="sort"> 
+                                        Full Name<i class="fa fa-sort"></i> 
+                                    </a> 
+                                </th> 
+                                <th style="width: 100px">Email</th> 
+                                <th style="width:80px">Gender</th> 
+                                <th style="cursor:pointer;width: 80px"> 
+                                    <a href="${urlPrefix}sortBy=dob&order=${nextOrder}&page=${page}" class="sort"> 
+                                        Dob<i class="fa fa-sort"></i> 
+                                    </a> 
+                                </th> 
+                                <th style="width:60px">Image</th> 
+                                <th style="width:105px">Position Title</th> 
+                                <th style="width:70px">
+                                    <a href="${urlPrefix}sortBy=paid_leave_days&order=${nextOrder}&page=${page}" class="sort"> 
+                                        Paid leaves day<i class="fa fa-sort"></i> 
                                     </a>
-                                </th>
-                                <th style="cursor:pointer;width: 120px">
-                                    <a href="${urlPrefix}sortBy=fullname&order=${nextOrder}&page=${page}" class="sort">         
-                                        Full Name<i class="fa fa-sort"></i>
-                                    </a>
-                                </th>
-                                <th style="width: 100px">Email</th>
-                                <th style="width:80px">Gender</th>
-                                <th style="cursor:pointer;">
-                                    <a href="${urlPrefix}sortBy=dob&order=${nextOrder}&page=${page}" class="sort">
-                                        Dob<i class="fa fa-sort"></i>
-                                    </a>
-                                </th>
-                                <th>Image</th>
-                                <th style="width:105px">Position Title</th>
-                                <th style="cursor:pointer;width: 100px">
-                                    <a href="${urlPrefix}sortBy=dependant_count&order=${nextOrder}&page=${page}" class="sort">
-                                        Dependant Count<i class="fa fa-sort"></i>
-                                    </a>
-                                </th>
-                                <th>Paid leaves day</th>
-                                <th style="width:80px">Action</th>
-                            </tr>                                 
-                        </thead>
-                        <tbody>
-
+                                </th> 
+                                <th style="width:180px">Action</th> 
+                            </tr> 
+                        </thead> 
+                        <tbody> 
                             <c:forEach var="el" items="${sessionScope.empList}" varStatus ="loop">
                                 <tr>
-                                    <c:choose>
-                                        <c:when test="${editEmp != null && editEmp.empCode eq el.empCode}">
-                                    <form action="${pageContext.request.contextPath}/employeelistservlet" method="post">
-                                        <input type="hidden" name="page" value="${page}">
-                                        <c:if test="${not empty searchkey}">
-                                            <input type="hidden" name="searchkey" value="${searchkey}">
-                                            <input type="hidden" name="totalSearchResults" value="${totalSearchResults}">
-                                        </c:if>
-                                        <c:if test="${not empty gender}">
-                                            <input type="hidden" name="gender" value="${gender}">
-                                        </c:if>
-                                        <c:if test="${not empty ageRange}">
-                                            <input type="hidden" name="ageRange" value="${ageRange}">
-                                        </c:if>
-                                        <c:if test="${not empty positionTitle}">
-                                            <c:forEach var="pt" items="${positionTitle}">
-                                                <input type="hidden" name="positionTitle" value="${pt}">
-                                            </c:forEach>
-                                        </c:if>
-                                        <c:if test="${not empty sortBy}">
-                                            <input type="hidden" name="sortBy" value="${sortBy}">
-                                            <input type="hidden" name="order" value="${order}">
-                                        </c:if>
-                                        <td>${loop.index+1}</td>
-                                        <td><input type="hidden" name="empCode" value="${el.empCode}" />${el.empCode}</td>
-                                        <td>${el.fullname}</td>
-                                        <td style="overflow-wrap: break-word;"><input style="width:80px" type="email" name="email" value="${el.email}" />
-                                        </td>
-                                        <td>${el.gender}</td>
-                                        <td>
-                                            <input style="width:55px" type="date" name="dob" value="${el.dob}"/>
-                                            <span style="color:red;">${dobErr}</span>
-                                        </td>
-                                        <td>
-                                            <img style="width:65px" src="${el.image}" alt="Employee Image" style="width:60px; height:60px; object-fit:cover; border-radius:6px;">
-                                        </td>
-                                        <td style="overflow-wrap: break-word;">
-                                            <select name="editPositionTitle">
-                                                <c:forEach var="d" items="${sessionScope.positionList}">
-                                                    <option value="${d}">${d}</option>
-                                                </c:forEach>
-                                            </select>
-                                        </td>
-                                        <td><input style="width:65px"  type="number" name="dependantCount" value="${el.dependantCount}" min="0"/>
-                                        </td>
-                                        <td>${el.paidLeaveDays}</td>
-                                        <td>
-                                            <button type="submit" name="action" value="save" class="btn btn-success btn-sm">Save</button>
-                                            <a href="${pageContext.request.contextPath}/employeelistservlet" class="btn btn-secondary btn-sm">Cancel</a>
-                                        </td>
-                                    </form>
-                                </c:when>
-                                <c:otherwise>
-                                    <td>${loop.index+1}</td>
-                                    <td>${el.empCode}</td>
-                                    <td>${el.fullname}</td>
-                                    <td style="overflow-wrap: break-word;">${el.email}</td>
-                                    <td>${el.gender ?'Male' :'Female'}</td>
-                                    <td>${el.dob}</td>                                           
-                                    <td>
-                                        <img style="width:65px" src="${el.image}" alt="Employee Image" style="width:60px; height:60px; object-fit:cover; border-radius:6px;">
-                                    </td>
-                                    <td style="overflow-wrap: break-word;">${el.positionTitle}</td>
-                                    <td>${el.dependantCount}</td>
-                                    <td>${el.paidLeaveDays}</td>
-                                    <td>
-                                        <a href="${pageContext.request.contextPath}/${urlPrefix}type=edit&empCode=${el.empCode}&page=${page}" class="btn btn-sm btn-primary">Edit</a>
+                                    <td>${loop.index+1}</td> 
+                                    <td>${el.empCode}</td> 
+                                    <td>${el.fullname}</td> 
+                                    <td style="overflow-wrap: break-word;">${el.email}</td> 
+                                    <td>${el.gender ?'Male' :'Female'}</td> 
+                                    <td>${el.dob}</td> 
+                                    <td> 
+                                        <img style="width:65px" src="${el.image}" alt="Employee Image" 
+                                             style="width:60px; height:60px; object-fit:cover; border-radius:6px;"> 
+                                    </td> 
+                                    <td style="overflow-wrap: break-word;">${el.positionTitle}</td> 
+                                    <td>${el.paidLeaveDays}</td> 
+                                    <td class="text-center" style="padding: 1%;">
+                                        <div class="d-flex justify-content-center" style="gap:20px">
+                                            <a href="${pageContext.request.contextPath}/updateemployee?empCode=${el.empCode}" 
+                                               class="btn btn-sm btn-primary">Edit</a>
+                                            <a href="${pageContext.request.contextPath}/employeedetail?empCode=${el.empCode}" 
+                                               class="btn btn-sm btn-secondary">View detail</a>
+                                        </div>
                                     </td>
 
-                                </c:otherwise>
-                            </c:choose>
-                            </tr>
-                        </c:forEach>
-                        <c:if test="${not empty message}">
-                            <tr>
-                                <td colspan="10" style="text-align:center; color:red; font-weight:bold;">
-                                    No results found!
-                                </td>
-                            </tr>
-                        </c:if>
-                        </tbody>
-                    </table>
+                                </tr>
+                            </c:forEach> 
+
+                            <c:if test="${not empty message}"> 
+                                <tr> 
+                                    <td colspan="11" style="text-align:center; color:red; font-weight:bold;"> 
+                                        No results found! 
+                                    </td> 
+                                </tr> 
+                            </c:if> 
+                        </tbody> 
+                    </table> 
                 </div>
-                <c:url var="baseUrlWithSort" value="employeelistservlet">
+
+
+                <c:url var="baseUrlWithSort" value="employeelist">
                     <c:if test="${not empty ageRange}">
                         <c:param name="ageRange" value="${ageRange}" />
                     </c:if>
