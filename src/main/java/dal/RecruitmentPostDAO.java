@@ -77,7 +77,6 @@ public class RecruitmentPostDAO extends DBContext { // Kế thừa DBContext đ�
                 post.setTitle(rs.getString("title"));
                 post.setContent(rs.getString("content"));
                 post.setStatus(rs.getString("status"));
-                post.setDelete(rs.getBoolean("is_delete"));
                 post.setCreatedBy(createdBy);
                 post.setApprovedBy(approvedBy);
                 post.setDepartment(department);
@@ -161,7 +160,6 @@ public class RecruitmentPostDAO extends DBContext { // Kế thừa DBContext đ�
                 post.setTitle(rs.getString("title"));
                 post.setContent(rs.getString("content"));
                 post.setStatus(rs.getString("status"));
-                post.setDelete(rs.getBoolean("is_delete"));
                 post.setCreatedBy(createdBy);
                 post.setApprovedBy(approvedBy);
                 post.setDepartment(department);
@@ -244,7 +242,6 @@ public class RecruitmentPostDAO extends DBContext { // Kế thừa DBContext đ�
                     post.setTitle(rs.getString("title"));
                     post.setContent(rs.getString("content"));
                     post.setStatus(rs.getString("status"));
-                    post.setDelete(rs.getBoolean("is_delete"));
                     post.setCreatedBy(createdBy);
                     post.setApprovedBy(approvedBy);
                     post.setDepartment(department);
@@ -313,7 +310,6 @@ public class RecruitmentPostDAO extends DBContext { // Kế thừa DBContext đ�
                 post.setTitle(rs.getString("title"));
                 post.setContent(rs.getString("content"));
                 post.setStatus(rs.getString("status"));
-                post.setDelete(rs.getBoolean("is_delete"));
                 post.setCreatedBy(createdBy);
                 post.setDepartment(department);
                 post.setApprovedAt(rs.getTimestamp("approved_at"));

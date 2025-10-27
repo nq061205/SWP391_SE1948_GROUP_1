@@ -214,7 +214,6 @@ public class EmployeeListServlet extends HttpServlet {
                 emp.setEmail(email);
                 emp.setDob(dob);
                 emp.setPositionTitle(positionTitle);
-                emp.setDependantCount(dependantcount);
                 empDAO.updateEmployee(emp);
             }
             List<Employee> empList = empDAO.manageEmployeeForHR(searchkey, currentPage, quantityOfPage, gender, positionTitleArray, ageRange, sortBy, order);
