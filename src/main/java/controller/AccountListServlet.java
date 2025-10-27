@@ -160,9 +160,6 @@ public class AccountListServlet extends HttpServlet {
         ses.setAttribute("roleList", uniqueRoles);
         ses.setAttribute("deptList", deptDAO.getAllDepartment());
 
-        empDAO.close();
-        deptDAO.close();
-        rDAO.close();
 
         request.getRequestDispatcher("Views/accountList.jsp").forward(request, response);
     }
@@ -234,11 +231,6 @@ public class AccountListServlet extends HttpServlet {
             request.getRequestDispatcher("Views/accountList.jsp").forward(request, response);
             return;
         }
-
-        empDAO.close();
-
-        rDAO.close();
-
     }
 
     /**

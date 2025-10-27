@@ -38,7 +38,7 @@ public class ExportAttendanceExcelServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {        
+            throws ServletException, IOException {
         EmployeeDAO employeeDAO = null;
         DailyAttendanceDAO dailyDAO = null;
 
@@ -56,7 +56,7 @@ public class ExportAttendanceExcelServlet extends HttpServlet {
 
             employeeDAO = new EmployeeDAO();
             List<Employee> employees = employeeDAO.getEmployees(0, Integer.MAX_VALUE, search, department);
-   
+
             if (employees == null || employees.isEmpty()) {
                 response.reset();
                 response.setContentType("text/html;charset=UTF-8");
@@ -70,15 +70,15 @@ public class ExportAttendanceExcelServlet extends HttpServlet {
                 out.println("</body></html>");
                 return;
             }
-            
+
             List<Integer> empIds = employees.stream()
                     .filter(e -> e != null)
                     .map(e -> e.getEmpId())
                     .collect(Collectors.toList());
-            
+
             dailyDAO = new DailyAttendanceDAO();
             List<DailyAttendance> dailyList = dailyDAO.getAttendanceByEmpIds(empIds, selectedMonth, selectedYear);
-            
+
             Map<Integer, Map<Integer, DailyAttendance>> attendanceByDay = new HashMap<>();
             if (dailyList != null) {
                 for (DailyAttendance att : dailyList) {
@@ -99,7 +99,7 @@ public class ExportAttendanceExcelServlet extends HttpServlet {
 
         } catch (Exception ex) {
             ex.printStackTrace();
-            
+
             try {
                 response.reset();
                 response.setContentType("text/html;charset=UTF-8");
@@ -117,10 +117,16 @@ public class ExportAttendanceExcelServlet extends HttpServlet {
             }
         } finally {
             if (employeeDAO != null) {
-                try { employeeDAO.close(); } catch (Exception e) { e.printStackTrace(); }
+                try {
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
             }
             if (dailyDAO != null) {
-                try { dailyDAO.close(); } catch (Exception e) { e.printStackTrace(); }
+                try {
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
             }
         }
     }

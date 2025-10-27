@@ -196,21 +196,18 @@ public class DailyAttendanceServlet extends HttpServlet {
         } finally {
             if (deptDAO != null) {
                 try {
-                    deptDAO.close();
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
             }
             if (employeeDAO != null) {
                 try {
-                    employeeDAO.close();
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
             }
             if (dailyDAO != null) {
                 try {
-                    dailyDAO.close();
                 } catch (Exception e) {
                     e.printStackTrace();
                 }

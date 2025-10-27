@@ -138,7 +138,6 @@ public class EmployeeListServlet extends HttpServlet {
         ses.setAttribute("oldGender", newGender);
         ses.setAttribute("empList", empList);
         ses.setAttribute("positionList", positionList);
-        empDAO.close();
         request.getRequestDispatcher("Views/employeelist.jsp").forward(request, response);
     }
 

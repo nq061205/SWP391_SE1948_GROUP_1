@@ -7,6 +7,7 @@ package dal;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.sql.Types;
 import java.util.ArrayList;
 import java.util.List;
@@ -20,13 +21,28 @@ import model.Employee;
  */
 public class DailyAttendanceDAO extends DBContext {
 
-    private Connection con;
+    private final String BASE_SELECT_SQL = "SELECT ad.*, "
+            + "e.emp_code, e.fullname, e.email, e.position_title "
+            + "FROM daily_attendance ad "
+            + "JOIN employee e ON ad.emp_id = e.emp_id ";
 
-    public DailyAttendanceDAO() {
-        try {
-            con = DBContext.getConnection();
-        } catch (Exception e) {
-        }
+    private DailyAttendance mapResultSetToDailyAttendance(ResultSet rs) throws SQLException {
+        Employee e = new Employee();
+        e.setEmpId(rs.getInt("emp_id"));
+        e.setEmpCode(rs.getString("emp_code"));
+        e.setFullname(rs.getString("fullname"));
+        e.setEmail(rs.getString("email"));
+        e.setPositionTitle(rs.getString("position_title"));
+
+        return new DailyAttendance(
+                e,
+                rs.getDate("date"),
+                rs.getDouble("work_day"),
+                rs.getTime("check_in_time"),
+                rs.getTime("check_out_time"),
+                rs.getDouble("ot_hours"),
+                rs.getString("status")
+        );
     }
 
     public void upsertDailyAttendance(List<DailyAttendance> list) {
@@ -43,100 +59,80 @@ public class DailyAttendanceDAO extends DBContext {
                 + "ot_hours = VALUES(ot_hours), "
                 + "status = VALUES(status)";
 
-        PreparedStatement st = null;
-        try {
-            boolean originalAutoCommit = con.getAutoCommit();
-            con.setAutoCommit(false);
-
-            st = con.prepareStatement(sql);
-
-            int count = 0;
-            for (DailyAttendance d : list) {
-                if (d.getEmployee() == null || d.getEmployee().getEmpId() == 0) {
-                    continue;
-                }
-
-                st.setInt(1, d.getEmployee().getEmpId());
-                st.setDate(2, new java.sql.Date(d.getDate().getTime()));
-                st.setDouble(3, d.getWorkDay());
-
-                if (d.getCheckInTime() != null) {
-                    st.setTime(4, new java.sql.Time(d.getCheckInTime().getTime()));
-                } else {
-                    st.setNull(4, Types.TIME);  // FIX: Dùng TIME thay vì TIMESTAMP
-                }
-
-                if (d.getCheckOutTime() != null) {
-                    st.setTime(5, new java.sql.Time(d.getCheckOutTime().getTime()));
-                } else {
-                    st.setNull(5, Types.TIME);  // FIX: Dùng TIME thay vì TIMESTAMP
-                }
-
-                st.setDouble(6, d.getOtHours());
-                st.setString(7, d.getStatus());
-                st.addBatch();
-                count++;
-
-                if (count % 1000 == 0) {
-                    int[] results = st.executeBatch();
-                }
-            }
-
-            // Execute remaining batch
-            if (count % 1000 != 0) {
-                int[] results = st.executeBatch();
-            }
-
-            // FIX: COMMIT transaction
-            con.commit();
-
-            // Restore original autoCommit
-            con.setAutoCommit(originalAutoCommit);
-
-        } catch (Exception e) {
-            e.printStackTrace();
-
-            // FIX: ROLLBACK nếu có lỗi
+        try (Connection conn = DBContext.getConnection()) {
+            boolean originalAutoCommit = conn.getAutoCommit();
             try {
-                if (con != null) {
-                    con.rollback();
+                conn.setAutoCommit(false);
+
+                try (PreparedStatement st = conn.prepareStatement(sql)) {
+                    int count = 0;
+                    for (DailyAttendance d : list) {
+                        if (d.getEmployee() == null || d.getEmployee().getEmpId() == 0) {
+                            continue;
+                        }
+
+                        st.setInt(1, d.getEmployee().getEmpId());
+                        st.setDate(2, new java.sql.Date(d.getDate().getTime()));
+                        st.setDouble(3, d.getWorkDay());
+
+                        if (d.getCheckInTime() != null) {
+                            st.setTime(4, new java.sql.Time(d.getCheckInTime().getTime()));
+                        } else {
+                            st.setNull(4, Types.TIME);
+                        }
+
+                        if (d.getCheckOutTime() != null) {
+                            st.setTime(5, new java.sql.Time(d.getCheckOutTime().getTime()));
+                        } else {
+                            st.setNull(5, Types.TIME);
+                        }
+
+                        st.setDouble(6, d.getOtHours());
+                        st.setString(7, d.getStatus());
+                        st.addBatch();
+                        count++;
+
+                        if (count % 1000 == 0) {
+                            st.executeBatch();
+                        }
+                    }
+
+                    if (count % 1000 != 0) {
+                        st.executeBatch();
+                    }
                 }
-            } catch (Exception ex) {
-                ex.printStackTrace();
-            }
+                conn.commit();
 
-            // FIX: Throw exception để caller biết có lỗi
-            throw new RuntimeException("Failed to upsert daily attendance", e);
-
-        } finally {
-            if (st != null) {
+            } catch (Exception e) {
+                e.printStackTrace();
                 try {
-                    st.close();
-                } catch (Exception e) {
+                    conn.rollback();
+                } catch (SQLException ex) {
+                    ex.printStackTrace();
+                }
+                throw new RuntimeException("Failed to upsert daily attendance", e);
+            } finally {
+                try {
+                    conn.setAutoCommit(originalAutoCommit);
+                } catch (SQLException e) {
                     e.printStackTrace();
                 }
             }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
     public List<DailyAttendance> getAll() {
         List<DailyAttendance> list = new ArrayList<>();
-        String sql = "SELECT emp_id, date, work_day, check_in_time, check_out_time, ot_hours, status FROM daily_attendance";
+        String sql = BASE_SELECT_SQL;
 
-        try (PreparedStatement st = con.prepareStatement(sql); ResultSet rs = st.executeQuery()) {
+        try (Connection conn = DBContext.getConnection();
+             PreparedStatement st = conn.prepareStatement(sql); 
+             ResultSet rs = st.executeQuery()) {
 
             while (rs.next()) {
-                Employee e = new EmployeeDAO().getEmployeeByEmpId(rs.getInt("emp_id"));
-                DailyAttendance d = new DailyAttendance(
-                        e,
-                        rs.getDate("date"),
-                        rs.getDouble("work_day"),
-                        rs.getTime("check_in_time"),
-                        rs.getTime("check_out_time"),
-                        rs.getDouble("ot_hours"),
-                        rs.getString("status")
-                );
-                list.add(d);
+                list.add(mapResultSetToDailyAttendance(rs));
             }
 
         } catch (Exception e) {
@@ -147,7 +143,7 @@ public class DailyAttendanceDAO extends DBContext {
 
     public long countAttendance(String search, String department, int selectedMonth, int selectedYear) {
         long count = 0;
-        String sql = "SELECT COUNT(*) FROM daily_attendance ad "
+        String sql = "SELECT COUNT(ad.emp_id) FROM daily_attendance ad "
                 + "JOIN employee e ON ad.emp_id = e.emp_id "
                 + "WHERE MONTH(ad.date) = ? AND YEAR(ad.date) = ? ";
         List<Object> params = new ArrayList<>();
@@ -162,7 +158,7 @@ public class DailyAttendanceDAO extends DBContext {
             sql += "AND e.dep_id = ? ";
             params.add(department);
         }
-        try (Connection conn = getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
+        try (Connection conn = DBContext.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
             int idx = 1;
             for (Object param : params) {
                 ps.setObject(idx++, param);
@@ -180,9 +176,7 @@ public class DailyAttendanceDAO extends DBContext {
 
     public List<DailyAttendance> getAttendance(int offset, int pageSize, String search, String department, int selectedMonth, int selectedYear) {
         List<DailyAttendance> list = new ArrayList<>();
-        String sql = "SELECT ad.emp_id, ad.date, ad.work_day, ad.check_in_time, ad.check_out_time, ad.ot_hours, ad.status "
-                + "FROM daily_attendance ad "
-                + "JOIN employee e ON ad.emp_id = e.emp_id "
+        String sql = BASE_SELECT_SQL
                 + "WHERE MONTH(ad.date) = ? AND YEAR(ad.date) = ? ";
         List<Object> params = new ArrayList<>();
         params.add(selectedMonth);
@@ -200,40 +194,21 @@ public class DailyAttendanceDAO extends DBContext {
         params.add(pageSize);
         params.add(offset);
 
-        try (PreparedStatement st = con.prepareStatement(sql)) {
+        try (Connection conn = DBContext.getConnection();
+             PreparedStatement st = conn.prepareStatement(sql)) {
             int idx = 1;
             for (Object param : params) {
                 st.setObject(idx++, param);
             }
             try (ResultSet rs = st.executeQuery()) {
                 while (rs.next()) {
-                    Employee e = new EmployeeDAO().getEmployeeByEmpId(rs.getInt("emp_id"));
-                    DailyAttendance d = new DailyAttendance(
-                            e,
-                            rs.getDate("date"),
-                            rs.getDouble("work_day"),
-                            rs.getTime("check_in_time"),
-                            rs.getTime("check_out_time"),
-                            rs.getDouble("ot_hours"),
-                            rs.getString("status")
-                    );
-                    list.add(d);
+                    list.add(mapResultSetToDailyAttendance(rs));
                 }
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
         return list;
-    }
-
-    public void close() {
-        try {
-            if (con != null && !con.isClosed()) {
-                con.close();
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
     }
 
     public List<DailyAttendance> getAttendanceByEmpIds(List<Integer> empIds, int selectedMonth, int selectedYear) {
@@ -248,9 +223,10 @@ public class DailyAttendanceDAO extends DBContext {
                 inClause.append(",");
             }
         }
-        String sql = "SELECT * FROM daily_attendance WHERE emp_id IN (" + inClause + ") "
-                + "AND MONTH(date) = ? AND YEAR(date) = ? "
-                + "ORDER BY emp_id ASC, date ASC";
+        String sql = BASE_SELECT_SQL
+                + "WHERE ad.emp_id IN (" + inClause + ") "
+                + "AND MONTH(ad.date) = ? AND YEAR(ad.date) = ? "
+                + "ORDER BY ad.emp_id ASC, ad.date ASC";
 
         try (Connection conn = DBContext.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
             int idx = 1;
@@ -262,17 +238,7 @@ public class DailyAttendanceDAO extends DBContext {
 
             try (ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {
-                    Employee e = new EmployeeDAO().getEmployeeByEmpId(rs.getInt("emp_id"));
-                    DailyAttendance d = new DailyAttendance(
-                            e,
-                            rs.getDate("date"),
-                            rs.getDouble("work_day"),
-                            rs.getTime("check_in_time"),
-                            rs.getTime("check_out_time"),
-                            rs.getDouble("ot_hours"),
-                            rs.getString("status")
-                    );
-                    list.add(d);
+                    list.add(mapResultSetToDailyAttendance(rs));
                 }
             }
         } catch (Exception ex) {
