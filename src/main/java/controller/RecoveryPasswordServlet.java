@@ -5,6 +5,7 @@
 package controller;
 
 import dal.EmployeeDAO;
+import helper.PasswordEncryption;
 import model.Employee;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -69,7 +70,7 @@ public class RecoveryPasswordServlet extends HttpServlet {
         } else {
             String tokenReference = (String) session.getAttribute("resetToken");
             if (!token.equals(tokenReference)) {
-                response.sendRedirect("forgetpassword");
+                response.sendRedirect("login");
             } else {
                 request.getRequestDispatcher("Views/recoverypassword.jsp").forward(request, response);
             }
@@ -106,24 +107,20 @@ public class RecoveryPasswordServlet extends HttpServlet {
         String email = (String) session.getAttribute("resetEmail");
         session.removeAttribute("resetEmail");
         session.removeAttribute("resetToken");
-
+        session.removeAttribute("successMessage");
         EmployeeDAO lDao = new EmployeeDAO();
         Employee emp = lDao.getEmployeeByEmail(email);
         if (emp != null) {
-            lDao.updatePassword(emp.getEmpCode(), newPassword);
+            lDao.updatePassword(emp.getEmpCode(), PasswordEncryption.encryptPassword(newPassword));
             request.setAttribute("successMessage", "Password reset successfully! Please login again.");
-            request.getRequestDispatcher("Views/recoverypassword.jsp").forward(request, response);
+            request.getRequestDispatcher("Views/forgetpassword.jsp").forward(request, response);
         } else {
             request.setAttribute("errorMessage", "Account not found. Please try again.");
             request.getRequestDispatcher("Views/recoverypassword.jsp").forward(request, response);
         }
     }
 
-    /**
-     * Returns a short description of the servlet.
-     *
-     * @return a String containing servlet description
-     */
+
     @Override
     public String getServletInfo() {
         return "Short description";

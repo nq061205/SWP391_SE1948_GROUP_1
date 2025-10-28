@@ -19,7 +19,7 @@
         <link rel="shortcut icon" type="image/x-icon" href="${pageContext.request.contextPath}/assets1/images/favicon.png" />
 
         <!-- PAGE TITLE HERE ============================================= -->
-        <title>Apply for a Job | Human Tech</title>
+        <title>Apply Job</title>
 
         <!-- MOBILE SPECIFIC ============================================= -->
         <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -56,7 +56,7 @@
                     <div class="container">
                         <ul class="list-inline">
                             <li><a href="${pageContext.request.contextPath}/homepage">Home</a></li>
-                            <li>Apply Job</li>
+                            <li><a href="${pageContext.request.contextPath}/jobsite">Apply Job</a></li>
                         </ul>
                     </div>
                 </div>
@@ -78,22 +78,27 @@
                                         <div class="row placeani">
                                             <div class="col-lg-12 form-group">
                                                 <label>Full Name</label>
-                                                <input type="text" name="name" class="form-control" placeholder="Enter your full name" required>
+                                                <input type="text" value="${requestScope.name}"name="name" class="form-control" placeholder="Enter your full name" required>
                                             </div>
 
                                             <div class="col-lg-12 form-group">
                                                 <label>Email</label>
-                                                <input type="email" name="email" class="form-control" placeholder="Enter your email address" required>
+                                                <input type="email" value="${requestScope.email}" name="email" class="form-control" placeholder="Enter your email address" required>
                                             </div>
 
                                             <div class="col-lg-12 form-group">
                                                 <label>Phone Number</label>
-                                                <input type="text" name="phone" class="form-control" placeholder="Enter your phone number" required>
+                                                <input type="text" name="phone" value="${requestScope.phone}" class="form-control" placeholder="Enter your phone number" required>
                                             </div>
 
                                             <div class="col-lg-12 form-group">
                                                 <label>Upload CV (PDF only, max 5MB)</label>
                                                 <input type="file" name="cvFile" class="form-control" accept=".pdf" required>
+                                                <c:if test="${not empty fileName}">
+                                                    <p style="margin-top: 5px; color: green;">
+                                                        File uploaded: ${fileName}
+                                                    </p>
+                                                </c:if>
                                             </div>
 
                                             <div class="col-lg-12 text-center mt-3">
@@ -135,3 +140,4 @@
         <script src="${pageContext.request.contextPath}/assets1/js/functions.js"></script>
     </body>
 </html>
+

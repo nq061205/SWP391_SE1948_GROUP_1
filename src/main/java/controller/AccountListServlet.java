@@ -71,8 +71,11 @@ public class AccountListServlet extends HttpServlet {
         RoleDAO rDAO = new RoleDAO();
         String searchkey = request.getParameter("searchkey");
         String statusStr = request.getParameter("status");
+
         Boolean status = null;
-        if (statusStr != null && !statusStr.trim().isEmpty()) {
+        if ("All".equalsIgnoreCase(statusStr)) {
+            status = null;
+        } else if (statusStr != null && !statusStr.trim().isEmpty()) {
             status = Boolean.parseBoolean(statusStr);
         }
         String[] deptId = request.getParameterValues("deptId");
@@ -110,9 +113,9 @@ public class AccountListServlet extends HttpServlet {
 
         int totalResults = 0;
         if (searchkey != null && !searchkey.trim().isEmpty()) {
-            totalResults = empDAO.countSearchAndFilterEmployee(searchkey,status, deptId, roleId);
+            totalResults = empDAO.countSearchAndFilterAccount(searchkey, status, deptId, roleId);
         } else if (status != null || (deptId != null && deptId.length > 0) || (roleId != null && roleId.length > 0)) {
-            totalResults = empDAO.countSearchAndFilterEmployee(searchkey,status, deptId, roleId);
+            totalResults = empDAO.countSearchAndFilterAccount(searchkey, status, deptId, roleId);
         } else if (sortBy != null) {
             totalResults = empDAO.countAllRecordOfEmployee();
         } else {
@@ -156,9 +159,6 @@ public class AccountListServlet extends HttpServlet {
         ses.setAttribute("roleList", uniqueRoles);
         ses.setAttribute("deptList", deptDAO.getAllDepartment());
 
-        empDAO.close();
-        deptDAO.close();
-        rDAO.close();
 
         request.getRequestDispatcher("Views/accountList.jsp").forward(request, response);
     }
@@ -218,8 +218,8 @@ public class AccountListServlet extends HttpServlet {
             empDAO.updateEmployee(emp);
 
             List<Employee> empList = empDAO.ManageEmployeeWithPaging(searchkey, currentPage, quantityOfPage, status, deptId, roleIds, sortBy, order);
-            int totalSearchRecords = empDAO.countSearchAndFilterEmployee(searchkey,status, deptId, roleIds);
-            int totalEmployees = empDAO.countSearchAndFilterEmployee(searchkey,status, deptId, roleIds);
+            int totalSearchRecords = empDAO.countSearchAndFilterAccount(searchkey, status, deptId, roleIds);
+            int totalEmployees = empDAO.countSearchAndFilterAccount(searchkey, status, deptId, roleIds);
             int totalPages = (int) Math.ceil((double) totalEmployees / quantityOfPage);
 
             ses.setAttribute("empList", empList);
@@ -247,8 +247,8 @@ public class AccountListServlet extends HttpServlet {
             }
 
             List<Employee> empList = empDAO.ManageEmployeeWithPaging(searchkey, currentPage, quantityOfPage, status, deptId, roleIds, sortBy, order);
-            int totalSearchRecords = empDAO.countSearchAndFilterEmployee(searchkey,status, deptId, roleIds);
-            int totalEmployees = empDAO.countSearchAndFilterEmployee(searchkey,status, deptId, roleIds);
+            int totalSearchRecords = empDAO.countSearchAndFilterAccount(searchkey, status, deptId, roleIds);
+            int totalEmployees = empDAO.countSearchAndFilterAccount(searchkey, status, deptId, roleIds);
             int totalPages = (int) Math.ceil((double) totalEmployees / quantityOfPage);
 
             ses.setAttribute("empList", empList);
@@ -258,18 +258,13 @@ public class AccountListServlet extends HttpServlet {
             request.setAttribute("deptId", deptId);
             request.setAttribute("roleId", roleIds);
             request.setAttribute("sortBy", sortBy);
-            request.setAttribute("order", order);
+            request.setAttribute("order", "asc");
             request.setAttribute("totalSearchResults", totalSearchRecords);
             request.setAttribute("searchkey", searchkey);
 
             request.getRequestDispatcher("Views/accountList.jsp").forward(request, response);
             return;
         }
-
-        empDAO.close();
-
-        rDAO.close();
-
     }
 
     /**

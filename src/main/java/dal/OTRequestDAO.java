@@ -20,40 +20,54 @@ import java.util.List;
  */
 public class OTRequestDAO extends DBContext {
 
-    private Connection connection;
-    private String status = "ok";
-    private EmployeeDAO employeeDAO = new EmployeeDAO();
+    private final String OT_SELECT_SQL = "SELECT "
+            + "ot.ot_id, ot.emp_id, ot.date, ot.ot_hours, ot.approved_by, ot.approved_at, ot.status, ot.created_at, ot.updated_at, "
+            + "e.emp_code as emp_code, e.fullname as emp_fullname, e.email as emp_email, e.position_title as emp_pos, "
+            + "a.emp_code as app_code, a.fullname as app_fullname, a.email as app_email, a.position_title as app_pos "
+            + "FROM hrm.ot_request ot "
+            + "JOIN hrm.employee e ON ot.emp_id = e.emp_id "
+            + "LEFT JOIN hrm.employee a ON ot.approved_by = a.emp_id ";
 
-    public OTRequestDAO() {
-        try {
-            connection = new DBContext().getConnection();
-        } catch (Exception e) {
-            status = "Connection failed: " + e.getMessage();
-            e.printStackTrace();
+    private OTRequest mapResultSetToOTRequest(ResultSet rs) throws SQLException {
+        Employee employee = new Employee();
+        employee.setEmpId(rs.getInt("emp_id"));
+        employee.setEmpCode(rs.getString("emp_code"));
+        employee.setFullname(rs.getString("emp_fullname"));
+        employee.setEmail(rs.getString("emp_email"));
+        employee.setPositionTitle(rs.getString("emp_pos"));
+
+        Employee approver = null;
+        if (rs.getObject("approved_by") != null) {
+            approver = new Employee();
+            approver.setEmpId(rs.getInt("approved_by"));
+            approver.setEmpCode(rs.getString("app_code"));
+            approver.setFullname(rs.getString("app_fullname"));
+            approver.setEmail(rs.getString("app_email"));
+            approver.setPositionTitle(rs.getString("app_pos"));
         }
+
+        return new OTRequest(
+                rs.getInt("ot_id"),
+                employee,
+                rs.getDate("date"),
+                rs.getDouble("ot_hours"),
+                approver,
+                rs.getTimestamp("approved_at"),
+                rs.getString("status"),
+                rs.getTimestamp("created_at"),
+                rs.getTimestamp("updated_at")
+        );
     }
 
     public ArrayList<OTRequest> getOTRequestByEmpId(int emp_id) {
         ArrayList<OTRequest> list = new ArrayList<>();
-        String sql = "SELECT * FROM hrm.ot_request WHERE emp_id = ?";
+        String sql = OT_SELECT_SQL + " WHERE ot.emp_id = ?";
         try (Connection cn = DBContext.getConnection(); PreparedStatement stm = cn.prepareStatement(sql)) {
 
             stm.setInt(1, emp_id);
             try (ResultSet rs = stm.executeQuery()) {
-                EmployeeDAO ed = new EmployeeDAO();
-                Employee employee = ed.getEmployeeByEmpId(emp_id);
                 while (rs.next()) {
-                    list.add(new OTRequest(
-                            rs.getInt("ot_id"),
-                            employee,
-                            rs.getDate("date"),
-                            rs.getDouble("ot_hours"),
-                            ed.getEmployeeByEmpId(rs.getInt("approved_by")),
-                            rs.getTimestamp("approved_at"),
-                            rs.getString("status"),
-                            rs.getTimestamp("created_at"),
-                            rs.getTimestamp("updated_at")
-                    ));
+                    list.add(mapResultSetToOTRequest(rs));
                 }
             }
         } catch (SQLException ex) {
@@ -63,23 +77,12 @@ public class OTRequestDAO extends DBContext {
     }
 
     public OTRequest getOTRequestByOTId(int ot_id) {
-        String sql = "SELECT * FROM hrm.ot_request WHERE ot_id = ?";
+        String sql = OT_SELECT_SQL + " WHERE ot.ot_id = ?";
         try (Connection cn = DBContext.getConnection(); PreparedStatement stm = cn.prepareStatement(sql)) {
             stm.setInt(1, ot_id);
             try (ResultSet rs = stm.executeQuery()) {
                 if (rs.next()) {
-                    EmployeeDAO ed = new EmployeeDAO();
-                    return new OTRequest(
-                            rs.getInt("ot_id"),
-                            ed.getEmployeeByEmpId(rs.getInt("emp_id")),
-                            rs.getDate("date"),
-                            rs.getDouble("ot_hours"),
-                            ed.getEmployeeByEmpId(rs.getInt("approved_by")),
-                            rs.getTimestamp("approved_at"),
-                            rs.getString("status"),
-                            rs.getTimestamp("created_at"),
-                            rs.getTimestamp("updated_at")
-                    );
+                    return mapResultSetToOTRequest(rs);
                 }
             }
         } catch (SQLException ex) {
@@ -161,13 +164,7 @@ public class OTRequestDAO extends DBContext {
 
             int index = 1;
             for (Object p : params) {
-                if (p instanceof Integer) {
-                    ps.setInt(index++, (Integer) p);
-                } else if (p instanceof String) {
-                    ps.setString(index++, (String) p);
-                } else if (p instanceof java.sql.Date) {
-                    ps.setDate(index++, (java.sql.Date) p);
-                }
+                ps.setObject(index++, p);
             }
 
             try (ResultSet rs = ps.executeQuery()) {
@@ -183,8 +180,12 @@ public class OTRequestDAO extends DBContext {
 
     public List<OTRequest> findOTByEmpPaged(int empId, int offset, int size, String search, String status, Date startDate, Date endDate) {
         StringBuilder sql = new StringBuilder(
-                "SELECT ot.* "
+                "SELECT ot.ot_id, ot.emp_id, ot.date, ot.ot_hours, ot.approved_by, ot.approved_at, ot.status, ot.created_at, ot.updated_at, "
+                + "e.emp_code as emp_code, e.fullname as emp_fullname, e.email as emp_email, e.position_title as emp_pos, "
+                + "a.emp_code as app_code, a.fullname as app_fullname, a.email as app_email, a.position_title as app_pos "
                 + "FROM hrm.ot_request ot "
+                + "JOIN hrm.employee e ON ot.emp_id = e.emp_id "
+                + "LEFT JOIN hrm.employee a ON ot.approved_by = a.emp_id "
                 + "WHERE ot.emp_id = ? "
         );
 
@@ -224,17 +225,7 @@ public class OTRequestDAO extends DBContext {
             int idx = 1;
 
             for (Object p : params) {
-                if (p instanceof Integer) {
-                    ps.setInt(idx++, (Integer) p);
-                } else if (p instanceof String) {
-                    ps.setString(idx++, (String) p);
-                } else if (p instanceof java.sql.Date) {
-                    ps.setDate(idx++, (java.sql.Date) p);
-                } else if (p instanceof java.sql.Timestamp) {
-                    ps.setTimestamp(idx++, (java.sql.Timestamp) p);
-                } else {
-                    throw new SQLException("Unsupported param type: " + p.getClass());
-                }
+                ps.setObject(idx++, p);
             }
 
             ps.setInt(idx++, size);
@@ -242,17 +233,7 @@ public class OTRequestDAO extends DBContext {
 
             try (ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {
-                    list.add(new OTRequest(
-                            rs.getInt("ot_id"),
-                            employeeDAO.getEmployeeByEmpId(rs.getInt("emp_id")),
-                            rs.getDate("date"),
-                            rs.getDouble("ot_hours"),
-                            employeeDAO.getEmployeeByEmpId(rs.getInt("approved_by")),
-                            rs.getTimestamp("approved_at"),
-                            rs.getString("status"),
-                            rs.getTimestamp("created_at"),
-                            rs.getTimestamp("updated_at")
-                    ));
+                    list.add(mapResultSetToOTRequest(rs));
                 }
             }
         } catch (SQLException e) {
@@ -261,23 +242,18 @@ public class OTRequestDAO extends DBContext {
         return list;
     }
 
-    public List<OTRequest> getApprovedOTs() {
+    public List<OTRequest> getApprovedOTBetween(Date minDate, Date maxDate) {
         List<OTRequest> list = new ArrayList<>();
-        String sql = "SELECT * FROM hrm.ot_request WHERE status = 'Approved'";
-        try (Connection cn = DBContext.getConnection(); PreparedStatement st = cn.prepareStatement(sql); ResultSet rs = st.executeQuery()) {
-            EmployeeDAO ed = new EmployeeDAO();
-            while (rs.next()) {
-                Employee e = ed.getEmployeeByEmpId(rs.getInt("emp_id"));
-                Employee a = ed.getEmployeeByEmpId(rs.getInt("approved_by"));
-                list.add(new OTRequest(
-                        rs.getInt("ot_id"), e,
-                        rs.getDate("date"),
-                        rs.getDouble("ot_hours"), a,
-                        rs.getTimestamp("approved_at"),
-                        rs.getString("status"),
-                        rs.getTimestamp("created_at"),
-                        rs.getTimestamp("updated_at")
-                ));
+        String sql = OT_SELECT_SQL + " WHERE ot.status = 'Approved' AND ot.date BETWEEN ? AND ?";
+
+        try (Connection cn = DBContext.getConnection(); PreparedStatement st = cn.prepareStatement(sql)) {
+            st.setDate(1, minDate);
+            st.setDate(2, maxDate);
+
+            try (ResultSet rs = st.executeQuery()) {
+                while (rs.next()) {
+                    list.add(mapResultSetToOTRequest(rs));
+                }
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -286,12 +262,7 @@ public class OTRequestDAO extends DBContext {
     }
 
     public static void main(String[] args) {
-        OTRequestDAO dao = new OTRequestDAO();
-        List<OTRequest> list = new ArrayList<>();
-        System.out.println(dao.countOTByEmpFiltered(1, null, "Pending", null, null));
-        list = dao.findOTByEmpPaged(1, 0, 10, null, "Pending", null, null);
-        for (OTRequest x : list) {
-            System.out.println(x.toString());
-        }
+
     }
+
 }

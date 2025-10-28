@@ -33,12 +33,21 @@ public class EmailUtil {
         Transport.send(msg);
     }
 
+    public static boolean isValidEmail(String email) {
+        try {
+            InternetAddress emailAddr = new InternetAddress(email);
+            emailAddr.validate();
+            return true;
+        } catch (AddressException ex) {
+            return false;
+        }
+    }
+
     public static void sendResetLink(String toEmail, String token) {
         try {
             String resetLink = "http://localhost:8080/HRMSystem/recovery?token=" + token;
             String subject = "Password Reset Request";
-            String content = "<p>Click <a href='" + resetLink + "'>here</a> to reset your password.</p>"
-                    + "<p><b>Note:</b> This link will expire in 5 minutes.</p>";
+            String content = "<p>Click <a href='" + resetLink + "'>here</a> to reset your password.</p>";
             sendEmail(toEmail, subject, content);
         } catch (MessagingException ex) {
             Logger.getLogger(EmailUtil.class.getName()).log(Level.SEVERE, null, ex);

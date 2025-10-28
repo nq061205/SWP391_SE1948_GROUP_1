@@ -39,7 +39,7 @@ public class ApplicationServlet extends HttpServlet {
             return;
         }
         EmployeeDAO empDAO = new EmployeeDAO();
-        Employee emp = empDAO.getEmployeeByEmpId(1);
+        Employee emp = empDAO.getEmployeeByEmpId(user.getEmpId());
         String typeApplication = request.getParameter("typeapplication");
         if ("leave".equalsIgnoreCase(typeApplication)) {
             doLeaveRequestApplication(request, response, emp);
@@ -94,7 +94,6 @@ public class ApplicationServlet extends HttpServlet {
         request.setAttribute("size", size);
         request.setAttribute("totalPages", totalPages);
 
-        request.setAttribute("search", search);
         request.setAttribute("status", status);
         request.setAttribute("type", type);
         request.setAttribute("startDate", startDate == null ? null : startDate.toString());
@@ -145,7 +144,6 @@ public class ApplicationServlet extends HttpServlet {
         request.setAttribute("size", size);
         request.setAttribute("totalPages", totalPages);
 
-        request.setAttribute("search", search);
         request.setAttribute("status", status);
         request.setAttribute("startDate", startDate == null ? null : startDate.toString());
         request.setAttribute("endDate", endDate == null ? null : endDate.toString());

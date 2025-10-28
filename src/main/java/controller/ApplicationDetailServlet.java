@@ -38,8 +38,8 @@ public class ApplicationDetailServlet extends HttpServlet {
         OTRequestDAO OTDAO = new OTRequestDAO();
         LeaveRequestDAO leaveDAO = new LeaveRequestDAO();
         String leaveId = request.getParameter("leaveId");
-        String OTId = request.getParameter("OTId");
-        Employee employee = employeeDAO.getEmployeeByEmpId(1);
+        String OTId = request.getParameter("otId");
+        Employee employee = employeeDAO.getEmployeeByEmpId(user.getEmpId());
         if(OTId != null && !OTId.isEmpty()){
             OTRequest ot = OTDAO.getOTRequestByOTId(Integer.parseInt(OTId));
             request.setAttribute("type", "ot");

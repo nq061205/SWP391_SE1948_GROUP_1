@@ -12,11 +12,10 @@
         <meta name="robots" content="" />
 
         <!-- DESCRIPTION -->
-        <meta name="description" content="EduChamp : Education HTML Template" />
-
+        <meta name="description" content="Human Tech" />
         <!-- OG -->
-        <meta property="og:title" content="EduChamp : Education HTML Template" />
-        <meta property="og:description" content="EduChamp : Education HTML Template" />
+        <meta property="og:title" content="Human Tech" />
+        <meta property="og:description" content="Human Tech" />
         <meta property="og:image" content="" />
         <meta name="format-detection" content="telephone=no">
 
@@ -25,7 +24,7 @@
         <link rel="shortcut icon" type="image/x-icon" href="${pageContext.request.contextPath}/assets2/images/favicon.png" />
 
         <!-- PAGE TITLE HERE ============================================= -->
-        <title>EduChamp : Education HTML Template </title>
+        <title>Compose Leave Request Application</title>
 
         <!-- MOBILE SPECIFIC ============================================= -->
         <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -79,14 +78,21 @@
                                     <input type="hidden" name="type" value="LEAVE"/>
                                     <div class="form-group mb-3">
                                         <label for="to">Receiver:</label>
-                                        <input type="email" id="to" name="email" class="form-control" placeholder="Email receiver" value="${email}" required
-                                               <c:if test="${not empty isEdit}">
-                                                   disabled
-                                               </c:if> 
-                                               >
-                                        <c:if test="${messageEmail!=null}">
-                                            <input type="text" class="form-control" value="${messageEmail}">
-                                        </c:if>
+                                        <select id="to" name="email" class="form-control" required
+                                                <c:if test="${not empty isEdit}">
+                                                    disabled
+                                                </c:if>>
+                                            <option value="" selected>Select email receiver</option>
+
+                                            <c:forEach var="receiver" items="${receivers}">
+                                                <option value="${receiver.email}"
+                                                        <c:if test="${email eq receiver.email}">
+                                                            selected
+                                                        </c:if>>
+                                                    ${receiver.fullname} (${receiver.email})
+                                                </option>
+                                            </c:forEach>
+                                        </select>
                                     </div>
                                     <div class="form-group mb-3">
                                         <label for="type">Leave Type:</label>
@@ -96,7 +102,10 @@
                                                     <c:if test="${type_leave eq 'Annual'}">
                                                         selected
                                                     </c:if>
-                                                    >Annual Leave</option>
+                                                    <c:if test="${user.paidLeaveDays<=0}">
+                                                        disabled
+                                                    </c:if>
+                                                    >Annual</option>
                                             <option value="Sick"
                                                     <c:if test="${type_leave eq 'Sick'}">
                                                         selected 
@@ -130,13 +139,7 @@
                                         <input type="date" name="enddate" value="${enddate}" class="form-control" required/>
                                     </div>
                                     <c:if  test="${not empty messageDate}">
-                                        <input type="text" name="messageDate" class="form-control"value="${messageDate}" />
-                                    </c:if>
-                                    <c:if test="${paidLeaveDay>0}">
-                                        <div class="form-group mb-3">
-                                            <label for="paidLeaveDay">Reason:</label>
-                                            <input type="checkbox" name="paidLeaveDay" value="ON" class="form-control"/>
-                                        </div>
+                                        <input type="text" name="messageDate" style="color: red" class="form-control"value="${messageDate}" />
                                     </c:if>
                                     <div class="form-group mb-3">
                                         <label for="content">Reason:</label>
@@ -145,6 +148,10 @@
 
                                     <div class="text-right">
                                         <c:if test="${not empty isEdit}">
+                                            <button type="button" class="btn btn-warning btn-lg ms-2" style="background: red"
+                                                    onclick="confirmDelete(${id})">
+                                                Delete
+                                            </button>
                                             <button type="submit" class="btn btn-primary btn-lg">Update</button>
                                             <c:if test="${not empty isSuccess}">
                                                 <script>
@@ -156,10 +163,26 @@
                                             <button type="submit" class="btn btn-primary btn-lg">Send</button>
                                         </c:if> 
                                     </div>
+                                    <div class="text-left">
+
+                                        <p
+                                            style="color:
+                                            <c:choose>
+                                                <c:when test="${user.paidLeaveDays<=0}">
+                                                    red
+                                                </c:when>
+                                            </c:choose>"
+                                            >Paid leave days remains: ${user.paidLeaveDays}</p>
+                                    </div>
                                 </form>
+
                         </div>
                     </div>
                 </div>
+                <form id="deleteForm" action="${pageContext.request.contextPath}/deleteapplication" method="post" style="display:none;">
+                    <input type="hidden" name="type" value="LEAVE"/>
+                    <input type="hidden" name="id" id="deleteId"/>
+                </form>
                 <script src="${pageContext.request.contextPath}/assets2/js/jquery.min.js"></script>
                 <script src="${pageContext.request.contextPath}/assets2/vendors/bootstrap/js/popper.min.js"></script>
                 <script src="${pageContext.request.contextPath}/assets2/vendors/bootstrap/js/bootstrap.min.js"></script>
@@ -179,5 +202,13 @@
                 <script src="${pageContext.request.contextPath}/assets2/vendors/summernote/summernote.js"></script>
                 <script src="${pageContext.request.contextPath}/assets2/vendors/file-upload/imageuploadify.min.js"></script>
                 <script src='${pageContext.request.contextPath}/assets2/vendors/switcher/switcher.js'></script>
+                <script>
+                                                    function confirmDelete(id) {
+                                                        if (confirm("Do you confirm delete this application?")) {
+                                                            document.getElementById("deleteId").value = id;
+                                                            document.getElementById("deleteForm").submit();
+                                                        }
+                                                    }
+                </script>
                 </body>
                 </html>

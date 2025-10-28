@@ -9,7 +9,7 @@
     <div class="ttr-sidebar-wrapper content-scroll">
         <!-- side menu logo start -->
         <div class="ttr-sidebar-logo">
-            <a href="#"><img alt="" src="assets/images/logo.png" width="122" height="27"></a>
+            <a href="#"><img alt="" src="/HRMSystem/assets1/images/logo-white.png" width="100" height="50"></a>
             <div class="ttr-sidebar-toggle-button">
                 <i class="ti-arrow-left"></i>
             </div>
@@ -45,8 +45,8 @@
                     <ul>
                         <li><a href="${pageContext.request.contextPath}/application?typeapplication=leave" class="ttr-material-button"><span class="ttr-label">Leave request</span></a></li>
                         <li><a href="${pageContext.request.contextPath}/application?typeapplication=ot" class="ttr-material-button"><span class="ttr-label">Overtime request</span></a></li>
-                        <li><a href="${pageContext.request.contextPath}/compose?type=LEAVE" class="ttr-material-button"><span class="ttr-label">Send leave application</span></a></li>
-                        <li><a href="${pageContext.request.contextPath}/compose?type=OT" class="ttr-material-button"><span class="ttr-label">Send overtime application</span></a></li>
+                        <li><a href="${pageContext.request.contextPath}/compose?type=LEAVE" class="ttr-material-button"><span class="ttr-label">Create leave application</span></a></li>
+                        <li><a href="${pageContext.request.contextPath}/compose?type=OT" class="ttr-material-button"><span class="ttr-label">Create overtime application</span></a></li>
                     </ul>
                 </li>
 
@@ -103,6 +103,12 @@
                     <a href="${pageContext.request.contextPath}/raw-attendance" class="ttr-material-button">
                         <span class="ttr-icon"><i class="ti-time"></i></span>
                         <span class="ttr-label">Raw Attendance</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="${pageContext.request.contextPath}/daily-attendance" class="ttr-material-button">
+                        <span class="ttr-icon"><i class="ti-time"></i></span>
+                        <span class="ttr-label">Daily Attendance</span>
                     </a>
                 </li>
 

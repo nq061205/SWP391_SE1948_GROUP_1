@@ -23,15 +23,6 @@ import model.Department;
  */
 public class DepartmentListServlet extends HttpServlet {
 
-    /**
-     * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
-     * methods.
-     *
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
-     */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
@@ -49,15 +40,6 @@ public class DepartmentListServlet extends HttpServlet {
         }
     }
 
-    // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
-    /**
-     * Handles the HTTP <code>GET</code> method.
-     *
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
-     */
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -73,19 +55,9 @@ public class DepartmentListServlet extends HttpServlet {
             request.setAttribute("editDept", editDept);
         }
         ses.setAttribute("deptList", deptList);
-        deptDAO.close();
-        //Comment de merge
         request.getRequestDispatcher("Views/departmentlist.jsp").forward(request, response);
     }
 
-    /**
-     * Handles the HTTP <code>POST</code> method.
-     *
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
-     */
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -100,32 +72,14 @@ public class DepartmentListServlet extends HttpServlet {
             String depName = request.getParameter("depName");
             String description = request.getParameter("description");
             Department dept = depDAO.getDepartmentByDepartmentId(editDepId);
-            boolean hasError = false;
-            if (depName == null || depName.trim().isEmpty()) {
-                hasError = true;
-                request.setAttribute("depNameError", "You must input department name!");
-            }
-             if (description == null || description.trim().isEmpty()) {
-                hasError = true;
-                request.setAttribute("descriptionError", "You must input description!");
-            }
-
-            if (hasError) {
+            if (dept != null) {
                 dept.setDepName(depName);
                 dept.setDescription(description);
-                request.setAttribute("editDept", dept);
-                request.getRequestDispatcher("Views/departmentlist.jsp").forward(request, response);
-                return;
-            } else {
-                if (dept != null) {
-                    dept.setDepName(depName);
-                    dept.setDescription(description);
-                    depDAO.updateDepartment(dept);
-                }
+                depDAO.updateDepartment(dept);
             }
         } else if ("add".equalsIgnoreCase(action)) {
             Department dept = new Department();
-            dept.setDepId(addDepId);
+            dept.setDepId(addDepId.toUpperCase());
             dept.setDepName(addDepName);
             dept.setDescription(addDescription);
             depDAO.createDepartment(dept);
@@ -135,15 +89,5 @@ public class DepartmentListServlet extends HttpServlet {
         request.getRequestDispatcher("Views/departmentlist.jsp").forward(request, response);
 
     }
-
-    /**
-     * Returns a short description of the servlet.
-     *
-     * @return a String containing servlet description
-     */
-    @Override
-    public String getServletInfo() {
-        return "Short description";
-    }// </editor-fold>
 
 }

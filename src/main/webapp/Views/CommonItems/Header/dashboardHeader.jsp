@@ -17,8 +17,7 @@
         <div class="ttr-logo-box">
             <div>
                 <a href="index.html" class="ttr-logo">
-                    <img class="ttr-logo-mobile" alt="" src="${pageContext.request.contextPath}/assets2/images/logo-mobile.png" width="30" height="30">
-                    <img class="ttr-logo-desktop" alt="" src="${pageContext.request.contextPath}/assets2/images/logo-white.png" width="160" height="27">
+                    <img class="ttr-logo-desktop" alt="" src="/HRMSystem/assets1/images/logo-white.png" width="160" height="27">
                 </a>
             </div>
         </div>
@@ -122,7 +121,9 @@
                     </div>
                 </li>
                 <li>
-                    <a href="#" class="ttr-material-button ttr-submenu-toggle"><span class="ttr-user-avatar"><img alt="" src="${sessionScope.user.image}" width="32" height="32"></span></a>
+                    <a href="#" class="ttr-material-button ttr-submenu-toggle"><span class="ttr-user-avatar"><img
+                                src="${pageContext.request.contextPath}/${sessionScope.user.image}?v=${pageContext.session.id}"
+                                alt="Avatar" width="225" height="300"></span></a>
                     <div class="ttr-header-submenu">
                         <ul>
                             <li><a href="${pageContext.request.contextPath}/profile">My profile</a></li>

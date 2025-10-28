@@ -8,10 +8,10 @@
         <meta name="keywords" content="" />
         <meta name="author" content="" />
         <meta name="robots" content="" />
-        <meta name="description" content="EduChamp Dashboard Template" />
-        <meta property="og:title" content="EduChamp Admin Dashboard" />
+        <meta name="description" content="Human Tech Dashboard Template" />
+        <meta property="og:title" content="Human Tech Admin Dashboard" />
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <title>Dashboard | EduChamp HR System</title>
+        <title>Dashboard | Human Tech HR System</title>
 
         <!-- FAVICONS -->
         <link rel="icon" href="${pageContext.request.contextPath}/assets2/images/favicon.ico" type="image/x-icon" />

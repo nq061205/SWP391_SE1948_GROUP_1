@@ -52,7 +52,7 @@ public class ForgetPasswordServlet extends HttpServlet {
                 String tokenGenerate = generateToken();
                 session.setAttribute("resetEmail", email);
                 session.setAttribute("resetToken", tokenGenerate);
-                session.setMaxInactiveInterval(5 * 60);
+                session.setMaxInactiveInterval(60);
                 util.sendResetLink(email, tokenGenerate);
                 session.setAttribute("successMessage", "Reset link has been sent");
                 session.setMaxInactiveInterval(60);
