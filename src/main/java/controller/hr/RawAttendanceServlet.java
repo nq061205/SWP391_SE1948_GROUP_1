@@ -107,11 +107,7 @@ public class RawAttendanceServlet extends HttpServlet {
                 } catch (Exception e) {
                     e.printStackTrace();
                     request.setAttribute("error", "Error importing: " + e.getMessage());
-                } finally {
-                    if (dao != null) {
-                        dao.close();
-                    }
-                }
+                } 
             }
             loadAttendanceData(request, response); 
             return;
@@ -273,11 +269,7 @@ public class RawAttendanceServlet extends HttpServlet {
             e.printStackTrace();
             request.setAttribute("error", "Error loading data: " + e.getMessage());
             request.getRequestDispatcher("Views/HR/rawAttendance.jsp").forward(request, response);
-        } finally {
-            if (rawDAO != null) {
-                rawDAO.close();
-            }
-        }
+        } 
     }
 
     @Override

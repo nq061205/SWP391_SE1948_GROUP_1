@@ -61,7 +61,7 @@
         <!-- HEADER + NAVBAR -->
         <%@ include file="CommonItems/Header/dashboardHeader.jsp" %>
         <%@ include file="CommonItems/Navbar/empNavbar.jsp" %>
-        
+
         <main class="ttr-wrapper">
             <div class="container-fluid">
                 <div class="db-breadcrumb">
@@ -83,7 +83,9 @@
                                     <div class="row">
                                         <div class="col-md-3 text-center">
                                             <div class="profile-avatar mb-3">
-                                                <img src="${sessionScope.user.image}" alt="Avatar"  width="225" height="300">
+                                                <img
+                                                    src="${pageContext.request.contextPath}/${sessionScope.user.image}?v=${pageContext.session.id}"
+                                                    alt="Avatar" width="225" height="300">                                    
                                             </div>
                                         </div>
 
@@ -135,7 +137,7 @@
                                                 <div class="col-sm-9">
                                                     <input name="dob" class="form-control" type="date" value="${sessionScope.user.dob}"
                                                            <c:if test="${click != 'save'}"> readonly required"</c:if>
-                                                           >
+                                                               >
                                                     <c:if test="${dobErr!=null}">
                                                         <input style="color: red" type="text" class="form-control" value="${dobErr}">
                                                     </c:if>   
@@ -147,18 +149,11 @@
                                                 <div class="col-sm-9">
                                                     <input name="phone" 
                                                            class="form-control" type="text" value="${sessionScope.user.phone}" title="Phone must include 10 number" minlength="10" maxlength="10"
-                                                    <c:if test="${click != 'save'}"> readonly required</c:if>
-                                                    >
+                                                           <c:if test="${click != 'save'}"> readonly required</c:if>
+                                                               >
                                                     <c:if test="${phoneErr!=null}">
                                                         <input style="color: red" type="text" class="form-control" value="${phoneErr}">
                                                     </c:if>      
-                                                </div>
-                                            </div>
-
-                                            <div class="form-group row">
-                                                <label class="col-sm-3 col-form-label">Paid Leave Remain Days </label>
-                                                <div class="col-sm-9">
-                                                    <input name="paidLeaveDay" class="form-control" type="text" value="${sessionScope.user.paidLeaveDays}" readonly>
                                                 </div>
                                             </div>
 

@@ -5,6 +5,7 @@
 package controller;
 
 import dal.EmployeeDAO;
+import helper.PasswordEncryption;
 import model.Employee;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -76,8 +77,10 @@ public class ChangePasswordServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        EmployeeDAO eDAO = new EmployeeDAO();
         HttpSession session = request.getSession();
-        Employee emp = (Employee) session.getAttribute("user");
+        Employee empSession = (Employee) session.getAttribute("user");
+        Employee emp = eDAO.getEmployeeByEmpCode(empSession.getEmpCode());
         String currentPass = request.getParameter("currentPassword");
         String newPass = request.getParameter("newPassword");
         String confirmPass = request.getParameter("confirmPassword");
@@ -86,7 +89,7 @@ public class ChangePasswordServlet extends HttpServlet {
             request.getRequestDispatcher("Views/changepassword.jsp").forward(request, response);
             return;
         }
-        if (!currentPass.equals(emp.getPassword())) {
+        if (!PasswordEncryption.checkPassword(currentPass, emp.getPassword())) {
             request.setAttribute("errorMessage", "password is incorect");
             request.getRequestDispatcher("Views/changepassword.jsp").forward(request, response);
             return;
@@ -106,23 +109,18 @@ public class ChangePasswordServlet extends HttpServlet {
         }
 
         EmployeeDAO eDao = new EmployeeDAO();
-        boolean success = eDao.updatePassword(emp.getEmpCode(), newPass);
+        boolean success = eDao.updatePassword(emp.getEmpCode(), PasswordEncryption.encryptPassword(newPass));
         if (success) {
-            emp.setPassword(newPass);
+            emp.setPassword(currentPass);
             session.setAttribute("user", emp);
             request.setAttribute("successMessage", "New password has been updated");
         } else {
-            request.setAttribute("errorMessage", "Lỗi khi cập nhật mật khẩu!");
+            request.setAttribute("errorMessage", "Error");
         }
         request.getRequestDispatcher("Views/changepassword.jsp").forward(request, response);
 
     }
 
-    /**
-     * Returns a short description of the servlet.
-     *
-     * @return a String containing servlet description
-     */
     @Override
     public String getServletInfo() {
         return "Short description";

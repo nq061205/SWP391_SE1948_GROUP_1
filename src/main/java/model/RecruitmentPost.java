@@ -13,8 +13,7 @@ public class RecruitmentPost {
     private int postId;
     private String title;
     private String content;
-    private String status;   // Approve, Reject, Pending
-    private boolean isDelete;
+    private String status; 
     private Employee createdBy;
     private Employee approvedBy;
     private Department department;
@@ -25,12 +24,11 @@ public class RecruitmentPost {
     public RecruitmentPost() {
     }
 
-    public RecruitmentPost(int postId, String title, String content, String status, boolean isDelete, Employee createdBy, Employee approvedBy, Department department, Timestamp approvedAt, Timestamp createdAt, Timestamp updatedAt) {
+    public RecruitmentPost(int postId, String title, String content, String status, Employee createdBy, Employee approvedBy, Department department, Timestamp approvedAt, Timestamp createdAt, Timestamp updatedAt) {
         this.postId = postId;
         this.title = title;
         this.content = content;
         this.status = status;
-        this.isDelete = isDelete;
         this.createdBy = createdBy;
         this.approvedBy = approvedBy;
         this.department = department;
@@ -71,13 +69,6 @@ public class RecruitmentPost {
         this.status = status;
     }
 
-    public boolean isDelete() {
-        return isDelete;
-    }
-
-    public void setDelete(boolean delete) {
-        isDelete = delete;
-    }
 
     public Employee getCreatedBy() {
         return createdBy;
@@ -129,7 +120,9 @@ public class RecruitmentPost {
 
     @Override
     public String toString() {
-        return "RecruitmentPost{" + "postId=" + postId + ", title=" + title + ", content=" + content + ", status=" + status + ", isDelete=" + isDelete + ", createdBy=" + createdBy + ", approvedBy=" + approvedBy + ", department=" + department + ", approvedAt=" + approvedAt + ", createdAt=" + createdAt + ", updatedAt=" + updatedAt + '}';
+        return "RecruitmentPost{" + "postId=" + postId + ", title=" + title + ", content=" + content + ", status=" + status + ", createdBy=" + createdBy + ", approvedBy=" + approvedBy + ", department=" + department + ", approvedAt=" + approvedAt + ", createdAt=" + createdAt + ", updatedAt=" + updatedAt + '}';
     }
+
+    
     
 }

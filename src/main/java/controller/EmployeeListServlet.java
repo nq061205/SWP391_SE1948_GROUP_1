@@ -134,7 +134,6 @@ public class EmployeeListServlet extends HttpServlet {
         ses.setAttribute("oldGender", newGender);
         ses.setAttribute("empList", empList);
         ses.setAttribute("positionList", positionList);
-        empDAO.close();
         request.getRequestDispatcher("Views/employeelist.jsp").forward(request, response);
     }
 
@@ -215,7 +214,6 @@ public class EmployeeListServlet extends HttpServlet {
                 emp.setEmail(email);
                 emp.setDob(dob);
                 emp.setPositionTitle(positionTitle);
-                emp.setDependantCount(dependantcount);
                 empDAO.updateEmployee(emp);
             }
             List<Employee> empList = empDAO.manageEmployeeForHR(searchkey, currentPage, quantityOfPage, gender, positionTitleArray, ageRange, sortBy, order);
