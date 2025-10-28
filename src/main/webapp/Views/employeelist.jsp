@@ -237,7 +237,7 @@
                                             <a href="${pageContext.request.contextPath}/updateemployee?empCode=${el.empCode}" 
                                                class="btn btn-sm btn-primary">Edit</a>
                                             <a href="${pageContext.request.contextPath}/employeedetail?empCode=${el.empCode}" 
-                                               class="btn btn-sm btn-secondary">View detail</a>
+                                               class="btn btn-sm btn-secondary" title="View Detail">View detail</a>
                                         </div>
                                     </td>
 

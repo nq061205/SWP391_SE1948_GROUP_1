@@ -130,6 +130,14 @@
         <servlet-name>UpdateDepartmentServlet</servlet-name>
         <servlet-class>controller.UpdateDepartmentServlet</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>EmployeeDetailServlet</servlet-name>
+        <servlet-class>controller.EmployeeDetailServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>ContractDetailServlet</servlet-name>
+        <servlet-class>controller.ContractDetailServlet</servlet-class>
+    </servlet>
     <servlet-mapping>
         <servlet-name>UpdateAccountServlet</servlet-name>
         <url-pattern>/updateaccount</url-pattern>
@@ -262,6 +270,14 @@
     <servlet-mapping>
         <servlet-name>UpdateDepartmentServlet</servlet-name>
         <url-pattern>/updatedepartment</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>EmployeeDetailServlet</servlet-name>
+        <url-pattern>/employeedetail</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>ContractDetailServlet</servlet-name>
+        <url-pattern>/contractdetail</url-pattern>
     </servlet-mapping>
     <session-config>
         <session-timeout>30</session-timeout>
