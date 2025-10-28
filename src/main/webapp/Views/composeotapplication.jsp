@@ -77,22 +77,21 @@
                                     </c:choose>
                                     <input type="hidden" name="type" value="OT"/>
                                     <div class="form-group mb-3">
-                                        <label for="to">Receiver:</label>
-                                        <input type="email" id="to" name="email" class="form-control" placeholder="Email receiver" value="${email}" required
-                                               <c:if test="${not empty isEdit}">
-                                                   disabled
-                                               </c:if> 
-                                               >
-                                        <c:if test="${message!=null}">
-                                            <input type="text" class="form-control" value="${message}">
-                                        </c:if>
+                                        <label>Receiver:</label>
+                                        <input type="text" name="email" class="form-control" value="${receiver.email}" readonly/>
                                     </div>
 
                                     <div class="form-group mb-3">
                                         <label for="type">Date:</label>
-                                        <input type="date" name="date" value="${date}" class="form-control" required/>
+                                        <input
+                                            type="date" 
+                                            name="date" 
+                                            value="${date}" 
+                                            class="form-control"
+                                            min="<%= java.time.LocalDate.now() %>"
+                                            required/>
                                     </div>
-                                    
+
                                     <div class="form-group mb-3">
                                         <label for="type">Overtime hours:</label>
                                         <input type="number" name="hours" value="${hours}" step="0.5" class="form-control" min="0.5" max="4" required/>
@@ -100,7 +99,11 @@
 
                                     <div class="text-right">
                                         <c:if test="${not empty isEdit}">
-                                            <button type="submit" class="btn btn-primary btn-lg">Update</button>
+                                            <button type="button" class="btn btn-warning btn-lg ms-2" style="background: red"
+                                                    onclick="confirmDelete(${id})">
+                                                Delete
+                                            </button>
+                                            <button type="submit" class="btn btn-primary btn-lg" onclick="return confirm('Confirm to update!!')">Update</button>
                                         </c:if> 
                                         <c:if test="${empty isEdit}">
                                             <button type="submit" class="btn btn-primary btn-lg">Send</button>
@@ -111,6 +114,10 @@
                     </div>
                 </div>
             </div>
+            <form id="deleteForm" action="${pageContext.request.contextPath}/deleteapplication" method="post" style="display:none;">
+                <input type="hidden" name="type" value="OT"/>
+                <input type="hidden" name="id" id="deleteId"/>
+            </form>
         </main>
 
         <script src="${pageContext.request.contextPath}/assets2/js/jquery.min.js"></script>
@@ -132,5 +139,13 @@
         <script src="${pageContext.request.contextPath}/assets2/vendors/summernote/summernote.js"></script>
         <script src="${pageContext.request.contextPath}/assets2/vendors/file-upload/imageuploadify.min.js"></script>
         <script src='${pageContext.request.contextPath}/assets2/vendors/switcher/switcher.js'></script>
+        <script>
+                                                function confirmDelete(id) {
+                                                    if (confirm("Do you confirm delete this application?")) {
+                                                        document.getElementById("deleteId").value = id;
+                                                        document.getElementById("deleteForm").submit();
+                                                    }
+                                                }
+        </script>
     </body>
 </html>
