@@ -33,8 +33,7 @@ public class ComposeApplicationServlet extends HttpServlet {
             return;
         }
         String type = request.getParameter("type");
-        String role = user.getRole().getRoleName();
-        request.setAttribute("receivers", empDAO.getEmailReceiverByRole(role));
+        request.setAttribute("receiver", empDAO.getEmailReceiverByRole(user.getRole().getRoleName(), user.getDept().getDepId()));
         if ("LEAVE".equalsIgnoreCase(type)) {
             request.getRequestDispatcher("Views/composeleaveapplication.jsp").forward(request, response);
         } else if ("OT".equalsIgnoreCase(type)) {
@@ -67,22 +66,15 @@ public class ComposeApplicationServlet extends HttpServlet {
                     request.setAttribute("startdate", startDate);
                     request.setAttribute("enddate", endDate);
                     request.setAttribute("content", content);
-                    int approvedBy;
-                    if (empDAO.getEmployeeByEmail(email) != null) {
-                        Employee approver = empDAO.getEmployeeByEmail(request.getParameter("email"));
-                        approvedBy = approver.getEmpId();
-                    } else {
-                        request.setAttribute("message", "Email is not available.");
-                        request.getRequestDispatcher("Views/composeleaveapplication.jsp").forward(request, response);
-                        return;
-                    }
+                    Employee approver = empDAO.getEmployeeByEmail(email);
+                    request.setAttribute("receiver", empDAO.getEmailReceiverByRole(user.getRole().getRoleName(), user.getDept().getDepId()));
                     leaveDAO.composeLeaveRequest(
                             user.getEmpId(),
                             leaveType,
                             content,
                             startDate,
                             endDate,
-                            approvedBy
+                            approver.getEmpId()
                     );
                     request.getRequestDispatcher("Views/applicationsuccess.jsp").forward(request, response);
                     return;

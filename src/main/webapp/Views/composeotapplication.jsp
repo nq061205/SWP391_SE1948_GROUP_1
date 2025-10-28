@@ -77,22 +77,8 @@
                                     </c:choose>
                                     <input type="hidden" name="type" value="OT"/>
                                     <div class="form-group mb-3">
-                                        <label for="to">Receiver:</label>
-                                        <select id="to" name="email" class="form-control" required
-                                                <c:if test="${not empty isEdit}">
-                                                    disabled
-                                                </c:if>>
-                                            <option value="" selected>Select email receiver</option>
-
-                                            <c:forEach var="receiver" items="${receivers}">
-                                                <option value="${receiver.email}"
-                                                        <c:if test="${email eq receiver.email}">
-                                                            selected
-                                                        </c:if>>
-                                                    ${receiver.fullname} (${receiver.email})
-                                                </option>
-                                            </c:forEach>
-                                        </select>
+                                        <label>Receiver:</label>
+                                        <input type="text" name="email" class="form-control" value="${receiver.email}" disabled/>
                                     </div>
 
                                     <div class="form-group mb-3">

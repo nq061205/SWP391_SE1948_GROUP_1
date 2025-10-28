@@ -38,9 +38,8 @@ public class EditApplicationServlet extends HttpServlet {
         OTRequestDAO otRequestDAO = new OTRequestDAO();
         LeaveRequestDAO leaveRequestDAO = new LeaveRequestDAO();
         int id = Integer.parseInt(request.getParameter("id"));
-        String role = user.getRole().getRoleName();
         request.setAttribute("isEdit", "true");
-        request.setAttribute("receivers", empDAO.getEmailReceiverByRole(role));
+        request.setAttribute("receivers", empDAO.getEmailReceiverByRole(user.getRole().getRoleName(),user.getDept().getDepId()));
         switch (type) {
             case "LEAVE":
                 LeaveRequest leaveRequest = leaveRequestDAO.getLeaveRequestByLeaveId(id, user.getEmpId());
