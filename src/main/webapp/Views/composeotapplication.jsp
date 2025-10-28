@@ -78,12 +78,18 @@
                                     <input type="hidden" name="type" value="OT"/>
                                     <div class="form-group mb-3">
                                         <label>Receiver:</label>
-                                        <input type="text" name="email" class="form-control" value="${receiver.email}" disabled/>
+                                        <input type="text" name="email" class="form-control" value="${receiver.email}" readonly/>
                                     </div>
 
                                     <div class="form-group mb-3">
                                         <label for="type">Date:</label>
-                                        <input type="date" name="date" value="${date}" class="form-control" required/>
+                                        <input
+                                            type="date" 
+                                            name="date" 
+                                            value="${date}" 
+                                            class="form-control"
+                                            min="<%= java.time.LocalDate.now() %>"
+                                            required/>
                                     </div>
 
                                     <div class="form-group mb-3">
@@ -97,7 +103,7 @@
                                                     onclick="confirmDelete(${id})">
                                                 Delete
                                             </button>
-                                            <button type="submit" class="btn btn-primary btn-lg" onclick="return alert('Update Successfully!')">Update</button>
+                                            <button type="submit" class="btn btn-primary btn-lg" onclick="return confirm('Confirm to update!!')">Update</button>
                                         </c:if> 
                                         <c:if test="${empty isEdit}">
                                             <button type="submit" class="btn btn-primary btn-lg">Send</button>

@@ -727,7 +727,7 @@ public class EmployeeDAO extends DBContext {
         return count;
     }
     
-    public Employee getEmailReceiverByRole(String requesterRole, String depId) {
+    public Employee getEmployeeReceiverByRole(String requesterRole, String depId) {
         String approverRole = null;
         boolean filterByDept = false;
         
@@ -778,7 +778,7 @@ public class EmployeeDAO extends DBContext {
     
     public static void main(String[] args) {
         EmployeeDAO dao = new EmployeeDAO();
-        
+        System.out.println(dao.getEmployeeReceiverByRole("Employee", "IT"));
         System.out.println(dao.getEmployeeByEmail("b@company.com"));
     }
     

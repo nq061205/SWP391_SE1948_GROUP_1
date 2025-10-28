@@ -33,7 +33,7 @@ public class ComposeApplicationServlet extends HttpServlet {
             return;
         }
         String type = request.getParameter("type");
-        request.setAttribute("receiver", empDAO.getEmailReceiverByRole(user.getRole().getRoleName(), user.getDept().getDepId()));
+        request.setAttribute("receiver", empDAO.getEmployeeReceiverByRole(user.getRole().getRoleName(), user.getDept().getDepId()));
         if ("LEAVE".equalsIgnoreCase(type)) {
             request.getRequestDispatcher("Views/composeleaveapplication.jsp").forward(request, response);
         } else if ("OT".equalsIgnoreCase(type)) {
@@ -67,7 +67,12 @@ public class ComposeApplicationServlet extends HttpServlet {
                     request.setAttribute("enddate", endDate);
                     request.setAttribute("content", content);
                     Employee approver = empDAO.getEmployeeByEmail(email);
-                    request.setAttribute("receiver", empDAO.getEmailReceiverByRole(user.getRole().getRoleName(), user.getDept().getDepId()));
+                    request.setAttribute("receiver", empDAO.getEmployeeReceiverByRole(user.getRole().getRoleName(), user.getDept().getDepId()));
+                    if(startDate.after(endDate)){
+                        request.setAttribute("messageDate", "Start date must before end date");
+                        request.getRequestDispatcher("Views/composeleaveapplication.jsp").forward(request, response);
+                        return;
+                    }
                     leaveDAO.composeLeaveRequest(
                             user.getEmpId(),
                             leaveType,
@@ -94,20 +99,12 @@ public class ComposeApplicationServlet extends HttpServlet {
                     request.setAttribute("email", email);
                     request.setAttribute("date", otDate);
                     request.setAttribute("othour", otHours);
-                    int approvedBy;
-                    if (empDAO.getEmployeeByEmail(request.getParameter("email")) != null) {
-                        Employee approver = empDAO.getEmployeeByEmail(request.getParameter("email"));
-                        approvedBy = approver.getEmpId();
-                    } else {
-                        request.setAttribute("message", "Email is not available.");
-                        request.getRequestDispatcher("Views/composeotapplication.jsp").forward(request, response);
-                        return;
-                    }
+                    Employee approver = empDAO.getEmployeeByEmail(email);
                     otDAO.composeOTRequest(
                             user.getEmpId(),
                             otDate,
                             otHours,
-                            approvedBy
+                            approver.getEmpId()
                     );
                     request.getRequestDispatcher("Views/applicationsuccess.jsp").forward(request, response);
                     return;

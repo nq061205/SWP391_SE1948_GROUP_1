@@ -137,7 +137,8 @@
                                                 <div class="col-sm-9">
                                                     <input name="dob" class="form-control" type="date" value="${sessionScope.user.dob}"
                                                            <c:if test="${click != 'save'}"> readonly required"</c:if>
-                                                               >
+                                                           max="<%=java.time.LocalDate.now().minusYears(15)%>"   
+                                                           >
                                                     <c:if test="${dobErr!=null}">
                                                         <input style="color: red" type="text" class="form-control" value="${dobErr}">
                                                     </c:if>   
