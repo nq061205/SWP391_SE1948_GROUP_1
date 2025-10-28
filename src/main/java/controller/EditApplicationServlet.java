@@ -34,10 +34,13 @@ public class EditApplicationServlet extends HttpServlet {
             response.sendRedirect("Views/login.jsp");
             return;
         }
+        EmployeeDAO empDAO = new EmployeeDAO();
         OTRequestDAO otRequestDAO = new OTRequestDAO();
         LeaveRequestDAO leaveRequestDAO = new LeaveRequestDAO();
         int id = Integer.parseInt(request.getParameter("id"));
+        String role = user.getRole().getRoleName();
         request.setAttribute("isEdit", "true");
+        request.setAttribute("receivers", empDAO.getEmailReceiverByRole(role));
         switch (type) {
             case "LEAVE":
                 LeaveRequest leaveRequest = leaveRequestDAO.getLeaveRequestByLeaveId(id, user.getEmpId());
@@ -88,16 +91,16 @@ public class EditApplicationServlet extends HttpServlet {
                         return;
                     } else {
                         leaveDAO.updateLeaveRequest(id, leaveType, content, startDate, endDate);
-                        response.sendRedirect("application?typeapplication=leave&issuccess=true");
+                        response.sendRedirect("application?typeapplication=leave");
                     }
                     break;
                 }
                 case "OT": {
                     int id = Integer.parseInt(request.getParameter("id"));
                     Date date = Date.valueOf(request.getParameter("date"));
-                    double hours = Double.parseDouble(request.getParameter("othour"));
+                    double hours = Double.parseDouble(request.getParameter("hours"));
                     otDAO.updateOTRequest(id, date, hours);
-                    response.sendRedirect("application?typeapplication=ot&issuccess=true");
+                    response.sendRedirect("application?typeapplication=ot");
                     break;
                 }
                 default:

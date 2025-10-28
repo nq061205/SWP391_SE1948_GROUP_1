@@ -152,7 +152,7 @@
                                                     onclick="confirmDelete(${id})">
                                                 Delete
                                             </button>
-                                            <button type="submit" class="btn btn-primary btn-lg">Update</button>
+                                            <button type="submit" class="btn btn-primary btn-lg" onclick="return alert('Update Successfully!')">Update</button>
                                             <c:if test="${not empty isSuccess}">
                                                 <script>
                                                     alert("Update successfully!");
@@ -175,7 +175,6 @@
                                             >Paid leave days remains: ${user.paidLeaveDays}</p>
                                     </div>
                                 </form>
-
                         </div>
                     </div>
                 </div>
@@ -183,6 +182,7 @@
                     <input type="hidden" name="type" value="LEAVE"/>
                     <input type="hidden" name="id" id="deleteId"/>
                 </form>
+        </main>
                 <script src="${pageContext.request.contextPath}/assets2/js/jquery.min.js"></script>
                 <script src="${pageContext.request.contextPath}/assets2/vendors/bootstrap/js/popper.min.js"></script>
                 <script src="${pageContext.request.contextPath}/assets2/vendors/bootstrap/js/bootstrap.min.js"></script>

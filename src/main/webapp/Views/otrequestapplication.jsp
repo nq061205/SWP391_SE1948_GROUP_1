@@ -60,11 +60,7 @@
         <%@ include file="CommonItems/Header/dashboardHeader.jsp" %>
         <%@ include file="CommonItems/Navbar/empNavbar.jsp" %>
         <input type="hidden" name="typeApplication" value="otrequest" />
-        <c:if test="${param.issuccess eq 'true'}">
-            <script>
-                alert("Update successfully!");
-            </script>
-        </c:if>
+        
         <main class="ttr-wrapper">
             <div class="filter-row mb-3">
                             <form action="${pageContext.request.contextPath}/application" method="get"
