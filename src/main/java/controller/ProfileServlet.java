@@ -15,12 +15,12 @@ import java.util.Set;
 
 @MultipartConfig(
         fileSizeThreshold = 2 * 1024 * 1024,
-        maxFileSize = 5 * 1024 * 1024,
+        maxFileSize = 20 * 1024 * 1024,
         maxRequestSize = 50 * 1024 * 1024
 )
 public class ProfileServlet extends HttpServlet {
 
-    private static final long MAX_AVATAR_SIZE = 2L * 1024 * 1024;
+    private static final long MAX_AVATAR_SIZE = 20L * 1024 * 1024;
     private static final Set<String> ALLOWED_CONTENT_TYPES = Set.of(
             "image/jpeg", "image/jpg", "image/pjpeg", "image/png", "image/gif", "image/webp"
     );
