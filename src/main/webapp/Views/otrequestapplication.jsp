@@ -60,44 +60,43 @@
         <%@ include file="CommonItems/Header/dashboardHeader.jsp" %>
         <%@ include file="CommonItems/Navbar/empNavbar.jsp" %>
         <input type="hidden" name="typeApplication" value="otrequest" />
-        <c:if test="${param.issuccess eq 'true'}">
-            <script>
-                alert("Update successfully!");
-            </script>
-        </c:if>
+
         <main class="ttr-wrapper">
             <div class="filter-row mb-3">
-                            <form action="${pageContext.request.contextPath}/application" method="get"
-                                  class="d-flex align-items-center flex-nowrap w-100" style="gap:12px;">
-                                <input type="hidden" name="typeapplication" value="LEAVE"/>
+                <c:if test="${not empty update}">
+                    <div class="alert alert-success">${update}</div>
+                </c:if>
+                <form action="${pageContext.request.contextPath}/application" method="get"
+                      class="d-flex align-items-center flex-nowrap w-100" style="gap:12px;">
+                    <input type="hidden" name="typeapplication" value="LEAVE"/>
 
-                                <select name="status" class="form-control filter-h" style="width:160px;" onchange="this.form.submit()">
-                                    <option value="">All Status</option>
-                                    <option value="Pending"  ${param.status == 'Pending'  ? 'selected' : ''}>Pending</option>
-                                    <option value="Approved" ${param.status == 'Approved' ? 'selected' : ''}>Approved</option>
-                                    <option value="Rejected" ${param.status == 'Rejected' ? 'selected' : ''}>Rejected</option>
-                                </select>
+                    <select name="status" class="form-control filter-h" style="width:160px;" onchange="this.form.submit()">
+                        <option value="">All Status</option>
+                        <option value="Pending"  ${param.status == 'Pending'  ? 'selected' : ''}>Pending</option>
+                        <option value="Approved" ${param.status == 'Approved' ? 'selected' : ''}>Approved</option>
+                        <option value="Rejected" ${param.status == 'Rejected' ? 'selected' : ''}>Rejected</option>
+                    </select>
 
-                                <select name="type" class="form-control filter-h" style="width:170px;" onchange="this.form.submit()">
-                                    <option value="">All Type</option>
-                                    <option value="Annual Leave" ${param.type == 'Annual Leave' ? 'selected' : ''}>Annual Leave</option>
-                                    <option value="Sick"    ${param.type == 'Sick'    ? 'selected' : ''}>Sick</option>
-                                    <option value="Unpaid"  ${param.type == 'Unpaid'  ? 'selected' : ''}>Unpaid</option>
-                                    <option value="Maternity" ${param.type == 'Maternity' ? 'selected' : ''}>Maternity</option>
-                                    <option value="Other"   ${param.type == 'Other'   ? 'selected' : ''}>Other</option>
-                                </select>
+                    <select name="type" class="form-control filter-h" style="width:170px;" onchange="this.form.submit()">
+                        <option value="">All Type</option>
+                        <option value="Annual Leave" ${param.type == 'Annual Leave' ? 'selected' : ''}>Annual Leave</option>
+                        <option value="Sick"    ${param.type == 'Sick'    ? 'selected' : ''}>Sick</option>
+                        <option value="Unpaid"  ${param.type == 'Unpaid'  ? 'selected' : ''}>Unpaid</option>
+                        <option value="Maternity" ${param.type == 'Maternity' ? 'selected' : ''}>Maternity</option>
+                        <option value="Other"   ${param.type == 'Other'   ? 'selected' : ''}>Other</option>
+                    </select>
 
-                                <input type="date" name="startDate" value="${param.startDate}"
-                                       class="form-control filter-h" style="width:170px;">
-                                <span class="sep">to</span>
-                                <input type="date" name="endDate" value="${param.endDate}"
-                                       class="form-control filter-h" style="width:170px;">
+                    <input type="date" name="startDate" value="${param.startDate}"
+                           class="form-control filter-h" style="width:170px;">
+                    <span class="sep">to</span>
+                    <input type="date" name="endDate" value="${param.endDate}"
+                           class="form-control filter-h" style="width:170px;">
 
-                                <button type="submit" class="btn btn-outline-secondary filter-h">Apply</button>
-                                <a href="${pageContext.request.contextPath}/application?typeapplication=LEAVE"
-                                   class="btn btn-warning filter-h">Clear</a>
-                            </form>
-                        </div>
+                    <button type="submit" class="btn btn-outline-secondary filter-h">Apply</button>
+                    <a href="${pageContext.request.contextPath}/application?typeapplication=LEAVE"
+                       class="btn btn-warning filter-h">Clear</a>
+                </form>
+            </div>
             <div class="table-responsive" style="overflow-x:auto;">
                 <table class="table table-striped table-bordered table-hover align-middle text-center" 
                        style="table-layout: fixed; width: 100%; border-collapse: collapse;">
@@ -243,9 +242,9 @@
         <script src="${pageContext.request.contextPath}/assets2/js/admin.js"></script>
         <script src='${pageContext.request.contextPath}/assets2/vendors/switcher/switcher.js'></script>
         <script>
-                                                $(document).ready(function () {
-                                                    $('[data-toggle="tooltip"]').tooltip();
-                                                });
+                                    $(document).ready(function () {
+                                        $('[data-toggle="tooltip"]').tooltip();
+                                    });
         </script>
         <style>
             .icon-circle {
