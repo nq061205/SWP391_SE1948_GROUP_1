@@ -31,7 +31,7 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
  *
  * @author admin
  */
-@MultipartConfig( // THÊM NÀY
+@MultipartConfig( 
         fileSizeThreshold = 1024 * 1024 * 1,
         maxFileSize = 1024 * 1024 * 10,
         maxRequestSize = 1024 * 1024 * 15
@@ -113,7 +113,6 @@ public class RawAttendanceServlet extends HttpServlet {
             return;
         }
 
-        // Handle file upload
         Part filePart = request.getPart("file");
         if (filePart == null || filePart.getSize() == 0) {
             request.setAttribute("error", "No file uploaded.");
