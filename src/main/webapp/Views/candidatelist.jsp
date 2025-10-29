@@ -21,16 +21,13 @@
         <link rel="stylesheet" href="${pageContext.request.contextPath}/assets2/css/style.css">
         <link rel="stylesheet" href="${pageContext.request.contextPath}/assets2/css/dashboard.css">
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-        <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/assets2/css/assets.css">
         <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/assets2/vendors/calendar/fullcalendar.css">
         <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/assets2/css/typography.css">
         <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/assets2/css/shortcodes/shortcodes.css">
-        <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/assets2/css/style.css">
-        <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/assets2/css/dashboard.css">
         <link class="skin" rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/assets2/css/color/color-1.css">
         <style>
             .nav-tabs .nav-link.active {
-                background-color: #007bff !important; /* xanh dương */
+                background-color: #007bff !important;
                 color: #fff !important;
                 border-color: #007bff #007bff #fff;
             }
@@ -43,7 +40,7 @@
     <body class="ttr-opened-sidebar ttr-pinned-sidebar">
         <!-- Header + Navbar -->
         <jsp:include page="CommonItems/Header/dashboardHeader.jsp" />
-         <%@ include file="CommonItems/Navbar/empNavbar.jsp" %>
+        <%@ include file="CommonItems/Navbar/empNavbar.jsp" %>
 
         <main class="ttr-wrapper">
             <div class="container-fluid">
@@ -69,26 +66,32 @@
 
                     <div class="widget-inner">
 
-                        <!-- ✅ Search Form -->
-                        <form action="${pageContext.request.contextPath}/candidatelist" method="post"
-                              class="d-flex align-items-center justify-content-between mb-4">
-                            <input type="hidden" name="tab" value="${sessionScope.tab}">
-                            <div class="input-group" style="max-width: 400px;">
-                                <span class="input-group-text bg-white border-end-0">
-                                    <i class="fa fa-search text-muted"></i>
-                                </span>
-                                <input type="text" name="keyword" class="form-control border-start-0"
-                                       placeholder="Search by name, email, or phone..."
-                                       value="${param.keyword}">
-                                <div class="input-group-append">
-                                    <button type="submit" class="btn btn-primary">
-                                        <i class="fa fa-search me-1"></i> Search
-                                    </button>
+                        <!-- ✅ Search + Create Interview Button -->
+                        <div class="d-flex align-items-center justify-content-between mb-4">
+                            <form action="${pageContext.request.contextPath}/candidatelist" method="post" class="d-flex">
+                                <input type="hidden" name="tab" value="${sessionScope.tab}">
+                                <div class="input-group" style="max-width: 400px;">
+                                    <span class="input-group-text bg-white border-end-0">
+                                        <i class="fa fa-search text-muted"></i>
+                                    </span>
+                                    <input type="text" name="keyword" class="form-control border-start-0"
+                                           placeholder="Search by name, email, or phone..."
+                                           value="${param.keyword}">
+                                    <div class="input-group-append">
+                                        <button type="submit" class="btn btn-primary">
+                                            <i class="fa fa-search me-1"></i> Search
+                                        </button>
+                                    </div>
                                 </div>
-                            </div>
-                        </form>
+                            </form>
 
-                        <!-- ✅ Tabs: Pending / Approved / Rejected -->
+                            <!-- ✅ Create Interview Schedule Button -->
+                            <a href="${pageContext.request.contextPath}/schedule" class="btn btn-success">
+                                <i class="fa fa-calendar-plus me-1"></i> Create Interview Schedule
+                            </a>
+                        </div>
+
+                        <!-- ✅ Tabs -->
                         <ul class="nav nav-tabs mb-4" id="candidateTabs" role="tablist">
                             <li class="nav-item" role="presentation">
                                 <a class="nav-link ${sessionScope.tab eq 'pending' ? 'active bg-primary text-white' : ''}" 
@@ -200,7 +203,6 @@
         <!-- JS libraries -->
         <script src="${pageContext.request.contextPath}/assets2/js/jquery.min.js"></script>
         <script src="${pageContext.request.contextPath}/assets2/vendors/bootstrap/js/bootstrap.bundle.min.js"></script>
-        <script src="${pageContext.request.contextPath}/assets2/js/jquery.min.js"></script>
         <script src="${pageContext.request.contextPath}/assets2/vendors/bootstrap/js/popper.min.js"></script>
         <script src="${pageContext.request.contextPath}/assets2/vendors/bootstrap/js/bootstrap.min.js"></script>
         <script src="${pageContext.request.contextPath}/assets2/vendors/bootstrap-select/bootstrap-select.min.js"></script>

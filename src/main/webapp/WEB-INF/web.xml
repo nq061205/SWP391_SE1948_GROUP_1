@@ -118,6 +118,10 @@
         <servlet-name>ExportAttendancePDFServlet</servlet-name>
         <servlet-class>controller.hr.ExportAttendancePDFServlet</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>scheduleServlet</servlet-name>
+        <servlet-class>controller.scheduleServlet</servlet-class>
+    </servlet>
     <servlet-mapping>
         <servlet-name>HomePageServlet</servlet-name>
         <url-pattern>/homepage</url-pattern>
@@ -242,6 +246,10 @@
     <servlet-mapping>
         <servlet-name>ExportAttendancePDFServlet</servlet-name>
         <url-pattern>/export-attendance-pdf</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>scheduleServlet</servlet-name>
+        <url-pattern>/schedule</url-pattern>
     </servlet-mapping>
     <session-config>
         <session-timeout>30</session-timeout>
