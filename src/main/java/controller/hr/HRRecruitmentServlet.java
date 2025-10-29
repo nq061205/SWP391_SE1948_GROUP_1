@@ -389,7 +389,7 @@ public class HRRecruitmentServlet extends HttpServlet {
             boolean success = recruitmentPostDAO.updatePost(postId, title.trim(), content.trim(), depId.trim());
             
             if (success) {
-                request.getSession().setAttribute("successMessage", "Post updated successfully! Status changed to pending.");
+                request.getSession().setAttribute("successMessage", "Post updated successfully! Status changed to new.");
             } else {
                 request.getSession().setAttribute("errorMessage", "Failed to update post. Please try again.");
             }

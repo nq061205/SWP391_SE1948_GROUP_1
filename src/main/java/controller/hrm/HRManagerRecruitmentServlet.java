@@ -286,8 +286,8 @@ public class HRManagerRecruitmentServlet extends HttpServlet {
                 return;
             }
             
-            if (!"Pending".equals(post.getStatus())) {
-                request.getSession().setAttribute("errorMessage", "Only pending posts can be approved.");
+            if (!"New".equals(post.getStatus())) {
+                request.getSession().setAttribute("errorMessage", "Only new posts can be approved.");
                 response.sendRedirect(request.getContextPath() + "/postreview");
                 return;
             }
@@ -340,8 +340,8 @@ public class HRManagerRecruitmentServlet extends HttpServlet {
                 return;
             }
             
-            if (!"Pending".equals(post.getStatus())) {
-                request.getSession().setAttribute("errorMessage", "Only pending posts can be rejected.");
+            if (!"New".equals(post.getStatus())) {
+                request.getSession().setAttribute("errorMessage", "Only new posts can be rejected.");
                 response.sendRedirect(request.getContextPath() + "/postreview");
                 return;
             }
