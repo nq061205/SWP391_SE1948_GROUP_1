@@ -77,22 +77,8 @@
                                     </c:choose>
                                     <input type="hidden" name="type" value="LEAVE"/>
                                     <div class="form-group mb-3">
-                                        <label for="to">Receiver:</label>
-                                        <select id="to" name="email" class="form-control" required
-                                                <c:if test="${not empty isEdit}">
-                                                    disabled
-                                                </c:if>>
-                                            <option value="" selected>Select email receiver</option>
-
-                                            <c:forEach var="receiver" items="${receivers}">
-                                                <option value="${receiver.email}"
-                                                        <c:if test="${email eq receiver.email}">
-                                                            selected
-                                                        </c:if>>
-                                                    ${receiver.fullname} (${receiver.email})
-                                                </option>
-                                            </c:forEach>
-                                        </select>
+                                        <label>Receiver:</label>
+                                        <input type="text" name="email" class="form-control" value="${receiver.email}" readonly/>
                                     </div>
                                     <div class="form-group mb-3">
                                         <label for="type">Leave Type:</label>
@@ -131,12 +117,25 @@
 
                                     <div class="form-group mb-3">
                                         <label for="startdate">From:</label>
-                                        <input type="date" name="startdate" value="${startdate}" class="form-control" required />
+                                        <input 
+                                            type="date" 
+                                            name="startdate"
+                                            value="${startdate}" 
+                                            class="form-control" 
+                                            min="<%= java.time.LocalDate.now() %>"
+                                            required 
+                                            />
                                     </div>
 
                                     <div class="form-group mb-3">
                                         <label for="enddate">To:</label>
-                                        <input type="date" name="enddate" value="${enddate}" class="form-control" required/>
+                                        <input
+                                            type="date"
+                                            name="enddate" 
+                                            value="${enddate}"
+                                            class="form-control"
+                                            min="<%= java.time.LocalDate.now() %>"
+                                            required/>
                                     </div>
                                     <c:if  test="${not empty messageDate}">
                                         <input type="text" name="messageDate" style="color: red" class="form-control"value="${messageDate}" />
@@ -152,7 +151,7 @@
                                                     onclick="confirmDelete(${id})">
                                                 Delete
                                             </button>
-                                            <button type="submit" class="btn btn-primary btn-lg">Update</button>
+                                            <button type="submit" class="btn btn-primary btn-lg" onclick="return confirm('Confirm to update!!')">Update</button>
                                             <c:if test="${not empty isSuccess}">
                                                 <script>
                                                     alert("Update successfully!");
@@ -175,7 +174,6 @@
                                             >Paid leave days remains: ${user.paidLeaveDays}</p>
                                     </div>
                                 </form>
-
                         </div>
                     </div>
                 </div>
@@ -183,32 +181,33 @@
                     <input type="hidden" name="type" value="LEAVE"/>
                     <input type="hidden" name="id" id="deleteId"/>
                 </form>
-                <script src="${pageContext.request.contextPath}/assets2/js/jquery.min.js"></script>
-                <script src="${pageContext.request.contextPath}/assets2/vendors/bootstrap/js/popper.min.js"></script>
-                <script src="${pageContext.request.contextPath}/assets2/vendors/bootstrap/js/bootstrap.min.js"></script>
-                <script src="${pageContext.request.contextPath}/assets2/vendors/bootstrap-select/bootstrap-select.min.js"></script>
-                <script src="${pageContext.request.contextPath}/assets2/vendors/bootstrap-touchspin/jquery.bootstrap-touchspin.js"></script>
-                <script src="${pageContext.request.contextPath}/assets2/vendors/magnific-popup/magnific-popup.js"></script>
-                <script src="${pageContext.request.contextPath}/assets2/vendors/counter/waypoints-min.js"></script>
-                <script src="${pageContext.request.contextPath}/assets2/vendors/counter/counterup.min.js"></script>
-                <script src="${pageContext.request.contextPath}/assets2/vendors/imagesloaded/imagesloaded.js"></script>
-                <script src="${pageContext.request.contextPath}/assets2/vendors/masonry/masonry.js"></script>
-                <script src="${pageContext.request.contextPath}/assets2/vendors/masonry/filter.js"></script>
-                <script src="${pageContext.request.contextPath}/assets2/vendors/owl-carousel/owl.carousel.js"></script>
-                <script src='${pageContext.request.contextPath}/assets2/vendors/scroll/scrollbar.min.js'></script>
-                <script src="${pageContext.request.contextPath}/assets2/js/functions.js"></script>
-                <script src="${pageContext.request.contextPath}/assets2/vendors/chart/chart.min.js"></script>
-                <script src="${pageContext.request.contextPath}/assets2/js/admin.js"></script>
-                <script src="${pageContext.request.contextPath}/assets2/vendors/summernote/summernote.js"></script>
-                <script src="${pageContext.request.contextPath}/assets2/vendors/file-upload/imageuploadify.min.js"></script>
-                <script src='${pageContext.request.contextPath}/assets2/vendors/switcher/switcher.js'></script>
-                <script>
-                                                    function confirmDelete(id) {
-                                                        if (confirm("Do you confirm delete this application?")) {
-                                                            document.getElementById("deleteId").value = id;
-                                                            document.getElementById("deleteForm").submit();
-                                                        }
-                                                    }
-                </script>
-                </body>
-                </html>
+        </main>
+        <script src="${pageContext.request.contextPath}/assets2/js/jquery.min.js"></script>
+        <script src="${pageContext.request.contextPath}/assets2/vendors/bootstrap/js/popper.min.js"></script>
+        <script src="${pageContext.request.contextPath}/assets2/vendors/bootstrap/js/bootstrap.min.js"></script>
+        <script src="${pageContext.request.contextPath}/assets2/vendors/bootstrap-select/bootstrap-select.min.js"></script>
+        <script src="${pageContext.request.contextPath}/assets2/vendors/bootstrap-touchspin/jquery.bootstrap-touchspin.js"></script>
+        <script src="${pageContext.request.contextPath}/assets2/vendors/magnific-popup/magnific-popup.js"></script>
+        <script src="${pageContext.request.contextPath}/assets2/vendors/counter/waypoints-min.js"></script>
+        <script src="${pageContext.request.contextPath}/assets2/vendors/counter/counterup.min.js"></script>
+        <script src="${pageContext.request.contextPath}/assets2/vendors/imagesloaded/imagesloaded.js"></script>
+        <script src="${pageContext.request.contextPath}/assets2/vendors/masonry/masonry.js"></script>
+        <script src="${pageContext.request.contextPath}/assets2/vendors/masonry/filter.js"></script>
+        <script src="${pageContext.request.contextPath}/assets2/vendors/owl-carousel/owl.carousel.js"></script>
+        <script src='${pageContext.request.contextPath}/assets2/vendors/scroll/scrollbar.min.js'></script>
+        <script src="${pageContext.request.contextPath}/assets2/js/functions.js"></script>
+        <script src="${pageContext.request.contextPath}/assets2/vendors/chart/chart.min.js"></script>
+        <script src="${pageContext.request.contextPath}/assets2/js/admin.js"></script>
+        <script src="${pageContext.request.contextPath}/assets2/vendors/summernote/summernote.js"></script>
+        <script src="${pageContext.request.contextPath}/assets2/vendors/file-upload/imageuploadify.min.js"></script>
+        <script src='${pageContext.request.contextPath}/assets2/vendors/switcher/switcher.js'></script>
+        <script>
+                                            function confirmDelete(id) {
+                                                if (confirm("Do you confirm delete this application?")) {
+                                                    document.getElementById("deleteId").value = id;
+                                                    document.getElementById("deleteForm").submit();
+                                                }
+                                            }
+        </script>
+    </body>
+</html>

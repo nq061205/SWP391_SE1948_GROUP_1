@@ -13,7 +13,7 @@
 <html lang="en">
     <head>
         <meta charset="utf-8">
-        <title>Candidate Detail</title>
+        <title>Employee Detail</title>
         <meta name="viewport" content="width=device-width, initial-scale=1">
 
         <!-- Base CSS -->
@@ -92,19 +92,19 @@
                 </div>
                 <ul class="nav nav-tabs mb-4" id="employeeTabs" role="tablist">
                     <li class="nav-item" role="presentation">
-                        <a class="nav-link ${sessionScope.tab eq 'Contract' ? 'active bg-primary text-white' : ''}" 
-                           href="${pageContext.request.contextPath}/employeedetail?tab=Contract" role="tab">
+                        <a class="nav-link ${tab eq 'Contract' ? 'active bg-primary text-white' : ''}" 
+                           href="${pageContext.request.contextPath}/employeedetail?tab=Contract&empCode=${empCode}" role="tab">
                             <i class="fa fa-list"></i> Contract
                         </a>
                     </li>
                     <li class="nav-item" role="presentation">
-                        <a class="nav-link ${sessionScope.tab eq 'Dependant' ? 'active bg-primary text-white' : ''}" 
-                           href="${pageContext.request.contextPath}/employeedetail?tab=Dependant" role="tab">
-                            <i class="fa fa-check-circle text-success"></i> Dependant
+                        <a class="nav-link ${tab eq 'Dependant' ? 'active bg-primary text-white' : ''}" 
+                           href="${pageContext.request.contextPath}/employeedetail?tab=Dependant&empCode=${empCode}" role="tab">
+                            <i class="fa fa-list"></i> Dependant
                         </a>
                     </li>
                 </ul>
-               <c:if test="${sessionScope.tab eq 'Contract'}">
+                <c:if test="${tab eq 'Contract'}">
                     <div class="row">
                         <div class="col-lg-8 col-md-7 mb-4">
                             <div class="widget-box">
@@ -130,29 +130,63 @@
                                 <div class="wc-title mb-3">
                                     <h4><i class="fa fa-user"></i> Contract Information</h4>
                                 </div>
+                                <c:choose>
+                                    <c:when test="${option eq 'edit'}">
+                                        <form action="contractdetail" method="post">
+                                            <input type="hidden" name="empCode" value="${empCode}">
+                                            <input type="hidden" name="tab" value="${tab}">
+                                            <div class="info-item">
+                                                <span class="info-label">Type:</span>
+                                                <select name="type">
+                                                    <c:forEach items="${typeList}" var="tl">
+                                                        <option value="${tl}"  <c:if test="${tl eq contract.type}">selected</c:if>>${tl}</option>
+                                                    </c:forEach>
+                                                </select>
+                                            </div>
 
-                                <div class="info-item">
-                                    <span class="info-label">Type:</span>
-                                    <p>${contract.type}</p>
-                                </div>
+                                            <div class="info-item">
+                                                <span class="info-label">Start Date:</span>
+                                                <input class="form-control" type="date" name="start" value="${contract.startDate}">
+                                            </div>
 
-                                <div class="info-item">
-                                    <span class="info-label">Start Date:</span>
-                                    <p><fmt:formatDate value="${contract.startDate}" pattern="MMM dd, yyyy HH:mm" /></p>
-                                </div>
+                                            <div class="info-item">
+                                                <span class="info-label">End Date:</span>
+                                                <input class="form-control" type="date" name="end" value="${contract.endDate}">
+                                            </div>
+                                            <hr>
+                                            <div class="d-flex justify-content-between mt-3">
+                                                <button type="submit" class="btn btn-sm btn-primary" name="option" value="save">Save</button>
+                                                <a href="${pageContext.request.contextPath}/employeedetail?tab=Contract&empCode=${empCode}" role="tab" 
+                                                   class="btn btn-sm btn-primary">Cancel</a>
+                                            </div>
+                                        </form>
+                                    </c:when>
+                                    <c:otherwise>
+                                        <div class="info-item">
+                                            <span class="info-label">Type:</span>
+                                            <p>${contract.type}</p>
+                                        </div>
 
-                                <div class="info-item">
-                                    <span class="info-label">End Date:</span>
-                                    <p><fmt:formatDate value="${contract.endDate}" pattern="MMM dd, yyyy HH:mm" /></p>
-                                </div>
-                                <hr>
-                                <div class="d-flex justify-content-between mt-3">
-                                    <a href="${pageContext.request.contextPath}/employeelist" class="btn btn-secondary">
-                                        <i class="fa fa-arrow-left"></i> Back
-                                    </a>
-                                    <a href="${pageContext.request.contextPath}/employeecontractedit?empCode=${emp.empCode}" 
-                                       class="btn btn-sm btn-primary">Edit information</a>
-                                </div>
+                                        <div class="info-item">
+                                            <span class="info-label">Start Date:</span>
+                                            <p><fmt:formatDate value="${contract.startDate}" pattern="MMM dd, yyyy HH:mm" /></p>
+                                        </div>
+
+                                        <div class="info-item">
+                                            <span class="info-label">End Date:</span>
+                                            <p><fmt:formatDate value="${contract.endDate}" pattern="MMM dd, yyyy HH:mm" /></p>
+                                        </div>
+                                        <hr>
+                                        <div class="d-flex justify-content-between mt-3">
+                                            <a href="${pageContext.request.contextPath}/employeelist" class="btn btn-secondary">
+                                                <i class="fa fa-arrow-left"></i> Back
+                                            </a>
+                                            <a href="${pageContext.request.contextPath}/employeedetail?empCode=${empCode}&option=edit" 
+                                               class="btn btn-sm btn-primary">Edit information</a>
+                                        </div>
+                                    </c:otherwise>
+                                </c:choose>
+
                             </div>
                         </div>
 

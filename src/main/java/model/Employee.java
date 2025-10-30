@@ -20,7 +20,6 @@ public class Employee {
     private String phone;
     private String positionTitle;
     private String image;
-    private int dependantCount;
     private int paidLeaveDays;
     private Department dept;
     private Role role;
@@ -30,7 +29,7 @@ public class Employee {
     public Employee() {
     }
 
-    public Employee(int empId, String empCode, String fullname, String email, String password, boolean gender, Date dob, String phone, String positionTitle, String image, int dependantCount, int paidLeaveDays, Department dept, Role role, boolean status) {
+    public Employee(int empId, String empCode, String fullname, String email, String password, boolean gender, Date dob, String phone, String positionTitle, String image, int paidLeaveDays, Department dept, Role role, boolean status) {
         this.empId = empId;
         this.empCode = empCode;
         this.fullname = fullname;
@@ -41,14 +40,13 @@ public class Employee {
         this.phone = phone;
         this.positionTitle = positionTitle;
         this.image = image;
-        this.dependantCount = dependantCount;
         this.paidLeaveDays = paidLeaveDays;
         this.dept = dept;
         this.role = role;
         this.status = status;
     }
 
-        public Employee(int empId, String empCode, String fullname, String email, String password, boolean gender, Date dob, String phone, String positionTitle, String image, int dependantCount, Department dept, Role role) {
+        public Employee(int empId, String empCode, String fullname, String email, String password, boolean gender, Date dob, String phone, String positionTitle, String image, Department dept, Role role) {
         this.empId = empId;
         this.empCode = empCode;
         this.fullname = fullname;
@@ -59,7 +57,6 @@ public class Employee {
         this.phone = phone;
         this.positionTitle = positionTitle;
         this.image = image;
-        this.dependantCount = dependantCount;
         this.dept = dept;
         this.role = role;
         this.status = status;
@@ -148,13 +145,7 @@ public class Employee {
         this.image = image;
     }
 
-    public int getDependantCount() {
-        return dependantCount;
-    }
-
-    public void setDependantCount(int dependantCount) {
-        this.dependantCount = dependantCount;
-    }
+ 
 
     public int getPaidLeaveDays() {
         return paidLeaveDays;
@@ -186,10 +177,8 @@ public class Employee {
 
     @Override
     public String toString() {
-        return "Employee{" + "empId=" + empId + ", empCode=" + empCode + ", fullname=" + fullname + ", email=" + email + ", password=" + password + ", gender=" + gender + ", dob=" + dob + ", phone=" + phone + ", positionTitle=" + positionTitle + ", image=" + image + ", dependantCount=" + dependantCount + ", paidLeaveDays=" + paidLeaveDays + ", dept=" + dept + ", role=" + role + ", status=" + status + '}';
+        return "Employee{" + "empId=" + empId + ", empCode=" + empCode + ", fullname=" + fullname + ", email=" + email + ", password=" + password + ", gender=" + gender + ", dob=" + dob + ", phone=" + phone + ", positionTitle=" + positionTitle + ", image=" + image + ", paidLeaveDays=" + paidLeaveDays + ", dept=" + dept + ", role=" + role + ", status=" + status + '}';
     }
-
-   
 
 
     

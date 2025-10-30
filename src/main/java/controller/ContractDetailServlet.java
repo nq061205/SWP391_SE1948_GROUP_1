@@ -13,6 +13,8 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
+import java.sql.Date;
+import java.util.List;
 import model.Contract;
 
 /**
@@ -57,13 +59,20 @@ public class ContractDetailServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
     throws ServletException, IOException {
         HttpSession ses = request.getSession();
-        String empCode = request.getParameter("empCode");
-        String tab = (String) ses.getAttribute("tab");
         ContractDAO conDAO = new ContractDAO();
+        String empCode = (String) request.getAttribute("empCode");
+        String tab = (String) request.getAttribute("tab");
+        String option = (String) request.getAttribute("option");
+        List<String> typeList = conDAO.getAllType();
         Contract con = conDAO.getContractByEmployeeCode(empCode);
         
-        ses.setAttribute("tab", tab);
+        if ("edit".equalsIgnoreCase(option)) {
+            request.setAttribute("typeList", typeList);
+        }
+        request.setAttribute("option", option);
+        request.setAttribute("tab", tab);
         request.setAttribute("contract", con);
+        request.setAttribute("empCode", empCode);
         request.getRequestDispatcher("Views/employeedetails.jsp").forward(request, response);
     } 
 
@@ -77,7 +86,34 @@ public class ContractDetailServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
     throws ServletException, IOException {
-        processRequest(request, response);
+        ContractDAO conDAO = new ContractDAO();
+        String type= request.getParameter("type");
+        String startDateStr = request.getParameter("start");
+        String endDateStr = request.getParameter("end");
+        Date startDate = null;
+        String tab = request.getParameter("tab");
+        String option = request.getParameter("option");
+        if (startDateStr != null && !startDateStr.isEmpty()) {
+            startDate = Date.valueOf(startDateStr);
+        }
+        Date endDate = null;
+        if (endDateStr != null && !endDateStr.isEmpty()) {
+            endDate = Date.valueOf(endDateStr);
+        }
+        String empCode = request.getParameter("empCode");
+        Contract con = conDAO.getContractByEmployeeCode(empCode);
+        if ("save".equalsIgnoreCase(option)) {
+             con.setType(type);
+             con.setStartDate(startDate);
+             con.setEndDate(endDate);
+             conDAO.updateContract(con);
+        }
+        request.setAttribute("type", type);
+        request.setAttribute("tab", tab);
+        request.setAttribute("contract", con);
+        request.setAttribute("empCode", empCode);
+        request.getRequestDispatcher("Views/employeedetails.jsp").forward(request, response);
+        
     }
 
     /** 

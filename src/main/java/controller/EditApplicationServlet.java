@@ -34,10 +34,12 @@ public class EditApplicationServlet extends HttpServlet {
             response.sendRedirect("Views/login.jsp");
             return;
         }
+        EmployeeDAO empDAO = new EmployeeDAO();
         OTRequestDAO otRequestDAO = new OTRequestDAO();
         LeaveRequestDAO leaveRequestDAO = new LeaveRequestDAO();
         int id = Integer.parseInt(request.getParameter("id"));
         request.setAttribute("isEdit", "true");
+        request.setAttribute("receiver", empDAO.getEmployeeReceiverByRole(user.getRole().getRoleName(), user.getDept().getDepId()));
         switch (type) {
             case "LEAVE":
                 LeaveRequest leaveRequest = leaveRequestDAO.getLeaveRequestByLeaveId(id, user.getEmpId());
@@ -66,7 +68,7 @@ public class EditApplicationServlet extends HttpServlet {
         String type = request.getParameter("type");
         LeaveRequestDAO leaveDAO = new LeaveRequestDAO();
         OTRequestDAO otDAO = new OTRequestDAO();
-
+        EmployeeDAO empDAO = new EmployeeDAO();
         try {
             switch (type.toUpperCase()) {
                 case "LEAVE": {
@@ -75,29 +77,32 @@ public class EditApplicationServlet extends HttpServlet {
                     String content = request.getParameter("content");
                     Date startDate = Date.valueOf(request.getParameter("startdate"));
                     Date endDate = Date.valueOf(request.getParameter("enddate"));
+                    Employee approver = empDAO.getEmployeeByEmail((String) request.getParameter("email"));
                     if (endDate.before(startDate)) {
-                        request.setAttribute("isEdit", "true");
-                        request.setAttribute("id", id);
                         request.setAttribute("type_leave", leaveType);
                         request.setAttribute("startdate", startDate);
                         request.setAttribute("enddate", endDate);
                         request.setAttribute("content", content);
+                        request.setAttribute("receiver", approver);
                         request.setAttribute("messageDate", "End date must be after start date");
-                        request.getRequestDispatcher("Views/composeleaveapplication.jsp")
-                                .forward(request, response);
+                        request.getRequestDispatcher("Views/composeleaveapplication.jsp").forward(request, response);
                         return;
                     } else {
+                        HttpSession session = request.getSession();
+                        session.setAttribute("flashMessage", "Updated Successfully!");
                         leaveDAO.updateLeaveRequest(id, leaveType, content, startDate, endDate);
-                        response.sendRedirect("application?typeapplication=leave&issuccess=true");
+                        response.sendRedirect("application?typeapplication=leave");
                     }
                     break;
                 }
                 case "OT": {
                     int id = Integer.parseInt(request.getParameter("id"));
                     Date date = Date.valueOf(request.getParameter("date"));
-                    double hours = Double.parseDouble(request.getParameter("othour"));
+                    double hours = Double.parseDouble(request.getParameter("hours"));
                     otDAO.updateOTRequest(id, date, hours);
-                    response.sendRedirect("application?typeapplication=ot&issuccess=true");
+                    HttpSession session = request.getSession();
+                    session.setAttribute("flashMessage", "Updated Successfully!");
+                    response.sendRedirect("application?typeapplication=ot");
                     break;
                 }
                 default:
