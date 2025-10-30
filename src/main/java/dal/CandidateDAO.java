@@ -167,6 +167,18 @@ public class CandidateDAO extends DBContext {
         }
         return result;
     }
+    
+    public List<Candidate> getAllPassedCandidatesByDepartment(List<Integer> candidateIds, int postId) {
+        List<Candidate> result = new ArrayList<>();
+        for (int id : candidateIds) {
+            Candidate c = getCandidateById(id);
+            if(c.getPost().getPostId() == postId){
+                result.add(c);
+            }
+            
+        }
+        return result;
+    }
 
     public List<Candidate> getCandidateByPage(List<Candidate> fullList, int page, int quantityPerPage) {
         List<Candidate> pagedList = new ArrayList<>();

@@ -9,21 +9,23 @@ import java.util.List;
 
 public class RecruitmentPostDAO extends DBContext {
 
+    // ------------------ GET APPROVED POSTS ------------------
     public List<RecruitmentPost> getApprovedPosts() {
         List<RecruitmentPost> approvedPosts = new ArrayList<>();
-        String sql = "SELECT rp.post_id, rp.title, rp.content, rp.status, "
-                   + "rp.created_by, rp.approved_by, rp.approved_at, rp.created_at, rp.updated_at, "
-                   + "d.dep_id, d.dep_name, d.description AS dep_description, "
-                   + "e1.emp_id AS created_emp_id, e1.emp_code AS created_emp_code, "
-                   + "e1.fullname AS created_fullname, e1.email AS created_email, e1.position_title AS created_position, "
-                   + "e2.emp_id AS approved_emp_id, e2.emp_code AS approved_emp_code, "
-                   + "e2.fullname AS approved_fullname, e2.email AS approved_email, e2.position_title AS approved_position "
-                   + "FROM RecruitmentPost rp "
-                   + "LEFT JOIN Department d ON rp.dep_id = d.dep_id "
-                   + "LEFT JOIN Employee e1 ON rp.created_by = e1.emp_id "
-                   + "LEFT JOIN Employee e2 ON rp.approved_by = e2.emp_id "
-                   + "WHERE rp.status = 'Approved' "
-                   + "ORDER BY rp.approved_at DESC";
+        String sql = "SELECT "
+                + "rp.post_id, rp.title, rp.content, rp.status, "
+                + "rp.created_by, rp.approved_by, rp.approved_at, rp.created_at, rp.updated_at, "
+                + "d.dep_id, d.dep_name, d.description AS dep_description, "
+                + "e1.emp_id AS created_emp_id, e1.emp_code AS created_emp_code, "
+                + "e1.fullname AS created_fullname, e1.email AS created_email, e1.position_title AS created_position, "
+                + "e2.emp_id AS approved_emp_id, e2.emp_code AS approved_emp_code, "
+                + "e2.fullname AS approved_fullname, e2.email AS approved_email, e2.position_title AS approved_position "
+                + "FROM RecruitmentPost rp "
+                + "LEFT JOIN Department d ON rp.dep_id = d.dep_id "
+                + "LEFT JOIN Employee e1 ON rp.created_by = e1.emp_id "
+                + "LEFT JOIN Employee e2 ON rp.approved_by = e2.emp_id "
+                + "WHERE rp.status = 'Approved' "
+                + "ORDER BY rp.approved_at DESC";
 
         try (Connection conn = DBContext.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql);
@@ -40,21 +42,23 @@ public class RecruitmentPostDAO extends DBContext {
         return approvedPosts;
     }
 
+    // ------------------ GET ALL POSTS ------------------
     public List<RecruitmentPost> getAllPosts() {
         List<RecruitmentPost> allPosts = new ArrayList<>();
-        String sql = "SELECT rp.post_id, rp.title, rp.content, rp.status, "
-                   + "rp.created_by, rp.approved_by, rp.approved_at, rp.created_at, rp.updated_at, "
-                   + "d.dep_id, d.dep_name, d.description AS dep_description, "
-                   + "e1.emp_id AS created_emp_id, e1.emp_code AS created_emp_code, "
-                   + "e1.fullname AS created_fullname, e1.email AS created_email, e1.position_title AS created_position, "
-                   + "e2.emp_id AS approved_emp_id, e2.emp_code AS approved_emp_code, "
-                   + "e2.fullname AS approved_fullname, e2.email AS approved_email, e2.position_title AS approved_position "
-                   + "FROM RecruitmentPost rp "
-                   + "LEFT JOIN Department d ON rp.dep_id = d.dep_id "
-                   + "LEFT JOIN Employee e1 ON rp.created_by = e1.emp_id "
-                   + "LEFT JOIN Employee e2 ON rp.approved_by = e2.emp_id "
-                   + "WHERE rp.status <> 'Deleted' "
-                   + "ORDER BY rp.created_at DESC";
+        String sql = "SELECT "
+                + "rp.post_id, rp.title, rp.content, rp.status, "
+                + "rp.created_by, rp.approved_by, rp.approved_at, rp.created_at, rp.updated_at, "
+                + "d.dep_id, d.dep_name, d.description AS dep_description, "
+                + "e1.emp_id AS created_emp_id, e1.emp_code AS created_emp_code, "
+                + "e1.fullname AS created_fullname, e1.email AS created_email, e1.position_title AS created_position, "
+                + "e2.emp_id AS approved_emp_id, e2.emp_code AS approved_emp_code, "
+                + "e2.fullname AS approved_fullname, e2.email AS approved_email, e2.position_title AS approved_position "
+                + "FROM RecruitmentPost rp "
+                + "LEFT JOIN Department d ON rp.dep_id = d.dep_id "
+                + "LEFT JOIN Employee e1 ON rp.created_by = e1.emp_id "
+                + "LEFT JOIN Employee e2 ON rp.approved_by = e2.emp_id "
+                + "WHERE rp.status != 'Deleted' "
+                + "ORDER BY rp.created_at DESC";
 
         try (Connection conn = DBContext.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql);
@@ -71,19 +75,21 @@ public class RecruitmentPostDAO extends DBContext {
         return allPosts;
     }
 
+    // ------------------ GET POST BY ID ------------------
     public RecruitmentPost getPostById(int postId) {
-        String sql = "SELECT rp.post_id, rp.title, rp.content, rp.status, "
-                   + "rp.created_by, rp.approved_by, rp.approved_at, rp.created_at, rp.updated_at, "
-                   + "d.dep_id, d.dep_name, d.description AS dep_description, "
-                   + "e1.emp_id AS created_emp_id, e1.emp_code AS created_emp_code, "
-                   + "e1.fullname AS created_fullname, e1.email AS created_email, e1.position_title AS created_position, "
-                   + "e2.emp_id AS approved_emp_id, e2.emp_code AS approved_emp_code, "
-                   + "e2.fullname AS approved_fullname, e2.email AS approved_email, e2.position_title AS approved_position "
-                   + "FROM RecruitmentPost rp "
-                   + "LEFT JOIN Department d ON rp.dep_id = d.dep_id "
-                   + "LEFT JOIN Employee e1 ON rp.created_by = e1.emp_id "
-                   + "LEFT JOIN Employee e2 ON rp.approved_by = e2.emp_id "
-                   + "WHERE rp.post_id = ? AND rp.status <> 'Deleted'";
+        String sql = "SELECT "
+                + "rp.post_id, rp.title, rp.content, rp.status, "
+                + "rp.created_by, rp.approved_by, rp.approved_at, rp.created_at, rp.updated_at, "
+                + "d.dep_id, d.dep_name, d.description AS dep_description, "
+                + "e1.emp_id AS created_emp_id, e1.emp_code AS created_emp_code, "
+                + "e1.fullname AS created_fullname, e1.email AS created_email, e1.position_title AS created_position, "
+                + "e2.emp_id AS approved_emp_id, e2.emp_code AS approved_emp_code, "
+                + "e2.fullname AS approved_fullname, e2.email AS approved_email, e2.position_title AS approved_position "
+                + "FROM RecruitmentPost rp "
+                + "LEFT JOIN Department d ON rp.dep_id = d.dep_id "
+                + "LEFT JOIN Employee e1 ON rp.created_by = e1.emp_id "
+                + "LEFT JOIN Employee e2 ON rp.approved_by = e2.emp_id "
+                + "WHERE rp.post_id = ? AND rp.status != 'Deleted'";
 
         try (Connection conn = DBContext.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
@@ -102,18 +108,23 @@ public class RecruitmentPostDAO extends DBContext {
         return null;
     }
 
+    // ------------------ GET PENDING & REJECTED POSTS ------------------
     public List<RecruitmentPost> getPendingAndRejectedPosts() {
         List<RecruitmentPost> posts = new ArrayList<>();
-        String sql = "SELECT rp.post_id, rp.title, rp.content, rp.status, "
-                   + "rp.created_by, rp.approved_by, rp.approved_at, rp.created_at, rp.updated_at, "
-                   + "d.dep_id, d.dep_name, d.description AS dep_description, "
-                   + "e1.emp_id AS created_emp_id, e1.emp_code AS created_emp_code, "
-                   + "e1.fullname AS created_fullname, e1.email AS created_email, e1.position_title AS created_position "
-                   + "FROM RecruitmentPost rp "
-                   + "LEFT JOIN Department d ON rp.dep_id = d.dep_id "
-                   + "LEFT JOIN Employee e1 ON rp.created_by = e1.emp_id "
-                   + "WHERE (rp.status = 'Pending' OR rp.status = 'Rejected') "
-                   + "ORDER BY rp.created_at DESC";
+        String sql = "SELECT "
+                + "rp.post_id, rp.title, rp.content, rp.status, "
+                + "rp.created_by, rp.approved_by, rp.approved_at, rp.created_at, rp.updated_at, "
+                + "d.dep_id, d.dep_name, d.description AS dep_description, "
+                + "e1.emp_id AS created_emp_id, e1.emp_code AS created_emp_code, "
+                + "e1.fullname AS created_fullname, e1.email AS created_email, e1.position_title AS created_position, "
+                + "e2.emp_id AS approved_emp_id, e2.emp_code AS approved_emp_code, "
+                + "e2.fullname AS approved_fullname, e2.email AS approved_email, e2.position_title AS approved_position "
+                + "FROM RecruitmentPost rp "
+                + "LEFT JOIN Department d ON rp.dep_id = d.dep_id "
+                + "LEFT JOIN Employee e1 ON rp.created_by = e1.emp_id "
+                + "LEFT JOIN Employee e2 ON rp.approved_by = e2.emp_id "
+                + "WHERE (rp.status = 'Pending' OR rp.status = 'Rejected') "
+                + "ORDER BY rp.created_at DESC";
 
         try (Connection conn = DBContext.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql);
@@ -130,6 +141,7 @@ public class RecruitmentPostDAO extends DBContext {
         return posts;
     }
 
+    // ------------------ CREATE POST ------------------
     public boolean createPost(String title, String content, String depId, int createdBy, int approvedBy) {
         String sql = "INSERT INTO RecruitmentPost "
                    + "(title, content, dep_id, status, created_by, approved_by, created_at, updated_at) "
@@ -152,10 +164,11 @@ public class RecruitmentPostDAO extends DBContext {
         }
     }
 
+    // ------------------ UPDATE POST ------------------
     public boolean updatePost(int postId, String title, String content, String depId) {
         String sql = "UPDATE RecruitmentPost SET title = ?, content = ?, dep_id = ?, "
                    + "status = 'Pending', updated_at = NOW() "
-                   + "WHERE post_id = ? AND status <> 'Deleted'";
+                   + "WHERE post_id = ? AND status != 'Deleted'";
 
         try (Connection conn = DBContext.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
@@ -173,6 +186,7 @@ public class RecruitmentPostDAO extends DBContext {
         }
     }
 
+    // ------------------ APPROVE POST ------------------
     public boolean approvePost(int postId, int approvedBy, String note) {
         String sql = "UPDATE RecruitmentPost "
                    + "SET status = 'Approved', approved_by = ?, approved_at = NOW(), updated_at = NOW() "
@@ -191,6 +205,7 @@ public class RecruitmentPostDAO extends DBContext {
         }
     }
 
+    // ------------------ REJECT POST ------------------
     public boolean rejectPost(int postId, int rejectedBy) {
         String sql = "UPDATE RecruitmentPost "
                    + "SET status = 'Rejected', approved_by = ?, approved_at = NOW(), updated_at = NOW() "
@@ -209,6 +224,7 @@ public class RecruitmentPostDAO extends DBContext {
         }
     }
 
+    // ------------------ DELETE POST ------------------
     public boolean deletePost(int postId) {
         String sql = "UPDATE RecruitmentPost SET status = 'Deleted', updated_at = NOW() WHERE post_id = ?";
 
@@ -224,6 +240,7 @@ public class RecruitmentPostDAO extends DBContext {
         }
     }
 
+    // ------------------ GET DEPARTMENTS ------------------
     public List<Department> getDepartments() {
         List<Department> departments = new ArrayList<>();
         String sql = "SELECT dep_id, dep_name, description FROM Department ORDER BY dep_name";
@@ -247,6 +264,7 @@ public class RecruitmentPostDAO extends DBContext {
         return departments;
     }
 
+    // ------------------ MAPPING FUNCTION ------------------
     private RecruitmentPost mapResultSetToPost(ResultSet rs) throws SQLException {
         Department department = new Department();
         department.setDepId(rs.getString("dep_id"));
@@ -284,7 +302,8 @@ public class RecruitmentPostDAO extends DBContext {
         post.setUpdatedAt(rs.getTimestamp("updated_at"));
         return post;
     }
-    
+
+    // ------------------ MAIN TEST ------------------
     public static void main(String[] args) {
         RecruitmentPostDAO rDAO = new RecruitmentPostDAO();
         for (RecruitmentPost arg : rDAO.getAllPosts()) {
