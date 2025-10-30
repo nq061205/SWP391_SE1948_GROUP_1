@@ -118,6 +118,30 @@
         <servlet-name>ExportAttendancePDFServlet</servlet-name>
         <servlet-class>controller.hr.ExportAttendancePDFServlet</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>UpdateAccountServlet</servlet-name>
+        <servlet-class>controller.UpdateAccountServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>UpdateEmployeeServlet</servlet-name>
+        <servlet-class>controller.UpdateEmployeeServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>UpdateDepartmentServlet</servlet-name>
+        <servlet-class>controller.UpdateDepartmentServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>EmployeeDetailServlet</servlet-name>
+        <servlet-class>controller.EmployeeDetailServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>ContractDetailServlet</servlet-name>
+        <servlet-class>controller.ContractDetailServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>UpdateAccountServlet</servlet-name>
+        <url-pattern>/updateaccount</url-pattern>
+    </servlet-mapping>
     <servlet-mapping>
         <servlet-name>HomePageServlet</servlet-name>
         <url-pattern>/homepage</url-pattern>
@@ -130,10 +154,6 @@
         <servlet-name>ForgetPassword</servlet-name>
         <url-pattern>/forgetpassword</url-pattern>
     </servlet-mapping>
-    <servlet>
-        <servlet-name>RecoveryPassword</servlet-name>
-        <servlet-class>controller.RecoveryPasswordServlet</servlet-class>
-    </servlet>
     <servlet-mapping>
         <servlet-name>RecoveryPassword</servlet-name>
         <url-pattern>/recovery</url-pattern>
@@ -192,7 +212,7 @@
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>DepartmentListServlet</servlet-name>
-        <url-pattern>/departmentlistservlet</url-pattern>
+        <url-pattern>/departmentlist</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>CandidateListServlet</servlet-name>
@@ -217,7 +237,7 @@
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>EmployeeListServlet</servlet-name>
-        <url-pattern>/employeelistservlet</url-pattern>
+        <url-pattern>/employeelist</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>ApplyJobServlet</servlet-name>
@@ -242,6 +262,22 @@
     <servlet-mapping>
         <servlet-name>ExportAttendancePDFServlet</servlet-name>
         <url-pattern>/export-attendance-pdf</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>UpdateEmployeeServlet</servlet-name>
+        <url-pattern>/updateemployee</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>UpdateDepartmentServlet</servlet-name>
+        <url-pattern>/updatedepartment</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>EmployeeDetailServlet</servlet-name>
+        <url-pattern>/employeedetail</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>ContractDetailServlet</servlet-name>
+        <url-pattern>/contractdetail</url-pattern>
     </servlet-mapping>
     <session-config>
         <session-timeout>30</session-timeout>

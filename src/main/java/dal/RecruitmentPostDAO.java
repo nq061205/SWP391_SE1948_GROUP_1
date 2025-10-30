@@ -19,7 +19,6 @@ public class RecruitmentPostDAO extends DBContext { // Kế thừa DBContext đ�
                 + "rp.title, "
                 + "rp.content, "
                 + "rp.status, "
-                + "rp.is_delete, "
                 + "rp.created_by, "
                 + "rp.approved_by, "
                 + "rp.approved_at, "
@@ -42,7 +41,7 @@ public class RecruitmentPostDAO extends DBContext { // Kế thừa DBContext đ�
                 + "LEFT JOIN Department d ON rp.dep_id = d.dep_id "
                 + "LEFT JOIN Employee e1 ON rp.created_by = e1.emp_id "
                 + "LEFT JOIN Employee e2 ON rp.approved_by = e2.emp_id "
-                + "WHERE rp.status = 'Approved' AND rp.is_delete = FALSE "
+                + "WHERE rp.status = 'Approved' "
                 + "ORDER BY rp.approved_at DESC";
 
         try (Connection conn = DBContext.getConnection();
@@ -102,7 +101,6 @@ public class RecruitmentPostDAO extends DBContext { // Kế thừa DBContext đ�
                 + "rp.title, "
                 + "rp.content, "
                 + "rp.status, "
-                + "rp.is_delete, "
                 + "rp.created_by, "
                 + "rp.approved_by, "
                 + "rp.approved_at, "
@@ -125,7 +123,7 @@ public class RecruitmentPostDAO extends DBContext { // Kế thừa DBContext đ�
                 + "LEFT JOIN Department d ON rp.dep_id = d.dep_id "
                 + "LEFT JOIN Employee e1 ON rp.created_by = e1.emp_id "
                 + "LEFT JOIN Employee e2 ON rp.approved_by = e2.emp_id "
-                + "WHERE rp.is_delete = FALSE "
+                + "WHERE rp.status != 'Deleted' "
                 + "ORDER BY rp.created_at DESC";
 
         try (Connection conn = DBContext.getConnection();
@@ -184,7 +182,6 @@ public class RecruitmentPostDAO extends DBContext { // Kế thừa DBContext đ�
                 + "rp.title, "
                 + "rp.content, "
                 + "rp.status, "
-                + "rp.is_delete, "
                 + "rp.created_by, "
                 + "rp.approved_by, "
                 + "rp.approved_at, "
@@ -207,7 +204,7 @@ public class RecruitmentPostDAO extends DBContext { // Kế thừa DBContext đ�
                 + "LEFT JOIN Department d ON rp.dep_id = d.dep_id "
                 + "LEFT JOIN Employee e1 ON rp.created_by = e1.emp_id "
                 + "LEFT JOIN Employee e2 ON rp.approved_by = e2.emp_id "
-                + "WHERE rp.post_id = ? AND rp.is_delete = FALSE";
+                + "WHERE rp.post_id = ? AND rp.status != 'Deleted'";
 
         try (Connection conn = DBContext.getConnection();
                 PreparedStatement ps = conn.prepareStatement(sql)) {
@@ -268,7 +265,6 @@ public class RecruitmentPostDAO extends DBContext { // Kế thừa DBContext đ�
                 + "rp.title, "
                 + "rp.content, "
                 + "rp.status, "
-                + "rp.is_delete, "
                 + "rp.created_by, "
                 + "rp.approved_by, "
                 + "rp.approved_at, "
@@ -285,7 +281,7 @@ public class RecruitmentPostDAO extends DBContext { // Kế thừa DBContext đ�
                 + "FROM RecruitmentPost rp "
                 + "LEFT JOIN Department d ON rp.dep_id = d.dep_id "
                 + "LEFT JOIN Employee e1 ON rp.created_by = e1.emp_id "
-                + "WHERE (rp.status = 'Pending' OR rp.status = 'Rejected') AND rp.is_delete = FALSE "
+                + "WHERE (rp.status = 'New' OR rp.status = 'Waiting' OR rp.status = 'Rejected') "
                 + "ORDER BY rp.created_at DESC";
 
         try (Connection conn = DBContext.getConnection();
@@ -328,8 +324,8 @@ public class RecruitmentPostDAO extends DBContext { // Kế thừa DBContext đ�
     }
 
     public boolean createPost(String title, String content, String depId, int createdBy, int approvedBy) {
-        String sql = "INSERT INTO RecruitmentPost (title, content, dep_id, status, is_delete, created_by, approved_by, created_at, updated_at) " +
-                     "VALUES (?, ?, ?, 'Pending', FALSE, ?, ?, NOW(), NOW())";
+        String sql = "INSERT INTO RecruitmentPost (title, content, dep_id, status, created_by, approved_by, created_at, updated_at) " +
+                     "VALUES (?, ?, ?, 'New', ?, ?, NOW(), NOW())";
 
         try (Connection conn = DBContext.getConnection();
                 PreparedStatement ps = conn.prepareStatement(sql)) {
@@ -351,8 +347,8 @@ public class RecruitmentPostDAO extends DBContext { // Kế thừa DBContext đ�
     }
 
     public boolean updatePost(int postId, String title, String content, String depId) {
-        String sql = "UPDATE RecruitmentPost SET title = ?, content = ?, dep_id = ?, status = 'Pending', updated_at = NOW() "
-                + "WHERE post_id = ? AND is_delete = FALSE";
+        String sql = "UPDATE RecruitmentPost SET title = ?, content = ?, dep_id = ?, status = 'New', updated_at = NOW() "
+                + "WHERE post_id = ? AND status != 'Deleted'";
 
         try (Connection conn = DBContext.getConnection();
                 PreparedStatement ps = conn.prepareStatement(sql)) {
@@ -398,7 +394,7 @@ public class RecruitmentPostDAO extends DBContext { // Kế thừa DBContext đ�
 
     public boolean approvePost(int postId, int approvedBy, String note) {
         String sql = "UPDATE RecruitmentPost SET status = 'Approved', approved_by = ?, approved_at = NOW(), updated_at = NOW() " +
-                     "WHERE post_id = ? AND status = 'Pending' AND is_delete = FALSE";
+                     "WHERE post_id = ? AND status = 'New' AND status != 'Deleted'";
 
         try (Connection conn = DBContext.getConnection();
                 PreparedStatement ps = conn.prepareStatement(sql)) {
@@ -418,7 +414,7 @@ public class RecruitmentPostDAO extends DBContext { // Kế thừa DBContext đ�
 
     public boolean rejectPost(int postId, int rejectedBy) {
         String sql = "UPDATE RecruitmentPost SET status = 'Rejected', approved_by = ?, approved_at = NOW(), updated_at = NOW() "
-                + "WHERE post_id = ? AND status = 'Pending' AND is_delete = FALSE";
+                + "WHERE post_id = ? AND status = 'New' AND status != 'Deleted'";
 
         try (Connection conn = DBContext.getConnection();
                 PreparedStatement ps = conn.prepareStatement(sql)) {
