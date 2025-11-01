@@ -84,7 +84,7 @@ public class AccountListServlet extends HttpServlet {
         String order = request.getParameter("order");
         String type = request.getParameter("type");
         String empCode = request.getParameter("empCode");
-        int quantityOfPage = 3;
+        int quantityOfPage = 5;
         int currentPage = 1;
         String oldSearchKey = (String) ses.getAttribute("oldSearchKey");
         Integer oldDeptCount = (Integer) ses.getAttribute("oldDeptCount");
@@ -110,6 +110,12 @@ public class AccountListServlet extends HttpServlet {
                 }
             }
         }
+        if (deptId!= null && deptId[0].isEmpty()) {
+            deptId=null;
+        }
+        if (roleId!= null && roleId[0].isEmpty()) {
+            roleId=null;
+        }
 
         int totalResults = 0;
         if (searchkey != null && !searchkey.trim().isEmpty()) {
@@ -122,11 +128,6 @@ public class AccountListServlet extends HttpServlet {
             totalResults = empDAO.countAllRecordOfEmployee();
         }
         int totalPages = (int) Math.ceil((double) totalResults / quantityOfPage);
-
-        if ("edit".equalsIgnoreCase(type) && empCode != null) {
-            Employee editEmp = empDAO.getEmployeeByEmpCode(empCode);
-            request.setAttribute("editEmp", editEmp);
-        }
         List<Employee> empList = empDAO.ManageEmployeeWithPaging(searchkey, currentPage, quantityOfPage, status, deptId, roleId, sortBy, order);
 
         List<Role> roleList = rDAO.getAllRoles();
@@ -201,42 +202,7 @@ public class AccountListServlet extends HttpServlet {
         String[] roleIds = request.getParameterValues("roleId");
         String sortBy = request.getParameter("sortBy");
         String order = request.getParameter("order");
-
         String empCode = request.getParameter("empCode");
-
-        if ("save".equalsIgnoreCase(action)) {
-            Employee emp = empDAO.getEmployeeByEmpCode(empCode);
-
-            String email = request.getParameter("email");
-            String deptIdStr = request.getParameter("editDepId");
-            String roleIdStr = request.getParameter("editRoleId");
-            int roleId = Integer.parseInt(roleIdStr);
-
-            emp.setEmail(email);
-            emp.setDept(dDAO.getDepartmentByDepartmentId(deptIdStr));
-            emp.setRole(rDAO.getRoleByRoleId(roleId));
-            empDAO.updateEmployee(emp);
-
-            List<Employee> empList = empDAO.ManageEmployeeWithPaging(searchkey, currentPage, quantityOfPage, status, deptId, roleIds, sortBy, order);
-            int totalSearchRecords = empDAO.countSearchAndFilterAccount(searchkey, status, deptId, roleIds);
-            int totalEmployees = empDAO.countSearchAndFilterAccount(searchkey, status, deptId, roleIds);
-            int totalPages = (int) Math.ceil((double) totalEmployees / quantityOfPage);
-
-            ses.setAttribute("empList", empList);
-            request.setAttribute("totalPages", totalPages);
-            request.setAttribute("page", currentPage);
-            request.setAttribute("status", status);
-            request.setAttribute("deptId", deptId);
-            request.setAttribute("roleId", roleIds);
-            request.setAttribute("sortBy", sortBy);
-            request.setAttribute("order", order);
-            request.setAttribute("totalSearchResults", totalSearchRecords);
-            request.setAttribute("searchkey", searchkey);
-
-            request.getRequestDispatcher("Views/accountList.jsp").forward(request, response);
-            return;
-        }
-
         if ("toggle".equalsIgnoreCase(action)) {
             boolean newStatus = Boolean.parseBoolean(request.getParameter("newstatus"));
 
@@ -263,7 +229,6 @@ public class AccountListServlet extends HttpServlet {
             request.setAttribute("searchkey", searchkey);
 
             request.getRequestDispatcher("Views/accountList.jsp").forward(request, response);
-            return;
         }
     }
 

@@ -68,7 +68,7 @@
 
                 <!-- Employee List -->
                 <li>
-                    <a href="${pageContext.request.contextPath}/employeelistservlet" class="ttr-material-button">
+                    <a href="${pageContext.request.contextPath}/employeelist" class="ttr-material-button">
                         <span class="ttr-icon"><i class="ti-briefcase"></i></span>
                         <span class="ttr-label">Employee List</span>
                     </a>
@@ -76,7 +76,7 @@
 
                 <!-- Department List -->
                 <li>
-                    <a href="${pageContext.request.contextPath}/departmentlistservlet" class="ttr-material-button">
+                    <a href="${pageContext.request.contextPath}/departmentlist" class="ttr-material-button">
                         <span class="ttr-icon"><i class="ti-home"></i></span>
                         <span class="ttr-label">Department List</span>
                     </a>
