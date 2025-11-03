@@ -138,6 +138,10 @@
         <servlet-name>ContractDetailServlet</servlet-name>
         <servlet-class>controller.ContractDetailServlet</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>DetailDailyAttendanceServlet</servlet-name>
+        <servlet-class>controller.hr.DetailDailyAttendanceServlet</servlet-class>
+    </servlet>
     <servlet-mapping>
         <servlet-name>UpdateAccountServlet</servlet-name>
         <url-pattern>/updateaccount</url-pattern>
@@ -278,6 +282,10 @@
     <servlet-mapping>
         <servlet-name>ContractDetailServlet</servlet-name>
         <url-pattern>/contractdetail</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>DetailDailyAttendanceServlet</servlet-name>
+        <url-pattern>/detail-daily-attendance</url-pattern>
     </servlet-mapping>
     <session-config>
         <session-timeout>30</session-timeout>
