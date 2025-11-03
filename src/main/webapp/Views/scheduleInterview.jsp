@@ -14,7 +14,6 @@
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 
         <style>
-            /* ??m b?o dropdown không ?è lên các ph?n khác */
             .dropdown-menu {
                 z-index: 1050 !important;
             }
@@ -49,9 +48,46 @@
                 <div class="row">
                     <div class="col-lg-8 offset-lg-2">
                         <div class="widget-box">
-                            <!-- FORM: ch? có 1 form duy nh?t -->
                             <form method="post"
                                   action="schedule">
+                                <div class="form-group mb-3">
+                                    <label for="post"><i class="fa fa-briefcase"></i> Recruitment Post:</label>
+                                    <select id="post" name="postId" class="form-control" onchange="this.form.submit()" required>
+                                        <option value="all"
+                                                ${selectedPostId != null ? 'disabled' : ''}
+                                                ${selectedPostId == null ? 'selected' : ''}>
+                                            Select recruitment post
+                                        </option>
+
+                                        <c:forEach var="p" items="${postList}">
+                                            <option value="${p.postId}"
+                                                    ${p.postId == selectedPostId ? 'selected' : ''}>
+                                                ${p.title}
+                                            </option>
+                                        </c:forEach>
+                                    </select>
+
+                                </div>
+
+                                <!-- Candidate Multi-Select -->
+                                <div class="form-group mb-3">
+                                    <label><i class="fa fa-user"></i> Candidates:</label>
+                                    <div class="border rounded p-2" style="max-height: 220px; overflow-y: auto;">
+                                        <c:forEach items="${candidateList}" var="c">
+                                            <div class="form-check">
+                                                <input type="checkbox" class="form-check-input candidate-checkbox"
+                                                       id="${c.candidateId}" name="candidateIds" value="${c.candidateId}">
+                                                <label for="${c.candidateId}" class="form-check-label">
+                                                    ${c.name} (${c.email})
+                                                </label>
+                                            </div>
+                                        </c:forEach>
+                                    </div>
+
+                                    <small id="selectedCandidates" class="text-muted mt-1 d-block">
+                                        No candidates selected
+                                    </small>
+                                </div>  
 
                                 <!-- Date -->
                                 <div class="form-group mb-3">
@@ -67,48 +103,13 @@
                                     <input type="time" id="time" name="time" class="form-control"
                                            value="${interview.time}" required>
                                 </div>
+                                <c:if test="${errorMessage != null}"><p style="color: red">${errorMessage}</p></c:if>
 
-                                <!-- Recruitment Post -->
-                                <div class="form-group mb-3">
-                                    <label for="post"><i class="fa fa-briefcase"></i> Recruitment Post:</label>
-                                    <select id="post" name="postId" class="form-control" required>
-                                        <option value="">Select recruitment post</option>
-                                        <c:forEach var="p" items="${postList}">
-                                            <option value="${p.postId}"
-                                                    ${p.postId == interview.post.postId ? 'selected' : ''}>
-                                                ${p.title}
-                                            </option>
-                                        </c:forEach>
-                                    </select>
-                                </div>
 
-                                <!-- Candidate Multi-Select -->
-                                <div class="form-group mb-3">
-                                    <div class="form-group mb-3">
-                                        <label><i class="fa fa-user"></i> Candidates:</label>
-                                        <div class="border rounded p-2" style="max-height: 220px; overflow-y: auto;">
-                                            <div class="form-check">
-                                                <input type="checkbox" class="form-check-input" id="c1" name="candidateIds" value="1">
-                                                <label for="c1" class="form-check-label">Nguyen Van A (a@gmail.com)</label>
-                                            </div>
-                                            
-                                        </div>
-                                    </div>
 
-                                    <small id="selectedCandidates" class="text-muted mt-1 d-block">
-                                        No candidates selected
-                                    </small>
-                                </div>
 
-                                <!-- Notes -->
-                                <div class="form-group mb-3">
-                                    <label for="note"><i class="fa fa-pencil-alt"></i> Notes:</label>
-                                    <textarea id="note" name="note" class="form-control" rows="5"
-                                              placeholder="Add any interview details...">${interview.note}</textarea>
-                                </div>
-
-                                <!-- Buttons -->
-                                <div class="text-end">
+                                    <!-- Buttons -->
+                                    <div class="text-end">
                                     <c:if test="${not empty isEdit}">
                                         <button type="button" class="btn btn-danger btn-lg me-2"
                                                 onclick="confirmDelete(${id})">
