@@ -130,6 +130,18 @@
         <servlet-class>controller.UpdateDepartmentServlet</servlet-class>
     </servlet>
     <servlet>
+        <servlet-name>DepartmentListServlet</servlet-name>
+        <servlet-class>controller.DepartmentListServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>DepartmentDetailServlet</servlet-name>
+        <servlet-class>controller.DepartmentDetailServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>CreateAccountServlet</servlet-name>
+        <servlet-class>controller.CreateAccountServlet</servlet-class>
+    </servlet>
+    <servlet>
         <servlet-name>EmployeeDetailServlet</servlet-name>
         <servlet-class>controller.EmployeeDetailServlet</servlet-class>
     </servlet>
@@ -231,6 +243,10 @@
         <url-pattern>/departmentlist</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
+        <servlet-name>DepartmentDetailServlet</servlet-name>
+        <url-pattern>/departmentdetail</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
         <servlet-name>CandidateListServlet</servlet-name>
         <url-pattern>/candidatelist</url-pattern>
     </servlet-mapping>
@@ -289,6 +305,10 @@
     <servlet-mapping>
         <servlet-name>UpdateAccountServlet</servlet-name>
         <url-pattern>/updateaccount</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>CreateAccountServlet</servlet-name>
+        <url-pattern>/createaccount</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>UpdateEmployeeServlet</servlet-name>
