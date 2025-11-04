@@ -431,4 +431,9 @@ public class RecruitmentPostDAO extends DBContext { // Kế thừa DBContext đ�
             return false;
         }
     }
+    
+    public static void main(String[] args) {
+        RecruitmentPostDAO r = new RecruitmentPostDAO();
+         System.out.println(r.getAllPosts());
+    }
 }
