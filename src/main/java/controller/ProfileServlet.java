@@ -20,7 +20,7 @@ import java.util.Set;
 )
 public class ProfileServlet extends HttpServlet {
 
-    private static final long MAX_AVATAR_SIZE = 20L * 1024 * 1024;
+    private static final long MAX_AVATAR_SIZE = 2L * 1024 * 1024;
     private static final Set<String> ALLOWED_CONTENT_TYPES = Set.of(
             "image/jpeg", "image/jpg", "image/pjpeg", "image/png", "image/gif", "image/webp"
     );
@@ -190,7 +190,6 @@ public class ProfileServlet extends HttpServlet {
             uploadDir.mkdirs();
         }
 
-        // XÓA file cũ theo pattern: ht_{empCode}.* (không phân biệt đuôi)
         File[] oldFiles = uploadDir.listFiles((dir, name)
                 -> name.toLowerCase().startsWith(("ht_" + empCode).toLowerCase() + "."));
         if (oldFiles != null) {
@@ -204,10 +203,8 @@ public class ProfileServlet extends HttpServlet {
             }
         }
 
-        // Ghi file mới (ghi đè nếu trùng)
         filePart.write(uploadPath + File.separator + safeName);
 
-        // Đường dẫn tương đối để lưu DB
         return "images/avatar/" + safeName;
     }
 }

@@ -111,10 +111,20 @@
                         <span class="ttr-label">Daily Attendance</span>
                     </a>
                 </li>
-
+                <li>
+                    <a href="${pageContext.request.contextPath}/payrollreportdetail" class="ttr-material-button">
+                        <span class="ttr-icon"><i class="ti-heart"></i></span>
+                        <span class="ttr-label">Payroll Report Detail</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="${pageContext.request.contextPath}/attendance" class="ttr-material-button">
+                        <span class="ttr-icon"><i class="ti-heart"></i></span>
+                        <span class="ttr-label">Personal attendance</span>
+                    </a>
+                </li>
                 <li class="ttr-seperate"></li>
             </ul>
         </nav>
-        <!-- sidebar menu end -->
     </div>
 </div>
