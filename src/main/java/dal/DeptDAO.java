@@ -159,9 +159,6 @@ public class DeptDAO extends DBContext {
 
     public static void main(String[] args) {
         DeptDAO dao = new DeptDAO();
-        Department dep = new Department();
-        dep.setDescription("Quản lí tài chín");
-        dao.updateDepartment(dep);
         System.out.println(dao.getAllDepartment());
     }
 }

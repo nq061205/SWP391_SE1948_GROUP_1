@@ -138,10 +138,22 @@
         <servlet-class>controller.ContractDetailServlet</servlet-class>
     </servlet>
     <servlet>
+        <servlet-name>DetailDailyAttendanceServlet</servlet-name>
+        <servlet-class>controller.hr.DetailDailyAttendanceServlet</servlet-class>
+    </servlet>
+    <servlet>
         <servlet-name>scheduleServlet</servlet-name>
         <servlet-class>controller.scheduleServlet</servlet-class>
     </servlet>
     <!-- ===== SERVLET MAPPINGS ===== -->
+    <servlet>
+        <servlet-name>PayrollReportDetailServlet</servlet-name>
+        <servlet-class>controller.PayrollReportDetailServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>PayrollReportListServlet</servlet-name>
+        <servlet-class>controller.PayrollReportListServlet</servlet-class>
+    </servlet>
     <servlet>
         <servlet-name>InterviewServlet</servlet-name>
         <servlet-class>controller.InterviewServlet</servlet-class>
@@ -267,6 +279,14 @@
         <url-pattern>/export-attendance-pdf</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
+        <servlet-name>PayrollReportDetailServlet</servlet-name>
+        <url-pattern>/payrollreportdetail</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>PayrollReportListServlet</servlet-name>
+        <url-pattern>/payrollreportlist</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
         <servlet-name>UpdateAccountServlet</servlet-name>
         <url-pattern>/updateaccount</url-pattern>
     </servlet-mapping>
@@ -285,6 +305,10 @@
     <servlet-mapping>
         <servlet-name>ContractDetailServlet</servlet-name>
         <url-pattern>/contractdetail</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>DetailDailyAttendanceServlet</servlet-name>
+        <url-pattern>/detail-daily-attendance</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>scheduleServlet</servlet-name>
