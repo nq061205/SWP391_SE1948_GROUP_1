@@ -60,25 +60,6 @@
         <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/assets2/css/dashboard.css">
         <link class="skin" rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/assets2/css/color/color-1.css">
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
-        <style>
-            .modal:target {
-                display: flex !important;
-                position: fixed;
-                top: 0;
-                left: 0;
-                width: 100%;
-                height: 100%;
-                background: rgba(0, 0, 0, 0.5);
-                z-index: 1000;
-                align-items: center;
-                justify-content: center;
-                padding: 20px 0;
-            }
-
-            .modal:target .modal-dialog {
-                margin: auto;
-            }
-        </style>
 
     </head>
 
@@ -343,179 +324,33 @@
                                                                         </c:when>
                                                                         <c:otherwise>
                                                                             <c:if test="${attendance != null}">
-                                                                                <a href="#detail-${employee.empId}-${day}-${selectedMonth}-${selectedYear}" 
-                                                                                   style="text-decoration: none; color: inherit; display: block; width: 100%; height: 100%;">
-                                                                                    <span class="work-day-text">
-                                                                                        <fmt:formatNumber value="${attendance.workDay}" pattern="#.##"/><c:if test="${attendance.otHours > 0}">T</c:if>
-                                                                                        </span>
-                                                                                    </a>
+                                                                                <span class="work-day-text">
+                                                                                    <fmt:formatNumber value="${attendance.workDay}" pattern="#.##"/>
+                                                                                    <c:if test="${attendance.otHours > 0}">T</c:if>
+                                                                                </span>
                                                                             </c:if>
                                                                         </c:otherwise>
                                                                     </c:choose>
-                                                                </td>
-                                                                <!-- Attendance detail -->
-                                                                <c:if test="${attendance != null}">
-                                                            <div id="detail-${employee.empId}-${day}-${selectedMonth}-${selectedYear}" 
-                                                                 class="modal d-none" tabindex="-1" role="dialog" style="display: none;">
-                                                                <div class="modal-dialog modal-lg" role="document">
-                                                                    <div class="modal-content">
-
-                                                                        <!-- Header -->
-                                                                        <div class="modal-header bg-primary text-white">
-                                                                            <h5 class="modal-title">
-                                                                                <i class="fa fa-calendar-check-o"></i> Attendance Details
-                                                                            </h5>
-                                                                            <a href="#" class="close text-white" aria-label="Close">
-                                                                                <span aria-hidden="true">&times;</span>
-                                                                            </a>
-                                                                        </div>
-
-                                                                        <!-- Body -->
-                                                                        <div class="modal-body">
-
-                                                                            <!-- Employee Information -->
-                                                                            <div class="card mb-3 border-primary">
-                                                                                <div class="card-header bg-light border-primary">
-                                                                                    <h6 class="mb-0">
-                                                                                        <i class="fa fa-user text-primary"></i> Employee Information
-                                                                                    </h6>
-                                                                                </div>
-                                                                                <div class="card-body">
-                                                                                    <div class="row">
-                                                                                        <div class="col-md-6">
-                                                                                            <p class="mb-2">
-                                                                                                <strong>Employee ID:</strong> 
-                                                                                                <span class="text-secondary">${employee.empCode}</span>
-                                                                                            </p>
-                                                                                            <p class="mb-2">
-                                                                                                <strong>Full Name:</strong> 
-                                                                                                <span class="text-secondary">${employee.fullname}</span>
-                                                                                            </p>
-                                                                                            <p class="mb-0">
-                                                                                                <strong>Department:</strong> 
-                                                                                                <span class="text-secondary">
-                                                                                                    <c:if test="${not empty employee.dept}">
-                                                                                                        ${employee.dept.depName}
-                                                                                                    </c:if>
-                                                                                                </span>
-                                                                                            </p>
-                                                                                        </div>
-                                                                                        <div class="col-md-6">
-                                                                                            <p class="mb-2">
-                                                                                                <strong>Position:</strong> 
-                                                                                                <span class="text-secondary">N/A</span>
-                                                                                            </p>
-                                                                                            <p class="mb-2">
-                                                                                                <strong>Date:</strong> 
-                                                                                                <span class="badge badge-info">
-                                                                                                    ${day}/${selectedMonth}/${selectedYear}
-                                                                                                </span>
-                                                                                            </p>
-                                                                                        </div>
-                                                                                    </div>
-                                                                                </div>
-                                                                            </div>
-
-                                                                            <!-- Attendance Information -->
-                                                                            <div class="card border-success">
-                                                                                <div class="card-header bg-light border-success">
-                                                                                    <h6 class="mb-0">
-                                                                                        <i class="fa fa-clock-o text-success"></i> Attendance Information
-                                                                                    </h6>
-                                                                                </div>
-                                                                                <div class="card-body">
-                                                                                    <div class="row">
-                                                                                        <div class="col-md-6">
-                                                                                            <p class="mb-2"><strong>First Check-In:</strong></p>
-                                                                                            <p class="mb-3">
-                                                                                                <span class="badge badge-success badge-pill">
-                                                                                                    ${attendance.firstCheckIn != null ? attendance.firstCheckIn : 'Not checked in'}
-                                                                                                </span>
-                                                                                            </p>
-
-                                                                                            <p class="mb-2"><strong>Last Check-Out:</strong></p>
-                                                                                            <p class="mb-3">
-                                                                                                <span class="badge badge-info badge-pill">
-                                                                                                    ${attendance.lastCheckOut != null ? attendance.lastCheckOut : 'Not checked out'}
-                                                                                                </span>
-                                                                                            </p>
-
-                                                                                            <p class="mb-2"><strong>Work Days:</strong></p>
-                                                                                            <p class="mb-0">
-                                                                                                <span class="badge badge-primary badge-pill">
-                                                                                                    <fmt:formatNumber value="${attendance.workDay}" pattern="#.##"/>
-                                                                                                </span>
-                                                                                            </p>
-                                                                                        </div>
-                                                                                        <div class="col-md-6">
-                                                                                            <p class="mb-2"><strong>Overtime Hours:</strong></p>
-                                                                                            <p class="mb-3">
-                                                                                                <span class="badge badge-warning badge-pill">
-                                                                                                    <fmt:formatNumber value="${attendance.otHours}" pattern="#.##"/> hours
-                                                                                                </span>
-                                                                                            </p>
-
-                                                                                            <p class="mb-2"><strong>Status:</strong></p>
-                                                                                            <p class="mb-0">
-                                                                                                <c:choose>
-                                                                                                    <c:when test="${attendance.status == 'Present'}">
-                                                                                                        <span class="badge badge-success badge-pill">Present</span>
-                                                                                                    </c:when>
-                                                                                                    <c:when test="${attendance.status == 'Absent'}">
-                                                                                                        <span class="badge badge-danger badge-pill">Absent</span>
-                                                                                                    </c:when>
-                                                                                                    <c:when test="${attendance.status == 'Leave'}">
-                                                                                                        <span class="badge badge-info badge-pill">Leave</span>
-                                                                                                    </c:when>
-                                                                                                    <c:otherwise>
-                                                                                                        <span class="badge badge-secondary badge-pill">${attendance.status}</span>
-                                                                                                    </c:otherwise>
-                                                                                                </c:choose>
-                                                                                            </p>
-                                                                                        </div>
-                                                                                    </div>
-                                                                                </div>
-                                                                            </div>
-                                                                        </div>
-
-                                                                        <!-- Footer -->
-                                                                        <div class="modal-footer">
-                                                                            <form method="post" action="detail-daily-attendance" class="w-100">
-                                                                                <input type="hidden" name="empId" value="${employee.empId}">
-                                                                                <input type="hidden" name="day" value="${day}">
-                                                                                <input type="hidden" name="month" value="${selectedMonth}">
-                                                                                <input type="hidden" name="year" value="${selectedYear}">
-                                                                                <input type="hidden" name="action" value="edit">
-
-                                                                                <button type="submit" class="btn btn-primary">
-                                                                                    <i class="fa fa-edit"></i> Edit Attendance
-                                                                                </button>
-                                                                                <a href="#" class="btn btn-secondary" onclick="history.back();">
-                                                                                    <i class="fa fa-times"></i> Close
-                                                                                </a>
-                                                                            </form>
-                                                                        </div>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                        </c:if>
+                                                                </td> 
+                                                            </c:forEach>
+                                                            <!-- Summary -->
+                                                            <td class="summary-col text-center">
+                                                                <strong class="text-primary">
+                                                                    <fmt:formatNumber value="${totalWorkDaysMap[employee.empId]}" maxFractionDigits="1"/>
+                                                                </strong>
+                                                            </td>
+                                                            <td class="summary-col text-center">
+                                                                <strong class="text-warning">
+                                                                    <fmt:formatNumber value="${totalOTHoursMap[employee.empId]}" maxFractionDigits="1"/>h
+                                                                </strong>
+                                                            </td>
+                                                        </tr>
                                                     </c:forEach>
-                                                    <!-- Summary -->
-                                                    <td class="summary-col text-center">
-                                                        <strong class="text-primary">
-                                                            <fmt:formatNumber value="${totalWorkDaysMap[employee.empId]}" maxFractionDigits="1"/>
-                                                        </strong>
-                                                    </td>
-                                                    <td class="summary-col text-center">
-                                                        <strong class="text-warning">
-                                                            <fmt:formatNumber value="${totalOTHoursMap[employee.empId]}" maxFractionDigits="1"/>h
-                                                        </strong>
-                                                    </td>
-                                                    </tr>
-                                                </c:forEach>
                                                 </tbody>
                                             </table>
                                         </div>
+
+                                        <!-- PAGINATION -->                
                                         <c:if test="${totalPages > 1}">
                                             <nav aria-label="Page navigation" class="mt-3">
                                                 <ul class="pagination justify-content-center">
@@ -599,27 +434,6 @@
                 </div>
             </div>
         </main>
-
-        <!-- Detail Modal -->
-        <div class="modal fade" id="detailModal" tabindex="-1">
-            <div class="modal-dialog">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title"><i class="fa fa-info-circle"></i> Attendance Detail</h5>
-                        <button type="button" class="close" data-dismiss="modal">&times;</button>
-                    </div>
-                    <div class="modal-body" id="detailContent">
-                        <div class="text-center"><i class="fa fa-spinner fa-spin"></i> Loading...</div>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-
-
     </body>
 
     <script src="${pageContext.request.contextPath}/assets2/js/jquery.min.js"></script>
@@ -643,70 +457,70 @@
     <script src="${pageContext.request.contextPath}/assets2/vendors/switcher/switcher.js"></script>
 
     <script>
-                            var isProcessing = false;
+                                                    var isProcessing = false;
 
-                            $(document).ready(function () {
-                                setTimeout(function () {
-                                    $('.alert').fadeOut('slow');
-                                }, 5000);
-                            });
+                                                    $(document).ready(function () {
+                                                        setTimeout(function () {
+                                                            $('.alert').fadeOut('slow');
+                                                        }, 5000);
+                                                    });
 
-                            function toggleLegend() {
-                                var panel = $('#legendPanel');
-                                if (panel.length === 0) {
-                                    alert('Legend panel not found!');
-                                    return;
-                                }
-                                panel.slideToggle(300);
-                            }
+                                                    function toggleLegend() {
+                                                        var panel = $('#legendPanel');
+                                                        if (panel.length === 0) {
+                                                            alert('Legend panel not found!');
+                                                            return;
+                                                        }
+                                                        panel.slideToggle(300);
+                                                    }
 
-                            function changePageSize(newPageSize) {
-                                if (isProcessing) {
-                                    alert('Please wait until processing is complete');
-                                    return;
-                                }
-                                const form = document.getElementById('filterForm');
-                                if (!form) {
-                                    alert('Error: Form not found');
-                                    return;
-                                }
-                                const pageInput = form.querySelector('input[name="page"]');
-                                if (pageInput) {
-                                    pageInput.value = 1;
-                                }
-                                form.submit();
-                            }
+                                                    function changePageSize(newPageSize) {
+                                                        if (isProcessing) {
+                                                            alert('Please wait until processing is complete');
+                                                            return;
+                                                        }
+                                                        const form = document.getElementById('filterForm');
+                                                        if (!form) {
+                                                            alert('Error: Form not found');
+                                                            return;
+                                                        }
+                                                        const pageInput = form.querySelector('input[name="page"]');
+                                                        if (pageInput) {
+                                                            pageInput.value = 1;
+                                                        }
+                                                        form.submit();
+                                                    }
 
-                            function resetPageBeforeSubmit() {
-                                const form = document.getElementById('filterForm');
-                                if (form) {
-                                    form.querySelector('input[name="page"]').value = 1;
-                                }
-                            }
+                                                    function resetPageBeforeSubmit() {
+                                                        const form = document.getElementById('filterForm');
+                                                        if (form) {
+                                                            form.querySelector('input[name="page"]').value = 1;
+                                                        }
+                                                    }
 
-                            function applyFilter() {
-                                const form = document.getElementById('filterForm');
-                                if (!form)
-                                    return;
-                                form.querySelector('input[name="page"]').value = 1;
-                                form.submit();
-                            }
+                                                    function applyFilter() {
+                                                        const form = document.getElementById('filterForm');
+                                                        if (!form)
+                                                            return;
+                                                        form.querySelector('input[name="page"]').value = 1;
+                                                        form.submit();
+                                                    }
 
-                            function exportAttendance(format) {
-                                var form = $('#filterForm');
-                                if (!form.length) {
-                                    alert('Form not found!');
-                                    return;
-                                }
-                                var params = form.serialize();
-                                var url;
-                                if (format === 'excel') {
-                                    url = 'export-attendance-excel?' + params;
-                                } else if (format === 'pdf') {
-                                    url = 'export-attendance-pdf?' + params;
-                                }
-                                window.location.href = url;
-                            }
+                                                    function exportAttendance(format) {
+                                                        var form = $('#filterForm');
+                                                        if (!form.length) {
+                                                            alert('Form not found!');
+                                                            return;
+                                                        }
+                                                        var params = form.serialize();
+                                                        var url;
+                                                        if (format === 'excel') {
+                                                            url = 'export-attendance-excel?' + params;
+                                                        } else if (format === 'pdf') {
+                                                            url = 'export-attendance-pdf?' + params;
+                                                        }
+                                                        window.location.href = url;
+                                                    }
 
     </script>
 </html>

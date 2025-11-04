@@ -6,6 +6,7 @@ package controller;
 
 import api.EmailUtil;
 import dal.CandidateDAO;
+import dal.InterviewDAO;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
@@ -26,6 +27,7 @@ public class CandidateActionServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         CandidateDAO cDAO = new CandidateDAO();
+        InterviewDAO iDAO = new InterviewDAO();
         HttpSession ses = request.getSession();
         String id = request.getParameter("id");
         String action = request.getParameter("action");

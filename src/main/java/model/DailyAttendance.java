@@ -17,12 +17,13 @@ public class DailyAttendance {
     private int id;
     private Employee employee;
     private Date date;
-    private double workDay;      // DECIMAL(3,2)
+    private double workDay;      
     private Time checkInTime;
     private Time checkOutTime;
     private double otHours;
-    private String status;       // Present, Absent, Holiday, Leave
+    private String status;      
     private boolean isLocked;
+    private String note;
     private Timestamp createdAt;
     private Timestamp updatedAt;
 
@@ -51,6 +52,32 @@ public class DailyAttendance {
         this.checkOutTime = checkOutTime;
         this.otHours = otHours;
         this.status = status;
+    }
+    
+    public DailyAttendance(Employee employee, Date date, double workDay, Time checkInTime, Time checkOutTime, double otHours, String status, String note) {
+        this.employee = employee;
+        this.date = date;
+        this.workDay = workDay;
+        this.checkInTime = checkInTime;
+        this.checkOutTime = checkOutTime;
+        this.otHours = otHours;
+        this.status = status;
+        this.note = note;
+    }
+
+    public DailyAttendance(int id, Employee employee, Date date, double workDay, Time checkInTime, Time checkOutTime, double otHours, String status, boolean isLocked, String note, Timestamp createdAt, Timestamp updatedAt) {
+        this.id = id;
+        this.employee = employee;
+        this.date = date;
+        this.workDay = workDay;
+        this.checkInTime = checkInTime;
+        this.checkOutTime = checkOutTime;
+        this.otHours = otHours;
+        this.status = status;
+        this.isLocked = isLocked;
+        this.note = note;
+        this.createdAt = createdAt;
+        this.updatedAt = updatedAt;
     }
 
     public Employee getEmployee() {
@@ -141,10 +168,17 @@ public class DailyAttendance {
         this.updatedAt = updatedAt;
     }
 
+    public String getNote() {
+        return note;
+    }
+
+    public void setNote(String note) {
+        this.note = note;
+    }
+
     @Override
     public String toString() {
-        return "DailyAttendance{" + "id=" + id + ", employee=" + employee + ", date=" + date + ", workDay=" + workDay + ", checkInTime=" + checkInTime + ", checkOutTime=" + checkOutTime + ", otHours=" + otHours + ", status=" + status + ", isLocked=" + isLocked + ", createdAt=" + createdAt + ", updatedAt=" + updatedAt + '}';
+        return "DailyAttendance{" + "id=" + id + ", employee=" + employee + ", date=" + date + ", workDay=" + workDay + ", checkInTime=" + checkInTime + ", checkOutTime=" + checkOutTime + ", otHours=" + otHours + ", status=" + status + ", isLocked=" + isLocked + ", note=" + note + ", createdAt=" + createdAt + ", updatedAt=" + updatedAt + '}';
     }
-    
     
 }

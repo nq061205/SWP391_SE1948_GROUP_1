@@ -15,32 +15,40 @@ public class Payroll {
     private int payrollId;
     private Employee employee;
     private double totalWorkDay;
-    private double totalWorkHours;
+    private double totalOTHours;
+    private double regularSalary;
+    private double otEarning;
+    private double insuranceBase;
     private double si;
     private double hi;
     private double ui;
+    private double taxIncome;
     private double tax;
-    private double totalSalary;
     private int month;
     private int year;
+    private boolean isPaid;
     private Timestamp createdAt;
     private Timestamp updatedAt;
 
     public Payroll() {
     }
 
-    public Payroll(int payrollId, Employee employee, double totalWorkDay, double totalWorkHours, double si, double hi, double ui, double tax, double totalSalary, int month, int year, Timestamp createdAt, Timestamp updatedAt) {
+    public Payroll(int payrollId, Employee employee, double totalWorkDay, double totalOTHours, double regularSalary, double otEarning, double insuranceBase, double si, double hi, double ui, double taxIncome, double tax, int month, int year, boolean isPaid, Timestamp createdAt, Timestamp updatedAt) {
         this.payrollId = payrollId;
         this.employee = employee;
         this.totalWorkDay = totalWorkDay;
-        this.totalWorkHours = totalWorkHours;
+        this.totalOTHours = totalOTHours;
+        this.regularSalary = regularSalary;
+        this.otEarning = otEarning;
+        this.insuranceBase = insuranceBase;
         this.si = si;
         this.hi = hi;
         this.ui = ui;
+        this.taxIncome = taxIncome;
         this.tax = tax;
-        this.totalSalary = totalSalary;
         this.month = month;
         this.year = year;
+        this.isPaid = isPaid;
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
     }
@@ -53,6 +61,14 @@ public class Payroll {
         this.payrollId = payrollId;
     }
 
+    public Employee getEmployee() {
+        return employee;
+    }
+
+    public void setEmployee(Employee employee) {
+        this.employee = employee;
+    }
+
     public double getTotalWorkDay() {
         return totalWorkDay;
     }
@@ -61,12 +77,36 @@ public class Payroll {
         this.totalWorkDay = totalWorkDay;
     }
 
-    public double getTotalWorkHours() {
-        return totalWorkHours;
+    public double getTotalOTHours() {
+        return totalOTHours;
     }
 
-    public void setTotalWorkHours(double totalWorkHours) {
-        this.totalWorkHours = totalWorkHours;
+    public void setTotalOTHours(double totalOTHours) {
+        this.totalOTHours = totalOTHours;
+    }
+
+    public double getRegularSalary() {
+        return regularSalary;
+    }
+
+    public void setRegularSalary(double regularSalary) {
+        this.regularSalary = regularSalary;
+    }
+
+    public double getOtEarning() {
+        return otEarning;
+    }
+
+    public void setOtEarning(double otEarning) {
+        this.otEarning = otEarning;
+    }
+
+    public double getInsuranceBase() {
+        return insuranceBase;
+    }
+
+    public void setInsuranceBase(double insuranceBase) {
+        this.insuranceBase = insuranceBase;
     }
 
     public double getSi() {
@@ -93,28 +133,20 @@ public class Payroll {
         this.ui = ui;
     }
 
+    public double getTaxIncome() {
+        return taxIncome;
+    }
+
+    public void setTaxIncome(double taxIncome) {
+        this.taxIncome = taxIncome;
+    }
+
     public double getTax() {
         return tax;
     }
 
     public void setTax(double tax) {
         this.tax = tax;
-    }
-
-    public double getTotalSalary() {
-        return totalSalary;
-    }
-
-    public void setTotalSalary(double totalSalary) {
-        this.totalSalary = totalSalary;
-    }
-
-    public Timestamp getUpdatedAt() {
-        return updatedAt;
-    }
-
-    public void setUpdatedAt(Timestamp updateAt) {
-        this.updatedAt = updateAt;
     }
 
     public int getMonth() {
@@ -133,6 +165,14 @@ public class Payroll {
         this.year = year;
     }
 
+    public boolean isPaid() {
+        return isPaid;
+    }
+
+    public void setPaid(boolean isPaid) {
+        this.isPaid = isPaid;
+    }
+
     public Timestamp getCreatedAt() {
         return createdAt;
     }
@@ -141,17 +181,17 @@ public class Payroll {
         this.createdAt = createdAt;
     }
 
-    public Employee getEmployee() {
-        return employee;
+    public Timestamp getUpdatedAt() {
+        return updatedAt;
     }
 
-    public void setEmployee(Employee employee) {
-        this.employee = employee;
+    public void setUpdatedAt(Timestamp updatedAt) {
+        this.updatedAt = updatedAt;
     }
 
     @Override
     public String toString() {
-        return "Payroll{" + "payrollId=" + payrollId + ", employee=" + employee + ", totalWorkDay=" + totalWorkDay + ", totalWorkHours=" + totalWorkHours + ", si=" + si + ", hi=" + hi + ", ui=" + ui + ", tax=" + tax + ", totalSalary=" + totalSalary + ", month=" + month + ", year=" + year + ", createdAt=" + createdAt + ", updatedAt=" + updatedAt + '}';
+        return "Payroll{" + "payrollId=" + payrollId + ", employee=" + employee + ", totalWorkDay=" + totalWorkDay + ", totalOTHours=" + totalOTHours + ", regularSalary=" + regularSalary + ", otEarning=" + otEarning + ", insuranceBase=" + insuranceBase + ", si=" + si + ", hi=" + hi + ", ui=" + ui + ", taxIncome=" + taxIncome + ", tax=" + tax + ", month=" + month + ", year=" + year + ", isPaid=" + isPaid + ", createdAt=" + createdAt + ", updatedAt=" + updatedAt + '}';
     }
-    
+
 }

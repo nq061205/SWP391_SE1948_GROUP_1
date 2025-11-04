@@ -1,0 +1,89 @@
+package dal;
+
+import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
+import model.Interview;
+import model.Candidate;
+import model.Employee;
+
+public class InterviewDAO {
+
+    private final CandidateDAO cDAO = new CandidateDAO();
+    private final EmployeeDAO eDAO = new EmployeeDAO();
+
+    public void insertToInterview(Interview interview) {
+        String sql = "INSERT INTO Interview (candidate_id, created_by, interviewed_by, date, time, result) "
+                + "VALUES (?, ?, ?, ?, ?, ?)";
+
+        try (Connection conn = DBContext.getConnection(); PreparedStatement stm = conn.prepareStatement(sql)) {
+
+            stm.setInt(1, interview.getCandidate().getCandidateId());
+            stm.setInt(2, interview.getCreatedBy().getEmpId());
+            stm.setInt(3, interview.getInterviewedBy().getEmpId());
+            stm.setDate(4, interview.getDate());
+            stm.setTime(5, interview.getTime());
+            stm.setString(6, interview.getResult());
+
+            stm.executeUpdate();
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+    }
+
+    public List<Interview> getAllInterviews() {
+        List<Interview> list = new ArrayList<>();
+        String sql = "SELECT i.*, "
+                + "c.candidate_id, c.name AS candidate_name, c.email AS candidate_email, c.phone AS candidate_phone, "
+                + "e1.emp_id AS created_emp_id, e1.fullname AS created_name, "
+                + "e2.emp_id AS interviewed_emp_id, e2.fullname AS interviewed_name "
+                + "FROM Interview i "
+                + "LEFT JOIN Candidate c ON i.candidate_id = c.candidate_id "
+                + "LEFT JOIN Employee e1 ON i.created_by = e1.emp_id "
+                + "LEFT JOIN Employee e2 ON i.interviewed_by = e2.emp_id";
+
+        try (Connection conn = DBContext.getConnection(); PreparedStatement stm = conn.prepareStatement(sql); ResultSet rs = stm.executeQuery()) {
+
+            while (rs.next()) {
+                Interview interview = new Interview();
+
+                interview.setInterviewId(rs.getInt("interview_id"));
+                interview.setDate(rs.getDate("date"));
+                interview.setTime(rs.getTime("time"));
+                interview.setResult(rs.getString("result"));
+                interview.setCreatedAt(rs.getTimestamp("created_at"));
+                interview.setUpdatedAt(rs.getTimestamp("updated_at"));
+
+                Candidate candidate = new Candidate();
+                candidate.setCandidateId(rs.getInt("candidate_id"));
+                candidate.setName(rs.getString("candidate_name"));
+                candidate.setEmail(rs.getString("candidate_email"));
+                candidate.setPhone(rs.getString("candidate_phone"));
+                interview.setCandidate(candidate);
+
+                Employee createdBy = new Employee();
+                createdBy.setEmpId(rs.getInt("created_emp_id"));
+                createdBy.setFullname(rs.getString("created_name"));
+                interview.setCreatedBy(createdBy);
+
+                Employee interviewedBy = new Employee();
+                interviewedBy.setEmpId(rs.getInt("interviewed_emp_id"));
+                interviewedBy.setFullname(rs.getString("interviewed_name"));
+                interview.setInterviewedBy(interviewedBy);
+
+                list.add(interview);
+            }
+
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+        return list;
+    }
+    
+    public static void main(String[] args) {
+        InterviewDAO d = new InterviewDAO();
+        for (Interview arg : d.getAllInterviews()) {
+            System.out.println(arg);
+        }
+    }
+}
