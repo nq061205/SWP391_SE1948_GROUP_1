@@ -123,9 +123,7 @@ public class DailyAttendanceDAO extends DBContext {
         List<DailyAttendance> list = new ArrayList<>();
         String sql = BASE_SELECT_SQL;
 
-        try (Connection conn = DBContext.getConnection();
-             PreparedStatement st = conn.prepareStatement(sql); 
-             ResultSet rs = st.executeQuery()) {
+        try (Connection conn = DBContext.getConnection(); PreparedStatement st = conn.prepareStatement(sql); ResultSet rs = st.executeQuery()) {
 
             while (rs.next()) {
                 list.add(mapResultSetToDailyAttendance(rs));
@@ -190,8 +188,7 @@ public class DailyAttendanceDAO extends DBContext {
         params.add(pageSize);
         params.add(offset);
 
-        try (Connection conn = DBContext.getConnection();
-             PreparedStatement st = conn.prepareStatement(sql)) {
+        try (Connection conn = DBContext.getConnection(); PreparedStatement st = conn.prepareStatement(sql)) {
             int idx = 1;
             for (Object param : params) {
                 st.setObject(idx++, param);
@@ -243,12 +240,38 @@ public class DailyAttendanceDAO extends DBContext {
         return list;
     }
 
+    public DailyAttendance getDailyAttendentByTime(int empId, int day, int month, int year) {
+        DailyAttendance attendance = null;
+
+        String sql = BASE_SELECT_SQL
+                + " WHERE ad.emp_id = ? "
+                + " AND DAY(ad.date) = ? "
+                + " AND MONTH(ad.date) = ? "
+                + " AND YEAR(ad.date) = ?";
+
+        try (Connection conn = DBContext.getConnection(); PreparedStatement st = conn.prepareStatement(sql)) {
+
+            st.setInt(1, empId);
+            st.setInt(2, day);
+            st.setInt(3, month);
+            st.setInt(4, year);
+
+            try (ResultSet rs = st.executeQuery()) {
+                if (rs.next()) {
+                    attendance = mapResultSetToDailyAttendance(rs);
+                }
+            }
+
+        } catch (SQLException e) {
+        }
+
+        return attendance;
+    }
+
     public static void main(String[] args) {
         DailyAttendanceDAO dailyDAO = new DailyAttendanceDAO();
         EmployeeDAO empDAO = new EmployeeDAO();
-        List<Employee> employees = empDAO.getEmployees(0, 5, null, null);
-        List<Integer> empIds = employees.stream().map(e -> e.getEmpId()).collect(Collectors.toList());
-        List<DailyAttendance> list = dailyDAO.getAttendanceByEmpIds(empIds, 10, 2025);
-        System.out.println(list);
+        System.out.println(dailyDAO.getDailyAttendentByTime(2, 1, 10, 2025));
     }
+
 }

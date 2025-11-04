@@ -325,8 +325,7 @@ public class LeaveRequestDAO extends DBContext {
 
     public static void main(String[] args) {
         LeaveRequestDAO dao = new LeaveRequestDAO();
-        List<LeaveRequest> l = dao.getApprovedLeaves();
-        System.out.println(l.size());
+        System.out.println(dao.composeLeaveRequest(1, "Sick", "a", Date.valueOf("2025-12-12"), Date.valueOf("2025-12-12"), 2));
     }
 
 }
