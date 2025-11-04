@@ -5,6 +5,7 @@
 
 package controller;
 
+import dal.PayrollDAO;
 import jakarta.mail.Session;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -14,6 +15,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import model.Employee;
+import model.Payroll;
 
 /**
  *
@@ -27,7 +29,13 @@ public class PayrollReportDetailServlet extends HttpServlet {
     throws ServletException, IOException {
         HttpSession session = request.getSession();
         Employee emp = (Employee)session.getAttribute("user");
-        
+        if(emp == null){
+            request.getRequestDispatcher("Views/login.jsp");
+            return;
+        }
+        PayrollDAO payrollDAO = new PayrollDAO();
+        Payroll payroll = payrollDAO.getPayrollDeatailByPayrollId(1);
+        request.setAttribute("payroll", payroll);
         request.getRequestDispatcher("Views/payrollreportdetail.jsp").forward(request, response);
     } 
 
