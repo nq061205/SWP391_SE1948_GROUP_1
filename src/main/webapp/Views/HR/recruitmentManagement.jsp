@@ -25,6 +25,9 @@
         <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/assets2/css/style.css">
         <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/assets2/css/dashboard.css">
         <link class="skin" rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/assets2/css/color/color-1.css">
+        
+        <!-- Summernote CSS -->
+        <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/assets2/vendors/summernote/summernote.css">
     </head>
 
     <body class="ttr-opened-sidebar ttr-pinned-sidebar">
@@ -198,6 +201,9 @@
                                                     <c:if test="${not empty currentPage}">
                                                         <input type="hidden" name="page" value="${currentPage}">
                                                     </c:if>
+                                                    <c:if test="${not empty notifStatusFilter}">
+                                                        <input type="hidden" name="notifStatus" value="${notifStatusFilter}">
+                                                    </c:if>
                                                     <div class="form-group mr-2">
                                                         <label for="notifSearch" class="mr-2">Search:</label>
                                                         <input type="text" class="form-control" id="notifSearch" name="notifSearch" 
@@ -207,7 +213,7 @@
                                                         <i class="fa fa-search"></i> Search
                                                     </button>
                                                     <c:if test="${not empty notifSearchKeyword}">
-                                                        <a href="${pageContext.request.contextPath}/hrrecruitment?action=list&notifPageSize=${notifPageSize}${not empty searchKeyword ? '&search='.concat(searchKeyword) : ''}${not empty pageSize ? '&pageSize='.concat(pageSize) : ''}${not empty currentPage ? '&page='.concat(currentPage) : ''}" class="btn btn-secondary ml-2">
+                                                        <a href="${pageContext.request.contextPath}/hrrecruitment?action=list&notifPageSize=${notifPageSize}${not empty searchKeyword ? '&search='.concat(searchKeyword) : ''}${not empty pageSize ? '&pageSize='.concat(pageSize) : ''}${not empty currentPage ? '&page='.concat(currentPage) : ''}${not empty notifStatusFilter ? '&notifStatus='.concat(notifStatusFilter) : ''}" class="btn btn-secondary ml-2">
                                                             <i class="fa fa-times"></i> Clear
                                                         </a>
                                                     </c:if>
@@ -228,6 +234,13 @@
                                                     <c:if test="${not empty currentPage}">
                                                         <input type="hidden" name="page" value="${currentPage}">
                                                     </c:if>
+                                                    <label for="notifStatusFilter" class="mr-2" style="white-space: nowrap;">Filter Status:</label>
+                                                    <select class="form-control mr-2" id="notifStatusFilter" name="notifStatus" style="width: 120px; height: 38px; flex-shrink: 0;">
+                                                        <option value="" ${empty notifStatusFilter ? 'selected' : ''}>All</option>
+                                                        <option value="New" ${notifStatusFilter == 'New' ? 'selected' : ''}>New</option>
+                                                        <option value="Waiting" ${notifStatusFilter == 'Waiting' ? 'selected' : ''}>Waiting</option>
+                                                        <option value="Rejected" ${notifStatusFilter == 'Rejected' ? 'selected' : ''}>Rejected</option>
+                                                    </select>
                                                     <select class="form-control" id="notifPageSizeSelect" name="notifPageSize" style="width: 70px; height: 38px; margin-right: 8px; flex-shrink: 0;">
                                                         <option value="5" ${notifPageSize == 5 ? 'selected' : ''}>5</option>
                                                         <option value="10" ${notifPageSize == 10 ? 'selected' : ''}>10</option>
@@ -235,7 +248,7 @@
                                                         <option value="50" ${notifPageSize == 50 ? 'selected' : ''}>50</option>
                                                     </select>
                                                     <button type="submit" class="btn btn-primary" style="height: 38px; padding: 0.375rem 0.75rem; margin-right: 8px; flex-shrink: 0; white-space: nowrap;">
-                                                        <i class="fa fa-check"></i> Show
+                                                        <i class="fa fa-check"></i> Apply
                                                     </button>
                                                     <span style="white-space: nowrap; height: 38px; display: flex; align-items: center; flex-shrink: 0;">items per page</span>
                                                 </form>
@@ -248,7 +261,7 @@
                                                         <th width="60">Index</th>
                                                         <th>Title</th>
                                                         <th width="100">Status</th>
-                                                        <th width="120">Actions</th>
+                                                        <th width="180">Actions</th>
                                                     </tr>
                                                 </thead>
                                                 <tbody>
@@ -269,8 +282,11 @@
                                                                     </td>
                                                                     <td class="text-center">
                                                                         <c:choose>
-                                                                            <c:when test="${post.status == 'Pending'}">
-                                                                                <span class="badge badge-warning">Pending</span>
+                                                                            <c:when test="${post.status == 'New'}">
+                                                                                <span class="badge badge-info">New</span>
+                                                                            </c:when>
+                                                                            <c:when test="${post.status == 'Waiting'}">
+                                                                                <span class="badge badge-warning">Waiting</span>
                                                                             </c:when>
                                                                             <c:when test="${post.status == 'Rejected'}">
                                                                                 <span class="badge badge-danger">Rejected</span>
@@ -278,20 +294,40 @@
                                                                         </c:choose>
                                                                     </td>
                                                                     <td class="text-center">
-                                                                        <c:choose>
-                                                                            <c:when test="${post.status == 'Pending'}">
-                                                                                <a href="${pageContext.request.contextPath}/hrrecruitment?action=view&postId=${post.postId}" 
-                                                                                   class="btn btn-sm btn-info">
-                                                                                    <i class="fa fa-eye"></i> View Details
-                                                                                </a>
-                                                                            </c:when>
-                                                                            <c:when test="${post.status == 'Rejected'}">
-                                                                                <a href="${pageContext.request.contextPath}/hrrecruitment?action=edit&postId=${post.postId}" 
-                                                                                   class="btn btn-sm btn-warning">
-                                                                                    <i class="fa fa-edit"></i> Update
-                                                                                </a>
-                                                                            </c:when>
-                                                                        </c:choose>
+                                                                        <div style="display: flex; justify-content: center; align-items: center; gap: 5px; flex-wrap: wrap;">
+                                                                            <c:choose>
+                                                                                <c:when test="${post.status == 'New'}">
+                                                                                    <a href="${pageContext.request.contextPath}/hrrecruitment?action=edit&postId=${post.postId}" 
+                                                                                       class="btn btn-sm btn-warning" title="Update post"
+                                                                                       style="min-width: 80px;">
+                                                                                        <i class="fa fa-edit"></i> Update
+                                                                                    </a>
+                                                                                    <form action="${pageContext.request.contextPath}/hrrecruitment" method="post" style="display:inline; margin: 0;">
+                                                                                        <input type="hidden" name="action" value="send">
+                                                                                        <input type="hidden" name="postId" value="${post.postId}">
+                                                                                        <button type="submit" class="btn btn-sm btn-success" title="Send for approval"
+                                                                                                style="min-width: 80px;"
+                                                                                                onclick="return confirm('Are you sure you want to send this post for approval?');">
+                                                                                            <i class="fa fa-paper-plane"></i> Send
+                                                                                        </button>
+                                                                                    </form>
+                                                                                </c:when>
+                                                                                <c:when test="${post.status == 'Waiting'}">
+                                                                                    <a href="${pageContext.request.contextPath}/hrrecruitment?action=view&postId=${post.postId}" 
+                                                                                       class="btn btn-sm btn-info" title="View details"
+                                                                                       style="min-width: 110px;">
+                                                                                        <i class="fa fa-eye"></i> View Detail
+                                                                                    </a>
+                                                                                </c:when>
+                                                                                <c:when test="${post.status == 'Rejected'}">
+                                                                                    <a href="${pageContext.request.contextPath}/hrrecruitment?action=edit&postId=${post.postId}" 
+                                                                                       class="btn btn-sm btn-warning" title="Update rejected post"
+                                                                                       style="min-width: 80px;">
+                                                                                        <i class="fa fa-edit"></i> Update
+                                                                                    </a>
+                                                                                </c:when>
+                                                                            </c:choose>
+                                                                        </div>
                                                                     </td>
                                                                 </tr>
                                                             </c:forEach>
@@ -330,10 +366,10 @@
                                                     <ul class="pagination justify-content-end">
                                                         <c:if test="${notifCurrentPage > 1}">
                                                             <li class="page-item">
-                                                                <a class="page-link" href="${pageContext.request.contextPath}/hrrecruitment?action=list&notifPage=1&notifPageSize=${notifPageSize}${not empty notifSearchKeyword ? '&notifSearch='.concat(notifSearchKeyword) : ''}${not empty searchKeyword ? '&search='.concat(searchKeyword) : ''}${not empty pageSize ? '&pageSize='.concat(pageSize) : ''}">First</a>
+                                                                <a class="page-link" href="${pageContext.request.contextPath}/hrrecruitment?action=list&notifPage=1&notifPageSize=${notifPageSize}${not empty notifSearchKeyword ? '&notifSearch='.concat(notifSearchKeyword) : ''}${not empty notifStatusFilter ? '&notifStatus='.concat(notifStatusFilter) : ''}${not empty searchKeyword ? '&search='.concat(searchKeyword) : ''}${not empty pageSize ? '&pageSize='.concat(pageSize) : ''}">First</a>
                                                             </li>
                                                             <li class="page-item">
-                                                                <a class="page-link" href="${pageContext.request.contextPath}/hrrecruitment?action=list&notifPage=${notifCurrentPage - 1}&notifPageSize=${notifPageSize}${not empty notifSearchKeyword ? '&notifSearch='.concat(notifSearchKeyword) : ''}${not empty searchKeyword ? '&search='.concat(searchKeyword) : ''}${not empty pageSize ? '&pageSize='.concat(pageSize) : ''}">Previous</a>
+                                                                <a class="page-link" href="${pageContext.request.contextPath}/hrrecruitment?action=list&notifPage=${notifCurrentPage - 1}&notifPageSize=${notifPageSize}${not empty notifSearchKeyword ? '&notifSearch='.concat(notifSearchKeyword) : ''}${not empty notifStatusFilter ? '&notifStatus='.concat(notifStatusFilter) : ''}${not empty searchKeyword ? '&search='.concat(searchKeyword) : ''}${not empty pageSize ? '&pageSize='.concat(pageSize) : ''}">Previous</a>
                                                             </li>
                                                         </c:if>
                                                         
@@ -341,16 +377,16 @@
                                                                    end="${notifCurrentPage + 2 > notifTotalPages ? notifTotalPages : notifCurrentPage + 2}" 
                                                                    var="i">
                                                             <li class="page-item ${i == notifCurrentPage ? 'active' : ''}">
-                                                                <a class="page-link" href="${pageContext.request.contextPath}/hrrecruitment?action=list&notifPage=${i}&notifPageSize=${notifPageSize}${not empty notifSearchKeyword ? '&notifSearch='.concat(notifSearchKeyword) : ''}${not empty searchKeyword ? '&search='.concat(searchKeyword) : ''}${not empty pageSize ? '&pageSize='.concat(pageSize) : ''}">${i}</a>
+                                                                <a class="page-link" href="${pageContext.request.contextPath}/hrrecruitment?action=list&notifPage=${i}&notifPageSize=${notifPageSize}${not empty notifSearchKeyword ? '&notifSearch='.concat(notifSearchKeyword) : ''}${not empty notifStatusFilter ? '&notifStatus='.concat(notifStatusFilter) : ''}${not empty searchKeyword ? '&search='.concat(searchKeyword) : ''}${not empty pageSize ? '&pageSize='.concat(pageSize) : ''}">${i}</a>
                                                             </li>
                                                         </c:forEach>
                                                         
                                                         <c:if test="${notifCurrentPage < notifTotalPages}">
                                                             <li class="page-item">
-                                                                <a class="page-link" href="${pageContext.request.contextPath}/hrrecruitment?action=list&notifPage=${notifCurrentPage + 1}&notifPageSize=${notifPageSize}${not empty notifSearchKeyword ? '&notifSearch='.concat(notifSearchKeyword) : ''}${not empty searchKeyword ? '&search='.concat(searchKeyword) : ''}${not empty pageSize ? '&pageSize='.concat(pageSize) : ''}">Next</a>
+                                                                <a class="page-link" href="${pageContext.request.contextPath}/hrrecruitment?action=list&notifPage=${notifCurrentPage + 1}&notifPageSize=${notifPageSize}${not empty notifSearchKeyword ? '&notifSearch='.concat(notifSearchKeyword) : ''}${not empty notifStatusFilter ? '&notifStatus='.concat(notifStatusFilter) : ''}${not empty searchKeyword ? '&search='.concat(searchKeyword) : ''}${not empty pageSize ? '&pageSize='.concat(pageSize) : ''}">Next</a>
                                                             </li>
                                                             <li class="page-item">
-                                                                <a class="page-link" href="${pageContext.request.contextPath}/hrrecruitment?action=list&notifPage=${notifTotalPages}&notifPageSize=${notifPageSize}${not empty notifSearchKeyword ? '&notifSearch='.concat(notifSearchKeyword) : ''}${not empty searchKeyword ? '&search='.concat(searchKeyword) : ''}${not empty pageSize ? '&pageSize='.concat(pageSize) : ''}">Last</a>
+                                                                <a class="page-link" href="${pageContext.request.contextPath}/hrrecruitment?action=list&notifPage=${notifTotalPages}&notifPageSize=${notifPageSize}${not empty notifSearchKeyword ? '&notifSearch='.concat(notifSearchKeyword) : ''}${not empty notifStatusFilter ? '&notifStatus='.concat(notifStatusFilter) : ''}${not empty searchKeyword ? '&search='.concat(searchKeyword) : ''}${not empty pageSize ? '&pageSize='.concat(pageSize) : ''}">Last</a>
                                                             </li>
                                                         </c:if>
                                                     </ul>
@@ -598,5 +634,100 @@
         <script src="${pageContext.request.contextPath}/assets2/js/functions.js"></script>
         <script src="${pageContext.request.contextPath}/assets2/vendors/chart/chart.min.js"></script>
         <script src="${pageContext.request.contextPath}/assets2/js/admin.js"></script>
+        
+        <!-- Summernote JS -->
+        <script src="${pageContext.request.contextPath}/assets2/vendors/summernote/summernote.js"></script>
+        <script>
+            $(document).ready(function() {
+                // Initialize Summernote for create form
+                $('#content').summernote({
+                    height: 300,
+                    placeholder: 'Enter detailed job description, requirements, and benefits...',
+                    toolbar: [
+                        ['style', ['style']],
+                        ['font', ['bold', 'italic', 'underline', 'clear']],
+                        ['fontname', ['fontname']],
+                        ['fontsize', ['fontsize']],
+                        ['color', ['color']],
+                        ['para', ['ul', 'ol', 'paragraph']],
+                        ['height', ['height']],
+                        ['table', ['table']],
+                        ['insert', ['link', 'picture']],
+                        ['view', ['fullscreen', 'codeview', 'help']]
+                    ],
+                    fontNames: ['Arial', 'Arial Black', 'Comic Sans MS', 'Courier New', 'Helvetica', 'Impact', 'Tahoma', 'Times New Roman', 'Verdana'],
+                    fontSizes: ['8', '9', '10', '11', '12', '14', '16', '18', '20', '24', '36', '48'],
+                    callbacks: {
+                        onImageUpload: function(files) {
+                            // Handle image upload if needed
+                            for (let i = 0; i < files.length; i++) {
+                                let reader = new FileReader();
+                                reader.onloadend = function() {
+                                    $('#content').summernote('insertImage', reader.result);
+                                }
+                                reader.readAsDataURL(files[i]);
+                            }
+                        }
+                    }
+                });
+                
+                // Initialize Summernote for edit form
+                $('#editContent').summernote({
+                    height: 300,
+                    placeholder: 'Enter detailed job description, requirements, and benefits...',
+                    toolbar: [
+                        ['style', ['style']],
+                        ['font', ['bold', 'italic', 'underline', 'clear']],
+                        ['fontname', ['fontname']],
+                        ['fontsize', ['fontsize']],
+                        ['color', ['color']],
+                        ['para', ['ul', 'ol', 'paragraph']],
+                        ['height', ['height']],
+                        ['table', ['table']],
+                        ['insert', ['link', 'picture']],
+                        ['view', ['fullscreen', 'codeview', 'help']]
+                    ],
+                    fontNames: ['Arial', 'Arial Black', 'Comic Sans MS', 'Courier New', 'Helvetica', 'Impact', 'Tahoma', 'Times New Roman', 'Verdana'],
+                    fontSizes: ['8', '9', '10', '11', '12', '14', '16', '18', '20', '24', '36', '48'],
+                    callbacks: {
+                        onImageUpload: function(files) {
+                            // Handle image upload
+                            for (let i = 0; i < files.length; i++) {
+                                let reader = new FileReader();
+                                reader.onloadend = function() {
+                                    $('#editContent').summernote('insertImage', reader.result);
+                                }
+                                reader.readAsDataURL(files[i]);
+                            }
+                        }
+                    }
+                });
+                
+                // Form validation to ensure Summernote content is not empty
+                $('#createPostForm').on('submit', function(e) {
+                    var content = $('#content').summernote('code');
+                    var text = $('<div>').html(content).text().trim();
+                    
+                    if (text === '' || content === '<p><br></p>') {
+                        e.preventDefault();
+                        alert('Please enter job description');
+                        $('#content').summernote('focus');
+                        return false;
+                    }
+                });
+                
+                $('#updatePostForm').on('submit', function(e) {
+                    var content = $('#editContent').summernote('code');
+                    var text = $('<div>').html(content).text().trim();
+                    
+                    if (text === '' || content === '<p><br></p>') {
+                        e.preventDefault();
+                        alert('Please enter job description');
+                        $('#editContent').summernote('focus');
+                        return false;
+                    }
+                });
+            });
+        </script>
     </body>
 </html>

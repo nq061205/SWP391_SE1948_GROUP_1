@@ -45,6 +45,9 @@ public class HRRecruitmentServlet extends HttpServlet {
             case "update":
                 updatePost(request, response);
                 break;
+            case "send":
+                sendPost(request, response);
+                break;
             default:
                 showApprovedPostsList(request, response);
                 break;
@@ -74,6 +77,7 @@ public class HRRecruitmentServlet extends HttpServlet {
             String notifPageStr = request.getParameter("notifPage");
             String notifPageSizeStr = request.getParameter("notifPageSize");
             String notifSearchKeyword = request.getParameter("notifSearch");
+            String notifStatusFilter = request.getParameter("notifStatus");
             
             int currentPage = 1;
             int pageSize = 10;
@@ -146,6 +150,17 @@ public class HRRecruitmentServlet extends HttpServlet {
                 }
             }
             
+            // Apply status filter
+            if (notifStatusFilter != null && !notifStatusFilter.trim().isEmpty()) {
+                List<RecruitmentPost> statusFiltered = new java.util.ArrayList<>();
+                for (RecruitmentPost post : filteredPendingAndRejected) {
+                    if (post.getStatus().equalsIgnoreCase(notifStatusFilter.trim())) {
+                        statusFiltered.add(post);
+                    }
+                }
+                filteredPendingAndRejected = statusFiltered;
+            }
+            
             int totalPosts = (filteredApprovedPosts != null) ? filteredApprovedPosts.size() : 0;
             int totalPages = (int) Math.ceil((double) totalPosts / pageSize);
             if (totalPages < 1) totalPages = 1;
@@ -188,6 +203,7 @@ public class HRRecruitmentServlet extends HttpServlet {
             request.setAttribute("notifTotalPages", totalNotifPages);
             request.setAttribute("notifPageSize", notifPageSize);
             request.setAttribute("notifSearchKeyword", notifSearchKeyword != null ? notifSearchKeyword : "");
+            request.setAttribute("notifStatusFilter", notifStatusFilter != null ? notifStatusFilter : "");
             request.setAttribute("hasApprovedPosts", hasApprovedPosts);
             request.setAttribute("hasPendingOrRejected", hasPendingOrRejected);
             request.setAttribute("hasDepartments", hasDepartments);
@@ -283,11 +299,10 @@ public class HRRecruitmentServlet extends HttpServlet {
             }
             
             int createdBy = 1;
-            int approvedBy = 2;
-            boolean success = recruitmentPostDAO.createPost(title.trim(), content.trim(), depId.trim(), createdBy, approvedBy);
+            boolean success = recruitmentPostDAO.createPost(title.trim(), content.trim(), depId.trim(), createdBy);
             
             if (success) {
-                request.getSession().setAttribute("successMessage", "Post created successfully! It's now pending approval.");
+                request.getSession().setAttribute("successMessage", "Post created successfully! Status is now 'New'.");
             } else {
                 request.getSession().setAttribute("errorMessage", "Failed to create post. Please try again.");
             }
@@ -310,7 +325,7 @@ public class HRRecruitmentServlet extends HttpServlet {
                 int postId = Integer.parseInt(postIdStr.trim());
                 RecruitmentPost post = recruitmentPostDAO.getPostById(postId);
                 
-                if (post != null && "Rejected".equals(post.getStatus())) {
+                if (post != null && ("Rejected".equals(post.getStatus()) || "New".equals(post.getStatus()))) {
                     List<Department> departments = recruitmentPostDAO.getDepartments();
                     List<RecruitmentPost> approvedPosts = recruitmentPostDAO.getApprovedPosts();
                     List<RecruitmentPost> pendingAndRejectedPosts = recruitmentPostDAO.getPendingAndRejectedPosts();
@@ -329,10 +344,10 @@ public class HRRecruitmentServlet extends HttpServlet {
                     request.setAttribute("hasPendingOrRejected", hasPendingOrRejected);
                     request.setAttribute("hasDepartments", hasDepartments);
                     request.setAttribute("currentPage", "Recruitment Management");
-                    request.setAttribute("pageTitle", "Edit Rejected Post");
+                    request.setAttribute("pageTitle", "Edit Post");
                     request.getRequestDispatcher("/Views/HR/recruitmentManagement.jsp").forward(request, response);
                 } else {
-                    request.setAttribute("errorMessage", "Post not found or not in rejected status.");
+                    request.setAttribute("errorMessage", "Post not found or cannot be edited.");
                     showApprovedPostsList(request, response);
                 }
             } else {
@@ -389,9 +404,9 @@ public class HRRecruitmentServlet extends HttpServlet {
             boolean success = recruitmentPostDAO.updatePost(postId, title.trim(), content.trim(), depId.trim());
             
             if (success) {
-                request.getSession().setAttribute("successMessage", "Post updated successfully! Status changed to new.");
+                request.getSession().setAttribute("successMessage", "Post updated successfully! Status is now 'New'.");
             } else {
-                request.getSession().setAttribute("errorMessage", "Failed to update post. Please try again.");
+                request.getSession().setAttribute("errorMessage", "Failed to update post. Please ensure the post status is 'New' or 'Rejected'.");
             }
             
             response.sendRedirect(request.getContextPath() + "/hrrecruitment");
@@ -404,6 +419,40 @@ public class HRRecruitmentServlet extends HttpServlet {
             System.err.println("Error in updatePost: " + e.getMessage());
             e.printStackTrace();
             request.getSession().setAttribute("errorMessage", "Unable to update post. Please try again.");
+            response.sendRedirect(request.getContextPath() + "/hrrecruitment");
+        }
+    }
+
+    private void sendPost(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        try {
+            String postIdStr = request.getParameter("postId");
+            
+            if (postIdStr == null || postIdStr.trim().isEmpty()) {
+                request.getSession().setAttribute("errorMessage", "Post ID is required.");
+                response.sendRedirect(request.getContextPath() + "/hrrecruitment");
+                return;
+            }
+            
+            int postId = Integer.parseInt(postIdStr.trim());
+            boolean success = recruitmentPostDAO.sendPost(postId);
+            
+            if (success) {
+                request.getSession().setAttribute("successMessage", "Post sent successfully! Status changed to 'Waiting' for approval.");
+            } else {
+                request.getSession().setAttribute("errorMessage", "Failed to send post. Please ensure the post status is 'New'.");
+            }
+            
+            response.sendRedirect(request.getContextPath() + "/hrrecruitment");
+            
+        } catch (NumberFormatException e) {
+            System.err.println("Invalid post ID format: " + e.getMessage());
+            request.getSession().setAttribute("errorMessage", "Invalid post ID format.");
+            response.sendRedirect(request.getContextPath() + "/hrrecruitment");
+        } catch (Exception e) {
+            System.err.println("Error in sendPost: " + e.getMessage());
+            e.printStackTrace();
+            request.getSession().setAttribute("errorMessage", "Unable to send post. Please try again.");
             response.sendRedirect(request.getContextPath() + "/hrrecruitment");
         }
     }
