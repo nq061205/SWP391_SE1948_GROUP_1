@@ -35,37 +35,31 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
 
         <!-- All PLUGINS CSS ============================================= -->
+        <link rel="icon" href="${pageContext.request.contextPath}/assets2/images/favicon.ico" type="image/x-icon" />
+        <link rel="stylesheet" href="${pageContext.request.contextPath}/assets2/css/assets.css">
+        <link rel="stylesheet" href="${pageContext.request.contextPath}/assets2/css/style.css">
+        <link rel="stylesheet" href="${pageContext.request.contextPath}/assets2/css/dashboard.css">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
         <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/assets2/css/assets.css">
         <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/assets2/vendors/calendar/fullcalendar.css">
-
-        <!-- TYPOGRAPHY ============================================= -->
         <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/assets2/css/typography.css">
-
-        <!-- SHORTCODES ============================================= -->
         <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/assets2/css/shortcodes/shortcodes.css">
-
-        <!-- STYLESHEETS ============================================= -->
         <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/assets2/css/style.css">
         <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/assets2/css/dashboard.css">
         <link class="skin" rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/assets2/css/color/color-1.css">
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 
     </head>
 
     <body class="ttr-opened-sidebar ttr-pinned-sidebar">
-
-        <!-- HEADER + NAVBAR -->
         <%@ include file="CommonItems/Header/dashboardHeader.jsp" %>
         <%@ include file="CommonItems/Navbar/empNavbar.jsp" %>
-        <input type="hidden" name="typeApplication" value="leaverequest" />
         <main class="ttr-wrapper">
             <div class="container-fluid">
                 <div class="db-breadcrumb">
                     <h4 class="breadcrumb-title">Department Listing</h4>
                     <ul class="db-breadcrumb-list">
                         <li><a href="${pageContext.request.contextPath}/Views/Admin/adminDashboard.jsp"><i class="fa fa-home"></i>Home</a></li>
-                        <li><a href="${pageContext.request.contextPath}/departmentlistservlet">Department list</a></li>
+                        <li><a href="${pageContext.request.contextPath}/departmentlist">Department list</a></li>
                     </ul>
                 </div>
                 <button class="btn btn-primary mb-3" data-bs-toggle="modal" data-bs-target="#addModal">
@@ -75,7 +69,7 @@
                     <div class="modal-dialog">
                         <div class="modal-content">
 
-                            <form action="departmentlistservlet" method="post">
+                            <form action="departmentlist" method="post">
                                 <div class="modal-header">
                                     <h5 class="modal-title">Add New Department</h5>
                                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
@@ -101,11 +95,12 @@
                         </div>
                     </div>
                 </div>
-                <div class="mail-box-list" style="overflow-x: scroll;">
-                    <table class="table table-bordered table-hover">
-                        <thead style="background-color: #f5f5f5;">
+                <div class="table-responsive" style="overflow-x:auto;">
+                    <table class="table table-striped table-bordered table-hover align-middle text-center" 
+                           style="table-layout: fixed; width: 100%; border-collapse: collapse;">
+                        <thead class="thead-dark">
                             <tr style="text-align: center">
-                                <th>ID</th>
+                                <th>No</th>
                                 <th>DepartmentID</th>
                                 <th>Department Name</th>
                                 <th>Description</th>
@@ -113,41 +108,20 @@
                             </tr>                                 
                         </thead>
                         <tbody>
-
                             <c:forEach var="el" items="${sessionScope.deptList}" varStatus ="loop">
                                 <tr style="text-align:center">
-                                    <c:choose>
-                                        <c:when test="${editDept != null && editDept.depId eq el.depId}">
-                                    <form action="${pageContext.request.contextPath}/departmentlistservlet" method="post">
-                                        <td>${loop.index+1}</td>
-                                        <td><input type="hidden" name="depId" value="${el.depId}">${el.depId}</td>
-                                        <td>
-                                            <input type="text" name="depName" value="${el.depName}" required />
-                                        </td>
-                                        <td>
-                                            <input type="text" name="description" value="${el.description}" required />
-                                        </td>
-                                        <td>
-                                            <button type="submit" name="action" value="save" class="btn btn-success btn-sm">Save</button>
-                                            <a href="${pageContext.request.contextPath}/departmentlistservlet" class="btn btn-secondary btn-sm">Cancel</a>
-                                        </td>
-                                    </form>
-                                </c:when>
-                                <c:otherwise>
                                     <td>${loop.index+1}</td>
                                     <td>${el.depId}</td>
                                     <td>${el.depName}</td>
                                     <td>${el.description}</td>                                           
                                     <td>
                                         <div style="display: flex;gap: 30px">
-                                            <a style="width: 50%" href="${pageContext.request.contextPath}/departmentlistservlet?type=edit&depId=${el.depId}" class="btn btn-sm btn-primary">Edit</a>
-                                            <a style="width:50%"href="${pageContext.request.contextPath}/accountlist?deptId=${el.depId}" class="btn btn-sm btn-primary">View</a>
+                                            <a style="width: 50%" href="${pageContext.request.contextPath}/updatedepartment?depId=${el.depId}" class="btn btn-sm btn-primary">Edit</a>
+                                            <a style="width:50%" href="${pageContext.request.contextPath}/accountlist?deptId=${el.depId}" class="btn btn-sm btn-primary">View</a>
                                         </div>
                                     </td>                                                   
-                                </c:otherwise>
-                            </c:choose>
-                            </tr>
-                        </c:forEach>
+                                </tr>
+                            </c:forEach>
                         </tbody>
                     </table>
                 </div>

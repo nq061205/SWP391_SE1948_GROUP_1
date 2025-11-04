@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <web-app version="6.0" xmlns="https://jakarta.ee/xml/ns/jakartaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="https://jakarta.ee/xml/ns/jakartaee https://jakarta.ee/xml/ns/jakartaee/web-app_6_0.xsd">
+
     <!-- ===== SERVLETS ===== -->
     <servlet>
         <servlet-name>HomePageServlet</servlet-name>
@@ -77,7 +78,6 @@
         <servlet-name>ProfileServlet</servlet-name>
         <servlet-class>controller.ProfileServlet</servlet-class>
     </servlet>
-    <!-- ===== SERVLET MAPPINGS ===== -->
     <servlet>
         <servlet-name>CandidateActionServlet</servlet-name>
         <servlet-class>controller.CandidateActionServlet</servlet-class>
@@ -119,6 +119,35 @@
         <servlet-class>controller.hr.ExportAttendancePDFServlet</servlet-class>
     </servlet>
     <servlet>
+        <servlet-name>UpdateAccountServlet</servlet-name>
+        <servlet-class>controller.UpdateAccountServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>UpdateEmployeeServlet</servlet-name>
+        <servlet-class>controller.UpdateEmployeeServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>UpdateDepartmentServlet</servlet-name>
+        <servlet-class>controller.UpdateDepartmentServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>EmployeeDetailServlet</servlet-name>
+        <servlet-class>controller.EmployeeDetailServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>ContractDetailServlet</servlet-name>
+        <servlet-class>controller.ContractDetailServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>DetailDailyAttendanceServlet</servlet-name>
+        <servlet-class>controller.hr.DetailDailyAttendanceServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>scheduleServlet</servlet-name>
+        <servlet-class>controller.scheduleServlet</servlet-class>
+    </servlet>
+
+    <!-- ===== SERVLET MAPPINGS ===== -->
         <servlet-name>PayrollReportDetailServlet</servlet-name>
         <servlet-class>controller.PayrollReportDetailServlet</servlet-class>
     </servlet>
@@ -138,10 +167,6 @@
         <servlet-name>ForgetPassword</servlet-name>
         <url-pattern>/forgetpassword</url-pattern>
     </servlet-mapping>
-    <servlet>
-        <servlet-name>RecoveryPassword</servlet-name>
-        <servlet-class>controller.RecoveryPasswordServlet</servlet-class>
-    </servlet>
     <servlet-mapping>
         <servlet-name>RecoveryPassword</servlet-name>
         <url-pattern>/recovery</url-pattern>
@@ -200,7 +225,7 @@
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>DepartmentListServlet</servlet-name>
-        <url-pattern>/departmentlistservlet</url-pattern>
+        <url-pattern>/departmentlist</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>CandidateListServlet</servlet-name>
@@ -210,7 +235,6 @@
         <servlet-name>CandidateDetailServlet</servlet-name>
         <url-pattern>/candidatedetail</url-pattern>
     </servlet-mapping>
-    <!-- ===== SESSION CONFIG & WELCOME FILE ===== -->
     <servlet-mapping>
         <servlet-name>CandidateActionServlet</servlet-name>
         <url-pattern>/candidateaction</url-pattern>
@@ -225,7 +249,7 @@
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>EmployeeListServlet</servlet-name>
-        <url-pattern>/employeelistservlet</url-pattern>
+        <url-pattern>/employeelist</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>ApplyJobServlet</servlet-name>
@@ -259,9 +283,39 @@
         <servlet-name>PayrollReportListServlet</servlet-name>
         <url-pattern>/payrollreportlist</url-pattern>
     </servlet-mapping>
+        <servlet-name>UpdateAccountServlet</servlet-name>
+        <url-pattern>/updateaccount</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>UpdateEmployeeServlet</servlet-name>
+        <url-pattern>/updateemployee</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>UpdateDepartmentServlet</servlet-name>
+        <url-pattern>/updatedepartment</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>EmployeeDetailServlet</servlet-name>
+        <url-pattern>/employeedetail</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>ContractDetailServlet</servlet-name>
+        <url-pattern>/contractdetail</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>DetailDailyAttendanceServlet</servlet-name>
+        <url-pattern>/detail-daily-attendance</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>scheduleServlet</servlet-name>
+        <url-pattern>/schedule</url-pattern>
+    </servlet-mapping>
+
+    <!-- ===== SESSION CONFIG & WELCOME FILE ===== -->
     <session-config>
         <session-timeout>30</session-timeout>
     </session-config>
+
     <welcome-file-list>
         <welcome-file>HomePageServlet</welcome-file>
     </welcome-file-list>

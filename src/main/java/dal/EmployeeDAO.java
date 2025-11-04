@@ -776,10 +776,29 @@ public class EmployeeDAO extends DBContext {
         return null;
     }
     
+    public Employee getManagerByDepartment(String depId) {
+    String sql = BASE_SELECT_SQL + " WHERE e.dep_id = ? AND r.role_name = 'Manager'";
+    try (Connection conn = DBContext.getConnection();
+         PreparedStatement ps = conn.prepareStatement(sql)) {
+
+        ps.setString(1, depId);
+
+        try (ResultSet rs = ps.executeQuery()) {
+            if (rs.next()) {
+                return mapResultSetToEmployee(rs);
+            }
+        }
+    } catch (Exception ex) {
+        Logger.getLogger(EmployeeDAO.class.getName()).log(Level.SEVERE, null, ex);
+    }
+    return null;
+}
+
+
+    
     public static void main(String[] args) {
         EmployeeDAO dao = new EmployeeDAO();
-        System.out.println(dao.getEmployeeReceiverByRole("Employee", "IT"));
-        System.out.println(dao.getEmployeeByEmail("b@company.com"));
+        System.out.println(dao.getManagerByDepartment("HR"));
     }
     
 }

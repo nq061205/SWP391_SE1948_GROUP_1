@@ -27,13 +27,8 @@ public class DailyAttendanceDAO extends DBContext {
             + "JOIN employee e ON ad.emp_id = e.emp_id ";
 
     private DailyAttendance mapResultSetToDailyAttendance(ResultSet rs) throws SQLException {
-        Employee e = new Employee();
-        e.setEmpId(rs.getInt("emp_id"));
-        e.setEmpCode(rs.getString("emp_code"));
-        e.setFullname(rs.getString("fullname"));
-        e.setEmail(rs.getString("email"));
-        e.setPositionTitle(rs.getString("position_title"));
-
+        EmployeeDAO empDAO = new EmployeeDAO();
+        Employee e = empDAO.getEmployeeByEmpId(rs.getInt("emp_id"));
         return new DailyAttendance(
                 e,
                 rs.getDate("date"),
@@ -41,7 +36,8 @@ public class DailyAttendanceDAO extends DBContext {
                 rs.getTime("check_in_time"),
                 rs.getTime("check_out_time"),
                 rs.getDouble("ot_hours"),
-                rs.getString("status")
+                rs.getString("status"),
+                rs.getString("note")
         );
     }
 
@@ -251,9 +247,8 @@ public class DailyAttendanceDAO extends DBContext {
         DailyAttendanceDAO dailyDAO = new DailyAttendanceDAO();
         EmployeeDAO empDAO = new EmployeeDAO();
         List<Employee> employees = empDAO.getEmployees(0, 5, null, null);
-
         List<Integer> empIds = employees.stream().map(e -> e.getEmpId()).collect(Collectors.toList());
         List<DailyAttendance> list = dailyDAO.getAttendanceByEmpIds(empIds, 10, 2025);
-        System.out.println(list.size());
+        System.out.println(list);
     }
 }
