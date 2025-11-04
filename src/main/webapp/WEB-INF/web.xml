@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <web-app version="6.0" xmlns="https://jakarta.ee/xml/ns/jakartaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="https://jakarta.ee/xml/ns/jakartaee https://jakarta.ee/xml/ns/jakartaee/web-app_6_0.xsd">
-
     <!-- ===== SERVLETS ===== -->
     <servlet>
         <servlet-name>HomePageServlet</servlet-name>
@@ -146,15 +145,18 @@
         <servlet-name>scheduleServlet</servlet-name>
         <servlet-class>controller.scheduleServlet</servlet-class>
     </servlet>
-
     <!-- ===== SERVLET MAPPINGS ===== -->
-     <servlet>
+    <servlet>
         <servlet-name>PayrollReportDetailServlet</servlet-name>
         <servlet-class>controller.PayrollReportDetailServlet</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>PayrollReportListServlet</servlet-name>
         <servlet-class>controller.PayrollReportListServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>InterviewServlet</servlet-name>
+        <servlet-class>controller.InterviewServlet</servlet-class>
     </servlet>
     <servlet-mapping>
         <servlet-name>HomePageServlet</servlet-name>
@@ -312,12 +314,14 @@
         <servlet-name>scheduleServlet</servlet-name>
         <url-pattern>/schedule</url-pattern>
     </servlet-mapping>
-
     <!-- ===== SESSION CONFIG & WELCOME FILE ===== -->
+    <servlet-mapping>
+        <servlet-name>InterviewServlet</servlet-name>
+        <url-pattern>/interview</url-pattern>
+    </servlet-mapping>
     <session-config>
         <session-timeout>30</session-timeout>
     </session-config>
-
     <welcome-file-list>
         <welcome-file>HomePageServlet</welcome-file>
     </welcome-file-list>

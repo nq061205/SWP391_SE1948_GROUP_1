@@ -53,22 +53,11 @@ public class InterviewDAO {
                 interview.setResult(rs.getString("result"));
                 interview.setCreatedAt(rs.getTimestamp("created_at"));
                 interview.setUpdatedAt(rs.getTimestamp("updated_at"));
-
-                Candidate candidate = new Candidate();
-                candidate.setCandidateId(rs.getInt("candidate_id"));
-                candidate.setName(rs.getString("candidate_name"));
-                candidate.setEmail(rs.getString("candidate_email"));
-                candidate.setPhone(rs.getString("candidate_phone"));
+                Candidate candidate = cDAO.getCandidateById(rs.getInt("candidate_id"));
                 interview.setCandidate(candidate);
-
-                Employee createdBy = new Employee();
-                createdBy.setEmpId(rs.getInt("created_emp_id"));
-                createdBy.setFullname(rs.getString("created_name"));
+                Employee createdBy = eDAO.getEmployeeByEmpId(rs.getInt("created_by"));
                 interview.setCreatedBy(createdBy);
-
-                Employee interviewedBy = new Employee();
-                interviewedBy.setEmpId(rs.getInt("interviewed_emp_id"));
-                interviewedBy.setFullname(rs.getString("interviewed_name"));
+                Employee interviewedBy = eDAO.getEmployeeByEmpId(rs.getInt("interviewed_by"));
                 interview.setInterviewedBy(interviewedBy);
 
                 list.add(interview);

@@ -798,7 +798,7 @@ public class EmployeeDAO extends DBContext {
     
     public static void main(String[] args) {
         EmployeeDAO dao = new EmployeeDAO();
-        System.out.println(dao.getManagerByDepartment("HR"));
+        System.out.println(dao.getAllEmployees());
     }
     
 }
