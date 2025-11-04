@@ -60,6 +60,7 @@
         <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/assets2/css/dashboard.css">
         <link class="skin" rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/assets2/css/color/color-1.css">
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+
     </head>
 
     <body class="ttr-opened-sidebar ttr-pinned-sidebar">
@@ -315,7 +316,6 @@
                                                             <c:forEach begin="1" end="${daysInMonth}" var="day">
                                                                 <c:set var="attendance" value="${attendanceByDay[employee.empId][day]}" />
                                                                 <c:set var="isWeekend" value="${weekendDays.contains(day)}" />
-
                                                                 <td class="day-cell ${isWeekend ? 'weekend-cell' : (attendance != null ? 'status-'.concat(attendance.status) : '')}" 
                                                                     title="Click to view details">
                                                                     <c:choose>
@@ -325,12 +325,13 @@
                                                                         <c:otherwise>
                                                                             <c:if test="${attendance != null}">
                                                                                 <span class="work-day-text">
-                                                                                    <fmt:formatNumber value="${attendance.workDay}" pattern="#.##"/><c:if test="${attendance.otHours > 0}">T</c:if>
-                                                                                    </span>
+                                                                                    <fmt:formatNumber value="${attendance.workDay}" pattern="#.##"/>
+                                                                                    <c:if test="${attendance.otHours > 0}">T</c:if>
+                                                                                </span>
                                                                             </c:if>
                                                                         </c:otherwise>
                                                                     </c:choose>
-                                                                </td>
+                                                                </td> 
                                                             </c:forEach>
                                                             <!-- Summary -->
                                                             <td class="summary-col text-center">
@@ -348,6 +349,8 @@
                                                 </tbody>
                                             </table>
                                         </div>
+
+                                        <!-- PAGINATION -->                
                                         <c:if test="${totalPages > 1}">
                                             <nav aria-label="Page navigation" class="mt-3">
                                                 <ul class="pagination justify-content-center">
@@ -431,27 +434,6 @@
                 </div>
             </div>
         </main>
-
-        <!-- Detail Modal -->
-        <div class="modal fade" id="detailModal" tabindex="-1">
-            <div class="modal-dialog">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title"><i class="fa fa-info-circle"></i> Attendance Detail</h5>
-                        <button type="button" class="close" data-dismiss="modal">&times;</button>
-                    </div>
-                    <div class="modal-body" id="detailContent">
-                        <div class="text-center"><i class="fa fa-spinner fa-spin"></i> Loading...</div>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-
-
     </body>
 
     <script src="${pageContext.request.contextPath}/assets2/js/jquery.min.js"></script>

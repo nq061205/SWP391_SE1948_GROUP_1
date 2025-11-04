@@ -15,15 +15,16 @@ public class LeaveRequest {
 
     private int leaveId;
     private Employee employee;
-    private String leaveType;   // Annual Leave, Sick, Unpaid, Maternity, Other
+    private String leaveType;   
     private String reason;
     private double dayRequested;
     private Date startDate;
     private Date endDate;
     private Employee approvedBy;
     private Timestamp approvedAt;
-    private String status;      // Pending, Approved, Rejected
+    private String status;     
     private String note;
+    private String systemLog;
     private Timestamp createdAt;
     private Timestamp updatedAt;
 
@@ -42,6 +43,23 @@ public class LeaveRequest {
         this.approvedAt = approvedAt;
         this.status = status;
         this.note = note;
+        this.createdAt = createdAt;
+        this.updatedAt = updatedAt;
+    }
+
+    public LeaveRequest(int leaveId, Employee employee, String leaveType, String reason, double dayRequested, Date startDate, Date endDate, Employee approvedBy, Timestamp approvedAt, String status, String note, String systemLog, Timestamp createdAt, Timestamp updatedAt) {
+        this.leaveId = leaveId;
+        this.employee = employee;
+        this.leaveType = leaveType;
+        this.reason = reason;
+        this.dayRequested = dayRequested;
+        this.startDate = startDate;
+        this.endDate = endDate;
+        this.approvedBy = approvedBy;
+        this.approvedAt = approvedAt;
+        this.status = status;
+        this.note = note;
+        this.systemLog = systemLog;
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
     }
@@ -151,9 +169,17 @@ public class LeaveRequest {
         this.updatedAt = updatedAt;
     }
 
+    public String getSystemLog() {
+        return systemLog;
+    }
+
+    public void setSystemLog(String systemLog) {
+        this.systemLog = systemLog;
+    }
+
     @Override
     public String toString() {
-        return "LeaveRequest{" + "leaveId=" + leaveId + ", employee=" + employee + ", leaveType=" + leaveType + ", reason=" + reason + ", dayRequested=" + dayRequested + ", startDate=" + startDate + ", endDate=" + endDate + ", approvedBy=" + approvedBy + ", approvedAt=" + approvedAt + ", status=" + status + ", note=" + note + ", createdAt=" + createdAt + ", updatedAt=" + updatedAt + '}';
+        return "LeaveRequest{" + "leaveId=" + leaveId + ", employee=" + employee + ", leaveType=" + leaveType + ", reason=" + reason + ", dayRequested=" + dayRequested + ", startDate=" + startDate + ", endDate=" + endDate + ", approvedBy=" + approvedBy + ", approvedAt=" + approvedAt + ", status=" + status + ", note=" + note + ", systemLog=" + systemLog + ", createdAt=" + createdAt + ", updatedAt=" + updatedAt + '}';
     }
     
 }

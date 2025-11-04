@@ -66,10 +66,10 @@
                 <!-- Navigation Menu ==== -->
                 <div class="menu-links navbar-collapse collapse justify-content-start" id="menuDropdown">
                     <div class="menu-logo">
-                        <a href="index.html"><img src="${pageContext.request.contextPath}/assets1/images/logo.png" alt=""></a>
+                        <a href="homepage"><img src="${pageContext.request.contextPath}/assets1/images/logo.png" alt=""></a>
                     </div>
                     <ul class="nav navbar-nav">	
-                        <li><a href="javascript:;">Home</a></li>
+                        <li><a href="homepage">Home</a></li>
                         <li><a href="javascript:;">Products</a></li>
                         <li><a href="javascript:;">News</a></li>
                         <li><a href="${pageContext.request.contextPath}/jobsite">Careers</a></li>                       

@@ -139,6 +139,10 @@
         <servlet-class>controller.ContractDetailServlet</servlet-class>
     </servlet>
     <servlet>
+        <servlet-name>DetailDailyAttendanceServlet</servlet-name>
+        <servlet-class>controller.hr.DetailDailyAttendanceServlet</servlet-class>
+    </servlet>
+    <servlet>
         <servlet-name>scheduleServlet</servlet-name>
         <servlet-class>controller.scheduleServlet</servlet-class>
     </servlet>
@@ -283,6 +287,10 @@
     <servlet-mapping>
         <servlet-name>ContractDetailServlet</servlet-name>
         <url-pattern>/contractdetail</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>DetailDailyAttendanceServlet</servlet-name>
+        <url-pattern>/detail-daily-attendance</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>scheduleServlet</servlet-name>

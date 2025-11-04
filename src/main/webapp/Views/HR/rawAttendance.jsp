@@ -7,6 +7,7 @@
 
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 
 <!DOCTYPE html>
 <html>
@@ -86,7 +87,7 @@
             }
 
             .bootstrap-select .dropdown-toggle {
-                color: #000000 !important; 
+                color: #000000 !important;
             }
 
             .bootstrap-select .dropdown-toggle .filter-option {
@@ -104,7 +105,7 @@
 
             .bootstrap-select .dropdown-toggle .filter-option-inner-inner {
                 color: #000000 !important;
-            }
+            }/*
 
             #processingModal .modal-content {
                 border-radius: 15px;
@@ -121,7 +122,7 @@
 
             #processingModal .modal-body {
                 padding: 3rem 2rem;
-            }
+            }*/
         </style>
 
     </head>
@@ -132,9 +133,9 @@
         <main class="ttr-wrapper">
             <div class="container-fluid">
                 <div class="db-breadcrumb">
-                    <h4 class="breadcrumb-title">Import Raw Attendance</h4>
+                    <h4 class="breadcrumb-title">Raw Attendance</h4>
                     <ul class="db-breadcrumb-list">
-                        <li><a href="${pageContext.request.contextPath}/Views/HR/hrDashboard.jsp"><i class="fa fa-home"></i>Home</a></li>
+                        <li><a href="hr-dashboard"><i class="fa fa-home"></i>Home</a></li>
                         <li>Attendance Management</li>
                         <li>Raw Attendance</li>
                     </ul>
@@ -204,7 +205,84 @@
                     </div>
                 </div>
 
-                <!-- Preview Section -->
+                <!-- Error Section: Duplicate Records Detected -->
+                <c:if test="${not empty duplicateRecords}">
+                    <div class="row">
+                        <div class="col-lg-12 m-b30">
+                            <div class="widget-box">
+                                <div class="wc-title">
+                                    <h4><i class="fa fa-ban"></i> Upload Failed - Duplicate Records Found</h4>
+                                </div>
+                                <div class="widget-inner">
+                                    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                                        <strong><i class="fa fa-exclamation-circle"></i> Cannot Upload File!</strong>
+                                        <br>Found <strong>${duplicateCount}</strong> duplicate record(s) out of <strong>${totalCount}</strong> total records.
+                                        <br><br>
+                                        <strong>Action Required:</strong>
+                                        <ol>
+                                            <li>Please check your Excel file</li>
+                                            <li>Remove or modify the duplicate records below</li>
+                                            <li>Upload the corrected file</li>
+                                        </ol>
+                                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                            <span aria-hidden="true">&times;</span>
+                                        </button>
+                                    </div>
+
+                                    <!-- Duplicate Records Table -->
+                                    <h5 class="mt-4 mb-3"><i class="fa fa-list"></i> Duplicate Records:</h5>
+                                    <div class="table-responsive">
+                                        <table class="table table-striped table-bordered table-danger">
+                                            <thead class="table-danger">
+                                                <tr>
+                                                    <th width="50">No.</th>
+                                                    <th width="150">Employee ID</th>
+                                                    <th width="150">Date</th>
+                                                    <th width="150">Check Time</th>
+                                                    <th width="100">Check Type</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <c:forEach var="row" items="${duplicateRecords}" varStatus="status">
+                                                    <c:if test="${status.index < 20}">
+                                                        <tr>
+                                                            <td class="text-center">
+                                                                <span class="badge badge-danger">${status.index + 1}</span>
+                                                            </td>
+                                                            <td><strong>${row.emp.empId}</strong></td>
+                                                            <td><strong>${row.date}</strong></td>
+                                                            <td><strong>${row.checkTime}</strong></td>
+                                                            <td class="text-center">
+                                                                <c:choose>
+                                                                    <c:when test="${row.checkType == 'IN'}">
+                                                                        <span class="badge badge-success">IN</span>
+                                                                    </c:when>
+                                                                    <c:when test="${row.checkType == 'OUT'}">
+                                                                        <span class="badge badge-danger">OUT</span>
+                                                                    </c:when>
+                                                                </c:choose>
+                                                            </td>
+                                                        </tr>
+                                                    </c:if>
+                                                </c:forEach>
+
+                                                <c:if test="${fn:length(duplicateRecords) > 20}">
+                                                    <tr>
+                                                        <td colspan="5" class="text-center text-muted">
+                                                            ... and ${fn:length(duplicateRecords) - 20} other duplicates ...
+                                                        </td>
+                                                    </tr>
+                                                </c:if>
+                                            </tbody>
+                                        </table>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </c:if>
+
                 <c:if test="${not empty preview}">
                     <div class="row">
                         <div class="col-lg-12 m-b30">
@@ -218,7 +296,7 @@
                                         <table class="table table-striped table-bordered">
                                             <thead class="thead-dark">
                                                 <tr>
-                                                    <th width="50">Index</th>
+                                                    <th width="50">No.</th>
                                                     <th width="200">Employee ID</th>
                                                     <th width="200">Date</th>
                                                     <th>Check Time</th>
@@ -231,17 +309,9 @@
                                                         <td class="text-center">
                                                             <span class="badge badge-secondary">${status.index + 1}</span>
                                                         </td>
-                                                        <td>
-                                                            <div class="d-flex flex-column">
-                                                                <strong class="text-primary">${row.emp.empId}</strong>
-                                                            </div>
-                                                        </td>
-                                                        <td>
-                                                            <span class="font-weight-bold">${row.date}</span>
-                                                        </td>
-                                                        <td>
-                                                            <span class="font-weight-bold">${row.checkTime}</span>
-                                                        </td>
+                                                        <td>${row.emp.empId}</td>
+                                                        <td>${row.date}</td>
+                                                        <td>${row.checkTime}</td>
                                                         <td class="text-center">
                                                             <c:choose>
                                                                 <c:when test="${row.checkType == 'IN'}">
@@ -258,22 +328,44 @@
                                         </table>
                                     </div>
 
-                                    <!-- Confirm Import Buttons -->
+                                    <!-- Action Buttons -->
                                     <div class="row">
                                         <div class="col-md-12 text-center">
                                             <form action="raw-attendance" method="post" class="d-inline mr-2">
                                                 <input type="hidden" name="action" value="confirm">
-                                                <button type="submit" class="btn btn-success">
-                                                    <i class="fa fa-check-circle"></i> Confirm Import
+                                                <button type="submit" class="btn btn-success btn-lg">
+                                                    <i class="fa fa-check-circle"></i> Import
                                                 </button>
                                             </form>
                                             <form action="raw-attendance" method="post" class="d-inline">
                                                 <input type="hidden" name="action" value="cancel">
-                                                <button type="submit" class="btn btn-secondary">
-                                                    <i class="fa fa-times-circle"></i> Cancel Import
+                                                <button type="submit" class="btn btn-secondary btn-lg">
+                                                    <i class="fa fa-times-circle"></i> Cancel
                                                 </button>
                                             </form>
                                         </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </c:if>
+
+                <!-- Error Details Section -->
+                <c:if test="${not empty errorDetails}">
+                    <div class="row">
+                        <div class="col-lg-12 m-b30">
+                            <div class="widget-box">
+                                <div class="wc-title">
+                                    <h4><i class="fa fa-exclamation"></i> Validation Errors</h4>
+                                </div>
+                                <div class="widget-inner">
+                                    <div class="alert alert-danger">
+                                        <ul class="mb-0">
+                                            <c:forEach var="error" items="${errorDetails}">
+                                                <li>${error}</li>
+                                                </c:forEach>
+                                        </ul>
                                     </div>
                                 </div>
                             </div>
@@ -286,56 +378,64 @@
                     <div class="col-lg-12 m-b30">
                         <div class="widget-box">
                             <div class="wc-title">
-                                <h4><i class="fa fa-list"></i> Raw Attendance List</h4>
-                                <span class="badge badge-primary">Total Records: ${totalRecords}</span>
+                                <h4><i class="fa fa-list"></i> Raw Attendance Records</h4>
+                                <span class="badge badge-primary">Total: ${totalRecords} records</span>
                             </div>
                             <div class="widget-inner">
                                 <!-- Filter Form -->
-                                <form method="get" action="raw-attendance" class="mb-4">
+                                <form method="get" action="raw-attendance" class="mb-4" id="filterForm">
                                     <div class="row g-3 align-items-end">
                                         <div class="col-md-3">
                                             <div class="form-group">
-                                                <label for="search">Employee Code</label>
-                                                <input type="text" name="search" value="${search}" 
-                                                       class="form-control" id="search"
-                                                       placeholder="Search by Employee Code...">
+                                                <label for="date"><i class="fa fa-calendar"></i> Select Date</label>
+                                                <input type="date" name="date" value="${date}" 
+                                                       class="form-control form-control-lg" id="date" 
+                                                       onchange="resetPageAndSubmit()" required>
                                             </div>
                                         </div>
-                                        <div class="col-md-1"></div>
+                                        <!-- Department Filter -->
                                         <div class="col-md-2">
                                             <div class="form-group">
-                                                <label for="fromDate">From Date</label>
-                                                <input type="date" name="fromDate" value="${fromDate}" 
-                                                       class="form-control" id="fromDate">
-                                            </div>
-                                        </div>
-                                        <div class="col-md-2">
-                                            <div class="form-group">
-                                                <label for="toDate">To Date</label>
-                                                <input type="date" name="toDate" value="${toDate}" 
-                                                       class="form-control" id="toDate">
-                                            </div>
-                                        </div>
-                                        <div class="col-md-2">
-                                            <div class="form-group">
-                                                <label for="filterType">Check Type</label>
-                                                <select name="filterType" class="form-control" id="filterType">
-                                                    <option value="">All Types</option>
-                                                    <option value="IN" ${param.filterType == 'IN' ? 'selected' : ''}>IN</option>
-                                                    <option value="OUT" ${param.filterType == 'OUT' ? 'selected' : ''}>OUT</option>
+                                                <label for="department"><i class="fa fa-building"></i> Department</label>
+                                                <select name="department" class="form-control" id="department" 
+                                                        onchange="resetPageAndSubmit()">
+
+                                                    <option value="">All Departments</option>
+                                                    <c:forEach var="dept" items="${departments}">
+                                                        <option value="${dept.depId}" ${department == dept.depId ? 'selected' : ''}>
+                                                            ${dept.depName}
+                                                        </option>
+                                                    </c:forEach>
                                                 </select>
                                             </div>
                                         </div>
-                                        <div class="col-md-1">
+                                        <!-- Check Type Filter -->
+                                        <div class="col-md-2">
                                             <div class="form-group">
-                                                <button type="submit" class="btn btn-primary w-105">
-                                                    <i class="fa fa-search"></i> Filter
-                                                </button>
+                                                <label for="filterType"><i class="fa fa-filter"></i> Check Type</label>
+                                                <select name="filterType" class="form-control" id="filterType" 
+                                                        onchange="resetPageAndSubmit()">
+                                                    <option value="">All Types</option>
+                                                    <option value="IN" ${filterType == 'IN' ? 'selected' : ''}>Check IN</option>
+                                                    <option value="OUT" ${filterType == 'OUT' ? 'selected' : ''}>Check OUT</option>
+                                                </select>
                                             </div>
                                         </div>
-                                        <div class="col-md-1">
+                                        <!-- Search Box -->
+                                        <div class="col-md-3">
                                             <div class="form-group">
-                                                <a href="raw-attendance" class="btn btn-secondary w-105">
+                                                <label for="search"><i class="fa fa-search"></i> Search Employee</label>
+                                                <input type="text" name="search" value="${search}" 
+                                                       class="form-control" id="search"
+                                                       placeholder="Code or Name..."
+                                                       onchange="resetPageAndSubmit()">
+                                            </div>
+                                        </div>
+
+                                        <!-- Reset Button -->
+                                        <div class="col-md-2">
+                                            <div class="form-group">
+                                                <a href="raw-attendance" class="btn btn-secondary btn-block">
                                                     <i class="fa fa-refresh"></i> Reset
                                                 </a>
                                             </div>
@@ -348,31 +448,39 @@
                                             <div class="form-group">
                                                 <label for="pageSize">Records per page</label>
                                                 <select name="pageSize" class="form-control" id="pageSize" 
-                                                        onchange="changePageSize(this.value)">
-                                                    <option value="5" ${pageSize == 5 ? 'selected' : ''}>5</option>
+                                                         onchange="resetPageAndSubmit()"">
                                                     <option value="10" ${pageSize == 10 ? 'selected' : ''}>10</option>
-                                                    <option value="15" ${pageSize == 15 ? 'selected' : ''}>15</option>
                                                     <option value="20" ${pageSize == 20 ? 'selected' : ''}>20</option>
+                                                    <option value="50" ${pageSize == 50 ? 'selected' : ''}>50</option>
+                                                    <option value="100" ${pageSize == 100 ? 'selected' : ''}>100</option>
                                                 </select>
                                             </div>
                                         </div>
+                                        <div class="col-md-9 text-right">
+                                            <p class="text-muted mt-4">
+                                                Showing ${(currentPage - 1) * pageSize + 1} to 
+                                                ${currentPage * pageSize > totalRecords ? totalRecords : currentPage * pageSize} 
+                                                of ${totalRecords} entries
+                                            </p>
+                                        </div>
                                     </div>
 
-                                    <input type="hidden" name="page" value="${currentPage}">
+                                    <input type="hidden" name="page" value="${currentPage}" id="pageInput">
                                 </form>
 
                                 <!-- Results Table -->
                                 <c:choose>
                                     <c:when test="${not empty rawList}">
                                         <div class="table-responsive">
-                                            <table class="table table-striped table-bordered">
+                                            <table class="table table-striped table-bordered table-hover">
                                                 <thead class="thead-dark">
                                                     <tr>
-                                                        <th width="50">Index</th>
-                                                        <th width="200">Employee Code</th>
-                                                        <th width="200">Date (yyyy-MM-dd)</th>
-                                                        <th>Check Time</th>
-                                                        <th width="200">Check Type</th>
+                                                        <th width="50" class="text-center">#</th>
+                                                        <th width="120">Employee Code</th>
+                                                        <th width="200">Full Name</th>
+                                                        <th width="150">Department</th>
+                                                        <th width="100">Check Time</th>
+                                                        <th width="100" class="text-center">Type</th>
                                                     </tr>
                                                 </thead>
                                                 <tbody>
@@ -384,32 +492,35 @@
                                                                 </span>
                                                             </td>
                                                             <td>
-                                                                <div class="d-flex flex-column">
-                                                                    <strong class="text-primary">
-                                                                        <c:choose>
-                                                                            <c:when test="${not empty record.emp and not empty record.emp.empId}">
-                                                                                ${record.emp.empCode}
-                                                                            </c:when>
-                                                                            <c:otherwise>
-                                                                                <span class="text-muted">N/A</span>
-                                                                            </c:otherwise>
-                                                                        </c:choose>
-                                                                    </strong>
-                                                                </div>
+                                                                <strong class="text-primary">${record.emp.empCode}</strong>
                                                             </td>
                                                             <td>
-                                                                <span class="font-weight-bold">${record.date}</span>
+                                                                <span class="font-weight-bold">${record.emp.fullname}</span>
                                                             </td>
                                                             <td>
-                                                                <span class="font-weight-bold">${record.checkTime}</span>
+                                                                <c:choose>
+                                                                    <c:when test="${not empty record.emp.dept}">
+                                                                        <span class="badge badge-info">${record.emp.dept.depName}</span>
+                                                                    </c:when>
+                                                                    <c:otherwise>
+                                                                        <span class="text-muted">-</span>
+                                                                    </c:otherwise>
+                                                                </c:choose>
+                                                            </td>
+                                                            <td>
+                                                                <span class="text-primary font-weight-bold">${record.checkTime}</span>
                                                             </td>
                                                             <td class="text-center">
                                                                 <c:choose>
                                                                     <c:when test="${record.checkType == 'IN'}">
-                                                                        <span class="badge badge-success">IN</span>
+                                                                        <span class="badge badge-success badge-lg">
+                                                                            <i class="fa fa-sign-in"></i> IN
+                                                                        </span>
                                                                     </c:when>
                                                                     <c:when test="${record.checkType == 'OUT'}">
-                                                                        <span class="badge badge-danger">OUT</span>
+                                                                        <span class="badge badge-danger badge-lg">
+                                                                            <i class="fa fa-sign-out"></i> OUT
+                                                                        </span>
                                                                     </c:when>
                                                                 </c:choose>
                                                             </td>
@@ -427,12 +538,14 @@
                                                         <c:url var="prevUrl" value="raw-attendance">
                                                             <c:param name="page" value="${currentPage - 1}"/>
                                                             <c:param name="pageSize" value="${pageSize}"/>
+                                                            <c:param name="date" value="${date}"/>
                                                             <c:if test="${not empty search}"><c:param name="search" value="${search}"/></c:if>
-                                                            <c:if test="${not empty fromDate}"><c:param name="fromDate" value="${fromDate}"/></c:if>
-                                                            <c:if test="${not empty toDate}"><c:param name="toDate" value="${toDate}"/></c:if>
                                                             <c:if test="${not empty filterType}"><c:param name="filterType" value="${filterType}"/></c:if>
+                                                            <c:if test="${not empty department}"><c:param name="department" value="${department}"/></c:if>
                                                         </c:url>
-                                                        <a class="page-link" href="${currentPage > 1 ? prevUrl : '#'}"><i class="fa fa-chevron-left"></i> Previous</a>
+                                                        <a class="page-link" href="${currentPage > 1 ? prevUrl : '#'}">
+                                                            <i class="fa fa-chevron-left"></i> Previous
+                                                        </a>
                                                     </li>
 
                                                     <c:forEach begin="1" end="${totalPages}" var="pageNum">
@@ -441,10 +554,10 @@
                                                                 <c:url var="pageUrl" value="raw-attendance">
                                                                     <c:param name="page" value="${pageNum}"/>
                                                                     <c:param name="pageSize" value="${pageSize}"/>
+                                                                    <c:param name="date" value="${date}"/>
                                                                     <c:if test="${not empty search}"><c:param name="search" value="${search}"/></c:if>
-                                                                    <c:if test="${not empty fromDate}"><c:param name="fromDate" value="${fromDate}"/></c:if>
-                                                                    <c:if test="${not empty toDate}"><c:param name="toDate" value="${toDate}"/></c:if>
                                                                     <c:if test="${not empty filterType}"><c:param name="filterType" value="${filterType}"/></c:if>
+                                                                    <c:if test="${not empty department}"><c:param name="department" value="${department}"/></c:if>
                                                                 </c:url>
                                                                 <a class="page-link" href="${pageUrl}">${pageNum}</a>
                                                             </li>
@@ -458,12 +571,14 @@
                                                         <c:url var="nextUrl" value="raw-attendance">
                                                             <c:param name="page" value="${currentPage + 1}"/>
                                                             <c:param name="pageSize" value="${pageSize}"/>
+                                                            <c:param name="date" value="${date}"/>
                                                             <c:if test="${not empty search}"><c:param name="search" value="${search}"/></c:if>
-                                                            <c:if test="${not empty fromDate}"><c:param name="fromDate" value="${fromDate}"/></c:if>
-                                                            <c:if test="${not empty toDate}"><c:param name="toDate" value="${toDate}"/></c:if>
                                                             <c:if test="${not empty filterType}"><c:param name="filterType" value="${filterType}"/></c:if>
+                                                            <c:if test="${not empty department}"><c:param name="department" value="${department}"/></c:if>
                                                         </c:url>
-                                                        <a class="page-link" href="${currentPage < totalPages ? nextUrl : '#'}">Next <i class="fa fa-chevron-right"></i></a>
+                                                        <a class="page-link" href="${currentPage < totalPages ? nextUrl : '#'}">
+                                                            Next <i class="fa fa-chevron-right"></i>
+                                                        </a>
                                                     </li>
                                                 </ul>
                                             </nav>
@@ -475,10 +590,7 @@
                                                 <i class="fa fa-inbox fa-3x text-muted"></i>
                                             </div>
                                             <h5 class="text-muted">No Attendance Records Found</h5>
-                                            <p class="text-muted">There are currently no attendance records matching your criteria.</p>
-                                            <a href="raw-attendance" class="btn btn-primary">
-                                                <i class="fa fa-refresh"></i> Refresh List
-                                            </a>
+                                            <p class="text-muted">No attendance records for ${date}</p>
                                         </div>
                                     </c:otherwise>
                                 </c:choose>
@@ -486,6 +598,7 @@
                         </div>
                     </div>
                 </div>
+
                 <!-- Loading Modal -->
                 <div class="modal fade" id="processingModal" data-backdrop="static" data-keyboard="false" tabindex="-1" role="dialog">
                     <div class="modal-dialog modal-dialog-centered" role="document">
@@ -538,152 +651,67 @@
     <script src="${pageContext.request.contextPath}/assets2/vendors/calendar/moment.min.js"></script>
     <script src="${pageContext.request.contextPath}/assets2/vendors/calendar/fullcalendar.js"></script>
     <script src="${pageContext.request.contextPath}/assets2/vendors/switcher/switcher.js"></script>
-
     <script>
+                                                            let isProcessing = false;
+
                                                             $(document).ready(function () {
+                                                                // Handle Confirm Import button click
+                                                                $('form').on('submit', function (e) {
+                                                                    const action = $(this).find('input[name="action"]').val();
 
-                                                                $('#calendar').fullCalendar({
-                                                                    header: {
-                                                                        left: 'prev,next today',
-                                                                        center: 'title',
-                                                                        right: 'month,agendaWeek,agendaDay,listWeek'
-                                                                    },
-                                                                    defaultDate: '2019-03-12',
-                                                                    navLinks: true, // can click day/week names to navigate views
+                                                                    if (action === 'confirm') {
+                                                                        e.preventDefault();
 
-                                                                    weekNumbers: true,
-                                                                    weekNumbersWithinDays: true,
-                                                                    weekNumberCalculation: 'ISO',
+                                                                        const form = this;
 
-                                                                    editable: true,
-                                                                    eventLimit: true, // allow "more" link when too many events
-                                                                    events: [
-                                                                        {
-                                                                            title: 'All Day Event',
-                                                                            start: '2019-03-01'
-                                                                        },
-                                                                        {
-                                                                            title: 'Long Event',
-                                                                            start: '2019-03-07',
-                                                                            end: '2019-03-10'
-                                                                        },
-                                                                        {
-                                                                            id: 999,
-                                                                            title: 'Repeating Event',
-                                                                            start: '2019-03-09T16:00:00'
-                                                                        },
-                                                                        {
-                                                                            id: 999,
-                                                                            title: 'Repeating Event',
-                                                                            start: '2019-03-16T16:00:00'
-                                                                        },
-                                                                        {
-                                                                            title: 'Conference',
-                                                                            start: '2019-03-11',
-                                                                            end: '2019-03-13'
-                                                                        },
-                                                                        {
-                                                                            title: 'Meeting',
-                                                                            start: '2019-03-12T10:30:00',
-                                                                            end: '2019-03-12T12:30:00'
-                                                                        },
-                                                                        {
-                                                                            title: 'Lunch',
-                                                                            start: '2019-03-12T12:00:00'
-                                                                        },
-                                                                        {
-                                                                            title: 'Meeting',
-                                                                            start: '2019-03-12T14:30:00'
-                                                                        },
-                                                                        {
-                                                                            title: 'Happy Hour',
-                                                                            start: '2019-03-12T17:30:00'
-                                                                        },
-                                                                        {
-                                                                            title: 'Dinner',
-                                                                            start: '2019-03-12T20:00:00'
-                                                                        },
-                                                                        {
-                                                                            title: 'Birthday Party',
-                                                                            start: '2019-03-13T07:00:00'
-                                                                        },
-                                                                        {
-                                                                            title: 'Click for Google',
-                                                                            url: 'http://google.com/',
-                                                                            start: '2019-03-28'
-                                                                        }
-                                                                    ]
+                                                                        // Show loading modal
+                                                                        $('#processingModal').modal({
+                                                                            backdrop: 'static',
+                                                                            keyboard: false
+                                                                        });
+
+                                                                        isProcessing = true;
+
+                                                                        // Disable all buttons
+                                                                        $('button, a.btn').prop('disabled', true).addClass('disabled');
+
+                                                                        // Animate processing messages
+                                                                        const messages = [
+                                                                            '<i class="fa fa-check text-success"></i> Validating data...',
+                                                                            '<i class="fa fa-database text-primary"></i> Importing raw attendance records...',
+                                                                            '<i class="fa fa-users text-info"></i> Loading employee information...',
+                                                                            '<i class="fa fa-calculator text-warning"></i> Calculating work hours...',
+                                                                            '<i class="fa fa-clock-o text-primary"></i> Processing overtime requests...',
+                                                                            '<i class="fa fa-check-circle text-success"></i> Finalizing daily attendance...'
+                                                                        ];
+
+                                                                        const messageElement = $('#processingMessage');
+                                                                        let step = 0;
+
+                                                                        // Update message every 500ms
+                                                                        const messageInterval = setInterval(function () {
+                                                                            if (step < messages.length) {
+                                                                                messageElement.fadeOut(200, function () {
+                                                                                    $(this).html(messages[step]).fadeIn(200);
+                                                                                });
+                                                                                step++;
+                                                                            } else {
+                                                                                clearInterval(messageInterval);
+                                                                            }
+                                                                        }, 800);
+
+                                                                        // DELAY SUBMIT ĐỂ MODAL HIỂN THỊ ÍT NHẤT 3 GIÂY
+                                                                        setTimeout(function () {
+                                                                            form.submit();
+                                                                        }, 3000); // 3 seconds - đủ thời gian để user đọc messages
+                                                                    }
                                                                 });
-
                                                             });
-    </script>
-    <script>
-        let isProcessing = false;
 
-        $(document).ready(function () {
-            // Handle Confirm Import button click
-            $('form').on('submit', function (e) {
-                const action = $(this).find('input[name="action"]').val();
-
-                if (action === 'confirm') {
-                    e.preventDefault();
-
-                    const form = this;
-
-                    // Show loading modal
-                    $('#processingModal').modal({
-                        backdrop: 'static',
-                        keyboard: false
-                    });
-
-                    isProcessing = true;
-
-                    // Disable all buttons
-                    $('button, a.btn').prop('disabled', true).addClass('disabled');
-
-                    // Animate processing messages
-                    const messages = [
-                        '<i class="fa fa-check text-success"></i> Validating data...',
-                        '<i class="fa fa-database text-primary"></i> Importing raw attendance records...',
-                        '<i class="fa fa-users text-info"></i> Loading employee information...',
-                        '<i class="fa fa-calculator text-warning"></i> Calculating work hours...',
-                        '<i class="fa fa-clock-o text-primary"></i> Processing overtime requests...',
-                        '<i class="fa fa-check-circle text-success"></i> Finalizing daily attendance...'
-                    ];
-
-                    const messageElement = $('#processingMessage');
-                    let step = 0;
-
-                    // Update message every 500ms
-                    const messageInterval = setInterval(function () {
-                        if (step < messages.length) {
-                            messageElement.fadeOut(200, function () {
-                                $(this).html(messages[step]).fadeIn(200);
-                            });
-                            step++;
-                        } else {
-                            clearInterval(messageInterval);
-                        }
-                    }, 800);
-
-                    // DELAY SUBMIT ĐỂ MODAL HIỂN THỊ ÍT NHẤT 3 GIÂY
-                    setTimeout(function () {
-                        form.submit();
-                    }, 3000); // 3 seconds - đủ thời gian để user đọc messages
-                }
-            });
-        });
-
-        function changePageSize(newPageSize) {
-            if (isProcessing) {
-                alert('Please wait until processing is complete');
-                return;
-            }
-            const url = new URL(window.location.href);
-            url.searchParams.set('pageSize', newPageSize);
-            url.searchParams.set('page', '1');
-            window.location.href = url.toString();
-        }
+                                                            function resetPageAndSubmit(formId = 'filterForm') {
+                                                                document.getElementById('pageInput').value = '1';
+                                                                document.getElementById(formId).submit();
+                                                            }
     </script>
 
 
