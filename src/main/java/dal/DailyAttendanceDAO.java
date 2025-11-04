@@ -247,7 +247,6 @@ public class DailyAttendanceDAO extends DBContext {
         DailyAttendanceDAO dailyDAO = new DailyAttendanceDAO();
         EmployeeDAO empDAO = new EmployeeDAO();
         List<Employee> employees = empDAO.getEmployees(0, 5, null, null);
-
         List<Integer> empIds = employees.stream().map(e -> e.getEmpId()).collect(Collectors.toList());
         List<DailyAttendance> list = dailyDAO.getAttendanceByEmpIds(empIds, 10, 2025);
         System.out.println(list);
