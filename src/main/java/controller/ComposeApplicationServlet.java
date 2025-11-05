@@ -74,8 +74,7 @@ public class ComposeApplicationServlet extends HttpServlet {
                         request.setAttribute("messageLeave", "Exceeding the number of leave days");
                         request.getRequestDispatcher("Views/composeleaveapplication.jsp").forward(request, response);
                         return;
-                    }
-                    if (startDate.after(endDate)) {
+                    } else if (startDate.after(endDate)) {
                         request.setAttribute("messageDate", "Start date must before end date");
                         request.getRequestDispatcher("Views/composeleaveapplication.jsp").forward(request, response);
                         return;
