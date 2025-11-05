@@ -123,6 +123,17 @@
                         <span class="ttr-label">Personal attendance</span>
                     </a>
                 </li>
+                <li>
+                    <a href="${pageContext.request.contextPath}/Views/listapplication.jsp" class="ttr-material-button">
+                        <span class="ttr-icon"><i class="ti-write"></i></span>
+                        <span class="ttr-label">Application Management</span>
+                        <span class="ttr-arrow-icon"><i class="fa fa-angle-down"></i></span>
+                    </a>
+                    <ul>
+                        <li><a href="${pageContext.request.contextPath}/applicationmanagement?typeapplication=leave" class="ttr-material-button"><span class="ttr-label">Leave request</span></a></li>
+                        <li><a href="${pageContext.request.contextPath}/applicationmanagement?typeapplication=ot" class="ttr-material-button"><span class="ttr-label">Overtime request</span></a></li>
+                    </ul>
+                </li>
                 <li class="ttr-seperate"></li>
             </ul>
         </nav>

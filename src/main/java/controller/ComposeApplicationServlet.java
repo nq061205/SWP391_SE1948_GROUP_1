@@ -68,7 +68,14 @@ public class ComposeApplicationServlet extends HttpServlet {
                     request.setAttribute("content", content);
                     Employee approver = empDAO.getEmployeeByEmail(email);
                     request.setAttribute("receiver", empDAO.getEmployeeReceiverByRole(user.getRole().getRoleName(), user.getDept().getDepId()));
-                    if(startDate.after(endDate)){
+                    long diff = endDate.getTime() - startDate.getTime();
+                    double days = (double) diff / (1000 * 60 * 60 * 24) + 1;
+                    if (days > user.getPaidLeaveDays() && "Annual Leave".equalsIgnoreCase(leaveType)) {
+                        request.setAttribute("messageLeave", "Exceeding the number of leave days");
+                        request.getRequestDispatcher("Views/composeleaveapplication.jsp").forward(request, response);
+                        return;
+                    }
+                    if (startDate.after(endDate)) {
                         request.setAttribute("messageDate", "Start date must before end date");
                         request.getRequestDispatcher("Views/composeleaveapplication.jsp").forward(request, response);
                         return;

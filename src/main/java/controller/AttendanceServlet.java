@@ -48,12 +48,10 @@ public class AttendanceServlet extends HttpServlet {
                 ? today.getYear()
                 : Integer.parseInt(yearParam);
 
-        // --- Xác định ngày đầu tháng ---
         LocalDate firstDay = LocalDate.of(year, month, 1);
         int firstDayOfWeek = firstDay.getDayOfWeek().getValue(); // 1=Mon ...7=Sun
         int daysInMonth = firstDay.lengthOfMonth();
 
-        // --- Tạo danh sách các ngày ---
         List<Map<String, Object>> days = new ArrayList<>();
 
         for (int i = 1; i <= daysInMonth; i++) {
@@ -65,18 +63,20 @@ public class AttendanceServlet extends HttpServlet {
             dayInfo.put("dayOfWeek", dayOfWeek);
             dayInfo.put("isToday", current.equals(today));
 
-            // 🟩 1️⃣ Kiểm tra cuối tuần TRƯỚC
             if (current.getDayOfWeek() == DayOfWeek.SATURDAY || current.getDayOfWeek() == DayOfWeek.SUNDAY) {
                 dayInfo.put("status", "weekend");
                 dayInfo.put("checkIn", "-");
                 dayInfo.put("checkOut", "-");
                 dayInfo.put("workday", "0");
+            } else if (current.isAfter(LocalDate.now())) {
+                dayInfo.put("status", "future");
+                dayInfo.put("checkIn", "-");
+                dayInfo.put("checkOut", "-");
+                dayInfo.put("workday", "-");
             } else {
-                // 🟨 2️⃣ Chỉ query DB cho ngày làm việc
                 DailyAttendance attendance = dailyDAO.getDailyAttendentByTime(user.getEmpId(), i, month, year);
-
                 if (attendance != null) {
-                    dayInfo.put("status", attendance.getStatus());
+                    dayInfo.put("status", attendance.getStatus().toLowerCase());
                     dayInfo.put("checkIn", attendance.getCheckInTime() != null ? attendance.getCheckInTime().toString() : "-");
                     dayInfo.put("checkOut", attendance.getCheckOutTime() != null ? attendance.getCheckOutTime().toString() : "-");
                     dayInfo.put("workday", attendance.getWorkDay());

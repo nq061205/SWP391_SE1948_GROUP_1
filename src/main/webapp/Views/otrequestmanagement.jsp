@@ -52,6 +52,7 @@
         <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/assets2/css/dashboard.css">
         <link class="skin" rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/assets2/css/color/color-1.css">
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+        <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/assets2/css/custom.css">
     </head>
 
     <body class="ttr-opened-sidebar ttr-pinned-sidebar">
@@ -66,14 +67,24 @@
                 <c:if test="${not empty update}">
                     <div class="alert alert-success">${update}</div>
                 </c:if>
-                <form action="${pageContext.request.contextPath}/applicationmanagement" method="get"
+                <form action="${pageContext.request.contextPath}/application" method="get"
                       class="d-flex align-items-center flex-nowrap w-100" style="gap:12px;">
-                    <input type="hidden" name="typeapplication" value="ot"/>
+                    <input type="hidden" name="typeapplication" value="OT"/>
                     <input type="text" name="search" value="${param.search}"
                            class="form-control filter-h" placeholder="Search email or name...">
                     <button type="submit" class="btn btn-primary filter-h">
                         <i class="fa fa-search"></i> Search
                     </button>
+
+                    <select name="type" class="form-control filter-h" style="width:170px;" onchange="this.form.submit()">
+                        <option value="">All Type</option>
+                        <option value="Annual Leave" ${param.type == 'Annual Leave' ? 'selected' : ''}>Annual Leave</option>
+                        <option value="Sick"    ${param.type == 'Sick'    ? 'selected' : ''}>Sick</option>
+                        <option value="Unpaid"  ${param.type == 'Unpaid'  ? 'selected' : ''}>Unpaid</option>
+                        <option value="Maternity" ${param.type == 'Maternity' ? 'selected' : ''}>Maternity</option>
+                        <option value="Other"   ${param.type == 'Other'   ? 'selected' : ''}>Other</option>
+                    </select>
+
                     <input type="date" name="startDate" value="${param.startDate}"
                            class="form-control filter-h" style="width:170px;">
                     <span class="sep">to</span>
@@ -94,13 +105,10 @@
                                 No.
                             </th>
                             <th style="width: 120px">
-                                Receiver
+                                Sender
                             </th>
                             <th style="width: 120px">
                                 Email
-                            </th>
-                            <th style="width:80px">
-                                Status
                             </th>
                             <th style="width:80px">
                                 Overtime hours
@@ -123,32 +131,27 @@
                                 <td>${(page - 1) * 10 +loop.index+1}</td>
                                 <td>${list.approvedBy.fullname}</td>
                                 <td>${list.approvedBy.email}</td>
-                                <td
-                                    style="font-weight: bold;
-                                    color:
-                                    <c:choose>
-                                        <c:when test="${list.status eq 'Approved'}">green</c:when>
-                                        <c:when test="${list.status eq 'Rejected'}">red</c:when>
-                                        <c:otherwise>goldenrod</c:otherwise>
-                                    </c:choose>;
-                                    "
-                                    >${list.status}</td>
                                 <td>${list.otHours}</td>
                                 <td>${list.date}</td>
                                 <td>${list.createdAt}</td>
                                 <td>
-                                    <c:choose>
-                                        <c:when test="${not list.status.equalsIgnoreCase('Pending')}">
-                                            <a href="${pageContext.request.contextPath}/detail?otId=${list.otId}" class="icon-circle" title="More detail">
-                                                <i class="fa fa-info"></i>
-                                            </a>
-                                        </c:when>
-                                        <c:otherwise>
-                                            <a href="${pageContext.request.contextPath}/editapplication?type=OT&id=${list.otId}" class="icon-circle" data-toggle="tooltip" title="Edit">
-                                                <i class="fa fa-pencil"></i>
-                                            </a>   
-                                        </c:otherwise>
-                                    </c:choose>
+                                  <form action="${pageContext.request.contextPath}/applicationmanagement" method="post" style="display:inline;">
+                                        <input type="hidden" name="type" value="ot">
+                                        <input type="hidden" name="action" value="Approved">
+                                        <input type="hidden" name="otId" value="${list.otId}">
+                                        <button type="submit" class="btn btn-success btn-sm" title="Approved">
+                                            <i class="fa fa-check"></i>
+                                        </button>
+                                    </form>
+
+                                    <form action="${pageContext.request.contextPath}/applicationmanagement" method="post" style="display:inline;">
+                                        <input type="hidden" name="type" value="ot">
+                                        <input type="hidden" name="action" value="Rejected">
+                                        <input type="hidden" name="otId" value="${list.otId}">
+                                        <button type="submit" class="btn btn-danger btn-danger" title="Rejected">
+                                            <i class="fa fa-times"></i>
+                                        </button>
+                                    </form> 
                                 </td>
                             </tr>
                         </c:forEach>
@@ -162,9 +165,6 @@
                     </div>
                     <h5 class="text-muted">No Leave Request Found</h5>
                     <p class="text-muted">There are currently no overtime request in the system.</p>
-                    <a href="${pageContext.request.contextPath}/compose?type=LEAVE" class="btn btn-primary">
-                        <i class="fa fa-plus"></i> Create First Leave Request
-                    </a>
                 </div>
             </c:if>
             <c:url var="baseUrl" value="/application">
@@ -235,9 +235,9 @@
         <script src="${pageContext.request.contextPath}/assets2/js/admin.js"></script>
         <script src='${pageContext.request.contextPath}/assets2/vendors/switcher/switcher.js'></script>
         <script>
-            $(document).ready(function () {
-                $('[data-toggle="tooltip"]').tooltip();
-            });
+                        $(document).ready(function () {
+                            $('[data-toggle="tooltip"]').tooltip();
+                        });
         </script>
         <style>
             .icon-circle {

@@ -66,8 +66,7 @@ public class LeaveRequestDAO extends DBContext {
     public ArrayList<LeaveRequest> getLeaveRequestByEmpId(int emp_id) {
         ArrayList<LeaveRequest> list = new ArrayList<>();
         String sql = LEAVE_SELECT_SQL + " WHERE lr.emp_id = ?";
-        try (Connection cn = DBContext.getConnection();
-                PreparedStatement stm = cn.prepareStatement(sql)) {
+        try (Connection cn = DBContext.getConnection(); PreparedStatement stm = cn.prepareStatement(sql)) {
             stm.setInt(1, emp_id);
             try (ResultSet rs = stm.executeQuery()) {
                 while (rs.next()) {
@@ -82,8 +81,7 @@ public class LeaveRequestDAO extends DBContext {
 
     public LeaveRequest getLeaveRequestByLeaveId(int leave_id, int emp_id) {
         String sql = LEAVE_SELECT_SQL + " WHERE lr.leave_id = ? AND lr.emp_id = ?";
-        try (Connection cn = DBContext.getConnection();
-                PreparedStatement stm = cn.prepareStatement(sql)) {
+        try (Connection cn = DBContext.getConnection(); PreparedStatement stm = cn.prepareStatement(sql)) {
             stm.setInt(1, leave_id);
             stm.setInt(2, emp_id);
             try (ResultSet rs = stm.executeQuery()) {
@@ -104,8 +102,7 @@ public class LeaveRequestDAO extends DBContext {
                 + "(emp_id, leave_type, reason, day_requested, start_date, end_date, approved_by, status, created_at, updated_at)"
                 + "VALUES (?, ?, ?, ?, ?, ?, ?, 'Pending', ?, ?)";
 
-        try (Connection conn = DBContext.getConnection();
-                PreparedStatement stm = conn.prepareStatement(sql)) {
+        try (Connection conn = DBContext.getConnection(); PreparedStatement stm = conn.prepareStatement(sql)) {
             long diff = endDate.getTime() - startDate.getTime();
             double days = (double) diff / (1000 * 60 * 60 * 24) + 1;
 
@@ -128,8 +125,7 @@ public class LeaveRequestDAO extends DBContext {
 
     public int deleteLeaveRequest(int leaveId) {
         String sql = "DELETE FROM hrm.leave_request WHERE leave_id= ?";
-        try (Connection conn = DBContext.getConnection();
-                PreparedStatement stm = conn.prepareStatement(sql)) {
+        try (Connection conn = DBContext.getConnection(); PreparedStatement stm = conn.prepareStatement(sql)) {
             stm.setInt(1, leaveId);
             return stm.executeUpdate();
         } catch (Exception ex) {
@@ -140,8 +136,7 @@ public class LeaveRequestDAO extends DBContext {
 
     public int updateLeaveRequest(int id, String leaveType, String content, Date startDate, Date endDate) {
         String sql = "UPDATE hrm.leave_request SET leave_type=?, reason=?,day_requested = ? ,start_date = ?, end_date = ?, updated_at = NOW() WHERE leave_id=?";
-        try (Connection conn = DBContext.getConnection();
-                PreparedStatement stm = conn.prepareStatement(sql)) {
+        try (Connection conn = DBContext.getConnection(); PreparedStatement stm = conn.prepareStatement(sql)) {
 
             long diff = endDate.getTime() - startDate.getTime();
             double days = (double) diff / (1000 * 60 * 60 * 24) + 1;
@@ -194,6 +189,56 @@ public class LeaveRequestDAO extends DBContext {
             params.add(kw);
             params.add(kw);
             params.add(kw);
+        }
+
+        if (startDate != null) {
+            sql.append(" AND lr.created_at >= ?");
+            params.add(Timestamp.valueOf(startDate.toLocalDate().atStartOfDay()));
+        }
+        if (endDate != null) {
+            sql.append(" AND lr.created_at <= ?");
+            params.add(Timestamp.valueOf(endDate.toLocalDate().plusDays(1).atStartOfDay()));
+        }
+
+        try (Connection cn = DBContext.getConnection(); PreparedStatement ps = cn.prepareStatement(sql.toString())) {
+
+            int i = 1;
+            for (Object p : params) {
+                ps.setObject(i++, p);
+            }
+
+            try (ResultSet rs = ps.executeQuery()) {
+                return rs.next() ? rs.getInt(1) : 0;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            return 0;
+        }
+    }
+
+    public int countLeaveByApprorverFiltered(
+            int approver_id, String search, String type,
+            Date startDate, Date endDate) {
+
+        StringBuilder sql = new StringBuilder(
+                "SELECT COUNT(*) "
+                + "FROM hrm.leave_request lr "
+                + "WHERE lr.approved_by = ? and lr.status = 'pending'"
+        );
+
+        List<Object> params = new ArrayList<>();
+        params.add(approver_id);
+
+        if (type != null && !type.trim().isEmpty()) {
+            sql.append(" AND lr.leave_type = ?");
+            params.add(type.trim());
+        }
+
+        if (search != null && !search.trim().isEmpty()) {
+            String keyword = "%" + search.trim() + "%";
+            sql.append(" AND (e.fullname LIKE ? OR e.email LIKE ?)");
+            params.add(keyword);
+            params.add(keyword);
         }
 
         if (startDate != null) {
@@ -289,12 +334,71 @@ public class LeaveRequestDAO extends DBContext {
         return list;
     }
 
+    public List<LeaveRequest> findLeaveByApproverFilteredPaged(
+            int empId, String search, String status, String type,
+            Date startDate, Date endDate,
+            int offset, int size) {
+
+        StringBuilder sql = new StringBuilder(LEAVE_SELECT_SQL + " WHERE lr.approved_by = ? and lr.status = 'pending'");
+
+        List<Object> params = new ArrayList<>();
+        params.add(empId);
+
+        if (status != null && !status.trim().isEmpty()) {
+            sql.append(" AND lr.status = ?");
+            params.add(status.trim());
+        }
+
+        if (type != null && !type.trim().isEmpty()) {
+            sql.append(" AND lr.leave_type = ?");
+            params.add(type.trim());
+        }
+
+        if (search != null && !search.trim().isEmpty()) {
+            String keyword = "%" + search.trim() + "%";
+            sql.append(" AND (e.fullname LIKE ? OR e.email LIKE ?)");
+            params.add(keyword);
+            params.add(keyword);
+        }
+
+        if (startDate != null) {
+            sql.append(" AND lr.created_at >= ?");
+            params.add(java.sql.Timestamp.valueOf(startDate.toLocalDate().atStartOfDay()));
+        }
+        if (endDate != null) {
+            sql.append(" AND lr.created_at <= ?");
+            params.add(java.sql.Timestamp.valueOf(endDate.toLocalDate().plusDays(1).atStartOfDay()));
+        }
+
+        sql.append(" ORDER BY lr.created_at DESC LIMIT ? OFFSET ?");
+        params.add(size);
+        params.add(offset);
+
+        List<LeaveRequest> list = new ArrayList<>();
+
+        try (Connection cn = DBContext.getConnection(); PreparedStatement ps = cn.prepareStatement(sql.toString())) {
+
+            int i = 1;
+            for (Object p : params) {
+                ps.setObject(i++, p);
+            }
+
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    list.add(mapResultSetToLeaveRequest(rs));
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return list;
+    }
+
     public List<LeaveRequest> getApprovedLeaves() {
         List<LeaveRequest> list = new ArrayList<>();
         String sql = LEAVE_SELECT_SQL + " WHERE lr.status = 'Approved'";
-        try (Connection conn = DBContext.getConnection();
-                PreparedStatement st = conn.prepareStatement(sql);
-                ResultSet rs = st.executeQuery()) {
+        try (Connection conn = DBContext.getConnection(); PreparedStatement st = conn.prepareStatement(sql); ResultSet rs = st.executeQuery()) {
             while (rs.next()) {
                 list.add(mapResultSetToLeaveRequest(rs));
             }
@@ -308,8 +412,7 @@ public class LeaveRequestDAO extends DBContext {
         List<LeaveRequest> list = new ArrayList<>();
         String sql = LEAVE_SELECT_SQL + " WHERE lr.status = 'Approved' AND (lr.start_date <= ? AND lr.end_date >= ?)";
 
-        try (Connection conn = DBContext.getConnection();
-                PreparedStatement st = conn.prepareStatement(sql)) {
+        try (Connection conn = DBContext.getConnection(); PreparedStatement st = conn.prepareStatement(sql)) {
             st.setDate(1, maxDate);
             st.setDate(2, minDate);
             try (ResultSet rs = st.executeQuery()) {
@@ -323,9 +426,31 @@ public class LeaveRequestDAO extends DBContext {
         return list;
     }
 
+    public void updateLeaveStatus(int id, String action, String dept) {
+        String sql = "UPDATE leave_request SET "
+                + "status = ?, "
+                + "approved_at = NOW(), "
+                + "updated_at = NOW(), "
+                + "system_log = ? "
+                + "WHERE leave_id = ?";
+
+        try (Connection con = DBContext.getConnection(); PreparedStatement ps = con.prepareStatement(sql)) {
+
+            ps.setString(1, action); 
+            ps.setString(2, action + " by " + dept);
+            ps.setInt(3, id); 
+
+            ps.executeUpdate();
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
     public static void main(String[] args) {
         LeaveRequestDAO dao = new LeaveRequestDAO();
-        System.out.println(dao.composeLeaveRequest(1, "Sick", "a", Date.valueOf("2025-12-12"), Date.valueOf("2025-12-12"), 2));
+        dao.updateLeaveStatus(3, "Pending", "HR");
+//        System.out.println(dao.countLeaveByApprorverFiltered(1, "", "", null, null));
     }
 
 }
