@@ -129,8 +129,9 @@ public class UpdateDependantServlet extends HttpServlet {
             hasError = true;
         } else {
             int age = Period.between(dobLocal, today).getYears();
-            if (age < 18) {
-                request.setAttribute("DobErr", "Employee must be at least 18 years old!");
+            if ((relationship.equalsIgnoreCase("Spouse") || relationship.equalsIgnoreCase("Parent"))
+                    && age < 18) {
+                request.setAttribute("DobErr", "Parent or spouse must be at least 18 year olds!");
                 hasError = true;
             }
         }

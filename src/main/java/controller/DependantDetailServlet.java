@@ -172,11 +172,7 @@ public class DependantDetailServlet extends HttpServlet {
         dep.setEmployee(emp);
 
         depDAO.createDependant(dep);
-        request.setAttribute("dependantList", dependantList);
-        request.setAttribute("relationList", relationList);
-        request.setAttribute("empId", empId);
-        request.setAttribute("tab", tab);
-        request.getRequestDispatcher("Views/employeedetails.jsp").forward(request, response);
+        response.sendRedirect("employeedetail?empId=" + empId + "&tab=" + tab);
     }
 
     /**
