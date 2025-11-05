@@ -34,11 +34,11 @@ public class ContractDAO {
         return con;
     }
 
-    public Contract getContractByEmployeeCode(String empCode) {
-        String sql = BASE_SELECT_SQL + "where e.emp_code=?";
+    public Contract getContractByEmployeeId(int emp_id) {
+        String sql = BASE_SELECT_SQL + "where c.emp_id=?";
         Contract con = null;
         try (Connection conn = DBContext.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
-            ps.setString(1, empCode);
+            ps.setInt(1, emp_id);
             try (ResultSet rs = ps.executeQuery()) {
                 if (rs.next()) {
                     con = mapResultSetToContract(rs);
@@ -80,7 +80,7 @@ public class ContractDAO {
 
     public static void main(String[] args) {
         ContractDAO conDAO = new ContractDAO();
-        Contract con = conDAO.getContractByEmployeeCode("E002");
+        Contract con = conDAO.getContractByEmployeeId(2);
         con.setType("Probation");
         conDAO.updateContract(con);
         System.out.println(con);
