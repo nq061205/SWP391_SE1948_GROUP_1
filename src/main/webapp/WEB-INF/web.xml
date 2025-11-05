@@ -170,6 +170,14 @@
         <servlet-name>InterviewServlet</servlet-name>
         <servlet-class>controller.InterviewServlet</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>DependantDetailServlet</servlet-name>
+        <servlet-class>controller.DependantDetailServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>UpdateDependantServlet</servlet-name>
+        <servlet-class>controller.UpdateDependantServlet</servlet-class>
+    </servlet>
     <servlet-mapping>
         <servlet-name>HomePageServlet</servlet-name>
         <url-pattern>/homepage</url-pattern>
@@ -336,6 +344,14 @@
         <url-pattern>/interview</url-pattern>
         <servlet-name>AttendanceServlet</servlet-name>
         <url-pattern>/attendance</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>DependantDetailServlet</servlet-name>
+        <url-pattern>/dependantdetail</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>UpdateDependantServlet</servlet-name>
+        <url-pattern>/updatedependant</url-pattern>
     </servlet-mapping>
     <session-config>
         <session-timeout>30</session-timeout>
