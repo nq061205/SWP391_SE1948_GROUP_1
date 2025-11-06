@@ -99,6 +99,8 @@ public class CreateAccountServlet extends HttpServlet {
         );
 
         int totalPages = (int) Math.ceil((double) totalRecords / pageSize);
+        
+        List<String> managerDepIds = deptDAO.getDepartmentsHavingManager();
 
         List<Interview> interList = interDAO.getFilteredInterviewsNotInEmployee("Pass", searchKey, startApplyDate, endApplyDate, startInterviewDate, endInterviewDate, page, pageSize);
 
@@ -106,6 +108,7 @@ public class CreateAccountServlet extends HttpServlet {
         request.setAttribute("page", page);
         request.setAttribute("searchkey", searchKey);
         request.setAttribute("totalPages", totalPages);
+        ses.setAttribute("managerDepIds", managerDepIds);
         ses.setAttribute("deptList", deptDAO.getAllDepartment());
         request.setAttribute("passedList", interList);
         request.getRequestDispatcher("Views/createaccount.jsp").forward(request, response);

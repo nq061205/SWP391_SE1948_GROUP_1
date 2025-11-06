@@ -189,6 +189,7 @@
                                                                 class="btn btn-primary btn-sm open-modal-btn w-100"
                                                                 data-bs-toggle="modal"
                                                                 data-bs-target="#addModal"
+                                                                data-depId="${pl.candidate.post.department.depId}"
                                                                 data-name="${pl.candidate.name}"
                                                                 data-email="${pl.candidate.email}"
                                                                 data-phone="${pl.candidate.phone}">
@@ -274,27 +275,31 @@
 
                                         <label class="form-label mt-2">Phone:</label>
                                         <input type="text" name="phone" class="form-control" id="modalPhone" required>
-
+                                        <c:set var="selectedDepId" value="${param.depId}" />
+                                        <c:set var="managerDepIds" value="${sessionScope.managerDepIds}" />
                                         <label class="form-label mt-2">Department:</label>
                                         <br>
-                                        <select name="deptId"
+                                        <select id="modalDepId" name="deptId"
                                                 class="custom-select"
                                                 style="min-width:150px;">
                                             <c:forEach var="dep" items="${sessionScope.deptList}">
-                                                <option value="${dep.depId}"> 
+                                                <option value="${dep.depId}" <c:if test="${dep.depId == selectedDepId}">selected</c:if>>
                                                     ${dep.depName}
                                                 </option>
                                             </c:forEach>
                                         </select>
+                                        <c:set var="isManagerDep" value="${fn:contains(managerDepIds, selectedDepId)}" />
                                         <br>
                                         <label class="form-label mt-2">Role:</label>
                                         <br>
-                                        <select name="roleId" class="custom-select"
+                                        <select id="modalRoleId" name="roleId" class="custom-select"
                                                 style="min-width:150px;">
                                             <c:forEach var="rl" items="${sessionScope.roleList}">
-                                                <option value="${rl.roleId}" 
-                                                        <c:if test="${rl.roleId == roleId}">selected</c:if> >
+                                                <option value="${rl.roleId}"<c:if test="${isManagerDep and fn:contains(rl.roleName, 'Manager')}">disabled</c:if>>
                                                     ${rl.roleName}
+                                                    <c:if test="${isManagerDep and fn:contains(rl.roleName, 'Manager')}">
+                                                        (Already Assigned)
+                                                    </c:if>
                                                 </option>
                                             </c:forEach>
                                         </select>
@@ -314,20 +319,52 @@
         <script>
             document.addEventListener("DOMContentLoaded", function () {
                 const openBtns = document.querySelectorAll('.open-modal-btn');
-
                 openBtns.forEach(btn => {
                     btn.addEventListener('click', function () {
+                        const depId = this.getAttribute('data-depId');
                         const name = this.getAttribute('data-name');
                         const email = this.getAttribute('data-email');
                         const phone = this.getAttribute('data-phone');
 
+                        document.getElementById('modalDepId').value = depId || '';
                         document.getElementById('modalName').value = name || '';
                         document.getElementById('modalEmail').value = email || '';
                         document.getElementById('modalPhone').value = phone || '';
+                        document.querySelector('select[name="roleId"]').value = 4;
                     });
                 });
             });
+        </script>
+        <script>
+            const managerDepIds = [
+            <c:forEach var="id" items="${sessionScope.managerDepIds}" varStatus="loop">
+            "${id}"<c:if test="${!loop.last}">,</c:if>
+            </c:forEach>
+            ];
 
+            document.getElementById("modalDepId").addEventListener("change", function () {
+                const selectedDep = this.value;
+                const roleSelect = document.getElementById("modalRoleId");
+                const isManagerDep = managerDepIds.includes(selectedDep);
+
+                for (let opt of roleSelect.options) {
+                    const roleName = opt.text.toLowerCase();
+                    if (roleName.includes("manager")) {
+                        opt.disabled = isManagerDep;
+                        opt.text = opt.text.replace(" (Already Assigned)", "");
+                        if (isManagerDep && !opt.text.includes("Already Assigned")) {
+                            opt.text += " (Already Assigned)";
+                        }
+                    } else {
+                        opt.disabled = false;
+                        opt.text = opt.text.replace(" (Already Assigned)", "");
+                    }
+                }
+
+                if (roleSelect.options[roleSelect.selectedIndex]?.disabled) {
+                    roleSelect.selectedIndex = 0;
+                }
+            });
         </script>
         <script>
             $.fn.selectpicker = function () {
