@@ -32,18 +32,17 @@ public class InterviewDAO {
         }
     }
 
-    public void updateInterviewDateTime(int interviewId, Date date, Time time) {
-        String sql = "UPDATE Interview SET date = ?, time = ?, updated_at = NOW() WHERE interview_id = ?";
-        try (Connection conn = DBContext.getConnection(); PreparedStatement stm = conn.prepareStatement(sql)) {
-
-            stm.setDate(1, date);
-            stm.setTime(2, time);
-            stm.setInt(3, interviewId);
-            stm.executeUpdate();
-
+    public boolean updateInterviewDateTime(int id, Date date, Time time) {
+        String sql = "UPDATE Interview SET date = ?, time = ? WHERE interview_id = ?";
+        try (Connection conn = DBContext.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setDate(1, date);
+            ps.setTime(2, time);
+            ps.setInt(3, id);
+            return ps.executeUpdate() > 0;
         } catch (SQLException e) {
             e.printStackTrace();
         }
+        return false;
     }
 
     public List<Interview> getInterviewsCreatedBy(int empId) {
