@@ -66,7 +66,7 @@
                 <c:if test="${not empty update}">
                     <div class="alert alert-success">${update}</div>
                 </c:if>
-                <form action="${pageContext.request.contextPath}/applicationmanagement" method="get"
+                <form action="${pageContext.request.contextPath}/application" method="get"
                       class="d-flex align-items-center flex-nowrap w-100" style="gap:12px;">
                     <input type="hidden" name="typeapplication" value="ot"/>
                     <input type="text" name="search" value="${param.search}"

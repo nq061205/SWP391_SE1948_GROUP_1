@@ -5,6 +5,7 @@
 package controller;
 
 import dal.CandidateDAO;
+import dal.RolePermissionDAO;
 import java.io.IOException;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
@@ -16,6 +17,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Comparator;
 import model.Candidate;
+import model.Employee;
 
 /**
  *
@@ -27,6 +29,7 @@ public class CandidateListServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         CandidateDAO cDAO = new CandidateDAO();
+        RolePermissionDAO rperDAO = new RolePermissionDAO();
         String type = request.getParameter("type");
         String page = request.getParameter("page");
         String tab = (request.getParameter("tab") != null) ? request.getParameter("tab") : "pending";
@@ -35,7 +38,12 @@ public class CandidateListServlet extends HttpServlet {
             pageNum = Integer.parseInt(page);
         }
         HttpSession session = request.getSession();
-
+        Employee user = (Employee) session.getAttribute("user");
+        if(user == null || !rperDAO.hasPermission(user.getRole().getRoleId(), 2)){
+            response.sendRedirect("login");
+            return;
+        }
+        
         List<Candidate> fullList = (List<Candidate>) session.getAttribute("candidateListFull");
         if ("approve".equals(tab)) {
             fullList = cDAO.getAllCandidate("approve");

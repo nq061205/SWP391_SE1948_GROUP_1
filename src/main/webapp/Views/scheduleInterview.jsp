@@ -83,7 +83,6 @@
                                             </div>
                                         </c:forEach>
                                     </div>
-
                                     <small id="selectedCandidates" class="text-muted mt-1 d-block">
                                         No candidates selected
                                     </small>
@@ -98,7 +97,7 @@
                                             </c:forEach>
                                         </select>
                                     </div>
-                              
+
                                 </div>
 
 
@@ -113,9 +112,16 @@
                                 <!-- Time -->
                                 <div class="form-group mb-3">
                                     <label for="time"><i class="fa fa-clock"></i> Time:</label>
-                                    <input type="time" id="time" name="time" class="form-control"
-                                           value="${interview.time}" required>
+                                    <input type="time"
+                                           id="time"
+                                           name="time"
+                                           class="form-control"
+                                           value="${interview.time}"
+                                           min="07:30"
+                                           max="17:30"
+                                           required>
                                 </div>
+
                                 <c:if test="${errorMessage != null}"><p style="color: red">${errorMessage}</p></c:if>
                                 <c:if test="${successMessage != null}"><p style="color: green">${successMessage}</p></c:if>
 

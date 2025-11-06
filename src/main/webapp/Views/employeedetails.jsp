@@ -167,13 +167,13 @@
                 <ul class="nav nav-tabs mb-4" id="employeeTabs" role="tablist">
                     <li class="nav-item" role="presentation">
                         <a class="nav-link ${tab eq 'Contract' ? 'active bg-primary text-white' : ''}" 
-                           href="${pageContext.request.contextPath}/employeedetail?tab=Contract&empCode=${empCode}" role="tab">
+                           href="${pageContext.request.contextPath}/employeedetail?tab=Contract&empId=${empId}" role="tab">
                             <i class="fa fa-list"></i> Contract
                         </a>
                     </li>
                     <li class="nav-item" role="presentation">
                         <a class="nav-link ${tab eq 'Dependant' ? 'active bg-primary text-white' : ''}" 
-                           href="${pageContext.request.contextPath}/employeedetail?tab=Dependant&empCode=${empCode}" role="tab">
+                           href="${pageContext.request.contextPath}/employeedetail?tab=Dependant&empId=${empId}" role="tab">
                             <i class="fa fa-list"></i> Dependant
                         </a>
                     </li>
@@ -182,7 +182,7 @@
                     <form action="${pageContext.request.contextPath}/contractdetail"
                           method="post" enctype="multipart/form-data">
 
-                        <input type="hidden" name="empCode" value="${empCode}">
+                        <input type="hidden" name="empId" value="${empId}">
                         <input type="hidden" name="tab" value="${tab}">
                         <input type="hidden" name="option" value="save">
 
@@ -272,7 +272,7 @@
                                             <hr>
                                             <div class="d-flex justify-content-between mt-3">
                                                 <button type="submit" class="btn btn-sm btn-primary">Save</button>
-                                                <a href="${pageContext.request.contextPath}/employeedetail?tab=Contract&empCode=${empCode}"
+                                                <a href="${pageContext.request.contextPath}/employeedetail?tab=Contract&empId=${empId}"
                                                    class="btn btn-sm btn-secondary">Cancel</a>
                                             </div>
                                         </c:when>
@@ -297,7 +297,7 @@
                                                 <a href="${pageContext.request.contextPath}/employeelist" class="btn btn-secondary">
                                                     <i class="fa fa-arrow-left"></i> Back
                                                 </a>
-                                                <a href="${pageContext.request.contextPath}/employeedetail?empCode=${empCode}&tab=Contract&option=edit"
+                                                <a href="${pageContext.request.contextPath}/employeedetail?empId=${empId}&tab=Contract&option=edit"
                                                    class="btn btn-sm btn-primary">Edit Information</a>
                                             </div>
                                         </c:otherwise>
@@ -307,15 +307,132 @@
                         </div>
                     </form>
                 </c:if>
-                <c:if test="${tab eq 'dependant'}">
+                <c:if test="${tab eq 'Dependant'}">
+                    <div class="widget-box">
+                        <div class="wc-title">
+                            <h4>Dependant information</h4>
+                        </div>
+                        <div style="margin: 1% 3% 1%;">
+                            <button type="button"
+                                    class="btn btn-sm btn-primary"
+                                    data-bs-toggle="modal"
+                                    data-bs-target="#addDependantModal">
+                                <i class="fa-solid fa-user-plus"></i> Add New Dependant
+                            </button>
+                        </div>
+                        <div class="modal fade" id="addDependantModal" tabindex="-1" aria-labelledby="addDependantModalLabel" aria-hidden="true">
+                            <div class="modal-dialog modal-dialog-centered modal-lg">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title" id="addDependantModalLabel">Add New Dependant</h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">X</button>
+                                    </div>
+                                    <form action="${pageContext.request.contextPath}/dependantdetail" method="post">
+                                        <div class="modal-body">
+                                            <div class="form-group row mb-2">
+                                                <label class="col-sm-3 col-form-label">Name:</label>
+                                                <div class="col-sm-9">
+                                                    <input type="text" name="name" class="form-control" value="${name}" required>
+                                                </div>
+                                            </div>
 
+                                            <div class="form-group row mb-2">
+                                                <label class="col-sm-3 col-form-label">Relationship:</label>
+                                                <div class="col-sm-9">
+                                                    <select name="relationship" class="form-control">
+                                                        <c:forEach items="${relationList}" var="rl">
+                                                            <option value="${rl}">${rl}</option>
+                                                        </c:forEach>
+                                                    </select>
+                                                </div>
+                                            </div>
+
+                                            <div class="form-group row mb-2">
+                                                <label class="col-sm-3 col-form-label">Date of Birth:</label>
+                                                <div class="col-sm-9">
+                                                    <input type="date" value="${dob}" name="dob" class="form-control" required>
+                                                    <p>${DobErr}</p>
+                                                </div>
+                                            </div>
+
+                                            <div class="form-group row mb-2">
+                                                <label class="col-sm-3 col-form-label">Gender:</label>
+                                                <div class="col-sm-9">
+                                                    <select name="gender" class="form-control">
+                                                        <option value="true">Male</option>
+                                                        <option value="false">Female</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+
+                                            <div class="form-group row mb-2">
+                                                <label class="col-sm-3 col-form-label">Phone:</label>
+                                                <div class="col-sm-9">
+                                                    <input type="text" value="${phone}" name="phone" class="form-control" maxlength="10" pattern="0[0-9]{9}" required>
+                                                </div>
+                                            </div>
+                                            <input type="hidden" name="empId" value="${empId}">
+                                            <input type="hidden" name="tab" value="${tab}">
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                                            <button type="submit" class="btn btn-primary">Create</button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="table-responsive" style="overflow-x:auto;">
+                            <table class="table table-striped table-bordered table-hover align-middle text-center" 
+                                   style="table-layout: fixed; width: 100%; border-collapse: collapse;">
+                                <thead class="thead-dark">
+                                    <tr>
+                                        <th>No</th>
+                                        <th>Dependant Name</th>
+                                        <th>Relationship</th>
+                                        <th>Dob</th>
+                                        <th>Gender</th>
+                                        <th>Phone</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <c:forEach items="${dependantList}" var="dl" varStatus="loop">
+                                        <tr>
+                                            <td>${loop.index+1}</td>
+                                            <td>${dl.name}</td>
+                                            <td>${dl.relationship}</td>
+                                            <td>${dl.dob}</td>
+                                            <td>${dl.gender ?'Male':'Female'}</td>
+                                            <td>${dl.phone}</td>
+                                            <td>
+                                                <a href="${pageContext.request.contextPath}/updatedependant?empId=${dl.employee.empId}" 
+                                                   class="btn btn-sm btn-primary">Edit</a>
+                                            </td>
+                                        </tr>
+                                    </c:forEach>
+                                </tbody>
+                            </table>
+                        </div>
+
+                    </div>
                 </c:if>
             </div>
         </main>
+        <c:if test="${not empty DobErr}">
+            <script>
+                window.onload = function () {
+                    var myModal = new bootstrap.Modal(document.getElementById('addDependantModal'));
+                    myModal.show();
+                };
+            </script>
+        </c:if>
+
 
         <!-- JS Libraries -->
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
         <script src="${pageContext.request.contextPath}/assets2/js/jquery.min.js"></script>
-        <script src="${pageContext.request.contextPath}/assets2/vendors/bootstrap/js/bootstrap.bundle.min.js"></script>
+<!--        <script src="${pageContext.request.contextPath}/assets2/vendors/bootstrap/js/bootstrap.bundle.min.js"></script>-->
         <script src="${pageContext.request.contextPath}/assets2/js/jquery.min.js"></script>
         <script src="${pageContext.request.contextPath}/assets2/vendors/bootstrap/js/popper.min.js"></script>
         <script src="${pageContext.request.contextPath}/assets2/vendors/bootstrap/js/bootstrap.min.js"></script>
