@@ -53,7 +53,7 @@
 
     <body class="ttr-opened-sidebar ttr-pinned-sidebar">
         <%@ include file="CommonItems/Header/dashboardHeader.jsp" %>
-        <%@ include file="CommonItems/Navbar/empNavbar.jsp" %>
+        <%@ include file="CommonItems/Navbar/adminNavbar.jsp" %>
         <main class="ttr-wrapper">
             <div class="container-fluid">
                 <div class="db-breadcrumb">

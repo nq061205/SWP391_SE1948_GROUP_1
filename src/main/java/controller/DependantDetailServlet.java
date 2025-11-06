@@ -85,7 +85,7 @@ public class DependantDetailServlet extends HttpServlet {
             e.printStackTrace();
         }
         int page = 1;
-        int pageSize = 1;
+        int pageSize = 3;
         try {
             page = Integer.parseInt(request.getParameter("page"));
         } catch (NumberFormatException e) {
@@ -156,7 +156,7 @@ public class DependantDetailServlet extends HttpServlet {
             gender = null;
         }
         int page = 1;
-        int pageSize = 1;
+        int pageSize = 3;
         try {
             page = Integer.parseInt(request.getParameter("page"));
         } catch (NumberFormatException e) {
