@@ -60,7 +60,7 @@
 
         <!-- HEADER + NAVBAR -->
         <%@ include file="CommonItems/Header/dashboardHeader.jsp" %>
-        <%@ include file="CommonItems/Navbar/empNavbar.jsp" %>
+        <%@ include file="CommonItems/Navbar/hrNavbar.jsp" %>
 
         <main class="ttr-wrapper">
             <div class="container-fluid">
@@ -104,7 +104,7 @@
                                             <div class="form-group row">
                                                 <label class="col-sm-3 col-form-label">Email:</label>
                                                 <div class="col-sm-9">
-                                                    <input name="email" class="form-control"  type="email" value="${sessionScope.emp.email}">
+                                                    <input name="email" class="form-control"  type="email" value="${sessionScope.emp.email}" required>
                                                 </div>
                                             </div>
                                             <div class="form-group row mt-2">
@@ -116,7 +116,7 @@
                                             <div class="form-group row mt-2">
                                                 <label class="col-sm-3 col-form-label">Date of birth:</label>
                                                 <div class="col-sm-9">
-                                                    <input class="form-control" name="dob" type="date" value="${sessionScope.emp.dob}" >
+                                                    <input class="form-control" name="dob" type="date" value="${sessionScope.emp.dob}"  required>
                                                     <p>${dobErr}</p>
                                                 </div>
                                             </div>
