@@ -46,11 +46,9 @@ public class ApplicationManagementServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        HttpSession session = request.getSession();
         String type = request.getParameter("type");
         String action = request.getParameter("action");
         
-        Employee user = (Employee) session.getAttribute("user");
         if ("leave".equalsIgnoreCase(type)) {
             int id = Integer.parseInt(request.getParameter("leaveId"));
             String note = request.getParameter("note");
