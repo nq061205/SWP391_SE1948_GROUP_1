@@ -160,7 +160,6 @@
         <servlet-name>UpdateDepartmentServlet</servlet-name>
         <servlet-class>controller.UpdateDepartmentServlet</servlet-class>
     </servlet>
-
     <servlet>
         <servlet-name>DepartmentDetailServlet</servlet-name>
         <servlet-class>controller.DepartmentDetailServlet</servlet-class>
@@ -203,6 +202,11 @@
     <servlet>
         <servlet-name>InterviewServlet</servlet-name>
         <servlet-class>controller.InterviewServlet</servlet-class>
+    </servlet>
+    <!-- ===== SERVLET MAPPINGS ===== -->
+    <servlet>
+        <servlet-name>UpdateDailyAttendanceServlet</servlet-name>
+        <servlet-class>controller.hr.UpdateDailyAttendanceServlet</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>ApplicationManagementServlet</servlet-name>
@@ -321,11 +325,6 @@
     <servlet-mapping>
         <servlet-name>AccountListServlet</servlet-name>
         <url-pattern>/accountlist</url-pattern>
-    </servlet-mapping>
-
-    <servlet-mapping>
-        <servlet-name>DepartmentListServlet</servlet-name>
-        <url-pattern>/departmentlist</url-pattern>
     </servlet-mapping>
 
     <servlet-mapping>
@@ -457,10 +456,6 @@
         <url-pattern>/contractdetail</url-pattern>
     </servlet-mapping>
 
-    <servlet-mapping>
-        <servlet-name>DetailDailyAttendanceServlet</servlet-name>
-        <url-pattern>/detail-daily-attendance</url-pattern>
-    </servlet-mapping>
 
     <servlet-mapping>
         <servlet-name>ScheduleServlet</servlet-name>
@@ -473,6 +468,10 @@
     <servlet-mapping>
         <servlet-name>AttendanceServlet</servlet-name>
         <url-pattern>/attendance</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>UpdateDailyAttendanceServlet</servlet-name>
+        <url-pattern>/update-daily-attendance</url-pattern>
     </servlet-mapping>
 
     <servlet-mapping>
