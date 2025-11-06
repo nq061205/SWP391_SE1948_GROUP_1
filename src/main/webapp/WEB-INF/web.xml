@@ -331,6 +331,10 @@
         <servlet-name>DepartmentDetailServlet</servlet-name>
         <url-pattern>/departmentdetail</url-pattern>
     </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>DepartmentListServlet</servlet-name>
+        <url-pattern>/departmentlist</url-pattern>
+    </servlet-mapping>
 
     <servlet-mapping>
         <servlet-name>CandidateListServlet</servlet-name>

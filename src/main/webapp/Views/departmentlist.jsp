@@ -3,6 +3,7 @@
     Created on : Oct 5, 2025, 10:46:57 PM
     Author     : Lenovo
 --%>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ page contentType="text/html" pageEncoding="UTF-8"%>
 <!DOCTYPE html>
@@ -65,6 +66,31 @@
                 <button class="btn btn-primary mb-3" data-bs-toggle="modal" data-bs-target="#addModal">
                     + Add Department
                 </button>
+                <div class="filter-row mb-3" style="margin: 0% 1%">
+                    <form action="${pageContext.request.contextPath}/departmentlist" method="get"
+                          class="d-flex align-items-center justify-content-between flex-nowrap gap-3 h-100" style="gap:12px;">
+                        <input type="hidden" name="tab" value="${param.tab}">
+                        <input type="hidden" name="page" value="${param.page}">
+                        <input  type="text" name="searchkey" class="form-control filter-h"
+                                placeholder="Search by id or name"
+                                value="${searchkey}">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fa fa-search me-1"></i> Search
+                        </button>
+                        <select name="deptId" class="form-control filter-h" style="width:170px;">
+                            <option value="">-- All --</option>
+                            <c:forEach var="dl" items="${deptNameList}">
+                                <option value="${dl.depId}"
+                                        <c:if test="${param.deptId == dl.depId}">selected</c:if>>
+                                    ${dl.depName}
+                                </option>
+                            </c:forEach>
+                        </select>
+                        <button type="submit" class="btn btn-outline-secondary filter-h"> <i class="fa fa-filter"></i>Apply</button>
+                        <a href="${pageContext.request.contextPath}/departmentlist"
+                           class="btn btn-warning filter-h"><i class="fa fa-times"></i>Clear</a>
+                    </form>
+                </div>
                 <div class="modal fade" id="addModal">
                     <div class="modal-dialog">
                         <div class="modal-content">
@@ -72,12 +98,14 @@
                             <form action="departmentlist" method="post">
                                 <div class="modal-header">
                                     <h5 class="modal-title">Add New Department</h5>
-                                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal">X</button>
                                 </div>
+
 
                                 <div class="modal-body">
                                     <label class="form-label">Department ID</label>
                                     <input type="text" name="deptID" class="form-control" required>
+                                    <p style="color:red">${errorMessage}</p>
 
                                     <label class="form-label mt-2">Department Name</label>
                                     <input type="text" name="deptName" class="form-control" required>
@@ -125,10 +153,62 @@
                         </tbody>
                     </table>
                 </div>
+                <c:url var="baseUrlWithSort" value="departmentlist">
+                    <c:if test="${not empty deptId}">
+                        <c:forEach var="d" items="${deptId}">
+                            <c:param name="deptId" value="${d}" />
+                        </c:forEach>
+                    </c:if>
+                    <c:if test="${not empty searchkey}">
+                        <c:param name="searchkey" value="${searchkey}" />
+                    </c:if>
+                </c:url>
+                <c:set var="urlPrefixWithSort" value="${baseUrlWithSort}${fn:contains(baseUrlWithSort, '?') ? '&' : '?'}" />
+                <nav class="mt-3">
+                    <ul class="pagination justify-content-center">
+                        <c:set var="startPage" value="${page - 1}" />
+                        <c:set var="endPage" value="${page + 1}" />
+
+                        <c:if test="${startPage < 1}">
+                            <c:set var="endPage" value="${endPage + (1 - startPage)}" />
+                            <c:set var="startPage" value="1" />
+                        </c:if>
+
+                        <c:if test="${endPage > totalPages}">
+                            <c:set var="startPage" value="${startPage - (endPage - totalPages)}" />
+                            <c:set var="endPage" value="${totalPages}" />
+                        </c:if>
+
+                        <c:if test="${startPage < 1}">
+                            <c:set var="startPage" value="1" />
+                        </c:if>
+                        <li class="page-item ${page <= 1 ? 'disabled' : ''}">
+                            <a class="page-link" href="${urlPrefixWithSort}&page=${page-1}">Prev</a>
+                        </li>
+
+                        <c:forEach var="p" begin="${startPage}" end="${endPage}">
+                            <li class="page-item ${p == page ? 'active' : ''}">
+                                <a class="page-link" href="${urlPrefixWithSort}&page=${p}">${p}</a>
+                            </li>
+                        </c:forEach>
+
+                        <li class="page-item ${page >= totalPages ? 'disabled' : ''}">
+                            <a class="page-link" href="${urlPrefixWithSort}&page=${page+1}">Next</a>
+                        </li>
+                    </ul>
+                </nav>
             </div>
         </main>
+        <c:if test="${not empty errorMessage}">
+            <script>
+                window.onload = function () {
+                    var myModal = new bootstrap.Modal(document.getElementById('addModal'));
+                    myModal.show();
+                };
+            </script>
+        </c:if>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>
 
-        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
         <script src="${pageContext.request.contextPath}/assets2/js/jquery.min.js"></script>
         <script src="${pageContext.request.contextPath}/assets2/vendors/bootstrap/js/popper.min.js"></script>
         <script src="${pageContext.request.contextPath}/assets2/vendors/bootstrap/js/bootstrap.min.js"></script>

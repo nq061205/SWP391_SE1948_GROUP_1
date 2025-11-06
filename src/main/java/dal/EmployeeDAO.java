@@ -690,6 +690,21 @@ public class EmployeeDAO extends DBContext {
         return empList;
     }
 
+    public boolean hasManager(String depId) {
+        String sql = "SELECT COUNT(*) FROM employee WHERE dep_id = ? AND position_title LIKE '%Manager%'";
+        try (Connection conn = DBContext.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, depId);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt(1) > 0;
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
     public int countAllRecordOfEmployee() {
         String sql = "Select count(*) from Employee";
         try (Connection conn = DBContext.getConnection(); PreparedStatement ps = conn.prepareStatement(sql); ResultSet rs = ps.executeQuery();) {
@@ -976,6 +991,7 @@ public class EmployeeDAO extends DBContext {
             e.printStackTrace();
         }
     }
+
     public void updateIncreasePaidLeaveDaysByEmployeeId(int empId, double dayRequested) {
         String sql = "UPDATE Employee "
                 + "SET paid_leave_days = paid_leave_days + ? "

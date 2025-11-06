@@ -322,7 +322,7 @@
                                   class="d-flex align-items-center justify-content-between flex-nowrap gap-3 h-100" style="gap:12px;">
                                 <input type="hidden" name="tab" value="${param.tab}">
                                 <input type="hidden" name="empId" value="${param.empId}">
-                                <input type="hidden" name="page" value="1">
+                                <input type="hidden" name="page" value="${param.page}">
                                 <input  type="text" name="searchkey" class="form-control filter-h"
                                         placeholder="Search by name"
                                         value="${searchkey}">
@@ -498,18 +498,17 @@
         </main>
         <c:if test="${not empty DobErr}">
             <script>
-                window.onload = function () {
-                    var myModal = new bootstrap.Modal(document.getElementById('addDependantModal'));
-                    myModal.show();
-                };
+                document.addEventListener("DOMContentLoaded", function () {
+                    var modalEl = document.getElementById('addDependantModal');
+                    if (modalEl) {
+                        var myModal = new bootstrap.Modal(modalEl);
+                        myModal.show();
+                    }
+                });
             </script>
         </c:if>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>
 
-
-        <!-- JS Libraries -->
-        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-        <script src="${pageContext.request.contextPath}/assets2/js/jquery.min.js"></script>
-<!--        <script src="${pageContext.request.contextPath}/assets2/vendors/bootstrap/js/bootstrap.bundle.min.js"></script>-->
         <script src="${pageContext.request.contextPath}/assets2/js/jquery.min.js"></script>
         <script src="${pageContext.request.contextPath}/assets2/vendors/bootstrap/js/popper.min.js"></script>
         <script src="${pageContext.request.contextPath}/assets2/vendors/bootstrap/js/bootstrap.min.js"></script>
@@ -522,10 +521,10 @@
         <script src="${pageContext.request.contextPath}/assets2/vendors/masonry/masonry.js"></script>
         <script src="${pageContext.request.contextPath}/assets2/vendors/masonry/filter.js"></script>
         <script src="${pageContext.request.contextPath}/assets2/vendors/owl-carousel/owl.carousel.js"></script>
-        <script src="${pageContext.request.contextPath}/assets2/vendors/scroll/scrollbar.min.js"></script>
+        <script src='${pageContext.request.contextPath}/assets2/vendors/scroll/scrollbar.min.js'></script>
         <script src="${pageContext.request.contextPath}/assets2/js/functions.js"></script>
         <script src="${pageContext.request.contextPath}/assets2/vendors/chart/chart.min.js"></script>
         <script src="${pageContext.request.contextPath}/assets2/js/admin.js"></script>
-        <script src="${pageContext.request.contextPath}/assets2/vendors/switcher/switcher.js"></script>
+        <script src='${pageContext.request.contextPath}/assets2/vendors/switcher/switcher.js'></script>
     </body>
 </html>
