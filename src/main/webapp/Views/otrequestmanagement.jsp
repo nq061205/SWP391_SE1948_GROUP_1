@@ -1,3 +1,4 @@
+
 <%-- 
     Document   : listapplication
     Created on : Oct 5, 2025, 10:46:57 PM
@@ -31,7 +32,7 @@
         <link rel="shortcut icon" type="image/x-icon" href="${pageContext.request.contextPath}/assets2/images/favicon.png" />
 
         <!-- PAGE TITLE HERE ============================================= -->
-        <title>Leave Application</title>
+        <title>Overtime Application</title>
 
         <!-- MOBILE SPECIFIC ============================================= -->
         <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -51,6 +52,7 @@
         <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/assets2/css/dashboard.css">
         <link class="skin" rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/assets2/css/color/color-1.css">
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+        <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/assets2/css/custom.css">
     </head>
 
     <body class="ttr-opened-sidebar ttr-pinned-sidebar">
@@ -58,24 +60,21 @@
         <!-- HEADER + NAVBAR -->
         <%@ include file="CommonItems/Header/dashboardHeader.jsp" %>
         <%@ include file="CommonItems/Navbar/empNavbar.jsp" %>
-        <input type="hidden" name="typeApplication" value="leaverequest" />
+        <input type="hidden" name="typeApplication" value="otrequest" />
 
         <main class="ttr-wrapper">
             <div class="filter-row mb-3">
                 <c:if test="${not empty update}">
                     <div class="alert alert-success">${update}</div>
                 </c:if>
-                <form action="${pageContext.request.contextPath}/application" method="get"
+                <form action="${pageContext.request.contextPath}/applicationmanagement" method="get"
                       class="d-flex align-items-center flex-nowrap w-100" style="gap:12px;">
-                    <input type="hidden" name="typeapplication" value="LEAVE"/>
-
-                    <select name="status" class="form-control filter-h" style="width:160px;" onchange="this.form.submit()">
-                        <option value="">All Status</option>
-                        <option value="Pending"  ${param.status == 'Pending'  ? 'selected' : ''}>Pending</option>
-                        <option value="Approved" ${param.status == 'Approved' ? 'selected' : ''}>Approved</option>
-                        <option value="Rejected" ${param.status == 'Rejected' ? 'selected' : ''}>Rejected</option>
-                        <option value="Invalid" ${param.status == 'Invalid' ? 'selected' : ''}>Invalid</option>
-                    </select>
+                    <input type="hidden" name="typeapplication" value="OT"/>
+                    <input type="text" name="search" value="${param.search}"
+                           class="form-control filter-h" placeholder="Search email or name...">
+                    <button type="submit" class="btn btn-primary filter-h">
+                        <i class="fa fa-search"></i> Search
+                    </button>
 
                     <select name="type" class="form-control filter-h" style="width:170px;" onchange="this.form.submit()">
                         <option value="">All Type</option>
@@ -106,19 +105,16 @@
                                 No.
                             </th>
                             <th style="width: 120px">
-                                Receiver
+                                Sender
                             </th>
                             <th style="width: 120px">
                                 Email
                             </th>
-                            <th style="width: 100px">
-                                Leave Type
+                            <th style="width:80px">
+                                Overtime hours
                             </th>
                             <th style="width:80px">
-                                Status
-                            </th>
-                            <th style="width:80px">
-                                Day Request
+                                Day Overtime
                             </th>
                             <th style="width:120px">
                                 Day Created
@@ -135,37 +131,30 @@
                                 <td>${(page - 1) * 10 +loop.index+1}</td>
                                 <td>${list.approvedBy.fullname}</td>
                                 <td>${list.approvedBy.email}</td>
-                                <td>${list.leaveType}</td>
-                                <td
-                                    style="font-weight: bold;
-                                    color:
-                                    <c:choose>
-                                        <c:when test="${list.status eq 'Approved'}">green</c:when>
-                                        <c:when test="${list.status eq 'Rejected'}">red</c:when>
-                                        <c:when test="${list.status eq 'Pending'}">goldenrod</c:when>
-                                        <c:otherwise>gray</c:otherwise>
-                                    </c:choose>;
-                                    "
-                                    >${list.status}</td>
-                                <td>${list.dayRequested}</td>
+                                <td>${list.otHours}</td>
+                                <td>${list.date}</td>
                                 <td>${list.createdAt}</td>
                                 <td>
-                                    <c:choose>
-                                        <c:when test="${not list.status.equalsIgnoreCase('Pending')}">
-                                            <a href="${pageContext.request.contextPath}/detail?leaveId=${list.leaveId}" class="icon-circle" title="More detail">
-                                                <i class="fa fa-info"></i>
-                                            </a>
-                                        </c:when>
-                                        <c:otherwise>
-                                            <a href="${pageContext.request.contextPath}/editapplication?type=LEAVE&id=${list.leaveId}" class="icon-circle" data-toggle="tooltip" title="Edit">
-                                                <i class="fa fa-pencil"></i>
-                                            </a>   
-                                        </c:otherwise>
-                                    </c:choose>
+                                  <form action="${pageContext.request.contextPath}/applicationmanagement" method="post" style="display:inline;">
+                                        <input type="hidden" name="type" value="ot">
+                                        <input type="hidden" name="action" value="Approved">
+                                        <input type="hidden" name="otId" value="${list.otId}">
+                                        <button type="submit" class="btn btn-success btn-sm" title="Approved">
+                                            <i class="fa fa-check"></i>
+                                        </button>
+                                    </form>
+
+                                    <form action="${pageContext.request.contextPath}/applicationmanagement" method="post" style="display:inline;">
+                                        <input type="hidden" name="type" value="ot">
+                                        <input type="hidden" name="action" value="Rejected">
+                                        <input type="hidden" name="otId" value="${list.otId}">
+                                        <button type="submit" class="btn btn-danger btn-danger" title="Rejected">
+                                            <i class="fa fa-times"></i>
+                                        </button>
+                                    </form> 
                                 </td>
                             </tr>
                         </c:forEach>
-
                     </tbody>
                 </table>
             </div>
@@ -175,14 +164,11 @@
                         <i class="fa fa-inbox fa-3x text-muted"></i>
                     </div>
                     <h5 class="text-muted">No Leave Request Found</h5>
-                    <p class="text-muted">There are currently no leave request in the system.</p>
-                    <a href="${pageContext.request.contextPath}/compose?type=LEAVE" class="btn btn-primary">
-                        <i class="fa fa-plus"></i> Create First Leave Request
-                    </a>
+                    <p class="text-muted">There are currently no overtime request in the system.</p>
                 </div>
             </c:if>
             <c:url var="baseUrl" value="/application">
-                <c:param name="typeapplication" value="LEAVE"/>
+                <c:param name="typeapplication" value="OT"/>
                 <c:if test="${not empty param.search}">
                     <c:param name="search" value="${param.search}"/>
                 </c:if>
@@ -197,23 +183,23 @@
                 </c:if>
             </c:url>
             <nav class="mt-3">
+                <c:set var="startPage" value="${page - 1}" />
+                <c:set var="endPage" value="${page + 1}" />
+
+                <c:if test="${startPage < 1}">
+                    <c:set var="endPage" value="${endPage + (1 - startPage)}" />
+                    <c:set var="startPage" value="1" />
+                </c:if>
+
+                <c:if test="${endPage > totalPages}">
+                    <c:set var="startPage" value="${startPage - (endPage - totalPages)}" />
+                    <c:set var="endPage" value="${totalPages}" />
+                </c:if>
+
+                <c:if test="${startPage < 1}">
+                    <c:set var="startPage" value="1" />
+                </c:if>
                 <ul class="pagination justify-content-center">
-                    <c:set var="startPage" value="${page - 1}" />
-                    <c:set var="endPage" value="${page + 1}" />
-
-                    <c:if test="${startPage < 1}">
-                        <c:set var="endPage" value="${endPage + (1 - startPage)}" />
-                        <c:set var="startPage" value="1" />
-                    </c:if>
-
-                    <c:if test="${endPage > totalPages}">
-                        <c:set var="startPage" value="${startPage - (endPage - totalPages)}" />
-                        <c:set var="endPage" value="${totalPages}" />
-                    </c:if>
-
-                    <c:if test="${startPage < 1}">
-                        <c:set var="startPage" value="1" />
-                    </c:if>
                     <li class="page-item ${page <= 1 ? 'disabled' : ''}">
                         <a class="page-link" href="${baseUrl}&page=${page-1}">Prev</a>
                     </li>
@@ -273,7 +259,7 @@
             }
 
             .icon-circle:hover {
-                background-color: #d5d5d5; /* xám đậm hơn khi hover */
+                background-color: #d5d5d5;
                 color: #000;
             }
         </style>

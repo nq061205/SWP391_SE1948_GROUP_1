@@ -116,11 +116,95 @@ public class DependantDAO {
         }
     }
 
+    public int countFilteredDependantsByEmpId(int empId, String searchKey, String relationship, String gender) {
+        StringBuilder sql = new StringBuilder("SELECT COUNT(*) FROM dependant WHERE emp_id = ? ");
+
+        if (searchKey != null && !searchKey.isEmpty()) {
+            sql.append("AND name LIKE ? ");
+        }
+        if (relationship != null && !relationship.isEmpty()) {
+            sql.append("AND relationship = ? ");
+        }
+        if (gender != null && !gender.isEmpty()) {
+            sql.append("AND gender = ? ");
+        }
+
+        try (Connection conn = DBContext.getConnection(); PreparedStatement ps = conn.prepareStatement(sql.toString())) {
+
+            int index = 1;
+            ps.setInt(index++, empId);
+
+            if (searchKey != null && !searchKey.isEmpty()) {
+                ps.setString(index++, "%" + searchKey + "%");
+            }
+            if (relationship != null && !relationship.isEmpty()) {
+                ps.setString(index++, relationship);
+            }
+            if (gender != null && !gender.isEmpty()) {
+                ps.setBoolean(index++, Boolean.parseBoolean(gender));
+            }
+
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                return rs.getInt(1);
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return 0;
+    }
+
+    public List<Dependant> getFilteredDependantsByEmpId(
+            int empId, String searchKey, String relationship, String gender, int page, int pageSize) {
+
+        List<Dependant> list = new ArrayList<>();
+        StringBuilder sql = new StringBuilder("SELECT * FROM dependant WHERE emp_id = ? ");
+
+        if (searchKey != null && !searchKey.isEmpty()) {
+            sql.append("AND name LIKE ? ");
+        }
+        if (relationship != null && !relationship.isEmpty()) {
+            sql.append("AND relationship = ? ");
+        }
+        if (gender != null && !gender.isEmpty()) {
+            sql.append("AND gender = ? ");
+        }
+
+        sql.append(" LIMIT ? OFFSET ?");
+
+        try (Connection conn = DBContext.getConnection(); PreparedStatement ps = conn.prepareStatement(sql.toString())) {
+
+            int index = 1;
+            ps.setInt(index++, empId);
+
+            if (searchKey != null && !searchKey.isEmpty()) {
+                ps.setString(index++, "%" + searchKey + "%");
+            }
+            if (relationship != null && !relationship.isEmpty()) {
+                ps.setString(index++, relationship);
+            }
+            if (gender != null && !gender.isEmpty()) {
+                ps.setBoolean(index++, Boolean.parseBoolean(gender));
+            }
+            ps.setInt(index++, pageSize);
+            ps.setInt(index++, (page - 1) * pageSize);
+
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                list.add(mapResultSetToDependant(rs));
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return list;
+    }
+
     public static void main(String[] args) {
         DependantDAO depenDAO = new DependantDAO();
-        Dependant dependant = new Dependant();
-        dependant.setGender(true);
-        depenDAO.updateDependant(dependant);
-        System.out.println(depenDAO.getAllDependantByEmpId(dependant.getEmployee().getEmpId()));
+        System.out.println(depenDAO.getFilteredDependantsByEmpId(1, "thanh", "Child", "",1,1));
     }
 }

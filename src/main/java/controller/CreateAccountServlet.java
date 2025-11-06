@@ -82,6 +82,17 @@ public class CreateAccountServlet extends HttpServlet {
         DeptDAO deptDAO = new DeptDAO();
         RoleDAO rDAO = new RoleDAO();
         CandidateDAO canDAO = new CandidateDAO();
+        String searchKey = request.getParameter("searchkey");
+        String startApplyDate = request.getParameter("startApplyDate");
+        String endApplyDate = request.getParameter("endApplyDate");
+        String startInterviewDate = request.getParameter("startInterviewDate");
+        String endInterviewDate = request.getParameter("endInterviewDate");
+        int page = 1;
+        int pageSize = 5;
+        try {
+            page = Integer.parseInt(request.getParameter("page"));
+        } catch (NumberFormatException e) {
+        }
 
         List<Role> roleList = rDAO.getAllRoles();
         Map<String, Role> uniqueRolesMap = new LinkedHashMap<>();
@@ -90,10 +101,21 @@ public class CreateAccountServlet extends HttpServlet {
         }
 
         List<Role> uniqueRoles = new ArrayList<>(uniqueRolesMap.values());
+        int totalRecords = interDAO.countFilteredInterviewsNotInEmployee(
+                "Pass", searchKey, startApplyDate, endApplyDate, startInterviewDate, endInterviewDate
+        );
 
-        List<Interview> interList = interDAO.getAllPassNotInEmployee("Pass");
+        int totalPages = (int) Math.ceil((double) totalRecords / pageSize);
+        
+        List<String> managerDepIds = deptDAO.getDepartmentsHavingManager();
+
+        List<Interview> interList = interDAO.getFilteredInterviewsNotInEmployee("Pass", searchKey, startApplyDate, endApplyDate, startInterviewDate, endInterviewDate, page, pageSize);
 
         ses.setAttribute("roleList", uniqueRoles);
+        request.setAttribute("page", page);
+        request.setAttribute("searchkey", searchKey);
+        request.setAttribute("totalPages", totalPages);
+        ses.setAttribute("managerDepIds", managerDepIds);
         ses.setAttribute("deptList", deptDAO.getAllDepartment());
         request.setAttribute("passedList", interList);
         request.getRequestDispatcher("Views/createaccount.jsp").forward(request, response);
@@ -120,6 +142,23 @@ public class CreateAccountServlet extends HttpServlet {
         String addDepartmentId = request.getParameter("deptId");
         String addRoleId = request.getParameter("roleId");
         String action = request.getParameter("action");
+        String searchKey = request.getParameter("searchkey");
+        String startApplyDate = request.getParameter("startApplyDate");
+        String endApplyDate = request.getParameter("endApplyDate");
+        String startInterviewDate = request.getParameter("startInterviewDate");
+        String endInterviewDate = request.getParameter("endInterviewDate");
+        int page = 1;
+        int pageSize = 5;
+        try {
+            page = Integer.parseInt(request.getParameter("page"));
+        } catch (NumberFormatException e) {
+        }
+        int totalRecords = interDAO.countFilteredInterviewsNotInEmployee(
+                "Pass", searchKey, startApplyDate, endApplyDate, startInterviewDate, endInterviewDate
+        );
+
+        int totalPages = (int) Math.ceil((double) totalRecords / pageSize);
+
         int roleId = 0;
         try {
             roleId = Integer.parseInt(addRoleId);
@@ -144,8 +183,10 @@ public class CreateAccountServlet extends HttpServlet {
             emp.setStatus(true);
             empDAO.createEmployee(emp);
         }
-        List<Interview> interList = interDAO.getAllPassNotInEmployee("Pass");
+        List<Interview> interList = interDAO.getFilteredInterviewsNotInEmployee("Pass", searchKey, startApplyDate, endApplyDate, startInterviewDate, endInterviewDate, page, pageSize);
         request.setAttribute("passedList", interList);
+        request.setAttribute("page", page);
+        request.setAttribute("totalPages", totalPages);
         request.getRequestDispatcher("Views/createaccount.jsp").forward(request, response);
 
     }
