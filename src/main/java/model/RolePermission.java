@@ -10,36 +10,33 @@ package model;
  */
 public class RolePermission {
 
-    private int roleId;
+    private Role role;
     private Permission permission;
 
     public RolePermission() {
     }
 
-    public RolePermission(int roleId, Permission permission) {
-        this.roleId = roleId;
-        this.permission = permission;
+    public Role getRole() {
+        return role;
     }
 
-    public int getRoleId() {
-        return roleId;
-    }
-
-    public void setRoleId(int roleId) {
-        this.roleId = roleId;
+    public void setRole(Role role) {
+        this.role = role;
     }
 
     public Permission getPermission() {
         return permission;
     }
 
-    public void setPermissionId(Permission permission) {
+    public void setPermission(Permission permission) {
         this.permission = permission;
     }
 
     @Override
     public String toString() {
-        return "RolePermission{" + "roleId=" + roleId + ", permission=" + permission + '}';
+        return "RolePermission{" + "role=" + role + ", permission=" + permission + '}';
     }
+
+    
     
 }

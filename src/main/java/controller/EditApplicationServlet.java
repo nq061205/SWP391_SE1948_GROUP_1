@@ -8,6 +8,7 @@ import dal.EmployeeDAO;
 import model.*;
 import dal.LeaveRequestDAO;
 import dal.OTRequestDAO;
+import dal.RolePermissionDAO;
 import jakarta.mail.Session;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -30,7 +31,9 @@ public class EditApplicationServlet extends HttpServlet {
         HttpSession session = request.getSession();
         String type = request.getParameter("type");
         Employee user = (Employee) session.getAttribute("user");
-        if (user == null) {
+        RolePermissionDAO rperDAO = new RolePermissionDAO();
+
+        if (user == null || !rperDAO.hasPermission(user.getRole().getRoleId(), 7)) {
             response.sendRedirect("Views/login.jsp");
             return;
         }
@@ -42,7 +45,7 @@ public class EditApplicationServlet extends HttpServlet {
         request.setAttribute("receiver", empDAO.getEmployeeReceiverByRole(user.getRole().getRoleName(), user.getDept().getDepId()));
         switch (type) {
             case "LEAVE":
-                LeaveRequest leaveRequest = leaveRequestDAO.getLeaveRequestByLeaveId(id, user.getEmpId());
+                LeaveRequest leaveRequest = leaveRequestDAO.getLeaveRequestByLeaveId(id);
                 request.setAttribute("email", leaveRequest.getApprovedBy().getEmail());
                 request.setAttribute("type_leave", leaveRequest.getLeaveType());
                 request.setAttribute("startdate", leaveRequest.getStartDate());
@@ -73,6 +76,7 @@ public class EditApplicationServlet extends HttpServlet {
             switch (type.toUpperCase()) {
                 case "LEAVE": {
                     int id = Integer.parseInt(request.getParameter("id"));
+                    LeaveRequest leave = leaveDAO.getLeaveRequestByLeaveId(id);
                     String leaveType = request.getParameter("type_leave");
                     String content = request.getParameter("content");
                     Date startDate = Date.valueOf(request.getParameter("startdate"));
@@ -90,7 +94,7 @@ public class EditApplicationServlet extends HttpServlet {
                     } else {
                         HttpSession session = request.getSession();
                         session.setAttribute("flashMessage", "Updated Successfully!");
-                        leaveDAO.updateLeaveRequest(id, leaveType, content, startDate, endDate);
+                        leaveDAO.updateLeaveRequest(id, leaveType, content, startDate, endDate,leave.getNote());
                         response.sendRedirect("application?typeapplication=leave");
                     }
                     break;

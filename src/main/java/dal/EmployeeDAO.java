@@ -961,9 +961,40 @@ public class EmployeeDAO extends DBContext {
         return null;
     }
 
+    public void updateDecreasePaidLeaveDaysByEmployeeId(int empId, double dayRequested) {
+        String sql = "UPDATE Employee "
+                + "SET paid_leave_days = paid_leave_days - ? "
+                + "WHERE emp_id = ?";
+
+        try (Connection conn = DBContext.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            ps.setDouble(1, dayRequested);
+            ps.setInt(2, empId);
+            ps.executeUpdate();
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+    public void updateIncreasePaidLeaveDaysByEmployeeId(int empId, double dayRequested) {
+        String sql = "UPDATE Employee "
+                + "SET paid_leave_days = paid_leave_days + ? "
+                + "WHERE emp_id = ?";
+
+        try (Connection conn = DBContext.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            ps.setDouble(1, dayRequested);
+            ps.setInt(2, empId);
+            ps.executeUpdate();
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
     public static void main(String[] args) {
         EmployeeDAO dao = new EmployeeDAO();
-        System.out.println(dao.getAllEmployees());
+        dao.updateIncreasePaidLeaveDaysByEmployeeId(1, 1);
     }
 
 }

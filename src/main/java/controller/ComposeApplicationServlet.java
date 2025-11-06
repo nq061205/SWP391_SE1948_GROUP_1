@@ -7,6 +7,7 @@ package controller;
 import dal.OTRequestDAO;
 import dal.LeaveRequestDAO;
 import dal.EmployeeDAO;
+import dal.RolePermissionDAO;
 import model.*;
 import java.io.IOException;
 import jakarta.servlet.ServletException;
@@ -28,7 +29,9 @@ public class ComposeApplicationServlet extends HttpServlet {
         HttpSession session = request.getSession();
         EmployeeDAO empDAO = new EmployeeDAO();
         Employee user = (Employee) session.getAttribute("user");
-        if (user == null) {
+        RolePermissionDAO rperDAO = new RolePermissionDAO();
+
+        if (user == null || !rperDAO.hasPermission(user.getRole().getRoleId(), 7)) {
             response.sendRedirect("Views/login.jsp");
             return;
         }
@@ -68,7 +71,13 @@ public class ComposeApplicationServlet extends HttpServlet {
                     request.setAttribute("content", content);
                     Employee approver = empDAO.getEmployeeByEmail(email);
                     request.setAttribute("receiver", empDAO.getEmployeeReceiverByRole(user.getRole().getRoleName(), user.getDept().getDepId()));
-                    if(startDate.after(endDate)){
+                    long diff = endDate.getTime() - startDate.getTime();
+                    double days = (double) diff / (1000 * 60 * 60 * 24) + 1;
+                    if (days > user.getPaidLeaveDays() && "Annual Leave".equalsIgnoreCase(leaveType)) {
+                        request.setAttribute("messageLeave", "Exceeding the number of leave days");
+                        request.getRequestDispatcher("Views/composeleaveapplication.jsp").forward(request, response);
+                        return;
+                    } else if (startDate.after(endDate)) {
                         request.setAttribute("messageDate", "Start date must before end date");
                         request.getRequestDispatcher("Views/composeleaveapplication.jsp").forward(request, response);
                         return;

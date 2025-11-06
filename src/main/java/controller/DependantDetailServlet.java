@@ -6,12 +6,14 @@ package controller;
 
 import dal.DependantDAO;
 import dal.EmployeeDAO;
+import dal.RolePermissionDAO;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 import java.sql.Date;
 import java.time.LocalDate;
 import java.time.Period;
@@ -63,6 +65,13 @@ public class DependantDetailServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        HttpSession ses = request.getSession();
+        RolePermissionDAO rperDAO = new RolePermissionDAO();
+        Employee user = (Employee) ses.getAttribute("user");
+        if (user == null || !rperDAO.hasPermission(user.getRole().getRoleId(), 4)) {
+            response.sendRedirect("login");
+            return;
+        }
         DependantDAO depenDAO = new DependantDAO();
         String empIdStr = request.getParameter("empId");
         String tab = request.getParameter("tab");

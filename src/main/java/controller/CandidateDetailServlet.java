@@ -1,4 +1,4 @@
-    /*
+/*
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Servlet.java to edit this template
  */
@@ -6,6 +6,7 @@ package controller;
 
 import dal.CandidateDAO;
 import dal.EmployeeDAO;
+import dal.RolePermissionDAO;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
@@ -16,6 +17,7 @@ import jakarta.servlet.http.HttpSession;
 import java.util.ArrayList;
 import java.util.List;
 import model.Candidate;
+import model.Employee;
 import org.apache.commons.collections4.list.LazyList;
 
 /**
@@ -63,6 +65,7 @@ public class CandidateDetailServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         try {
+            RolePermissionDAO rperDAO = new RolePermissionDAO();
             String id = request.getParameter("id");
             int candidateId = Integer.parseInt(id);
             CandidateDAO cDao = new CandidateDAO();
@@ -71,6 +74,11 @@ public class CandidateDetailServlet extends HttpServlet {
                 return;
             }
             HttpSession session = request.getSession();
+            Employee user = (Employee) session.getAttribute("user");
+            if (user == null || !rperDAO.hasPermission(user.getRole().getRoleId(), 2)) {
+                response.sendRedirect("login");
+                return;
+            }
             request.setAttribute("candidate", cDao.getCandidateById(candidateId));
             request.getRequestDispatcher("Views/candidatedetail.jsp").forward(request, response);
         } catch (NumberFormatException e) {

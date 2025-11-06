@@ -118,6 +118,9 @@
                                                     </c:if>
                                                     >Other</option>
                                         </select>
+                                         <c:if  test="${not empty messageLeave}">
+                                        <input type="text" name="messageLeave" style="color: red" class="form-control"value="${messageLeave}" />
+                                    </c:if>
                                     </div>
 
                                     <div class="form-group mb-3">
@@ -168,7 +171,6 @@
                                         </c:if> 
                                     </div>
                                     <div class="text-left">
-
                                         <p
                                             style="color:
                                             <c:choose>
