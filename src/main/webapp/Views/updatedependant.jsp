@@ -60,7 +60,7 @@
 
         <!-- HEADER + NAVBAR -->
         <%@ include file="CommonItems/Header/dashboardHeader.jsp" %>
-        <%@ include file="CommonItems/Navbar/hrNavbar.jsp" %>
+        <%@ include file="CommonItems/Navbar/empNavbar.jsp" %>
 
         <main class="ttr-wrapper">
             <div class="container-fluid">
