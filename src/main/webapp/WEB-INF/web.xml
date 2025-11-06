@@ -216,6 +216,7 @@
         <servlet-name>SystemLogDetailServlet</servlet-name>
         <servlet-class>controller.SystemLogDetailServlet</servlet-class>
     </servlet>
+
     <servlet>
         <servlet-name>DependantDetailServlet</servlet-name>
         <servlet-class>controller.DependantDetailServlet</servlet-class>
@@ -383,15 +384,10 @@
     </servlet-mapping>
     
     <servlet-mapping>
-        <servlet-name>InterviewDetail</servlet-name>
-        <url-pattern>/interviewdetail</url-pattern>
-    </servlet-mapping>
-    
-    <servlet-mapping>
         <servlet-name>UpdateDependantServlet</servlet-name>
         <url-pattern>/updatedependant</url-pattern>
     </servlet-mapping>
-     
+
     <servlet-mapping>
         <servlet-name>DashboardServlet</servlet-name>
         <url-pattern>/dashboard</url-pattern>
@@ -450,6 +446,7 @@
         <servlet-name>EmployeeDetailServlet</servlet-name>
         <url-pattern>/employeedetail</url-pattern>
     </servlet-mapping>
+
     <servlet-mapping>
         <servlet-name>ApplicationManagementServlet</servlet-name>
         <url-pattern>/applicationmanagement</url-pattern>
@@ -477,6 +474,13 @@
         <servlet-name>AttendanceServlet</servlet-name>
         <url-pattern>/attendance</url-pattern>
     </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>InterviewDetail</servlet-name>
+        <url-pattern>/interviewdetail</url-pattern>
+    </servlet-mapping>
+
+    <!-- ===================== SESSION CONFIG & WELCOME FILE ===================== -->
     <session-config>
         <session-timeout>30</session-timeout>
     </session-config>
