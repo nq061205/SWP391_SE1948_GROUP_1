@@ -4,13 +4,9 @@
  */
 package controller;
 
-import model.Employee;
-import model.LeaveRequest;
-import model.OTRequest;
 import dal.EmployeeDAO;
 import dal.LeaveRequestDAO;
 import dal.OTRequestDAO;
-import dal.RolePermissionDAO;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
@@ -19,55 +15,66 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import java.sql.Date;
-import java.sql.Timestamp;
-import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.List;
+import model.Employee;
+import model.LeaveRequest;
+import model.OTRequest;
 
 /**
  *
  * @author Lenovo
  */
-public class ApplicationServlet extends HttpServlet {
+public class ApplicationManagementServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         HttpSession session = request.getSession();
         Employee user = (Employee) session.getAttribute("user");
-        RolePermissionDAO rperDAO = new RolePermissionDAO();
-
-        if (user == null || !rperDAO.hasPermission(user.getRole().getRoleId(), 7)) {
-            response.sendRedirect("Views/login.jsp");
+        if (user == null) {
+            request.getRequestDispatcher("Views/login.jsp").forward(request, response);
             return;
         }
-        String flash = (String) session.getAttribute("flashMessage");
-        if (flash != null) {
-            request.setAttribute("update", flash);
-            session.removeAttribute("flashMessage");
-        }
-        EmployeeDAO empDAO = new EmployeeDAO();
-        Employee emp = empDAO.getEmployeeByEmpId(user.getEmpId());
         String typeApplication = request.getParameter("typeapplication");
         if ("leave".equalsIgnoreCase(typeApplication)) {
-            doLeaveRequestApplication(request, response, emp);
+            doLeaveRequestApplication(request, response, user);
         } else if ("ot".equalsIgnoreCase(typeApplication)) {
-            doOTRequestApplication(request, response, emp);
+            doOTRequestApplication(request, response, user);
         }
     }
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-
+        HttpSession session = request.getSession();
+        String type = request.getParameter("type");
+        String action = request.getParameter("action");
+        
+        Employee user = (Employee) session.getAttribute("user");
+        if ("leave".equalsIgnoreCase(type)) {
+            int id = Integer.parseInt(request.getParameter("leaveId"));
+            String note = request.getParameter("note");
+            LeaveRequestDAO leaveDAO = new LeaveRequestDAO();
+            LeaveRequest leaveRequest = leaveDAO.getLeaveRequestByLeaveId(id);
+            if("Annual Leave".equalsIgnoreCase(leaveRequest.getLeaveType()) && "Approved".equalsIgnoreCase(action)){
+                 EmployeeDAO empDAO = new EmployeeDAO();
+                 empDAO.updateDecreasePaidLeaveDaysByEmployeeId(user.getEmpId(),leaveRequest.getDayRequested());
+            }
+                 leaveDAO.updateLeaveStatus(id, action,note);
+            response.sendRedirect(request.getContextPath() + "/applicationmanagement?typeapplication=leave");
+            return;
+        } else if ("ot".equalsIgnoreCase(type)) {
+            int id = Integer.parseInt(request.getParameter("otId"));
+            OTRequestDAO otDAO = new OTRequestDAO();
+            otDAO.updateOTStatus(id, action);
+            request.setAttribute("type", "ot");
+            response.sendRedirect(request.getContextPath() + "/applicationmanagement?typeapplication=ot");
+            return;
+        }
     }
 
     protected void doLeaveRequestApplication(HttpServletRequest request, HttpServletResponse response, Employee user)
             throws ServletException, IOException {
-        if (user == null) {
-            response.sendRedirect("Views/login.jsp");
-            return;
-        }
         LeaveRequestDAO leaveDAO = new LeaveRequestDAO();
 
         String search = trimOrNull(request.getParameter("search"));
@@ -90,11 +97,11 @@ public class ApplicationServlet extends HttpServlet {
 
         int empId = user.getEmpId();
 
-        List<LeaveRequest> applications = leaveDAO.findLeaveByEmpFilteredPaged(
+        List<LeaveRequest> applications = leaveDAO.findLeaveByApproverFilteredPaged(
                 empId, search, status, type, startDate, endDate, offset, size
         );
 
-        int total = leaveDAO.countLeaveByEmpFiltered(empId, search, status, type, startDate, endDate);
+        int total = leaveDAO.countLeaveByApprorverFiltered(empId, search, type, startDate, endDate);
         int totalPages = (int) Math.ceil(total / (double) size);
 
         request.setAttribute("listapplication", applications);
@@ -109,15 +116,11 @@ public class ApplicationServlet extends HttpServlet {
 
         request.setAttribute("user", user);
 
-        request.getRequestDispatcher("Views/leaverequestapplication.jsp").forward(request, response);
+        request.getRequestDispatcher("Views/leaverequestmanagement.jsp").forward(request, response);
     }
 
     protected void doOTRequestApplication(HttpServletRequest request, HttpServletResponse response, Employee user)
             throws ServletException, IOException {
-        if (user == null) {
-            response.sendRedirect("Views/login.jsp");
-            return;
-        }
         OTRequestDAO otDAO = new OTRequestDAO();
 
         String search = trimOrNull(request.getParameter("search"));
@@ -140,11 +143,11 @@ public class ApplicationServlet extends HttpServlet {
 
         int empId = user.getEmpId();
 
-        List<OTRequest> applications = otDAO.findOTByEmpPaged(
-                empId, offset, size, search, status, startDate, endDate
+        List<OTRequest> applications = otDAO.findOTByApproverEmpPaged(
+                empId, offset, size, search, startDate, endDate
         );
 
-        int total = otDAO.countOTByEmpFiltered(empId, search, status, startDate, endDate);
+        int total = otDAO.countOTByApproverFiltered(empId, search, startDate, endDate);
         int totalPages = (int) Math.ceil(total / (double) size);
 
         request.setAttribute("listapplication", applications);
@@ -152,13 +155,14 @@ public class ApplicationServlet extends HttpServlet {
         request.setAttribute("size", size);
         request.setAttribute("totalPages", totalPages);
 
+        request.setAttribute("search", search);
         request.setAttribute("status", status);
         request.setAttribute("startDate", startDate == null ? null : startDate.toString());
         request.setAttribute("endDate", endDate == null ? null : endDate.toString());
 
         request.setAttribute("user", user);
 
-        request.getRequestDispatcher("Views/otrequestapplication.jsp").forward(request, response);
+        request.getRequestDispatcher("Views/otrequestmanagement.jsp").forward(request, response);
     }
 
     private String trimOrNull(String s) {

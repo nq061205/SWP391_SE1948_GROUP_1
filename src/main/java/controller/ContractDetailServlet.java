@@ -5,6 +5,8 @@
 package controller;
 
 import dal.ContractDAO;
+import dal.EmployeeDAO;
+import dal.RolePermissionDAO;
 import jakarta.servlet.ServletContext;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -20,6 +22,7 @@ import java.sql.Date;
 import java.util.List;
 import java.util.Set;
 import model.Contract;
+import model.Employee;
 
 /**
  *
@@ -50,12 +53,25 @@ public class ContractDetailServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         HttpSession ses = request.getSession();
+        RolePermissionDAO rperDAO = new RolePermissionDAO();
+        Employee user = (Employee) ses.getAttribute("user");
+        if (user == null || !rperDAO.hasPermission(user.getRole().getRoleId(), 4)) {
+            response.sendRedirect("login");
+            return;
+        }
         ContractDAO conDAO = new ContractDAO();
-        String empCode = (String) request.getAttribute("empCode");
+        String empIdStr = (String) request.getAttribute("empId");
+        int empId=0;
+        try {
+            empId=Integer.parseInt(empIdStr);
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+        }
         String tab = (String) request.getAttribute("tab");
         String option = (String) request.getAttribute("option");
         List<String> typeList = conDAO.getAllType();
-        Contract con = conDAO.getContractByEmployeeCode(empCode);
+        Contract con = conDAO.getContractByEmployeeId(empId);
 
         if ("edit".equalsIgnoreCase(option)) {
             request.setAttribute("typeList", typeList);
@@ -63,7 +79,7 @@ public class ContractDetailServlet extends HttpServlet {
         request.setAttribute("option", option);
         request.setAttribute("tab", tab);
         request.setAttribute("contract", con);
-        request.setAttribute("empCode", empCode);
+        request.setAttribute("empCode", empId);
         request.getRequestDispatcher("Views/employeedetails.jsp").forward(request, response);
     }
 
@@ -79,13 +95,21 @@ public class ContractDetailServlet extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         ContractDAO conDAO = new ContractDAO();
+        EmployeeDAO empDAO = new EmployeeDAO();
 
         String type = request.getParameter("type");
         String startDateStr = request.getParameter("start");
         String endDateStr = request.getParameter("end");
         String tab = request.getParameter("tab");
         String option = request.getParameter("option");
-        String empCode = request.getParameter("empCode");
+        String empIdStr = request.getParameter("empId");
+        int empId=0;
+         try {
+            empId=Integer.parseInt(empIdStr);
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+        }
 
         Part filePart = null;
         try {
@@ -101,7 +125,8 @@ public class ContractDetailServlet extends HttpServlet {
             endDate = Date.valueOf(endDateStr);
         }
 
-        Contract con = conDAO.getContractByEmployeeCode(empCode);
+        Contract con = conDAO.getContractByEmployeeId(empId);
+        Employee emp = empDAO.getEmployeeByEmpId(empId);
         String fileUrl = con != null ? con.getContractImg() : "";
 
         boolean hasError = false;
@@ -123,7 +148,7 @@ public class ContractDetailServlet extends HttpServlet {
             request.setAttribute("tab", tab);
             request.setAttribute("contract", con);
             request.setAttribute("option", "edit");
-            request.setAttribute("empCode", empCode);
+            request.setAttribute("empId", empId);
             request.setAttribute("typeList", conDAO.getAllType());
             request.getRequestDispatcher("Views/employeedetails.jsp").forward(request, response);
             return;
@@ -133,7 +158,7 @@ public class ContractDetailServlet extends HttpServlet {
             con.setStartDate(startDate);
             con.setEndDate(endDate);
             if (filePart != null && filePart.getSize() > 0) {
-                fileUrl = saveAvatar(filePart, getServletContext(), empCode);
+                fileUrl = saveAvatar(filePart, getServletContext(), emp.getEmpCode());
                 con.setContractImg(fileUrl);
             }
 
@@ -142,7 +167,7 @@ public class ContractDetailServlet extends HttpServlet {
             request.setAttribute("type", type);
             request.setAttribute("tab", tab);
             request.setAttribute("contract", con);
-            request.setAttribute("empCode", empCode);
+            request.setAttribute("empId", empId);
             request.getRequestDispatcher("Views/employeedetails.jsp").forward(request, response);
         }
     }

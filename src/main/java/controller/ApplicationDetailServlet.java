@@ -11,6 +11,7 @@ import model.OTRequest;
 import dal.EmployeeDAO;
 import dal.LeaveRequestDAO;
 import dal.OTRequestDAO;
+import dal.RolePermissionDAO;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
@@ -29,24 +30,23 @@ public class ApplicationDetailServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
     throws ServletException, IOException {
         HttpSession session = request.getSession();
+        RolePermissionDAO rperDAO = new RolePermissionDAO();
         Employee user = (Employee) session.getAttribute("user");
-        if (user == null) {
+        if (user == null || !rperDAO.hasPermission(user.getRole().getRoleId(), 7)) {
             response.sendRedirect("Views/login.jsp");
             return;
         }
-        EmployeeDAO employeeDAO = new EmployeeDAO();
         OTRequestDAO OTDAO = new OTRequestDAO();
         LeaveRequestDAO leaveDAO = new LeaveRequestDAO();
         String leaveId = request.getParameter("leaveId");
         String OTId = request.getParameter("otId");
-        Employee employee = employeeDAO.getEmployeeByEmpId(user.getEmpId());
         if(OTId != null && !OTId.isEmpty()){
             OTRequest ot = OTDAO.getOTRequestByOTId(Integer.parseInt(OTId));
             request.setAttribute("type", "ot");
             request.setAttribute("ot", ot);
             
         }else if(leaveId != null && !leaveId.isEmpty()){
-            LeaveRequest leave = leaveDAO.getLeaveRequestByLeaveId(Integer.parseInt(leaveId), employee.getEmpId());
+            LeaveRequest leave = leaveDAO.getLeaveRequestByLeaveId(Integer.parseInt(leaveId));
             request.setAttribute("type", "leave");
             request.setAttribute("leave", leave);
         }

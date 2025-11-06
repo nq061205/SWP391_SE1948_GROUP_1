@@ -80,6 +80,8 @@ public class RoleDAO extends DBContext {
 
     public static void main(String[] args) {
         RoleDAO dao = new RoleDAO();
-        System.out.println(dao.getRoleByRoleId(1).toString());
+        for (Role allRole : dao.getAllRoles()) {
+            System.out.println(allRole);
+        }
     }
 }

@@ -7,6 +7,7 @@ package controller;
 import api.EmailUtil;
 import dal.CandidateDAO;
 import dal.InterviewDAO;
+import dal.RolePermissionDAO;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
@@ -16,6 +17,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import java.util.List;
 import model.Candidate;
+import model.Employee;
 
 /**
  *
@@ -26,9 +28,15 @@ public class CandidateActionServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        RolePermissionDAO rperDAO = new RolePermissionDAO();
         CandidateDAO cDAO = new CandidateDAO();
         InterviewDAO iDAO = new InterviewDAO();
         HttpSession ses = request.getSession();
+        Employee user = (Employee) ses.getAttribute("user");
+        if (user == null || !rperDAO.hasPermission(user.getRole().getRoleId(), 2)) {
+            response.sendRedirect("login");
+            return;
+        }
         String id = request.getParameter("id");
         String action = request.getParameter("action");
         if (id == null || action == null) {

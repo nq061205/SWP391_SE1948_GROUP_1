@@ -749,10 +749,10 @@ public class EmployeeDAO extends DBContext {
 
             ps.setString(4, emp.getEmail());
             ps.setString(5, emp.getPhone());
-            ps.setBoolean(6, emp.isGender()); // true = nam, false = nữ
+            ps.setBoolean(6, emp.isGender());
             ps.setString(7, emp.getDept().getDepId());
             ps.setInt(8, emp.getRole().getRoleId());
-            ps.setBoolean(9, emp.isStatus()); // true = active
+            ps.setBoolean(9, emp.isStatus());
 
             ps.executeUpdate();
 
@@ -945,7 +945,7 @@ public class EmployeeDAO extends DBContext {
     }
 
     public Employee getManagerByDepartment(String depId) {
-        String sql = BASE_SELECT_SQL + " WHERE e.dep_id = ? AND r.role_name = 'Manager'";
+        String sql = BASE_SELECT_SQL + " WHERE e.dep_id = ? AND r.role_name like '%Manager%'";
         try (Connection conn = DBContext.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
 
             ps.setString(1, depId);
@@ -961,9 +961,40 @@ public class EmployeeDAO extends DBContext {
         return null;
     }
 
+    public void updateDecreasePaidLeaveDaysByEmployeeId(int empId, double dayRequested) {
+        String sql = "UPDATE Employee "
+                + "SET paid_leave_days = paid_leave_days - ? "
+                + "WHERE emp_id = ?";
+
+        try (Connection conn = DBContext.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            ps.setDouble(1, dayRequested);
+            ps.setInt(2, empId);
+            ps.executeUpdate();
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+    public void updateIncreasePaidLeaveDaysByEmployeeId(int empId, double dayRequested) {
+        String sql = "UPDATE Employee "
+                + "SET paid_leave_days = paid_leave_days + ? "
+                + "WHERE emp_id = ?";
+
+        try (Connection conn = DBContext.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            ps.setDouble(1, dayRequested);
+            ps.setInt(2, empId);
+            ps.executeUpdate();
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
     public static void main(String[] args) {
         EmployeeDAO dao = new EmployeeDAO();
-        System.out.println(dao.getAllEmployees());
+        dao.updateIncreasePaidLeaveDaysByEmployeeId(1, 1);
     }
 
 }

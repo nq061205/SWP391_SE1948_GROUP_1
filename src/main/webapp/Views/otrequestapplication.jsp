@@ -68,24 +68,12 @@
                 </c:if>
                 <form action="${pageContext.request.contextPath}/application" method="get"
                       class="d-flex align-items-center flex-nowrap w-100" style="gap:12px;">
-                    <input type="hidden" name="typeapplication" value="LEAVE"/>
-
-                    <select name="status" class="form-control filter-h" style="width:160px;" onchange="this.form.submit()">
-                        <option value="">All Status</option>
-                        <option value="Pending"  ${param.status == 'Pending'  ? 'selected' : ''}>Pending</option>
-                        <option value="Approved" ${param.status == 'Approved' ? 'selected' : ''}>Approved</option>
-                        <option value="Rejected" ${param.status == 'Rejected' ? 'selected' : ''}>Rejected</option>
-                    </select>
-
-                    <select name="type" class="form-control filter-h" style="width:170px;" onchange="this.form.submit()">
-                        <option value="">All Type</option>
-                        <option value="Annual Leave" ${param.type == 'Annual Leave' ? 'selected' : ''}>Annual Leave</option>
-                        <option value="Sick"    ${param.type == 'Sick'    ? 'selected' : ''}>Sick</option>
-                        <option value="Unpaid"  ${param.type == 'Unpaid'  ? 'selected' : ''}>Unpaid</option>
-                        <option value="Maternity" ${param.type == 'Maternity' ? 'selected' : ''}>Maternity</option>
-                        <option value="Other"   ${param.type == 'Other'   ? 'selected' : ''}>Other</option>
-                    </select>
-
+                    <input type="hidden" name="typeapplication" value="ot"/>
+                    <input type="text" name="search" value="${param.search}"
+                           class="form-control filter-h" placeholder="Search email or name...">
+                    <button type="submit" class="btn btn-primary filter-h">
+                        <i class="fa fa-search"></i> Search
+                    </button>
                     <input type="date" name="startDate" value="${param.startDate}"
                            class="form-control filter-h" style="width:170px;">
                     <span class="sep">to</span>
@@ -173,7 +161,7 @@
                         <i class="fa fa-inbox fa-3x text-muted"></i>
                     </div>
                     <h5 class="text-muted">No Leave Request Found</h5>
-                    <p class="text-muted">There are currently no leave request in the system.</p>
+                    <p class="text-muted">There are currently no overtime request in the system.</p>
                     <a href="${pageContext.request.contextPath}/compose?type=LEAVE" class="btn btn-primary">
                         <i class="fa fa-plus"></i> Create First Leave Request
                     </a>
@@ -247,9 +235,9 @@
         <script src="${pageContext.request.contextPath}/assets2/js/admin.js"></script>
         <script src='${pageContext.request.contextPath}/assets2/vendors/switcher/switcher.js'></script>
         <script>
-                        $(document).ready(function () {
-                            $('[data-toggle="tooltip"]').tooltip();
-                        });
+            $(document).ready(function () {
+                $('[data-toggle="tooltip"]').tooltip();
+            });
         </script>
         <style>
             .icon-circle {
