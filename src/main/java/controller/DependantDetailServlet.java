@@ -73,19 +73,36 @@ public class DependantDetailServlet extends HttpServlet {
             return;
         }
         DependantDAO depenDAO = new DependantDAO();
-        String empIdStr = (String) request.getAttribute("empId");
-        String tab = (String) request.getAttribute("tab");
+        String empIdStr = request.getParameter("empId");
+        String tab = request.getParameter("tab");
+        String searchKey = request.getParameter("searchkey");
+        String relationship = request.getParameter("relationship");
+        String gender = request.getParameter("gender");
         int empId = 0;
         try {
             empId = Integer.parseInt(empIdStr);
         } catch (Exception e) {
             e.printStackTrace();
         }
-        List<Dependant> dependantList = depenDAO.getAllDependantByEmpId(empId);
+        int page = 1;
+        int pageSize = 1;
+        try {
+            page = Integer.parseInt(request.getParameter("page"));
+        } catch (NumberFormatException e) {
+            page = 1;
+        }
+        int totalRecords = depenDAO.countFilteredDependantsByEmpId(empId, searchKey, relationship, gender);
+        int totalPages = (int) Math.ceil((double) totalRecords / pageSize);
+
+        List<Dependant> dependantList = depenDAO.getFilteredDependantsByEmpId(empId, searchKey, relationship, gender, page, pageSize);
         List<String> relationList = depenDAO.getRelationshipListEnumValues();
 
         request.setAttribute("relationList", relationList);
         request.setAttribute("dependantList", dependantList);
+        request.setAttribute("page", page);
+        request.setAttribute("totalPages", totalPages);
+        request.setAttribute("searchkey", searchKey);
+
         request.setAttribute("tab", tab);
         request.setAttribute("empId", empId);
         request.getRequestDispatcher("Views/employeedetails.jsp").forward(request, response);
@@ -111,6 +128,7 @@ public class DependantDetailServlet extends HttpServlet {
         String phone = request.getParameter("phone");
         String empIdStr = request.getParameter("empId");
         String tab = request.getParameter("tab");
+        String searchKey = request.getParameter("searchkey");
 
         boolean hasError = false;
         String nameErr = null, dobErr = null, phoneErr = null;
@@ -137,6 +155,15 @@ public class DependantDetailServlet extends HttpServlet {
         } catch (Exception e) {
             gender = null;
         }
+        int page = 1;
+        int pageSize = 1;
+        try {
+            page = Integer.parseInt(request.getParameter("page"));
+        } catch (NumberFormatException e) {
+            page = 1;
+        }
+        int totalRecords = depDAO.countFilteredDependantsByEmpId(empId, searchKey, relationship, genderStr);
+        int totalPages = (int) Math.ceil((double) totalRecords / pageSize);
 
         if (dob != null) {
             LocalDate today = LocalDate.now();
@@ -153,10 +180,11 @@ public class DependantDetailServlet extends HttpServlet {
                 }
             }
         }
-        List<Dependant> dependantList = depDAO.getAllDependantByEmpId(empId);
+        List<Dependant> dependantList = depDAO.getFilteredDependantsByEmpId(empId, searchKey, relationship, genderStr, page, pageSize);
         List<String> relationList = depDAO.getRelationshipListEnumValues();
 
         if (hasError) {
+            request.setAttribute("searchkey", searchKey);
             request.setAttribute("DobErr", dobErr);
             request.setAttribute("dependantList", dependantList);
             request.setAttribute("relationList", relationList);
@@ -167,6 +195,8 @@ public class DependantDetailServlet extends HttpServlet {
             request.setAttribute("dob", dob);
             request.setAttribute("empId", empId);
             request.setAttribute("tab", tab);
+            request.setAttribute("page", page);
+            request.setAttribute("totalPages", totalPages);
             request.setAttribute("showModal", true);
             request.getRequestDispatcher("Views/employeedetails.jsp").forward(request, response);
             return;

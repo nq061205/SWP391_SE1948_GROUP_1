@@ -262,16 +262,35 @@ public class DailyAttendanceDAO extends DBContext {
                 }
             }
 
-        } catch (SQLException e) {
+        } catch (Exception e) {
         }
-
         return attendance;
+    }
+
+    public boolean updateDailyAttendance(int empId, String date, String status,
+            double workDay, double otHours, String note) {
+        String sql = "UPDATE daily_attendance SET status = ?, work_day = ?, ot_hours = ?, note = ? "
+                + "WHERE emp_id = ? AND date = ?";
+        try (Connection conn = DBContext.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, status);
+            ps.setDouble(2, workDay);
+            ps.setDouble(3, otHours);
+            ps.setString(4, note);
+            ps.setInt(5, empId);
+            ps.setString(6, date);
+
+            return ps.executeUpdate() > 0;
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
     }
 
     public static void main(String[] args) {
         DailyAttendanceDAO dailyDAO = new DailyAttendanceDAO();
-        EmployeeDAO empDAO = new EmployeeDAO();
-        System.out.println(dailyDAO.getDailyAttendentByTime(2, 1, 10, 2025));
+        boolean success = dailyDAO.updateDailyAttendance(1, "2025-10-25", "Present", 1, 2, "ok");
+        System.out.println(success);
     }
 
 }

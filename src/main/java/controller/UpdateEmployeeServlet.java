@@ -71,11 +71,17 @@ public class UpdateEmployeeServlet extends HttpServlet {
         }
         String empCode = request.getParameter("empCode");
         EmployeeDAO empDAO = new EmployeeDAO();
+        Employee emp = empDAO.getEmployeeByEmpCode(empCode);
+        boolean hasManager = empDAO.hasManager(emp.getDept().getDepId());
+
+        if ("Manager".equalsIgnoreCase(emp.getPositionTitle())) {
+            hasManager = false;
+        }
 
         List<String> posList = empDAO.getAllPosition();
 
         request.setAttribute("posList", posList);
-        Employee emp = empDAO.getEmployeeByEmpCode(empCode);
+        request.setAttribute("hasManager", hasManager);
         ses.setAttribute("emp", emp);
         request.getRequestDispatcher("Views/updateemployee.jsp").forward(request, response);
     }

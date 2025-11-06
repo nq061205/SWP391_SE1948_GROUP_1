@@ -101,9 +101,24 @@ public class DeptDAO extends DBContext {
         return departments;
     }
 
+    public boolean existsById(String depId) {
+        String sql = "SELECT COUNT(*) FROM department WHERE dep_id = ?";
+        try (Connection conn = DBContext.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, depId);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt(1) > 0;
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
     public List<Department> getAllDepartment() {
         List<Department> departments = new ArrayList<>();
-        String sql = "SELECT dep_id, dep_name, description FROM department";
+        String sql = "SELECT dep_id, dep_name, description FROM department ORDER BY dep_name";
         try (Connection conn = DBContext.getConnection(); PreparedStatement stm = conn.prepareStatement(sql); ResultSet rs = stm.executeQuery()) {
 
             while (rs.next()) {
@@ -118,6 +133,111 @@ public class DeptDAO extends DBContext {
             ex.printStackTrace();
         }
         return departments;
+    }
+
+    public List<Department> getDepartmentsByFilter(String depId, String searchKey, int page, int pageSize) {
+        List<Department> departments = new ArrayList<>();
+
+        StringBuilder sql = new StringBuilder(
+                "SELECT dep_id, dep_name, description FROM department WHERE 1=1"
+        );
+        if (depId != null && !depId.trim().isEmpty()) {
+            sql.append(" AND dep_id = ?");
+        }
+        if (searchKey != null && !searchKey.trim().isEmpty()) {
+            sql.append(" AND (dep_id LIKE ? OR dep_name LIKE ?)");
+        }
+
+        sql.append(" ORDER BY dep_name LIMIT ? OFFSET ?");
+
+        try (Connection conn = DBContext.getConnection(); PreparedStatement stm = conn.prepareStatement(sql.toString())) {
+
+            int index = 1;
+
+            if (depId != null && !depId.trim().isEmpty()) {
+                stm.setString(index++, depId.trim());
+            }
+            if (searchKey != null && !searchKey.trim().isEmpty()) {
+                String key = "%" + searchKey.trim() + "%";
+                stm.setString(index++, key);
+                stm.setString(index++, key);
+            }
+
+            stm.setInt(index++, pageSize);
+            stm.setInt(index, (page - 1) * pageSize);
+
+            try (ResultSet rs = stm.executeQuery()) {
+                while (rs.next()) {
+                    Department department = new Department(
+                            rs.getString("dep_id"),
+                            rs.getString("dep_name"),
+                            rs.getString("description")
+                    );
+                    departments.add(department);
+                }
+            }
+
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+
+        return departments;
+    }
+
+    public int countDepartmentsByFilter(String depId, String searchKey) {
+        int count = 0;
+
+        StringBuilder sql = new StringBuilder("SELECT COUNT(*) FROM department WHERE 1=1");
+
+        if (depId != null && !depId.trim().isEmpty()) {
+            sql.append(" AND dep_id = ?");
+        }
+        if (searchKey != null && !searchKey.trim().isEmpty()) {
+            sql.append(" AND (dep_id LIKE ? OR dep_name LIKE ?)");
+        }
+
+        try (Connection conn = DBContext.getConnection(); PreparedStatement stm = conn.prepareStatement(sql.toString())) {
+
+            int index = 1;
+            if (depId != null && !depId.trim().isEmpty()) {
+                stm.setString(index++, depId.trim());
+            }
+            if (searchKey != null && !searchKey.trim().isEmpty()) {
+                String key = "%" + searchKey.trim() + "%";
+                stm.setString(index++, key);
+                stm.setString(index++, key);
+            }
+
+            try (ResultSet rs = stm.executeQuery()) {
+                if (rs.next()) {
+                    count = rs.getInt(1);
+                }
+            }
+
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+
+        return count;
+    }
+
+    public List<String> getDepartmentsHavingManager() {
+        List<String> depIds = new ArrayList<>();
+        String sql = "SELECT DISTINCT e.dep_id\n"
+                + "        FROM employee e\n"
+                + "        JOIN role r ON e.role_id = r.role_id\n"
+                + "        WHERE r.role_name Like '%Manager%'";
+
+        try (Connection conn = DBContext.getConnection(); PreparedStatement ps = conn.prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
+            while (rs.next()) {
+                depIds.add(rs.getString("dep_id"));
+            }
+
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
+
+        return depIds;
     }
 
     public void createDepartment(Department department) {
@@ -165,6 +285,6 @@ public class DeptDAO extends DBContext {
 
     public static void main(String[] args) {
         DeptDAO dao = new DeptDAO();
-        System.out.println(dao.getAllDepartment());
+        System.out.println(dao.countDepartmentsByFilter("", ""));
     }
 }

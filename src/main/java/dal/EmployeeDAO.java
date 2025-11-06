@@ -690,6 +690,21 @@ public class EmployeeDAO extends DBContext {
         return empList;
     }
 
+    public boolean hasManager(String depId) {
+        String sql = "SELECT COUNT(*) FROM employee WHERE dep_id = ? AND position_title LIKE '%Manager%'";
+        try (Connection conn = DBContext.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, depId);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt(1) > 0;
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
     public int countAllRecordOfEmployee() {
         String sql = "Select count(*) from Employee";
         try (Connection conn = DBContext.getConnection(); PreparedStatement ps = conn.prepareStatement(sql); ResultSet rs = ps.executeQuery();) {
@@ -749,10 +764,10 @@ public class EmployeeDAO extends DBContext {
 
             ps.setString(4, emp.getEmail());
             ps.setString(5, emp.getPhone());
-            ps.setBoolean(6, emp.isGender()); // true = nam, false = nữ
+            ps.setBoolean(6, emp.isGender());
             ps.setString(7, emp.getDept().getDepId());
             ps.setInt(8, emp.getRole().getRoleId());
-            ps.setBoolean(9, emp.isStatus()); // true = active
+            ps.setBoolean(9, emp.isStatus());
 
             ps.executeUpdate();
 
@@ -942,7 +957,7 @@ public class EmployeeDAO extends DBContext {
     }
 
     public Employee getManagerByDepartment(String depId) {
-        String sql = BASE_SELECT_SQL + " WHERE e.dep_id = ? AND r.role_name = 'Manager'";
+        String sql = BASE_SELECT_SQL + " WHERE e.dep_id = ? AND r.role_name like '%Manager%'";
         try (Connection conn = DBContext.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
 
             ps.setString(1, depId);
