@@ -58,7 +58,7 @@ public class ApplicationManagementServlet extends HttpServlet {
             LeaveRequest leaveRequest = leaveDAO.getLeaveRequestByLeaveId(id);
             if("Annual Leave".equalsIgnoreCase(leaveRequest.getLeaveType()) && "Approved".equalsIgnoreCase(action)){
                  EmployeeDAO empDAO = new EmployeeDAO();
-                 empDAO.updateDecreasePaidLeaveDaysByEmployeeId(user.getEmpId(),leaveRequest.getDayRequested());
+                 empDAO.updateDecreasePaidLeaveDaysByEmployeeId(leaveRequest.getEmployee().getEmpId(),leaveRequest.getDayRequested());
             }
                  leaveDAO.updateLeaveStatus(id, action,note);
             response.sendRedirect(request.getContextPath() + "/applicationmanagement?typeapplication=leave");

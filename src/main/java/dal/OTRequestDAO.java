@@ -178,24 +178,30 @@ public class OTRequestDAO extends DBContext {
         return 0;
     }
 
-    public int countOTByApproverFiltered(int empId, String search, Date startDate, Date endDate) {
-        StringBuilder sql = new StringBuilder("SELECT COUNT(*) FROM hrm.ot_request WHERE emp_id = ? and ot.status = 'Pending'");
+    public int countOTByApproverFiltered(int approverId, String search, Date startDate, Date endDate) {
+        StringBuilder sql = new StringBuilder(
+                "SELECT COUNT(*) "
+                + "FROM hrm.ot_request ot "
+                + "JOIN hrm.employee e ON ot.emp_id = e.emp_id "
+                + "WHERE ot.approved_by = ? AND ot.status = 'Pending' "
+        );
+
         List<Object> params = new ArrayList<>();
-        params.add(empId);
+        params.add(approverId);
 
         if (search != null && !search.trim().isEmpty()) {
             String keyword = "%" + search.trim() + "%";
-            sql.append(" AND (e.fullname LIKE ? OR e.email LIKE ?)");
+            sql.append(" AND (e.fullname LIKE ? OR e.email LIKE ?) ");
             params.add(keyword);
             params.add(keyword);
         }
 
         if (startDate != null) {
-            sql.append(" AND date >= ?");
+            sql.append(" AND ot.created_at >= ? ");
             params.add(startDate);
         }
         if (endDate != null) {
-            sql.append(" AND date <= ?");
+            sql.append(" AND ot.created_at <= ? ");
             params.add(endDate);
         }
 
@@ -214,6 +220,7 @@ public class OTRequestDAO extends DBContext {
         } catch (SQLException e) {
             e.printStackTrace();
         }
+
         return 0;
     }
 
@@ -289,7 +296,7 @@ public class OTRequestDAO extends DBContext {
                 + "FROM hrm.ot_request ot "
                 + "JOIN hrm.employee e ON ot.emp_id = e.emp_id "
                 + "LEFT JOIN hrm.employee a ON ot.approved_by = a.emp_id "
-                + "WHERE ot.emp_id = ? and ot.status = 'Pending' "
+                + "WHERE ot.approved_by = ? and ot.status = 'Pending' "
         );
 
         List<Object> params = new ArrayList<>();
@@ -377,7 +384,8 @@ public class OTRequestDAO extends DBContext {
 
     public static void main(String[] args) {
         OTRequestDAO dao = new OTRequestDAO();
-        dao.updateOTStatus(1, "Approved");
+        System.out.println(dao.countOTByApproverFiltered(2, null, null, null));
+//        System.out.println(dao.findOTByApproverEmpPaged(2, 0, 0, search, startDate, endDate));
     }
 
 }
