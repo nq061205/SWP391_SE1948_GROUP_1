@@ -6,6 +6,7 @@ package controller;
 
 import dal.ContractDAO;
 import dal.EmployeeDAO;
+import dal.RolePermissionDAO;
 import jakarta.servlet.ServletContext;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -52,6 +53,12 @@ public class ContractDetailServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         HttpSession ses = request.getSession();
+        RolePermissionDAO rperDAO = new RolePermissionDAO();
+        Employee user = (Employee) ses.getAttribute("user");
+        if (user == null || !rperDAO.hasPermission(user.getRole().getRoleId(), 4)) {
+            response.sendRedirect("login");
+            return;
+        }
         ContractDAO conDAO = new ContractDAO();
         String empIdStr = (String) request.getAttribute("empId");
         int empId=0;

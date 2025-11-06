@@ -7,6 +7,7 @@ package controller;
 import dal.DeptDAO;
 import dal.EmployeeDAO;
 import dal.RoleDAO;
+import dal.RolePermissionDAO;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
@@ -70,6 +71,12 @@ public class UpdateAccountServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         HttpSession ses = request.getSession();
+        RolePermissionDAO rperDAO = new RolePermissionDAO();
+        Employee user = (Employee) ses.getAttribute("user");
+        if (user == null || !rperDAO.hasPermission(user.getRole().getRoleId(), 1)) {
+            response.sendRedirect("login");
+            return;
+        }
         String empCode = request.getParameter("empCode");
         EmployeeDAO empDAO = new EmployeeDAO();
         RoleDAO rDAO = new RoleDAO();
