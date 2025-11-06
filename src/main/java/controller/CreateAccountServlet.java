@@ -4,33 +4,34 @@
  */
 package controller;
 
+import dal.CandidateDAO;
 import dal.DeptDAO;
 import dal.EmployeeDAO;
+import dal.InterviewDAO;
 import dal.RoleDAO;
 import dal.RolePermissionDAO;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
-import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
+import model.Candidate;
 import model.Department;
 import model.Employee;
+import model.Interview;
 import model.Role;
 
 /**
  *
  * @author Admin
  */
-public class UpdateAccountServlet extends HttpServlet {
+public class CreateAccountServlet extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -49,10 +50,10 @@ public class UpdateAccountServlet extends HttpServlet {
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
-            out.println("<title>Servlet UpdateAccountServlet</title>");
+            out.println("<title>Servlet CreateAccountServlet</title>");
             out.println("</head>");
             out.println("<body>");
-            out.println("<h1>Servlet UpdateAccountServlet at " + request.getContextPath() + "</h1>");
+            out.println("<h1>Servlet CreateAccountServlet at " + request.getContextPath() + "</h1>");
             out.println("</body>");
             out.println("</html>");
         }
@@ -77,18 +78,11 @@ public class UpdateAccountServlet extends HttpServlet {
             response.sendRedirect("login");
             return;
         }
-        String empCode = request.getParameter("empCode");
-        EmployeeDAO empDAO = new EmployeeDAO();
+        InterviewDAO interDAO = new InterviewDAO();
+        DeptDAO deptDAO = new DeptDAO();
         RoleDAO rDAO = new RoleDAO();
-        DeptDAO dDAO = new DeptDAO();
-        String deptID = request.getParameter("deptId");
-        String roleIDStr = request.getParameter("roleId");
-        Department dept = dDAO.getDepartmentByDepartmentId(deptID);
-        int roleID = 0;
-        if (roleIDStr != null) {
-            roleID = Integer.parseInt(roleIDStr);
-        }
-        List<Department> departments = dDAO.getAllDepartment();
+        CandidateDAO canDAO = new CandidateDAO();
+
         List<Role> roleList = rDAO.getAllRoles();
         Map<String, Role> uniqueRolesMap = new LinkedHashMap<>();
         for (Role r : roleList) {
@@ -97,14 +91,12 @@ public class UpdateAccountServlet extends HttpServlet {
 
         List<Role> uniqueRoles = new ArrayList<>(uniqueRolesMap.values());
 
-        Role role = rDAO.getRoleByRoleId(roleID);
-        Employee emp = empDAO.getEmployeeByEmpCode(empCode);
-        request.setAttribute("departments", departments);
-        request.setAttribute("roles", uniqueRoles);
-        ses.setAttribute("emp", emp);
-        ses.setAttribute("dept", dept);
-        ses.setAttribute("role", role);
-        request.getRequestDispatcher("Views/updateAccount.jsp").forward(request, response);
+        List<Interview> interList = interDAO.getAllPassNotInEmployee("Pass");
+
+        ses.setAttribute("roleList", uniqueRoles);
+        ses.setAttribute("deptList", deptDAO.getAllDepartment());
+        request.setAttribute("passedList", interList);
+        request.getRequestDispatcher("Views/createaccount.jsp").forward(request, response);
     }
 
     /**
@@ -118,44 +110,44 @@ public class UpdateAccountServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        HttpSession ses = request.getSession();
-        String button = request.getParameter("button");
-        String empCode = request.getParameter("empCode");
-        String email = request.getParameter("email");
-        String deptID = request.getParameter("deptId");
-        String roleIdStr = request.getParameter("roleId");
-        EmployeeDAO dao = new EmployeeDAO();
-        RoleDAO rDAO = new RoleDAO();
-        DeptDAO dDAO = new DeptDAO();
-        int roleID = 0;
+        InterviewDAO interDAO = new InterviewDAO();
+        EmployeeDAO empDAO = new EmployeeDAO();
+        DeptDAO depDAO = new DeptDAO();
+        RoleDAO roleDAO = new RoleDAO();
+        String addCanName = request.getParameter("canName");
+        String addEmail = request.getParameter("email");
+        String addPhone = request.getParameter("phone");
+        String addDepartmentId = request.getParameter("deptId");
+        String addRoleId = request.getParameter("roleId");
+        String action = request.getParameter("action");
+        int roleId = 0;
         try {
-            roleID = Integer.parseInt(roleIdStr);
-        } catch (NumberFormatException e) {
-
-        }
-        Employee editEmp = dao.getEmployeeByEmpCode(empCode);
-        if (editEmp != null && "save".equalsIgnoreCase(button)) {
-            editEmp.setEmail(email);
-            Department dept = dDAO.getDepartmentByDepartmentId(deptID);
-            editEmp.setDept(dept);
-            Role role = rDAO.getRoleByRoleId(roleID);
-            editEmp.setRole(role);
-            dao.updateEmployee(editEmp);
-            request.setAttribute("message", "Update successfully!");
-        }
-        List<Department> departments = dDAO.getAllDepartment();
-        List<Role> roleList = rDAO.getAllRoles();
-        Map<String, Role> uniqueRolesMap = new LinkedHashMap<>();
-        for (Role r : roleList) {
-            uniqueRolesMap.putIfAbsent(r.getRoleName(), r);
+            roleId = Integer.parseInt(addRoleId);
+        } catch (Exception e) {
+            e.printStackTrace();
         }
 
-        List<Role> uniqueRoles = new ArrayList<>(uniqueRolesMap.values());
+        if ("add".equalsIgnoreCase(action)) {
+            Employee emp = new Employee();
+            emp.setEmpCode(empDAO.generateUserName());
+            emp.setFullname(addCanName);
+            emp.setEmail(addEmail);
+            emp.setPhone(addPhone);
 
-        request.setAttribute("departments", departments);
-        request.setAttribute("roles", uniqueRoles);
-        ses.setAttribute("emp", editEmp);
-        request.getRequestDispatcher("Views/updateAccount.jsp").forward(request, response);
+            Department dept = depDAO.getDepartmentByDepartmentId(addDepartmentId);
+            emp.setDept(dept);
+
+            Role role = roleDAO.getRoleByRoleId(roleId);
+            emp.setRole(role);
+            emp.setPassword(empDAO.generatePassword());
+            emp.setGender(true);
+            emp.setStatus(true);
+            empDAO.createEmployee(emp);
+        }
+        List<Interview> interList = interDAO.getAllPassNotInEmployee("Pass");
+        request.setAttribute("passedList", interList);
+        request.getRequestDispatcher("Views/createaccount.jsp").forward(request, response);
+
     }
 
     /**

@@ -70,6 +70,80 @@
             .nav-tabs .nav-link:hover {
                 background-color: #e9f2ff;
             }
+            /* Căn giữa form trong box */
+            .cv-container {
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                padding: 40px 20px;
+                background: #f9fafc;
+                border-radius: 16px;
+                box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            }
+
+            /* Form upload */
+            .cv-container form {
+                background: #fff;
+                padding: 30px 40px;
+                border-radius: 12px;
+                box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                width: 100%;
+                max-width: 400px;
+                transition: all 0.3s ease;
+            }
+            .cv-container form:hover {
+                transform: translateY(-4px);
+                box-shadow: 0 6px 18px rgba(0,0,0,0.1);
+            }
+
+            .cv-container input[type="file"] {
+                border: 2px dashed #4e73df;
+                border-radius: 10px;
+                padding: 25px;
+                background-color: #f8faff;
+                width: 100%;
+                cursor: pointer;
+                transition: all 0.3s ease;
+                text-align: center;
+            }
+
+            .cv-container input[type="file"]:hover {
+                background-color: #e9f0ff;
+                border-color: #3759c5;
+            }
+
+            /* Nút submit */
+            .cv-container input[type="submit"] {
+                background: linear-gradient(135deg, #4e73df, #2e59d9);
+                color: white;
+                border: none;
+                border-radius: 8px;
+                padding: 10px 24px;
+                margin-top: 20px;
+                font-weight: 600;
+                letter-spacing: 0.5px;
+                cursor: pointer;
+                transition: all 0.3s ease;
+            }
+
+            .cv-container input[type="submit"]:hover {
+                background: linear-gradient(135deg, #2e59d9, #224abe);
+                transform: scale(1.03);
+            }
+
+            /* Tiêu đề box */
+            .wc-title h4 {
+                display: flex;
+                align-items: center;
+                gap: 8px;
+                color: #2e59d9;
+                font-weight: 600;
+                border-bottom: 2px solid #e3e6f0;
+                padding-bottom: 10px;
+            }
         </style>
     </head>
 
@@ -93,111 +167,272 @@
                 <ul class="nav nav-tabs mb-4" id="employeeTabs" role="tablist">
                     <li class="nav-item" role="presentation">
                         <a class="nav-link ${tab eq 'Contract' ? 'active bg-primary text-white' : ''}" 
-                           href="${pageContext.request.contextPath}/employeedetail?tab=Contract&empCode=${empCode}" role="tab">
+                           href="${pageContext.request.contextPath}/employeedetail?tab=Contract&empId=${empId}" role="tab">
                             <i class="fa fa-list"></i> Contract
                         </a>
                     </li>
                     <li class="nav-item" role="presentation">
                         <a class="nav-link ${tab eq 'Dependant' ? 'active bg-primary text-white' : ''}" 
-                           href="${pageContext.request.contextPath}/employeedetail?tab=Dependant&empCode=${empCode}" role="tab">
+                           href="${pageContext.request.contextPath}/employeedetail?tab=Dependant&empId=${empId}" role="tab">
                             <i class="fa fa-list"></i> Dependant
                         </a>
                     </li>
                 </ul>
                 <c:if test="${tab eq 'Contract'}">
-                    <div class="row">
-                        <div class="col-lg-8 col-md-7 mb-4">
-                            <div class="widget-box">
-                                <div class="wc-title">
-                                    <h4><i class="fa fa-file-alt"></i> Contract Image</h4>
+                    <form action="${pageContext.request.contextPath}/contractdetail"
+                          method="post" enctype="multipart/form-data">
+
+                        <input type="hidden" name="empId" value="${empId}">
+                        <input type="hidden" name="tab" value="${tab}">
+                        <input type="hidden" name="option" value="save">
+
+                        <div class="row">
+                            <div class="col-lg-8 col-md-7 mb-4">
+                                <div class="widget-box">
+                                    <div class="wc-title">
+                                        <h4><i class="fa fa-file-alt"></i> Contract File</h4>
+                                    </div>
+
+                                    <div class="widget-inner cv-container">
+                                        <c:choose>
+
+                                            <c:when test="${empty contract.contractImg}">
+                                                <div style="text-align:center;">
+                                                    <p><strong>No contract file uploaded yet.</strong></p>
+                                                    <c:if test="${option eq 'edit'}">
+                                                        <input type="file" name="contractFile" accept=".pdf,image/*" required>
+                                                        <p style="color:red;">${avatarErr}</p>
+                                                    </c:if>
+                                                </div>
+                                            </c:when>
+
+                                            <c:otherwise>
+                                                <div style="margin-top:10px;width: 100%;height:100%">
+                                                    <c:choose>
+                                                        <c:when test="${fn:endsWith(contract.contractImg, '.pdf')}">
+                                                            <iframe src="${pageContext.request.contextPath}/${contract.contractImg}#zoom=83"
+                                                                    width="100%" height="100%"></iframe>
+                                                            </c:when>
+                                                            <c:otherwise>
+                                                            <img src="${pageContext.request.contextPath}/${contract.contractImg}"
+                                                                 alt="Contract Image"
+                                                                 style="width:100%; max-height:600px; object-fit:contain;" />
+                                                        </c:otherwise>
+                                                    </c:choose>
+                                                </div>
+
+                                                <c:if test="${option eq 'edit'}">
+                                                    <div class="mt-3">
+                                                        <label for="contractFile" style="font-weight:600;">Replace file:</label>
+                                                        <input type="file" name="contractFile"
+                                                               accept=".pdf,image/*" class="form-control mb-2">
+                                                        <p style="color:red;">${avatarErr}</p>
+                                                    </div>
+                                                </c:if>
+                                            </c:otherwise>
+                                        </c:choose>
+                                    </div>
                                 </div>
-                                <div class="widget-inner cv-container">
-                                    <iframe 
-                                        src="${contract.contractImg}" 
-                                        type="application/pdf" 
-                                        width="100%"    
-                                        height="600px">
-                                    </iframe>
-                                </div>
-
-
-
                             </div>
-                        </div>
 
-                        <div class="col-lg-4 col-md-5">
-                            <div class="widget-box candidate-info">
-                                <div class="wc-title mb-3">
-                                    <h4><i class="fa fa-user"></i> Contract Information</h4>
-                                </div>
-                                <c:choose>
-                                    <c:when test="${option eq 'edit'}">
-                                        <form action="contractdetail" method="post">
-                                            <input type="hidden" name="empCode" value="${empCode}">
-                                            <input type="hidden" name="tab" value="${tab}">
+                            <div class="col-lg-4 col-md-5">
+                                <div class="widget-box candidate-info">
+                                    <div class="wc-title mb-3">
+                                        <h4><i class="fa fa-user"></i> Contract Information</h4>
+                                    </div>
+
+                                    <c:choose>
+
+                                        <c:when test="${option eq 'edit'}">
                                             <div class="info-item">
                                                 <span class="info-label">Type:</span>
-                                                <select name="type">
+                                                <select name="type" class="form-control">
                                                     <c:forEach items="${typeList}" var="tl">
-                                                        <option value="${tl}"  <c:if test="${tl eq contract.type}">selected</c:if>>${tl}</option>
+                                                        <option value="${tl}" <c:if test="${tl eq contract.type}">selected</c:if>>
+                                                            ${tl}
+                                                        </option>
                                                     </c:forEach>
                                                 </select>
                                             </div>
 
                                             <div class="info-item">
                                                 <span class="info-label">Start Date:</span>
-                                                <input class="form-control" type="date" name="start" value="${contract.startDate}">
+                                                <input class="form-control" type="date"
+                                                       name="start" value="${contract.startDate}">
+                                                <p>${DateErr}</p>
                                             </div>
 
                                             <div class="info-item">
                                                 <span class="info-label">End Date:</span>
-                                                <input class="form-control" type="date" name="end" value="${contract.endDate}">
+                                                <input class="form-control" type="date"
+                                                       name="end" value="${contract.endDate}">
+                                                <p>${DateErr}</p>
+                                            </div>
+
+                                            <hr>
+                                            <div class="d-flex justify-content-between mt-3">
+                                                <button type="submit" class="btn btn-sm btn-primary">Save</button>
+                                                <a href="${pageContext.request.contextPath}/employeedetail?tab=Contract&empId=${empId}"
+                                                   class="btn btn-sm btn-secondary">Cancel</a>
+                                            </div>
+                                        </c:when>
+
+                                        <c:otherwise>
+                                            <div class="info-item">
+                                                <span class="info-label">Type:</span>
+                                                <p>${contract.type}</p>
+                                            </div>
+
+                                            <div class="info-item">
+                                                <span class="info-label">Start Date:</span>
+                                                <p><fmt:formatDate value="${contract.startDate}" pattern="MMM dd, yyyy" /></p>
+                                            </div>
+
+                                            <div class="info-item">
+                                                <span class="info-label">End Date:</span>
+                                                <p><fmt:formatDate value="${contract.endDate}" pattern="MMM dd, yyyy" /></p>
                                             </div>
                                             <hr>
                                             <div class="d-flex justify-content-between mt-3">
-                                                <button type="submit" class="btn btn-sm btn-primary" name="option" value="save">Save</button>
-                                                <a href="${pageContext.request.contextPath}/employeedetail?tab=Contract&empCode=${empCode}" role="tab" 
-                                                   class="btn btn-sm btn-primary">Cancel</a>
+                                                <a href="${pageContext.request.contextPath}/employeelist" class="btn btn-secondary">
+                                                    <i class="fa fa-arrow-left"></i> Back
+                                                </a>
+                                                <a href="${pageContext.request.contextPath}/employeedetail?empId=${empId}&tab=Contract&option=edit"
+                                                   class="btn btn-sm btn-primary">Edit Information</a>
                                             </div>
-                                        </form>
-                                    </c:when>
-                                    <c:otherwise>
-                                        <div class="info-item">
-                                            <span class="info-label">Type:</span>
-                                            <p>${contract.type}</p>
-                                        </div>
-
-                                        <div class="info-item">
-                                            <span class="info-label">Start Date:</span>
-                                            <p><fmt:formatDate value="${contract.startDate}" pattern="MMM dd, yyyy HH:mm" /></p>
-                                        </div>
-
-                                        <div class="info-item">
-                                            <span class="info-label">End Date:</span>
-                                            <p><fmt:formatDate value="${contract.endDate}" pattern="MMM dd, yyyy HH:mm" /></p>
-                                        </div>
-                                        <hr>
-                                        <div class="d-flex justify-content-between mt-3">
-                                            <a href="${pageContext.request.contextPath}/employeelist" class="btn btn-secondary">
-                                                <i class="fa fa-arrow-left"></i> Back
-                                            </a>
-                                            <a href="${pageContext.request.contextPath}/employeedetail?empCode=${empCode}&option=edit" 
-                                               class="btn btn-sm btn-primary">Edit information</a>
-                                        </div>
-                                    </c:otherwise>
-                                </c:choose>
-
+                                        </c:otherwise>
+                                    </c:choose>
+                                </div>
                             </div>
+                        </div>
+                    </form>
+                </c:if>
+                <c:if test="${tab eq 'Dependant'}">
+                    <div class="widget-box">
+                        <div class="wc-title">
+                            <h4>Dependant information</h4>
+                        </div>
+                        <div style="margin: 1% 3% 1%;">
+                            <button type="button"
+                                    class="btn btn-sm btn-primary"
+                                    data-bs-toggle="modal"
+                                    data-bs-target="#addDependantModal">
+                                <i class="fa-solid fa-user-plus"></i> Add New Dependant
+                            </button>
+                        </div>
+                        <div class="modal fade" id="addDependantModal" tabindex="-1" aria-labelledby="addDependantModalLabel" aria-hidden="true">
+                            <div class="modal-dialog modal-dialog-centered modal-lg">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title" id="addDependantModalLabel">Add New Dependant</h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">X</button>
+                                    </div>
+                                    <form action="${pageContext.request.contextPath}/dependantdetail" method="post">
+                                        <div class="modal-body">
+                                            <div class="form-group row mb-2">
+                                                <label class="col-sm-3 col-form-label">Name:</label>
+                                                <div class="col-sm-9">
+                                                    <input type="text" name="name" class="form-control" value="${name}" required>
+                                                </div>
+                                            </div>
+
+                                            <div class="form-group row mb-2">
+                                                <label class="col-sm-3 col-form-label">Relationship:</label>
+                                                <div class="col-sm-9">
+                                                    <select name="relationship" class="form-control">
+                                                        <c:forEach items="${relationList}" var="rl">
+                                                            <option value="${rl}">${rl}</option>
+                                                        </c:forEach>
+                                                    </select>
+                                                </div>
+                                            </div>
+
+                                            <div class="form-group row mb-2">
+                                                <label class="col-sm-3 col-form-label">Date of Birth:</label>
+                                                <div class="col-sm-9">
+                                                    <input type="date" value="${dob}" name="dob" class="form-control" required>
+                                                    <p>${DobErr}</p>
+                                                </div>
+                                            </div>
+
+                                            <div class="form-group row mb-2">
+                                                <label class="col-sm-3 col-form-label">Gender:</label>
+                                                <div class="col-sm-9">
+                                                    <select name="gender" class="form-control">
+                                                        <option value="true">Male</option>
+                                                        <option value="false">Female</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+
+                                            <div class="form-group row mb-2">
+                                                <label class="col-sm-3 col-form-label">Phone:</label>
+                                                <div class="col-sm-9">
+                                                    <input type="text" value="${phone}" name="phone" class="form-control" maxlength="10" pattern="0[0-9]{9}" required>
+                                                </div>
+                                            </div>
+                                            <input type="hidden" name="empId" value="${empId}">
+                                            <input type="hidden" name="tab" value="${tab}">
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                                            <button type="submit" class="btn btn-primary">Create</button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="table-responsive" style="overflow-x:auto;">
+                            <table class="table table-striped table-bordered table-hover align-middle text-center" 
+                                   style="table-layout: fixed; width: 100%; border-collapse: collapse;">
+                                <thead class="thead-dark">
+                                    <tr>
+                                        <th>No</th>
+                                        <th>Dependant Name</th>
+                                        <th>Relationship</th>
+                                        <th>Dob</th>
+                                        <th>Gender</th>
+                                        <th>Phone</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <c:forEach items="${dependantList}" var="dl" varStatus="loop">
+                                        <tr>
+                                            <td>${loop.index+1}</td>
+                                            <td>${dl.name}</td>
+                                            <td>${dl.relationship}</td>
+                                            <td>${dl.dob}</td>
+                                            <td>${dl.gender ?'Male':'Female'}</td>
+                                            <td>${dl.phone}</td>
+                                            <td>
+                                                <a href="${pageContext.request.contextPath}/updatedependant?empId=${dl.employee.empId}" 
+                                                   class="btn btn-sm btn-primary">Edit</a>
+                                            </td>
+                                        </tr>
+                                    </c:forEach>
+                                </tbody>
+                            </table>
                         </div>
 
                     </div>
                 </c:if>
             </div>
         </main>
+        <c:if test="${not empty DobErr}">
+            <script>
+                window.onload = function () {
+                    var myModal = new bootstrap.Modal(document.getElementById('addDependantModal'));
+                    myModal.show();
+                };
+            </script>
+        </c:if>
+
 
         <!-- JS Libraries -->
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
         <script src="${pageContext.request.contextPath}/assets2/js/jquery.min.js"></script>
-        <script src="${pageContext.request.contextPath}/assets2/vendors/bootstrap/js/bootstrap.bundle.min.js"></script>
+<!--        <script src="${pageContext.request.contextPath}/assets2/vendors/bootstrap/js/bootstrap.bundle.min.js"></script>-->
         <script src="${pageContext.request.contextPath}/assets2/js/jquery.min.js"></script>
         <script src="${pageContext.request.contextPath}/assets2/vendors/bootstrap/js/popper.min.js"></script>
         <script src="${pageContext.request.contextPath}/assets2/vendors/bootstrap/js/bootstrap.min.js"></script>

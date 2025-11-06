@@ -10,6 +10,7 @@ import model.OTRequest;
 import dal.EmployeeDAO;
 import dal.LeaveRequestDAO;
 import dal.OTRequestDAO;
+import dal.RolePermissionDAO;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
@@ -34,7 +35,9 @@ public class ApplicationServlet extends HttpServlet {
             throws ServletException, IOException {
         HttpSession session = request.getSession();
         Employee user = (Employee) session.getAttribute("user");
-        if (user == null) {
+        RolePermissionDAO rperDAO = new RolePermissionDAO();
+
+        if (user == null || !rperDAO.hasPermission(user.getRole().getRoleId(), 7)) {
             response.sendRedirect("Views/login.jsp");
             return;
         }

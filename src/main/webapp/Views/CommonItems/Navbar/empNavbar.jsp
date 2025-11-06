@@ -5,6 +5,16 @@
 --%>
 
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
+<%@ page import="model.Employee" %>
+<%@ page import="dal.RolePermissionDAO" %>
+<%@ page import="model.Role" %>
+
+<%
+    Employee user = (Employee) session.getAttribute("user");
+    RolePermissionDAO rpDAO = new RolePermissionDAO();
+    int roleId = (user != null && user.getRole() != null) ? user.getRole().getRoleId() : -1;
+%>
+
 <div class="ttr-sidebar">
     <div class="ttr-sidebar-wrapper content-scroll">
         <!-- side menu logo start -->
@@ -51,52 +61,73 @@
                 </li>
 
                 <!-- Candidate List -->
+                <% if (rpDAO.hasPermission(roleId, 2)) { %>
                 <li>
                     <a href="${pageContext.request.contextPath}/candidatelist" class="ttr-material-button">
                         <span class="ttr-icon"><i class="ti-id-badge"></i></span>
                         <span class="ttr-label">Candidate List</span>
                     </a>
                 </li>
+                <% } %>
+                <!-- Interview List -->
+                <% if (rpDAO.hasPermission(roleId, 6)) { %>
+                <li>
+                    <a href="${pageContext.request.contextPath}/interview" class="ttr-material-button">
+                        <span class="ttr-icon"><i class="ti-id-badge"></i></span>
+                        <span class="ttr-label">Interview List</span>
+                    </a>
+                </li>
+                <% } %>
 
                 <!-- Account List -->
+                <% if (rpDAO.hasPermission(roleId, 1)) { %>
                 <li>
                     <a href="${pageContext.request.contextPath}/accountlist" class="ttr-material-button">
                         <span class="ttr-icon"><i class="ti-lock"></i></span>
                         <span class="ttr-label">Account List</span>
                     </a>
                 </li>
+                <% } %>
 
                 <!-- Employee List -->
+                <% if (rpDAO.hasPermission(roleId, 4)) { %>
                 <li>
                     <a href="${pageContext.request.contextPath}/employeelist" class="ttr-material-button">
                         <span class="ttr-icon"><i class="ti-briefcase"></i></span>
                         <span class="ttr-label">Employee List</span>
                     </a>
                 </li>
+                <% } %>
 
                 <!-- Department List -->
+                <% if (rpDAO.hasPermission(roleId, 3)) { %>
                 <li>
                     <a href="${pageContext.request.contextPath}/departmentlist" class="ttr-material-button">
                         <span class="ttr-icon"><i class="ti-home"></i></span>
                         <span class="ttr-label">Department List</span>
                     </a>
                 </li>
-
+                <% } %>
                 <!-- HR Recruitment -->
+                <% if (rpDAO.hasPermission(roleId, 10)) { %>
+
                 <li>
                     <a href="${pageContext.request.contextPath}/hrrecruitment" class="ttr-material-button">
                         <span class="ttr-icon"><i class="ti-user"></i></span>
                         <span class="ttr-label">HR Recruitment</span>
                     </a>
                 </li>
+                <% } %>
 
                 <!-- HRM Recruitment -->
+                <% if (rpDAO.hasPermission(roleId, 11)) { %>
                 <li>
                     <a href="${pageContext.request.contextPath}/hrmanagerrecruitment" class="ttr-material-button">
                         <span class="ttr-icon"><i class="ti-user"></i></span>
                         <span class="ttr-label">HRM Recruitment</span>
                     </a>
                 </li>
+                <% } %>
 
                 <!-- Raw Attendance -->
                 <li>
@@ -111,10 +142,20 @@
                         <span class="ttr-label">Daily Attendance</span>
                     </a>
                 </li>
-
+                <li>
+                    <a href="${pageContext.request.contextPath}/payrollreportdetail" class="ttr-material-button">
+                        <span class="ttr-icon"><i class="ti-heart"></i></span>
+                        <span class="ttr-label">Payroll Report Detail</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="${pageContext.request.contextPath}/attendance" class="ttr-material-button">
+                        <span class="ttr-icon"><i class="ti-heart"></i></span>
+                        <span class="ttr-label">Personal attendance</span>
+                    </a>
+                </li>
                 <li class="ttr-seperate"></li>
             </ul>
         </nav>
-        <!-- sidebar menu end -->
     </div>
 </div>

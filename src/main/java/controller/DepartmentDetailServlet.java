@@ -4,7 +4,7 @@
  */
 package controller;
 
-import dal.CandidateDAO;
+import dal.DeptDAO;
 import dal.EmployeeDAO;
 import dal.RolePermissionDAO;
 import java.io.IOException;
@@ -14,45 +14,65 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
-import java.sql.Date;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import model.Candidate;
+import model.Department;
 import model.Employee;
 
 /**
  *
  * @author Admin
  */
-public class EmployeeListServlet extends HttpServlet {
+public class DepartmentDetailServlet extends HttpServlet {
 
+    /**
+     * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
+     * methods.
+     *
+     * @param request servlet request
+     * @param response servlet response
+     * @throws ServletException if a servlet-specific error occurs
+     * @throws IOException if an I/O error occurs
+     */
+    protected void processRequest(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        response.setContentType("text/html;charset=UTF-8");
+        try (PrintWriter out = response.getWriter()) {
+            /* TODO output your page here. You may use following sample code. */
+            out.println("<!DOCTYPE html>");
+            out.println("<html>");
+            out.println("<head>");
+            out.println("<title>Servlet DepartmentDetailServlet</title>");
+            out.println("</head>");
+            out.println("<body>");
+            out.println("<h1>Servlet DepartmentDetailServlet at " + request.getContextPath() + "</h1>");
+            out.println("</body>");
+            out.println("</html>");
+        }
+    }
+
+    // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
+    /**
+     * Handles the HTTP <code>GET</code> method.
+     *
+     * @param request servlet request
+     * @param response servlet response
+     * @throws ServletException if a servlet-specific error occurs
+     * @throws IOException if an I/O error occurs
+     */
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         HttpSession ses = request.getSession();
         RolePermissionDAO rperDAO = new RolePermissionDAO();
         Employee user = (Employee) ses.getAttribute("user");
-        if (user == null || !rperDAO.hasPermission(user.getRole().getRoleId(), 4)) {
+        if (user == null || !rperDAO.hasPermission(user.getRole().getRoleId(), 3)) {
             response.sendRedirect("login");
             return;
         }
+        DeptDAO depDAO = new DeptDAO();
         EmployeeDAO empDAO = new EmployeeDAO();
         String searchkey = request.getParameter("searchkey");
-        String sortBy = request.getParameter("sortBy");
-        String order = request.getParameter("order");
-        String type = request.getParameter("type");
-        String empCode = request.getParameter("empCode");
-
-        String ageRange = request.getParameter("ageRange");
         String genderStr = request.getParameter("gender");
-        if ("All".equalsIgnoreCase(ageRange)) {
-            ageRange = null;
-        }
         Boolean gender = null;
         if ("All".equalsIgnoreCase(genderStr)) {
             gender = null;
@@ -64,17 +84,18 @@ public class EmployeeListServlet extends HttpServlet {
         int currentPage = 1;
         int totalPages;
         int totalResults;
+        String deptID = request.getParameter("deptId");
+        Department dept = depDAO.getDepartmentByDepartmentId(deptID);
+        int empCount = depDAO.countEmployeeInDepartment(deptID);
+        Employee manager = empDAO.getManagerByDepartment(deptID);
         String oldSearchKey = (String) ses.getAttribute("oldSearchKey");
         Integer oldPosCount = (Integer) ses.getAttribute("oldPosCount");
-        String oldAgeRange = (String) ses.getAttribute("oldAgeRange");
         Boolean oldGender = (Boolean) ses.getAttribute("oldGender");
         int newPosCount = (positionTitle == null ? 0 : positionTitle.length);
         Boolean newGender = gender;
-        String newAgeRange = ageRange;
         String currentPageStr = request.getParameter("page");
         boolean isFilterChanged
                 = (oldPosCount == null ? newPosCount != 0 : !oldPosCount.equals(newPosCount))
-                || (oldAgeRange == null ? newAgeRange != null : !oldAgeRange.equals(newAgeRange))
                 || (oldGender == null ? newGender != null : !oldGender.equals(newGender))
                 || (oldSearchKey == null ? searchkey != null && !searchkey.isEmpty()
                         : !oldSearchKey.equals(searchkey));
@@ -92,61 +113,61 @@ public class EmployeeListServlet extends HttpServlet {
         if (positionTitle != null && positionTitle[0].isEmpty()) {
             positionTitle = null;
         }
-
-        List<String> positionList = empDAO.getAllPosition();
+        List<String> positionList = empDAO.getPositionByDepartment(deptID);
 
         if (searchkey != null && !searchkey.trim().isEmpty()) {
-            totalResults = empDAO.countSearchAndFilterEmployee(searchkey, gender, positionTitle, ageRange);
-        } else if (gender != null || (positionTitle != null) || (ageRange != null)) {
-            totalResults = empDAO.countSearchAndFilterEmployee(searchkey, gender, positionTitle, ageRange);
-        } else if (sortBy != null) {
-            totalResults = empDAO.countAllRecordOfEmployee();
+            totalResults = empDAO.countSearchAndFilterEmployeeByDepartment(deptID, searchkey, gender, positionTitle);
+        } else if (gender != null || (positionTitle != null)) {
+            totalResults = empDAO.countSearchAndFilterEmployeeByDepartment(deptID, searchkey, gender, positionTitle);
         } else {
-            totalResults = empDAO.countAllRecordOfEmployee();
+            totalResults = empCount;
         }
         totalPages = (int) Math.ceil((double) totalResults / quantityOfPage);
-        List<Employee> empList = empDAO.manageEmployeeForHR(searchkey, currentPage, quantityOfPage, gender, positionTitle, ageRange, sortBy, order);
 
-        if ("edit".equalsIgnoreCase(type) && empCode != null) {
-            Employee editEmp = empDAO.getEmployeeByEmpCode(empCode);
-            request.setAttribute("editEmp", editEmp);
-        }
+        List<Employee> empList = empDAO.getEmployeesByDepartment(deptID, searchkey, gender, positionTitle, currentPage, quantityOfPage);
         if (empList == null || empList.isEmpty()) {
             request.setAttribute("message", "No results found!");
         }
         request.setAttribute("searchkey", searchkey);
         request.setAttribute("gender", gender);
-        request.setAttribute("ageRange", ageRange);
         request.setAttribute("positionTitle", positionTitle);
-        request.setAttribute("sortBy", sortBy);
-        request.setAttribute("order", order);
         request.setAttribute("totalSearchResults", totalResults);
         request.setAttribute("totalPages", totalPages);
         request.setAttribute("page", currentPage);
+        request.setAttribute("empList", empList);
+        request.setAttribute("manager", manager);
+        request.setAttribute("employeeCount", empCount);
+        request.setAttribute("dept", dept);
+        request.setAttribute("deptId", deptID);
 
         ses.setAttribute("oldPosCount", newPosCount);
         ses.setAttribute("oldSearchKey", searchkey);
-        ses.setAttribute("oldAgeRange", newAgeRange);
         ses.setAttribute("oldGender", newGender);
-        ses.setAttribute("empList", empList);
         ses.setAttribute("positionList", positionList);
-        request.getRequestDispatcher("Views/employeelist.jsp").forward(request, response);
+        request.getRequestDispatcher("Views/departmentdetail.jsp").forward(request, response);
     }
 
+    /**
+     * Handles the HTTP <code>POST</code> method.
+     *
+     * @param request servlet request
+     * @param response servlet response
+     * @throws ServletException if a servlet-specific error occurs
+     * @throws IOException if an I/O error occurs
+     */
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        request.getRequestDispatcher("Views/employeelist.jsp").forward(request, response);
+        processRequest(request, response);
     }
 
-
-/**
- * Returns a short description of the servlet.
- *
- * @return a String containing servlet description
- */
-@Override
-public String getServletInfo() {
+    /**
+     * Returns a short description of the servlet.
+     *
+     * @return a String containing servlet description
+     */
+    @Override
+    public String getServletInfo() {
         return "Short description";
     }// </editor-fold>
 

@@ -31,6 +31,40 @@ public class InterviewDAO {
         }
     }
 
+    public List<Interview> getAllPassNotInEmployee(String result) {
+        List<Interview> interList = new ArrayList<>();
+        String sql = "SELECT i.*\n"
+                + "FROM interview i\n"
+                + "JOIN candidate c ON i.candidate_id = c.candidate_id\n"
+                + "LEFT JOIN employee e ON e.email = c.email\n"
+                + "WHERE i.result = ? AND e.emp_id IS NULL";
+
+        try (Connection conn = DBContext.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, result);
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                Interview inter = new Interview();
+                inter.setInterviewId(rs.getInt("interview_id"));
+
+                Candidate can = cDAO.getCandidateById(rs.getInt("candidate_id"));
+
+                inter.setCandidate(can);
+
+                Employee interviewBy = eDAO.getEmployeeByEmpId(rs.getInt("interviewed_by"));
+                inter.setInterviewedBy(interviewBy);
+                inter.setDate(rs.getDate("date"));
+                inter.setTime(rs.getTime("time"));
+                inter.setResult(rs.getString("result"));
+                interList.add(inter);
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return interList;
+    }
+
     public List<Interview> getAllInterviews() {
         List<Interview> list = new ArrayList<>();
         String sql = "SELECT i.*, "

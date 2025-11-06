@@ -4,6 +4,7 @@
  */
 package controller;
 
+import dal.RolePermissionDAO;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
@@ -11,6 +12,7 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
+import model.Employee;
 
 /**
  *
@@ -57,20 +59,26 @@ public class EmployeeDetailServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         HttpSession ses = request.getSession();
-        String empCode = request.getParameter("empCode");
+        RolePermissionDAO rperDAO = new RolePermissionDAO();
+        Employee user = (Employee) ses.getAttribute("user");
+        if (user == null || !rperDAO.hasPermission(user.getRole().getRoleId(), 4)) {
+            response.sendRedirect("login");
+            return;
+        }
+        String empId = request.getParameter("empId");
         String tab = request.getParameter("tab");
         String option = request.getParameter("option");
         if (tab == null || tab.isEmpty()) {
             tab = "Contract";
         }
 
-        request.setAttribute("empCode", empCode);
+        request.setAttribute("empId", empId);
         request.setAttribute("tab", tab);
         request.setAttribute("option", option);
         if ("Contract".equalsIgnoreCase(tab)) {
             request.getRequestDispatcher("/contractdetail").forward(request, response);
         } else if ("Dependant".equalsIgnoreCase(tab)) {
-            request.getRequestDispatcher("/DependantDetail").forward(request, response);
+            request.getRequestDispatcher("/dependantdetail").forward(request, response);
         }
     }
 

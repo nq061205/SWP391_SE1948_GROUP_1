@@ -1,12 +1,13 @@
 <%-- 
     Document   : InterviewList
-    Modified on: Nov 5, 2025
+    Modified on: Nov 6, 2025
     Author     : Hoàng Duy
 --%>
 
 <%@ page contentType="text/html" pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 
 <!DOCTYPE html>
 <html lang="en">
@@ -121,17 +122,43 @@
                         <!-- ✅ Interview Table -->
                         <div class="table-responsive">
                             <table class="table table-striped table-bordered table-hover align-middle text-center">
-                                <thead class="thead-dark">
+                                <<thead class="thead-dark">
                                     <tr>
                                         <th>#</th>
-                                        <th>Candidate</th>
+
+                                        <!-- ✅ Sort by Candidate -->
+                                        <th style="cursor:pointer;"
+                                            onclick="window.location = '${pageContext.request.contextPath}/interview?type=name&order=${requestScope.order == 'asc' && requestScope.type == 'name' ? 'desc' : 'asc'}&page=${sessionScope.pages}&postId=${requestScope.postId != null ? requestScope.postId : 'all'}&keyword=${fn:escapeXml(requestScope.keyword != null ? requestScope.keyword : '')}&dateFrom=${requestScope.dateFrom != null ? requestScope.dateFrom : ''}&dateTo=${requestScope.dateTo != null ? requestScope.dateTo : ''}'">
+                                            Candidate
+                                            <i class="fa
+                                               <c:choose>
+                                                   <c:when test="${requestScope.type == 'name' && requestScope.order == 'asc'}">fa-sort-up</c:when>
+                                                   <c:when test="${requestScope.type == 'name' && requestScope.order == 'desc'}">fa-sort-down</c:when>
+                                                   <c:otherwise>fa-sort</c:otherwise>
+                                               </c:choose>"></i>
+                                        </th>
+
                                         <th>Recruitment Post</th>
-                                        <th>Interview Date</th>
+
+                                        <!-- ✅ Sort by Interview Date -->
+                                        <th style="cursor:pointer;"
+                                            onclick="window.location = '${pageContext.request.contextPath}/interview?type=date&order=${requestScope.order == 'asc' && requestScope.type == 'date' ? 'desc' : 'asc'}&page=${sessionScope.pages}&postId=${requestScope.postId != null ? requestScope.postId : 'all'}&keyword=${fn:escapeXml(requestScope.keyword != null ? requestScope.keyword : '')}&dateFrom=${requestScope.dateFrom != null ? requestScope.dateFrom : ''}&dateTo=${requestScope.dateTo != null ? requestScope.dateTo : ''}'">
+                                            Interview Date
+                                            <i class="fa
+                                               <c:choose>
+                                                   <c:when test="${requestScope.type == 'date' && requestScope.order == 'asc'}">fa-sort-up</c:when>
+                                                   <c:when test="${requestScope.type == 'date' && requestScope.order == 'desc'}">fa-sort-down</c:when>
+                                                   <c:otherwise>fa-sort</c:otherwise>
+                                               </c:choose>"></i>
+                                        </th>
+
                                         <th>Interview Time</th>
                                         <th>Interviewer</th>
                                         <th>Action</th>
                                     </tr>
                                 </thead>
+
+
                                 <tbody>
                                     <c:forEach var="iv" items="${sessionScope.interviewList}" varStatus="st">
                                         <tr>
@@ -173,7 +200,7 @@
                                     <ul class="pagination mb-0">
                                         <li class="page-item ${sessionScope.pages == 1 ? 'disabled' : ''}">
                                             <a class="page-link"
-                                               href="${pageContext.request.contextPath}/interview?page=${sessionScope.pages - 1}&postId=${requestScope.postId}&keyword=${requestScope.keyword}&dateFrom=${requestScope.dateFrom}&dateTo=${requestScope.dateTo}">
+                                               href="${pageContext.request.contextPath}/interview?page=${sessionScope.pages - 1}&type=${requestScope.type}&order=${requestScope.order}&postId=${requestScope.postId}&keyword=${requestScope.keyword}&dateFrom=${requestScope.dateFrom}&dateTo=${requestScope.dateTo}">
                                                 <i class="fa fa-chevron-left"></i> Previous
                                             </a>
                                         </li>
@@ -184,15 +211,15 @@
 
                                         <li class="page-item ${sessionScope.pages >= sessionScope.total ? 'disabled' : ''}">
                                             <a class="page-link"
-                                               href="${pageContext.request.contextPath}/interview?page=${sessionScope.pages + 1}&postId=${requestScope.postId}&keyword=${requestScope.keyword}&dateFrom=${requestScope.dateFrom}&dateTo=${requestScope.dateTo}">
+                                               href="${pageContext.request.contextPath}/interview?page=${sessionScope.pages + 1}&type=${requestScope.type}&order=${requestScope.order}&postId=${requestScope.postId}&keyword=${requestScope.keyword}&dateFrom=${requestScope.dateFrom}&dateTo=${requestScope.dateTo}">
                                                 Next <i class="fa fa-chevron-right"></i>
                                             </a>
                                         </li>
                                     </ul>
                                 </nav>
                             </div>
-                        </div>
 
+                        </div>
                     </div>
                 </div>
             </div>

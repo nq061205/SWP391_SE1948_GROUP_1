@@ -22,9 +22,8 @@ public class DeptDAO extends DBContext {
     public Department getDepartmentByDepartmentId(String depId) {
         Department department = null;
         String sql = "select * from department where dep_id =?";
-        try (Connection conn = DBContext.getConnection();
-             PreparedStatement stm = conn.prepareStatement(sql)) {
-            
+        try (Connection conn = DBContext.getConnection(); PreparedStatement stm = conn.prepareStatement(sql)) {
+
             stm.setString(1, depId);
             try (ResultSet rs = stm.executeQuery()) {
                 if (rs.next()) {
@@ -44,9 +43,8 @@ public class DeptDAO extends DBContext {
     public Department getDepartmentByEmpCode(String emp_code) {
         Department department = null;
         String sql = "select d.* from department d join employee e on d.dep_id = e.dep_id where e.emp_code = ?";
-        try (Connection conn = DBContext.getConnection();
-             PreparedStatement stm = conn.prepareStatement(sql)) {
-            
+        try (Connection conn = DBContext.getConnection(); PreparedStatement stm = conn.prepareStatement(sql)) {
+
             stm.setString(1, emp_code);
             try (ResultSet rs = stm.executeQuery()) {
                 if (rs.next()) {
@@ -66,9 +64,8 @@ public class DeptDAO extends DBContext {
     public Department getDepartmentByEmpId(int emp_id) {
         Department department = null;
         String sql = "select d.* from department d join employee e on d.dep_id = e.dep_id where e.emp_id = ?";
-        try (Connection conn = DBContext.getConnection();
-             PreparedStatement stm = conn.prepareStatement(sql)) {
-            
+        try (Connection conn = DBContext.getConnection(); PreparedStatement stm = conn.prepareStatement(sql)) {
+
             stm.setInt(1, emp_id);
             try (ResultSet rs = stm.executeQuery()) {
                 if (rs.next()) {
@@ -88,10 +85,8 @@ public class DeptDAO extends DBContext {
     public List<Department> getAllDepartments() {
         List<Department> departments = new ArrayList<>();
         String sql = "SELECT dep_id, dep_name, description FROM department WHERE is_delete = FALSE ORDER BY dep_name";
-        try (Connection conn = DBContext.getConnection();
-             PreparedStatement stm = conn.prepareStatement(sql);
-             ResultSet rs = stm.executeQuery()) {
-            
+        try (Connection conn = DBContext.getConnection(); PreparedStatement stm = conn.prepareStatement(sql); ResultSet rs = stm.executeQuery()) {
+
             while (rs.next()) {
                 Department department = new Department(
                         rs.getString("dep_id"),
@@ -109,10 +104,8 @@ public class DeptDAO extends DBContext {
     public List<Department> getAllDepartment() {
         List<Department> departments = new ArrayList<>();
         String sql = "SELECT dep_id, dep_name, description FROM department";
-        try (Connection conn = DBContext.getConnection();
-             PreparedStatement stm = conn.prepareStatement(sql);
-             ResultSet rs = stm.executeQuery()) {
-            
+        try (Connection conn = DBContext.getConnection(); PreparedStatement stm = conn.prepareStatement(sql); ResultSet rs = stm.executeQuery()) {
+
             while (rs.next()) {
                 Department department = new Department(
                         rs.getString("dep_id"),
@@ -129,9 +122,8 @@ public class DeptDAO extends DBContext {
 
     public void createDepartment(Department department) {
         String sql = "INSERT INTO department VALUES(?,?,?)";
-        try (Connection conn = DBContext.getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql)) {
-            
+        try (Connection conn = DBContext.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
+
             ps.setString(1, department.getDepId());
             ps.setString(2, department.getDepName());
             ps.setString(3, department.getDescription());
@@ -144,9 +136,8 @@ public class DeptDAO extends DBContext {
 
     public void updateDepartment(Department department) {
         String sql = "UPDATE department SET dep_name=?,description=? where dep_id=?";
-        try (Connection conn = DBContext.getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql)) {
-            
+        try (Connection conn = DBContext.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
+
             ps.setString(1, department.getDepName());
             ps.setString(2, department.getDescription());
             ps.setString(3, department.getDepId());
@@ -155,6 +146,21 @@ public class DeptDAO extends DBContext {
             Logger.getLogger(DeptDAO.class.getName()).log(Level.SEVERE, null, ex);
         }
 
+    }
+
+    public int countEmployeeInDepartment(String depId) {
+        int count = 0;
+        String sql = "SELECT COUNT(*) FROM Employee WHERE dep_id = ?";
+        try (Connection conn = DBContext.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, depId);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                count = rs.getInt(1);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return count;
     }
 
     public static void main(String[] args) {

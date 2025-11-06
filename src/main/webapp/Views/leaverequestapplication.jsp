@@ -163,16 +163,22 @@
                                 </td>
                             </tr>
                         </c:forEach>
-                        <c:if test="${not empty message}">
-                            <tr>
-                                <td colspan="10" style="text-align:center; color:red; font-weight:bold;">
-                                    No results found!
-                                </td>
-                            </tr>
-                        </c:if>
+
                     </tbody>
                 </table>
             </div>
+            <c:if test="${listapplication.isEmpty()}">
+                <div class="text-center py-5">
+                    <div class="mb-3">
+                        <i class="fa fa-inbox fa-3x text-muted"></i>
+                    </div>
+                    <h5 class="text-muted">No Leave Request Found</h5>
+                    <p class="text-muted">There are currently no leave request in the system.</p>
+                    <a href="${pageContext.request.contextPath}/compose?type=LEAVE" class="btn btn-primary">
+                        <i class="fa fa-plus"></i> Create First Leave Request
+                    </a>
+                </div>
+            </c:if>
             <c:url var="baseUrl" value="/application">
                 <c:param name="typeapplication" value="LEAVE"/>
                 <c:if test="${not empty param.search}">
@@ -241,9 +247,9 @@
         <script src="${pageContext.request.contextPath}/assets2/js/admin.js"></script>
         <script src='${pageContext.request.contextPath}/assets2/vendors/switcher/switcher.js'></script>
         <script>
-                                    $(document).ready(function () {
-                                        $('[data-toggle="tooltip"]').tooltip();
-                                    });
+                        $(document).ready(function () {
+                            $('[data-toggle="tooltip"]').tooltip();
+                        });
         </script>
         <style>
             .icon-circle {

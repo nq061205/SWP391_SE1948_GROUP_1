@@ -84,29 +84,34 @@
                                         <label for="type">Leave Type:</label>
                                         <select id="type" name="type_leave" class="form-control" required>
                                             <option value="" selected>Select application type</option>
-                                            <option value="Annual"
-                                                    <c:if test="${type_leave eq 'Annual'}">
+                                            <option value="Annual Leave"
+                                                    <c:if test="${type_leave eq 'Annual Leave'}">
                                                         selected
                                                     </c:if>
                                                     <c:if test="${user.paidLeaveDays<=0}">
                                                         disabled
                                                     </c:if>
                                                     >Annual</option>
-                                            <option value="Sick"
-                                                    <c:if test="${type_leave eq 'Sick'}">
+                                            <option value="Sick Leave"
+                                                    <c:if test="${type_leave eq 'Sick Leave'}">
                                                         selected 
                                                     </c:if>
                                                     >Sick</option>
-                                            <option value="Unpaid"
-                                                    <c:if test="${type_leave eq 'Unpaid'}">
+                                            <option value="Personal Reason"
+                                                    <c:if test="${type_leave eq 'Personal Reason'}">
                                                         selected
                                                     </c:if>
-                                                    >Unpaid</option>
+                                                    >Personal Reason</option>
                                             <option value="Maternity"
                                                     <c:if test="${type_leave eq 'Maternity'}">
                                                         selected
                                                     </c:if>
                                                     >Maternity</option>
+                                            <option value="Family Business leave"
+                                                    <c:if test="${type_leave eq 'Family Business leave'}">
+                                                        selected
+                                                    </c:if>
+                                                    >Family Business</option>
                                             <option value="Other"
                                                     <c:if test="${type_leave eq 'Other'}">
                                                         selected

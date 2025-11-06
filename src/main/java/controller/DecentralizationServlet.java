@@ -26,7 +26,6 @@ public class DecentralizationServlet extends HttpServlet {
         PermissionDAO pDAO = new PermissionDAO();
         RolePermissionDAO rpDAO = new RolePermissionDAO();
 
-        // Load roles, permissions, and role-permission pairs
         request.setAttribute("roles", rDAO.getAllRoles());
         request.setAttribute("permissions", pDAO.getAllPermission());
         request.setAttribute("rolepermission", getStringRolePermission(rpDAO.getAllRolePermission()));
@@ -34,7 +33,6 @@ public class DecentralizationServlet extends HttpServlet {
         request.getRequestDispatcher("Views/Admin/decentralization.jsp").forward(request, response);
     }
 
-    // Convert List<RolePermission> -> List<String> ("permissionId-roleId")
     private List<String> getStringRolePermission(List<RolePermission> rpList) {
         List<String> result = new ArrayList<>();
         for (RolePermission rp : rpList) {
@@ -51,7 +49,6 @@ public class DecentralizationServlet extends HttpServlet {
         String[] selected = request.getParameterValues("rolepermission");
         RolePermissionDAO rpDAO = new RolePermissionDAO();
 
-        // Xóa hết dữ liệu cũ trước khi thêm lại
         rpDAO.deleteAll();
 
         if (selected != null) {
@@ -67,7 +64,6 @@ public class DecentralizationServlet extends HttpServlet {
             }
         }
 
-        // Quay lại trang chính sau khi lưu
         response.sendRedirect(request.getContextPath() + "/decentralization");
     }
 }

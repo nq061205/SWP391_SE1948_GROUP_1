@@ -7,6 +7,7 @@ package controller;
 import dal.DeptDAO;
 import dal.EmployeeDAO;
 import dal.RoleDAO;
+import dal.RolePermissionDAO;
 import model.Employee;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -15,6 +16,8 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
+import java.sql.Date;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -66,6 +69,12 @@ public class AccountListServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         HttpSession ses = request.getSession();
+        RolePermissionDAO rperDAO = new RolePermissionDAO();
+        Employee user = (Employee) ses.getAttribute("user");
+        if (user == null || !rperDAO.hasPermission(user.getRole().getRoleId(), 1)) {
+            response.sendRedirect("login");
+            return;
+        }
         EmployeeDAO empDAO = new EmployeeDAO();
         DeptDAO deptDAO = new DeptDAO();
         RoleDAO rDAO = new RoleDAO();
@@ -110,11 +119,11 @@ public class AccountListServlet extends HttpServlet {
                 }
             }
         }
-        if (deptId!= null && deptId[0].isEmpty()) {
-            deptId=null;
+        if (deptId != null && deptId[0].isEmpty()) {
+            deptId = null;
         }
-        if (roleId!= null && roleId[0].isEmpty()) {
-            roleId=null;
+        if (roleId != null && roleId[0].isEmpty()) {
+            roleId = null;
         }
 
         int totalResults = 0;
@@ -159,7 +168,6 @@ public class AccountListServlet extends HttpServlet {
         ses.setAttribute("empList", empList);
         ses.setAttribute("roleList", uniqueRoles);
         ses.setAttribute("deptList", deptDAO.getAllDepartment());
-
 
         request.getRequestDispatcher("Views/accountList.jsp").forward(request, response);
     }
