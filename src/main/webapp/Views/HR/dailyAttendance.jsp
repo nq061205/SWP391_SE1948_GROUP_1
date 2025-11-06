@@ -39,11 +39,6 @@
         <!-- MOBILE SPECIFIC ============================================= -->
         <meta name="viewport" content="width=device-width, initial-scale=1">
 
-        <!--[if lt IE 9]>
-        <script src="${pageContext.request.contextPath}/assets2/js/html5shiv.min.js"></script>
-        <script src="${pageContext.request.contextPath}/assets2/js/respond.min.js"></script>
-        <![endif]-->
-
         <!-- All PLUGINS CSS ============================================= -->
         <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/assets2/css/assets.css">
         <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/assets2/vendors/calendar/fullcalendar.css">
@@ -160,7 +155,7 @@
                                             <span class="badge badge-success">Present</span>
                                             <span class="badge badge-danger">Absent</span>
                                             <span class="badge badge-info">Leave</span>
-                                            <span class="badge badge-secondary">Holiday</span>
+                                            <span class="badge badge-warning">Holiday</span>
                                             <span class="badge badge-dark">Weekend</span>
                                         </div>
                                     </div>
@@ -283,15 +278,18 @@
                                                         <th rowspan="2" class="employee-col">Code</th>
                                                         <th rowspan="2" class="name-col">Employee</th>
                                                         <th rowspan="2" class="dept-col">Department</th>
-                                                        <th colspan="${daysInMonth}" class="text-center">${selectedMonth} ${selectedYear}</th>
+                                                        <th colspan="${daysInMonth}" class="text-center">${selectedMonth}/${selectedYear}</th>
                                                         <th rowspan="2" class="summary-col">Days</th>
                                                         <th rowspan="2" class="summary-col">OT</th>
                                                     </tr>
                                                     <tr>
                                                         <c:forEach begin="1" end="${daysInMonth}" var="day">
-                                                            <th class="day-header text-center ${weekendDays.contains(day) ? 'bg-dark text-white' : 'bg-secondary text-white'}">
+                                                            <c:set var="dayHoliday" value="${holidaysByDay[day]}" />
+                                                            <c:set var="isWeekend" value="${weekendDays.contains(day)}" />
+                                                            <c:set var="isHoliday" value="${dayHoliday != null}" />
+                                                            <th class="day-header text-center ${isHoliday ? 'bg-warning text-dark' : (isWeekend ? 'bg-dark text-white' : 'bg-secondary text-white')}" 
+                                                                title="${isHoliday ? dayHoliday.name : ''}">
                                                                 ${day}<br>
-                                                                <small>${dayNames[day-1]}</small>
                                                             </th>
                                                         </c:forEach>
                                                     </tr>
@@ -312,27 +310,53 @@
                                                                     </c:if>
                                                                 </small>
                                                             </td>
+
                                                             <c:set var="attendanceList" value="${groupedAttendance[employee.empId]}" />
                                                             <c:forEach begin="1" end="${daysInMonth}" var="day">
                                                                 <c:set var="attendance" value="${attendanceByDay[employee.empId][day]}" />
+                                                                <c:set var="dayHoliday" value="${holidaysByDay[day]}" />
                                                                 <c:set var="isWeekend" value="${weekendDays.contains(day)}" />
-                                                                <td class="day-cell ${isWeekend ? 'weekend-cell' : (attendance != null ? 'status-'.concat(attendance.status) : '')}" 
-                                                                    title="Click to view details">
+                                                                <c:set var="isHoliday" value="${dayHoliday != null}" />
+
+                                                                <td class="day-cell ${isHoliday ? 'status-Holiday' : (isWeekend ? 'weekend-cell' : (attendance != null ? 'status-'.concat(attendance.status) : ''))}" 
+                                                                    data-emp-id="${employee.empId}"
+                                                                    data-emp-code="${employee.empCode}"
+                                                                    data-emp-name="${employee.fullname}"
+                                                                    data-emp-gender="${employee.gender}"
+                                                                    data-emp-position="${employee.positionTitle}"
+                                                                    data-emp-department="${employee.dept.depName}"
+                                                                    data-day="${day}"
+                                                                    data-status="${attendance.status}"
+                                                                    data-work-day="${attendance != null ? attendance.workDay : '0'}"
+                                                                    data-ot-hours="${attendance != null ? attendance.otHours : '0'}"
+                                                                    data-check-in="${attendance.checkInTime}"
+                                                                    data-check-out="${attendance.checkOutTime}"
+                                                                    data-note="${attendance.note}"
+                                                                    title="${isHoliday ? dayHoliday.name : (isWeekend ? '' : (attendance != null ? 'Click to view details' : ''))}">
                                                                     <c:choose>
+                                                                        <c:when test="${isHoliday}">
+                                                                            <span class="work-day-text">1</span>
+                                                                        </c:when>
                                                                         <c:when test="${isWeekend}">
                                                                             <span class="work-day-text">-</span>
                                                                         </c:when>
                                                                         <c:otherwise>
-                                                                            <c:if test="${attendance != null}">
-                                                                                <span class="work-day-text">
-                                                                                    <fmt:formatNumber value="${attendance.workDay}" pattern="#.##"/>
-                                                                                    <c:if test="${attendance.otHours > 0}">T</c:if>
-                                                                                </span>
-                                                                            </c:if>
+                                                                            <c:choose>
+                                                                                <c:when test="${attendance != null}">
+                                                                                    <span class="work-day-text">
+                                                                                        <fmt:formatNumber value="${attendance.workDay}" pattern="#.##"/>
+                                                                                        <c:if test="${attendance.otHours > 0}">T</c:if>
+                                                                                        </span>
+                                                                                </c:when>
+                                                                                <c:otherwise>
+                                                                                    <span class="work-day-text text-muted">–</span> 
+                                                                                </c:otherwise>
+                                                                            </c:choose>
                                                                         </c:otherwise>
                                                                     </c:choose>
                                                                 </td> 
                                                             </c:forEach>
+
                                                             <!-- Summary -->
                                                             <td class="summary-col text-center">
                                                                 <strong class="text-primary">
@@ -434,6 +458,141 @@
                 </div>
             </div>
         </main>
+        <!-- POP-UP ATTENDANCE DETAIL -->
+        <div id="attendanceDetailModal" class="modal fade" tabindex="-1" role="dialog" 
+             aria-labelledby="attendanceDetailTitle" aria-hidden="true">
+            <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+                <div class="modal-content shadow-lg border-0">
+
+                    <!-- Header Modal -->
+                    <div class="modal-header bg-primary text-white">
+                        <h5 class="modal-title" id="attendanceDetailTitle">
+                            <i class="fa fa-calendar"></i> Attendance Details
+                        </h5>
+                        <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+
+                    <!-- Body Modal -->
+                    <div class="modal-body">
+                        <div class="row">
+
+                            <!-- EMPLOYEE INFORMATION -->
+                            <div class="col-md-6 pr-4">
+                                <h6 class="font-weight-bold mb-4">
+                                    <i class="fa fa-user"></i> Employee Information
+                                </h6>
+
+                                <div class="info-group mb-2">
+                                    <label class="font-weight-bold text-muted">ID</label>
+                                    <input type="text" id="modalEmpId" class="form-control" readonly>
+                                </div>
+
+                                <div class="info-group mb-2">
+                                    <label class="font-weight-bold text-muted">Code</label>
+                                    <input type="text" id="modalEmpCode" class="form-control" readonly>
+                                </div>
+
+                                <div class="info-group mb-2">
+                                    <label class="font-weight-bold text-muted">Fullname</label>
+                                    <input type="text" id="modalFullname" class="form-control" readonly>
+                                </div>
+
+                                <div class="info-group mb-2">
+                                    <label class="font-weight-bold text-muted">Gender</label>
+                                    <input type="text" id="modalGender" class="form-control" readonly>
+                                </div>
+
+                                <div class="info-group mb-2">
+                                    <label class="font-weight-bold text-muted">Position</label>
+                                    <input type="text" id="modalPosition" class="form-control" readonly>
+                                </div>
+
+                                <div class="info-group mb-2">
+                                    <label class="font-weight-bold text-muted">Department</label>
+                                    <input type="text" id="modalDepartment" class="form-control" readonly>
+                                </div>
+                            </div>
+
+                            <!-- ATTENDANCE DETAILS -->
+                            <div class="col-md-6 pl-4 border-left">
+                                <h6 class="font-weight-bold mb-4">
+                                    <i class="fa fa-clock-o"></i> Attendance Details
+                                </h6>
+
+                                <div class="form-group mb-3">
+                                    <label class="font-weight-bold text-muted">Date</label>
+                                    <input type="text" id="modalDate" class="form-control" readonly>
+                                </div>
+
+                                <div class="form-group mb-3">
+                                    <label class="font-weight-bold text-muted">Status</label>
+                                    <select id="modalStatusSelect" class="form-control border-primary">
+                                        <option value="Present">Present</option>
+                                        <option value="Absent">Absent</option>
+                                        <option value="Leave">Leave</option>
+                                    </select>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="form-group mb-3">
+                                            <label class="font-weight-bold text-muted">Work day</label>
+                                            <input type="number" id="modalWorkDay" class="form-control border-primary" step="0.5" min="0" max="1" placeholder="0 to 1">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group mb-3">
+                                            <label class="font-weight-bold text-muted">OT hours</label>
+                                            <input type="number" id="modalOTHours" class="form-control border-primary" step="0.5" min="0" placeholder="e.g., 1, 1.5">
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="form-group mb-3">
+                                            <label class="font-weight-bold text-muted">First check-in</label>
+                                            <input type="time" id="modalCheckInTime" class="form-control" readonly>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-6">
+                                        <div class="form-group mb-3">
+                                            <label class="font-weight-bold text-muted">Last check-out</label>
+                                            <input type="time" id="modalCheckOutTime" class="form-control" readonly>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <p class="text-muted small mt-1 mb-0 text-right">
+                                    <a href="#" id="rawAttendanceLink" target="_blank">
+                                        <i class="fa fa-external-link"></i> For more detail, go to Raw Attendance
+                                    </a>
+                                </p>
+
+                                <div id="noteContainer" class="form-group mb-3">
+                                    <label class="font-weight-bold text-muted">Note</label>
+                                    <textarea id="modalNote" class="form-control border-primary" rows="3" placeholder="Add notes..."></textarea>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Footer Modal -->
+                    <div class="modal-footer bg-light">
+                        <button type="button" class="btn btn-primary" id="modalSaveBtn">
+                            <i class="fa fa-save"></i> Save
+                        </button>
+                        <button type="button" class="btn btn-warning" id="modalUpdateBtn">
+                            <i class="fa fa-pencil"></i> Update
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
     </body>
 
     <script src="${pageContext.request.contextPath}/assets2/js/jquery.min.js"></script>
@@ -455,72 +614,199 @@
     <script src="${pageContext.request.contextPath}/assets2/vendors/calendar/moment.min.js"></script>
     <script src="${pageContext.request.contextPath}/assets2/vendors/calendar/fullcalendar.js"></script>
     <script src="${pageContext.request.contextPath}/assets2/vendors/switcher/switcher.js"></script>
-
     <script>
-                                                    var isProcessing = false;
-
                                                     $(document).ready(function () {
-                                                        setTimeout(function () {
-                                                            $('.alert').fadeOut('slow');
-                                                        }, 5000);
+                                                        $(document).on('click', 'td.day-cell', function () {
+                                                            var cell = $(this);
+
+                                                            var empId = cell.data('emp-id');
+                                                            var empCode = cell.data('emp-code');
+                                                            var empFullname = cell.data('emp-name');
+                                                            var empGender = (String(cell.data('emp-gender')) === 'true') ? 'Male' : 'Female';
+                                                            var empPosition = cell.data('emp-position');
+                                                            var empDepartment = cell.data('emp-department');
+                                                            var day = cell.data('day');
+                                                            var status = cell.data('status') || 'Unknown';
+                                                            var workDay = cell.data('work-day') || 0;
+                                                            var otHours = cell.data('ot-hours') || 0;
+                                                            var checkIn = cell.data('check-in') || '';
+                                                            var checkOut = cell.data('check-out') || '';
+                                                            var note = cell.data('note') || '';
+
+                                                            var selectedMonth = $('#selectedMonth').val() || '${selectedMonth}';
+                                                            var selectedYear = $('#selectedYear').val() || '${selectedYear}';
+                                                            var dayStr = (day < 10 ? '0' + day : day);
+                                                            var monthStr = (selectedMonth < 10 ? '0' + selectedMonth : selectedMonth);
+                                                            var formattedDate_ddMMyyyy = dayStr + '/' + monthStr + '/' + selectedYear;
+                                                            var formattedDate_yyyyMMdd = selectedYear + '-' + monthStr + '-' + dayStr;
+
+                                                            $('#modalEmpId').val(empId);
+                                                            $('#modalEmpCode').val(empCode);
+                                                            $('#modalFullname').val(empFullname);
+                                                            $('#modalGender').val(empGender);
+                                                            $('#modalPosition').val(empPosition);
+                                                            $('#modalDepartment').val(empDepartment);
+                                                            $('#modalDate').val(formattedDate_ddMMyyyy);
+                                                            $('#modalStatusSelect').val(status);
+                                                            $('#modalWorkDay').val(workDay);
+                                                            $('#modalOTHours').val(otHours);
+                                                            $('#modalCheckInTime').val(checkIn);
+                                                            $('#modalCheckOutTime').val(checkOut);
+                                                            $('#modalNote').val(note);
+
+                                                            $('#rawAttendanceLink').attr('href', 'raw-attendance?search=' + empCode + '&date=' + formattedDate_yyyyMMdd);
+
+                                                            if (note.trim() === '') {
+                                                                $('#noteContainer').hide();
+                                                            } else {
+                                                                $('#noteContainer').show();
+                                                            }
+
+                                                            $('#attendanceDetailModal input, #attendanceDetailModal textarea, #attendanceDetailModal select')
+                                                                    .prop('readonly', true)
+                                                                    .prop('disabled', true);
+
+                                                            $('#modalUpdateBtn').show();
+                                                            $('#modalSaveBtn').hide();
+
+                                                            $('#attendanceDetailModal').modal('show');
+                                                        });
+
+                                                        // Update button
+                                                        $('#modalUpdateBtn').on('click', function () {
+                                                            $('#attendanceDetailModal select, #modalWorkDay, #modalOTHours, #modalNote')
+                                                                    .prop('readonly', false)
+                                                                    .prop('disabled', false);
+
+                                                            $('#noteContainer').show();
+
+                                                            $('#modalUpdateBtn').hide();
+                                                            $('#modalSaveBtn').show();
+                                                        });
+
+                                                        // Save button
+                                                        $('#modalSaveBtn').on('click', function () {
+                                                            var workDay = parseFloat($('#modalWorkDay').val());
+                                                            var otHours = parseFloat($('#modalOTHours').val());
+                                                            var note = $('#modalNote').val().trim();
+
+                                                            if (![0, 0.5, 1].includes(workDay)) {
+                                                                alert('Workday only accepts value 0, 0.5 or 1!');
+                                                                $('#modalWorkDay').focus();
+                                                                return;
+                                                            }
+                                                            if (isNaN(otHours) || otHours < 0 || otHours > 4) {
+                                                                alert('OT hours must be in the range 0 - 4!');
+                                                                $('#modalOTHours').focus();
+                                                                return;
+                                                            }
+
+                                                            if (note === '') {
+                                                                alert('Please add note before Save!');
+                                                                $('#modalNote').focus();
+                                                                return;
+                                                            }
+
+                                                            var data = {
+                                                                empId: $('#modalEmpId').val(),
+                                                                date: $('#modalDate').val(),
+                                                                status: $('#modalStatusSelect').val(),
+                                                                workDay: workDay,
+                                                                otHours: otHours,
+                                                                note: note
+                                                            };
+
+                                                            $.ajax({
+                                                                url: 'update-daily-attendance',
+                                                                type: 'POST',
+                                                                data: data,
+                                                                dataType: 'json',
+                                                                success: function (response) {
+                                                                    alert(response.message || 'Updated successfully!');
+                                                                    $('#attendanceDetailModal').modal('hide');
+                                                                },
+                                                                error: function (xhr) {
+                                                                    alert('Error updating attendance!');
+                                                                }
+                                                            });
+
+                                                            $('#attendanceDetailModal input, #attendanceDetailModal textarea, #attendanceDetailModal select')
+                                                                    .prop('readonly', true)
+                                                                    .prop('disabled', true);
+                                                            $('#modalUpdateBtn').show();
+                                                            $('#modalSaveBtn').hide();
+                                                            $('#attendanceDetailModal').modal('hide');
+                                                            location.reload();
+                                                        });
+
                                                     });
 
-                                                    function toggleLegend() {
-                                                        var panel = $('#legendPanel');
-                                                        if (panel.length === 0) {
-                                                            alert('Legend panel not found!');
-                                                            return;
-                                                        }
-                                                        panel.slideToggle(300);
-                                                    }
+    </script>
+    <script>
+        var isProcessing = false;
 
-                                                    function changePageSize(newPageSize) {
-                                                        if (isProcessing) {
-                                                            alert('Please wait until processing is complete');
-                                                            return;
-                                                        }
-                                                        const form = document.getElementById('filterForm');
-                                                        if (!form) {
-                                                            alert('Error: Form not found');
-                                                            return;
-                                                        }
-                                                        const pageInput = form.querySelector('input[name="page"]');
-                                                        if (pageInput) {
-                                                            pageInput.value = 1;
-                                                        }
-                                                        form.submit();
-                                                    }
+        $(document).ready(function () {
+            setTimeout(function () {
+                $('.alert').fadeOut('slow');
+            }, 5000);
+        });
 
-                                                    function resetPageBeforeSubmit() {
-                                                        const form = document.getElementById('filterForm');
-                                                        if (form) {
-                                                            form.querySelector('input[name="page"]').value = 1;
-                                                        }
-                                                    }
+        function toggleLegend() {
+            var panel = $('#legendPanel');
+            if (panel.length === 0) {
+                alert('Legend panel not found!');
+                return;
+            }
+            panel.slideToggle(300);
+        }
 
-                                                    function applyFilter() {
-                                                        const form = document.getElementById('filterForm');
-                                                        if (!form)
-                                                            return;
-                                                        form.querySelector('input[name="page"]').value = 1;
-                                                        form.submit();
-                                                    }
+        function changePageSize(newPageSize) {
+            if (isProcessing) {
+                alert('Please wait until processing is complete');
+                return;
+            }
+            const form = document.getElementById('filterForm');
+            if (!form) {
+                alert('Error: Form not found');
+                return;
+            }
+            const pageInput = form.querySelector('input[name="page"]');
+            if (pageInput) {
+                pageInput.value = 1;
+            }
+            form.submit();
+        }
 
-                                                    function exportAttendance(format) {
-                                                        var form = $('#filterForm');
-                                                        if (!form.length) {
-                                                            alert('Form not found!');
-                                                            return;
-                                                        }
-                                                        var params = form.serialize();
-                                                        var url;
-                                                        if (format === 'excel') {
-                                                            url = 'export-attendance-excel?' + params;
-                                                        } else if (format === 'pdf') {
-                                                            url = 'export-attendance-pdf?' + params;
-                                                        }
-                                                        window.location.href = url;
-                                                    }
+        function resetPageBeforeSubmit() {
+            const form = document.getElementById('filterForm');
+            if (form) {
+                form.querySelector('input[name="page"]').value = 1;
+            }
+        }
+
+        function applyFilter() {
+            const form = document.getElementById('filterForm');
+            if (!form)
+                return;
+            form.querySelector('input[name="page"]').value = 1;
+            form.submit();
+        }
+
+        function exportAttendance(format) {
+            var form = $('#filterForm');
+            if (!form.length) {
+                alert('Form not found!');
+                return;
+            }
+            var params = form.serialize();
+            var url;
+            if (format === 'excel') {
+                url = 'export-attendance-excel?' + params;
+            } else if (format === 'pdf') {
+                url = 'export-attendance-pdf?' + params;
+            }
+            window.location.href = url;
+        }
 
     </script>
 </html>

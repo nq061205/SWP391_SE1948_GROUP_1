@@ -130,10 +130,6 @@
         <servlet-class>controller.UpdateDepartmentServlet</servlet-class>
     </servlet>
     <servlet>
-        <servlet-name>DepartmentListServlet</servlet-name>
-        <servlet-class>controller.DepartmentListServlet</servlet-class>
-    </servlet>
-    <servlet>
         <servlet-name>DepartmentDetailServlet</servlet-name>
         <servlet-class>controller.DepartmentDetailServlet</servlet-class>
     </servlet>
@@ -150,14 +146,9 @@
         <servlet-class>controller.ContractDetailServlet</servlet-class>
     </servlet>
     <servlet>
-        <servlet-name>DetailDailyAttendanceServlet</servlet-name>
-        <servlet-class>controller.hr.DetailDailyAttendanceServlet</servlet-class>
-    </servlet>
-    <servlet>
         <servlet-name>scheduleServlet</servlet-name>
         <servlet-class>controller.scheduleServlet</servlet-class>
     </servlet>
-    <!-- ===== SERVLET MAPPINGS ===== -->
     <servlet>
         <servlet-name>PayrollReportDetailServlet</servlet-name>
         <servlet-class>controller.PayrollReportDetailServlet</servlet-class>
@@ -169,6 +160,11 @@
     <servlet>
         <servlet-name>InterviewServlet</servlet-name>
         <servlet-class>controller.InterviewServlet</servlet-class>
+    </servlet>
+    <!-- ===== SERVLET MAPPINGS ===== -->
+    <servlet>
+        <servlet-name>UpdateDailyAttendanceServlet</servlet-name>
+        <servlet-class>controller.hr.UpdateDailyAttendanceServlet</servlet-class>
     </servlet>
     <servlet-mapping>
         <servlet-name>HomePageServlet</servlet-name>
@@ -323,10 +319,6 @@
         <url-pattern>/contractdetail</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
-        <servlet-name>DetailDailyAttendanceServlet</servlet-name>
-        <url-pattern>/detail-daily-attendance</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
         <servlet-name>scheduleServlet</servlet-name>
         <url-pattern>/schedule</url-pattern>
     </servlet-mapping>
@@ -334,13 +326,19 @@
     <servlet-mapping>
         <servlet-name>InterviewServlet</servlet-name>
         <url-pattern>/interview</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
         <servlet-name>AttendanceServlet</servlet-name>
         <url-pattern>/attendance</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>UpdateDailyAttendanceServlet</servlet-name>
+        <url-pattern>/update-daily-attendance</url-pattern>
     </servlet-mapping>
     <session-config>
         <session-timeout>30</session-timeout>
     </session-config>
     <welcome-file-list>
-        <welcome-file>HomePageServlet</welcome-file>
+        <welcome-file>homepage</welcome-file>
     </welcome-file-list>
 </web-app>
