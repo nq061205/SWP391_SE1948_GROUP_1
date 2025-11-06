@@ -115,7 +115,7 @@ public class PayrollDAO {
 
     public static void main(String[] args) {
         PayrollDAO dao = new PayrollDAO();
-        System.out.println(dao.getPayrollDeatailByTime(1,10,2025));
+        System.out.println(dao.getPayrollDeatailByTime(18,10,2025));
 
     }
 }

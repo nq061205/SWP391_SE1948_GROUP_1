@@ -902,18 +902,16 @@ public class EmployeeDAO extends DBContext {
         switch (requesterRole) {
             case "Employee":
                 approverRole = "Dept Manager";
-                filterByDept = true;
+                filterByDept = true; 
                 break;
             case "Dept Manager":
+                approverRole = "HR";
+                break;
             case "HR":
-                approverRole = "HR Manager";
+                approverRole = "HR Manager"; 
                 break;
             case "HR Manager":
-                approverRole = "Admin";
-                break;
-            case "Admin":
-                approverRole = "Admin";
-                break;
+                return null;
             default:
                 return null;
         }
@@ -933,11 +931,10 @@ public class EmployeeDAO extends DBContext {
             }
 
             try (ResultSet rs = ps.executeQuery()) {
-                while (rs.next()) {
+                if (rs.next()) {
                     return mapResultSetToEmployee(rs);
                 }
             }
-
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -976,6 +973,7 @@ public class EmployeeDAO extends DBContext {
             e.printStackTrace();
         }
     }
+
     public void updateIncreasePaidLeaveDaysByEmployeeId(int empId, double dayRequested) {
         String sql = "UPDATE Employee "
                 + "SET paid_leave_days = paid_leave_days + ? "
@@ -994,7 +992,7 @@ public class EmployeeDAO extends DBContext {
 
     public static void main(String[] args) {
         EmployeeDAO dao = new EmployeeDAO();
-        dao.updateIncreasePaidLeaveDaysByEmployeeId(1, 1);
+        System.out.println(dao.getEmployeeReceiverByRole("Admin", "D001"));
     }
 
 }

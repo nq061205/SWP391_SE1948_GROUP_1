@@ -102,6 +102,12 @@
                                             </div>
 
                                             <div class="form-group row">
+                                                <label class="col-sm-3 col-form-label">Role</label>
+                                                <div class="col-sm-9">
+                                                    <input name="position" class="form-control" type="text" value="${sessionScope.user.role.roleName}" readonly>
+                                                </div>
+                                            </div>
+                                            <div class="form-group row">
                                                 <label class="col-sm-3 col-form-label">Position</label>
                                                 <div class="col-sm-9">
                                                     <input name="position" class="form-control" type="text" value="${sessionScope.user.positionTitle}" readonly>
@@ -179,7 +185,7 @@
                                                         <button type="submit" name="click" value=""class="btn btn-primary">Change information</button>
                                                     </c:if>
                                                     <c:if test="${click == 'save'}">
-                                                        <button type="reset"class="btn btn-secondary">Cancel</button>
+                                                        <button type="reset"class="btn btn-secondary">Reset</button>
                                                         <button type="submit" name="click" value="save"class="btn btn-primary"
                                                                 onclick="return confirm('Do you confirm save change?');"
                                                                 >Save</button>
