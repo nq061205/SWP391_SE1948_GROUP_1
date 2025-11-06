@@ -12,6 +12,7 @@ import java.sql.ResultSet;
 import java.sql.Time;
 import java.util.ArrayList;
 import java.util.List;
+import model.Department;
 import model.Employee;
 
 /**
@@ -20,22 +21,87 @@ import model.Employee;
  */
 public class AttendanceRawDAO extends DBContext {
 
-    public void insertRawBatch(List<AttendanceRaw> list) {
-        String sql = "INSERT INTO attendance_raw (emp_id, date, check_time, check_type) VALUES (?, ?, ?, ?)";
+    public List<AttendanceRaw> findDuplicates(List<AttendanceRaw> list) {
+        List<AttendanceRaw> duplicates = new ArrayList<>();
+        String sql = "SELECT * FROM attendance_raw WHERE emp_id = ? AND date = ? AND check_time = ?";
 
-        try (Connection conn = DBContext.getConnection();
-             PreparedStatement st = conn.prepareStatement(sql)) {
+        try (Connection conn = DBContext.getConnection(); PreparedStatement st = conn.prepareStatement(sql)) {
             for (AttendanceRaw a : list) {
                 st.setInt(1, a.getEmp().getEmpId());
                 st.setDate(2, a.getDate());
                 st.setTime(3, a.getCheckTime());
-                st.setString(4, a.getCheckType());
-                st.addBatch();
+
+                try (ResultSet rs = st.executeQuery()) {
+                    if (rs.next()) {
+                        duplicates.add(a);
+                    }
+                }
+                st.clearParameters();
             }
-            st.executeBatch();
         } catch (Exception e) {
             e.printStackTrace();
         }
+        return duplicates;
+    }
+
+    public void deleteExisting(List<AttendanceRaw> list) throws Exception {
+        String sql = "DELETE FROM attendance_raw WHERE emp_id = ? AND date = ? AND check_time = ?";
+        Connection conn = DBContext.getConnection();
+        try {
+            conn.setAutoCommit(false);
+            try (PreparedStatement st = conn.prepareStatement(sql)) {
+                for (AttendanceRaw a : list) {
+                    st.setInt(1, a.getEmp().getEmpId());
+                    st.setDate(2, a.getDate());
+                    st.setTime(3, a.getCheckTime());
+                    st.addBatch();
+                }
+                st.executeBatch();
+                conn.commit();
+            } catch (Exception e) {
+                conn.rollback();
+                throw e;
+            }
+        } finally {
+            conn.setAutoCommit(true);
+            conn.close();
+        }
+    }
+
+    public void insertRawBatch(List<AttendanceRaw> list) throws Exception {
+        if (list == null || list.isEmpty()) {
+            return;
+        }
+        String sql = "INSERT INTO attendance_raw (emp_id, date, check_time, check_type) VALUES (?, ?, ?, ?)";
+        Connection conn = DBContext.getConnection();
+        try {
+            conn.setAutoCommit(false);
+            try (PreparedStatement st = conn.prepareStatement(sql)) {
+                for (AttendanceRaw a : list) {
+                    if (a.getDate() == null || a.getCheckTime() == null) {
+                        throw new Exception("Date or Time is null for emp_id: " + a.getEmp().getEmpId());
+                    }
+                    st.setInt(1, a.getEmp().getEmpId());
+                    st.setDate(2, a.getDate());
+                    st.setTime(3, a.getCheckTime());
+                    st.setString(4, a.getCheckType());
+                    st.addBatch();
+                }
+                st.executeBatch();
+                conn.commit();
+            } catch (Exception e) {
+                conn.rollback();
+                throw e;
+            }
+        } finally {
+            conn.setAutoCommit(true);
+            conn.close();
+        }
+    }
+
+    public void insertRawBatchWithOverwrite(List<AttendanceRaw> list) throws Exception {
+        deleteExisting(list);
+        insertRawBatch(list);
     }
 
     public List<AttendanceRaw> getAllRawAttendance() {
@@ -44,16 +110,14 @@ public class AttendanceRawDAO extends DBContext {
                 + "JOIN employee e ON ar.emp_id = e.emp_id";
         List<AttendanceRaw> raws = new ArrayList<>();
 
-        try (Connection conn = DBContext.getConnection();
-             PreparedStatement st = conn.prepareStatement(sql); 
-             ResultSet rs = st.executeQuery()) {
-            
+        try (Connection conn = DBContext.getConnection(); PreparedStatement st = conn.prepareStatement(sql); ResultSet rs = st.executeQuery()) {
+
             while (rs.next()) {
                 Employee e = new Employee();
                 e.setEmpId(rs.getInt("emp_id"));
                 e.setEmpCode(rs.getString("emp_code"));
                 e.setFullname(rs.getString("fullname"));
-                
+
                 AttendanceRaw a = new AttendanceRaw(e,
                         rs.getDate("date"),
                         rs.getTime("check_time"),
@@ -66,126 +130,122 @@ public class AttendanceRawDAO extends DBContext {
         return raws;
     }
 
-    public long countRawRecords(String search, String fromDate, String toDate, String filterType) {
-        StringBuilder sql = new StringBuilder("SELECT COUNT(ar.emp_id) ")
-                .append("FROM hrm.attendance_raw ar ")
-                .append("JOIN hrm.employee e ON ar.emp_id = e.emp_id ")
-                .append("WHERE 1=1");
+    public List<AttendanceRaw> getRawRecordsByDate(int offset, int pageSize, String search,
+            String date, String filterType, String department) {
+        List<AttendanceRaw> list = new ArrayList<>();
+        StringBuilder sql = new StringBuilder();
+        sql.append("SELECT ar.*, e.emp_code, e.fullname, e.dep_id, d.dep_name ");
+        sql.append("FROM attendance_raw ar ");
+        sql.append("INNER JOIN employee e ON ar.emp_id = e.emp_id ");
+        sql.append("LEFT JOIN department d ON e.dep_id = d.dep_id ");
+        sql.append("WHERE ar.date = ? ");
 
-        List<Object> params = new ArrayList<>();
-
-        if (search != null && !search.trim().isEmpty()) {
-            sql.append(" AND e.emp_code LIKE ?");
-            params.add("%" + search + "%");
+        if (search != null && !search.isEmpty()) {
+            sql.append("AND (e.emp_code LIKE ? OR e.fullname LIKE ?) ");
         }
-        if (fromDate != null && !fromDate.trim().isEmpty()) {
-            sql.append(" AND ar.date >= ?");
-            params.add(Date.valueOf(fromDate));
+        if (filterType != null && !filterType.isEmpty()) {
+            sql.append("AND ar.check_type = ? ");
         }
-        if (toDate != null && !toDate.trim().isEmpty()) {
-            sql.append(" AND ar.date <= ?");
-            params.add(Date.valueOf(toDate));
-        }
-        if (filterType != null && !filterType.trim().isEmpty()) {
-            sql.append(" AND ar.check_type = ?");
-            params.add(filterType);
+        if (department != null && !department.isEmpty()) {
+            sql.append("AND e.dep_id = ? ");
         }
 
-        long count = 0;
-        try (Connection conn = DBContext.getConnection();
-             PreparedStatement st = conn.prepareStatement(sql.toString())) {
-            
+        sql.append("ORDER BY e.emp_code ASC, ar.check_time ASC ");
+        sql.append("LIMIT ? OFFSET ?");
+
+        try (Connection conn = DBContext.getConnection(); PreparedStatement st = conn.prepareStatement(sql.toString())) {
+
             int paramIndex = 1;
-            for (Object param : params) {
-                st.setObject(paramIndex++, param);
+            st.setString(paramIndex++, date);
+
+            if (search != null && !search.isEmpty()) {
+                st.setString(paramIndex++, "%" + search + "%");
+                st.setString(paramIndex++, "%" + search + "%");
             }
-            
-            try (ResultSet rs = st.executeQuery()) {
-                if (rs.next()) {
-                    count = rs.getLong(1);
-                }
+            if (filterType != null && !filterType.isEmpty()) {
+                st.setString(paramIndex++, filterType);
             }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return count;
-    }
-
-    public List<AttendanceRaw> getRawRecords(int offset, int pageSize, String search, String fromDate, String toDate, String filterType) {
-        if (offset < 0) {
-            offset = 0;
-        }
-        if (pageSize <= 0) {
-            pageSize = 10;
-        }
-
-        StringBuilder sql = new StringBuilder(
-                "SELECT ar.emp_id, ar.date, ar.check_time, ar.check_type, e.emp_code, e.fullname ")
-                .append("FROM hrm.attendance_raw ar ")
-                .append("JOIN hrm.employee e ON ar.emp_id = e.emp_id ")
-                .append("WHERE 1=1");
-
-        List<Object> params = new ArrayList<>();
-
-        if (search != null && !search.trim().isEmpty()) {
-            sql.append(" AND e.emp_code LIKE ?");
-            params.add("%" + search + "%");
-        }
-        if (fromDate != null && !fromDate.trim().isEmpty()) {
-            sql.append(" AND ar.date >= ?");
-            params.add(Date.valueOf(fromDate));
-        }
-        if (toDate != null && !toDate.trim().isEmpty()) {
-            sql.append(" AND ar.date <= ?");
-            params.add(Date.valueOf(toDate));
-        }
-        if (filterType != null && !filterType.trim().isEmpty()) {
-            sql.append(" AND ar.check_type = ?");
-            params.add(filterType);
-        }
-
-        sql.append(" ORDER BY ar.date DESC, ar.check_time DESC");
-        sql.append(" LIMIT ? OFFSET ?");
-
-        List<AttendanceRaw> raws = new ArrayList<>();
-
-        try (Connection conn = DBContext.getConnection();
-             PreparedStatement st = conn.prepareStatement(sql.toString())) {
-            
-            int paramIndex = 1;
-            for (Object param : params) {
-                st.setObject(paramIndex++, param);
+            if (department != null && !department.isEmpty()) {
+                st.setString(paramIndex++, department);
             }
 
             st.setInt(paramIndex++, pageSize);
-            st.setInt(paramIndex, offset);
-
-            System.out.println("Executing SQL: " + sql.toString()); // DEBUG
-            System.out.println("Parameters: " + params + ", pageSize=" + pageSize + ", offset=" + offset); // DEBUG
+            st.setInt(paramIndex++, offset);
 
             try (ResultSet rs = st.executeQuery()) {
                 while (rs.next()) {
-                    Employee e = new Employee();
-                    e.setEmpId(rs.getInt("emp_id"));
-                    e.setEmpCode(rs.getString("emp_code"));
-                    e.setFullname(rs.getString("fullname"));
+                    Employee emp = new Employee();
+                    emp.setEmpId(rs.getInt("emp_id"));
+                    emp.setEmpCode(rs.getString("emp_code"));
+                    emp.setFullname(rs.getString("fullname"));
 
-                    AttendanceRaw a = new AttendanceRaw(e,
-                            rs.getDate("date"),
-                            rs.getTime("check_time"),
-                            rs.getString("check_type"));
-                    raws.add(a);
+                    Department dept = new Department();
+                    dept.setDepId(rs.getString("dep_id"));
+                    dept.setDepName(rs.getString("dep_name"));
+                    emp.setDept(dept);
+
+                    AttendanceRaw raw = new AttendanceRaw();
+                    raw.setId(rs.getInt("id"));
+                    raw.setEmp(emp);
+                    raw.setDate(rs.getDate("date"));
+                    raw.setCheckTime(rs.getTime("check_time"));
+                    raw.setCheckType(rs.getString("check_type"));
+
+                    list.add(raw);
                 }
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return raws;
+        return list;
+    }
+
+    public long countRawRecordsByDate(String search, String date, String filterType, String department) {
+        StringBuilder sql = new StringBuilder();
+        sql.append("SELECT COUNT(*) FROM attendance_raw ar ");
+        sql.append("INNER JOIN employee e ON ar.emp_id = e.emp_id ");
+        sql.append("WHERE ar.date = ? ");
+
+        if (search != null && !search.isEmpty()) {
+            sql.append("AND (e.emp_code LIKE ? OR e.fullname LIKE ?) ");
+        }
+        if (filterType != null && !filterType.isEmpty()) {
+            sql.append("AND ar.check_type = ? ");
+        }
+        if (department != null && !department.isEmpty()) {
+            sql.append("AND e.dep_id = ? ");
+        }
+
+        try (Connection conn = DBContext.getConnection(); PreparedStatement st = conn.prepareStatement(sql.toString())) {
+
+            int paramIndex = 1;
+            st.setString(paramIndex++, date);
+
+            if (search != null && !search.isEmpty()) {
+                st.setString(paramIndex++, "%" + search + "%");
+                st.setString(paramIndex++, "%" + search + "%");
+            }
+            if (filterType != null && !filterType.isEmpty()) {
+                st.setString(paramIndex++, filterType);
+            }
+            if (department != null && !department.isEmpty()) {
+                st.setString(paramIndex++, department);
+            }
+
+            try (ResultSet rs = st.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getLong(1);
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return 0;
     }
 
     public static void main(String[] args) {
-        AttendanceRawDAO rawDAO = new AttendanceRawDAO();
-        List<AttendanceRaw> test = rawDAO.getRawRecords(0, 10, null, null, null, null);
-        System.out.println(test);
+        AttendanceRawDAO dao = new AttendanceRawDAO();
+        long c = dao.countRawRecordsByDate(null, "2025-10-25", null, null);
+        System.out.println(c);
     }
 }

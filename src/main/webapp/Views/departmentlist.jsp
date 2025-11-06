@@ -83,7 +83,7 @@
                                     <input type="text" name="deptName" class="form-control" required>
 
                                     <label class="form-label mt-2">Description</label>
-                                    <input type="textarea" name="description" class="form-control" required>
+                                    <textarea name="description" class="form-control" required></textarea>
                                 </div>
 
                                 <div class="modal-footer">
@@ -117,7 +117,7 @@
                                     <td>
                                         <div style="display: flex;gap: 30px">
                                             <a style="width: 50%" href="${pageContext.request.contextPath}/updatedepartment?depId=${el.depId}" class="btn btn-sm btn-primary">Edit</a>
-                                            <a style="width:50%" href="${pageContext.request.contextPath}/accountlist?deptId=${el.depId}" class="btn btn-sm btn-primary">View</a>
+                                            <a style="width:50%" href="${pageContext.request.contextPath}/departmentdetail?deptId=${el.depId}" class="btn btn-sm btn-primary">View</a>
                                         </div>
                                     </td>                                                   
                                 </tr>

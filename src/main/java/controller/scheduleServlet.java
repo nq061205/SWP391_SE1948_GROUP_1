@@ -27,6 +27,7 @@ public class scheduleServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         RecruitmentPostDAO rpDAO = new RecruitmentPostDAO();
+        EmployeeDAO eDAO = new EmployeeDAO();
         List<RecruitmentPost> posts = rpDAO.getApprovedPosts();
         HttpSession session = request.getSession();
         if (session.getAttribute("user") == null) {
@@ -46,6 +47,7 @@ public class scheduleServlet extends HttpServlet {
         EmployeeDAO eDAO = new EmployeeDAO();
         InterviewDAO iDAO = new InterviewDAO();
         String postIdStr = request.getParameter("postId");
+        String action = request.getParameter("action");
         String[] selectedIds = request.getParameterValues("candidateIds");
         String dateStr = request.getParameter("date");
         String timeStr = request.getParameter("time");
@@ -71,8 +73,9 @@ public class scheduleServlet extends HttpServlet {
             try {
                 int postId = Integer.parseInt(postIdStr);
                 List<Candidate> allCandidates = cDAO.getAllCandidate("approve");
-                List<Candidate> candidateList = getAvailableCandidatesByPost(allCandidates, postId,iDAO.getAllInterviews());
+                List<Candidate> candidateList = getAvailableCandidatesByPost(allCandidates, postId, iDAO.getAllInterviews());
                 request.setAttribute("candidateList", candidateList);
+                request.setAttribute("employeeInterview", getEmployeeByDept(eDAO.getAllEmployees(), rpDAO.getPostById(postId).getDepartment().getDepId()));
                 request.setAttribute("selectedPostId", postId);
             } catch (NumberFormatException e) {
                 e.printStackTrace();
@@ -80,7 +83,7 @@ public class scheduleServlet extends HttpServlet {
         }
         List<Interview> listInterview = new ArrayList<>();
 
-        if (selectedIds != null && selectedIds.length != 0 && postIdStr != null && !postIdStr.isEmpty()) {
+        if (selectedIds != null && selectedIds.length != 0 && postIdStr != null && !postIdStr.isEmpty() && action != null) {
             try {
                 for (String selectedId : selectedIds) {
                     int postId = Integer.parseInt(postIdStr);
@@ -93,30 +96,30 @@ public class scheduleServlet extends HttpServlet {
                     i.setInterviewedBy(eDAO.getManagerByDepartment(deptId));
                     i.setResult("Pending");
                     i.setTime(Time.valueOf(time));
-                    EmailUtil.sendEmail(candidate.getEmail(), "Invitation to Interview ", "Congratulation" + candidate.getName()+" has been invited to our interview at " + dateStr+" " + timeStr);
+                    EmailUtil.sendEmail(candidate.getEmail(), "Invitation to Interview ", "Congratulation" + candidate.getName() + " has been invited to our interview at " + dateStr + " " + timeStr);
                     iDAO.insertToInterview(i);
-                     
                 }
+                request.setAttribute("successMessage", "Create schedule successfully");
             } catch (NumberFormatException e) {
                 e.printStackTrace();
             } catch (MessagingException ex) {
                 Logger.getLogger(scheduleServlet.class.getName()).log(Level.SEVERE, null, ex);
             }
 
-        }
-        else{
+        } else {
             request.setAttribute("errorMessage", "Please choose candidate to create interview schedule");
-            
+
         }
         int postId = Integer.parseInt(postIdStr);
-                List<Candidate> allCandidates = cDAO.getAllCandidate("approve");
-                List<Candidate> candidateList = getAvailableCandidatesByPost(allCandidates, postId,iDAO.getAllInterviews());
-                request.setAttribute("candidateList", candidateList);
-                request.setAttribute("selectedPostId", postId);
+        List<Candidate> allCandidates = cDAO.getAllCandidate("approve");
+        List<Candidate> candidateList = getAvailableCandidatesByPost(allCandidates, postId, iDAO.getAllInterviews());
+        request.setAttribute("candidateList", candidateList);
+        request.setAttribute("employeeInterview", getEmployeeByDept(eDAO.getAllEmployees(), rpDAO.getPostById(postId).getDepartment().getDepId()));
+        request.setAttribute("selectedPostId", postId);
         request.getRequestDispatcher("Views/scheduleInterview.jsp").forward(request, response);
     }
 
-     private List<Candidate> getAvailableCandidatesByPost(List<Candidate> all, int postId, List<Interview> interviewList) {
+    private List<Candidate> getAvailableCandidatesByPost(List<Candidate> all, int postId, List<Interview> interviewList) {
         List<Candidate> result = new ArrayList<>();
         Set<Integer> interviewedIds = new HashSet<>();
         for (Interview i : interviewList) {
@@ -126,11 +129,21 @@ public class scheduleServlet extends HttpServlet {
         }
 
         for (Candidate c : all) {
-            if (c.getPost() != null && c.getPost().getPostId() == postId &&
-                !interviewedIds.contains(c.getCandidateId())) {
+            if (c.getPost() != null && c.getPost().getPostId() == postId
+                    && !interviewedIds.contains(c.getCandidateId())) {
                 result.add(c);
             }
         }
         return result;
+    }
+
+    private List<Employee> getEmployeeByDept(List<Employee> empList, String deptId) {
+        List<Employee> eList = new ArrayList<>();
+        for (Employee employee : empList) {
+            if (employee.getDept().getDepId().equals(deptId)) {
+                eList.add(employee);
+            }
+        }
+        return eList;
     }
 }

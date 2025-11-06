@@ -116,6 +116,12 @@
                     </c:if>
                 </c:url>
                 <c:set var="urlPrefix" value="${baseUrl}${fn:contains(baseUrl, '?') ? '&' : '?'}" />
+                <div>
+                    <a href="${pageContext.request.contextPath}/createaccount"
+                       class="btn btn-sm btn-primary">
+                        <i class="fa-solid fa-user-plus"></i> Add New Account
+                    </a>
+                </div>
                 <div class="row align-items-stretch"> <!-- thêm align-items-stretch -->
                     <!-- SEARCH -->
                     <div class="col-md-4">

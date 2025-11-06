@@ -88,6 +88,19 @@
                                         No candidates selected
                                     </small>
                                 </div>  
+                                <div class="form-group mb-3">
+                                    <label><i class="fa fa-user"></i> Interview Employee</label>
+                                    <div class="border rounded p-2" style="max-height: 220px; overflow-y: auto;">
+                                        <select name="interviewer" class="form-select" required>
+                                            <option value="">-- Select Interviewer --</option>
+                                            <c:forEach items="${employeeInterview}" var="c">
+                                                <option value="${c.empId}">${c.fullname}</option>
+                                            </c:forEach>
+                                        </select>
+                                    </div>
+                              
+                                </div>
+
 
                                 <!-- Date -->
                                 <div class="form-group mb-3">
@@ -104,6 +117,7 @@
                                            value="${interview.time}" required>
                                 </div>
                                 <c:if test="${errorMessage != null}"><p style="color: red">${errorMessage}</p></c:if>
+                                <c:if test="${successMessage != null}"><p style="color: green">${successMessage}</p></c:if>
 
 
 
@@ -122,7 +136,7 @@
                                     </c:if>
 
                                     <c:if test="${empty isEdit}">
-                                        <button type="submit" class="btn btn-success btn-lg">
+                                        <button value="submit" name="action" type="submit" class="btn btn-success btn-lg">
                                             <i class="fa fa-calendar-check"></i> Create Schedule
                                         </button>
                                     </c:if>

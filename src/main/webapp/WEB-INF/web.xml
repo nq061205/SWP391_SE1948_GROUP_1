@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <web-app version="6.0" xmlns="https://jakarta.ee/xml/ns/jakartaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="https://jakarta.ee/xml/ns/jakartaee https://jakarta.ee/xml/ns/jakartaee/web-app_6_0.xsd">
-
     <!-- ===== SERVLETS ===== -->
     <servlet>
         <servlet-name>HomePageServlet</servlet-name>
@@ -131,6 +130,18 @@
         <servlet-class>controller.UpdateDepartmentServlet</servlet-class>
     </servlet>
     <servlet>
+        <servlet-name>DepartmentListServlet</servlet-name>
+        <servlet-class>controller.DepartmentListServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>DepartmentDetailServlet</servlet-name>
+        <servlet-class>controller.DepartmentDetailServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>CreateAccountServlet</servlet-name>
+        <servlet-class>controller.CreateAccountServlet</servlet-class>
+    </servlet>
+    <servlet>
         <servlet-name>EmployeeDetailServlet</servlet-name>
         <servlet-class>controller.EmployeeDetailServlet</servlet-class>
     </servlet>
@@ -139,11 +150,34 @@
         <servlet-class>controller.ContractDetailServlet</servlet-class>
     </servlet>
     <servlet>
+        <servlet-name>DetailDailyAttendanceServlet</servlet-name>
+        <servlet-class>controller.hr.DetailDailyAttendanceServlet</servlet-class>
+    </servlet>
+    <servlet>
         <servlet-name>scheduleServlet</servlet-name>
         <servlet-class>controller.scheduleServlet</servlet-class>
     </servlet>
-
     <!-- ===== SERVLET MAPPINGS ===== -->
+    <servlet>
+        <servlet-name>PayrollReportDetailServlet</servlet-name>
+        <servlet-class>controller.PayrollReportDetailServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>AttendanceServlet</servlet-name>
+        <servlet-class>controller.AttendanceServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>InterviewServlet</servlet-name>
+        <servlet-class>controller.InterviewServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>DependantDetailServlet</servlet-name>
+        <servlet-class>controller.DependantDetailServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>UpdateDependantServlet</servlet-name>
+        <servlet-class>controller.UpdateDependantServlet</servlet-class>
+    </servlet>
     <servlet-mapping>
         <servlet-name>HomePageServlet</servlet-name>
         <url-pattern>/homepage</url-pattern>
@@ -217,6 +251,10 @@
         <url-pattern>/departmentlist</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
+        <servlet-name>DepartmentDetailServlet</servlet-name>
+        <url-pattern>/departmentdetail</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
         <servlet-name>CandidateListServlet</servlet-name>
         <url-pattern>/candidatelist</url-pattern>
     </servlet-mapping>
@@ -265,8 +303,16 @@
         <url-pattern>/export-attendance-pdf</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
+        <servlet-name>PayrollReportDetailServlet</servlet-name>
+        <url-pattern>/payrollreportdetail</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
         <servlet-name>UpdateAccountServlet</servlet-name>
         <url-pattern>/updateaccount</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>CreateAccountServlet</servlet-name>
+        <url-pattern>/createaccount</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>UpdateEmployeeServlet</servlet-name>
@@ -285,15 +331,31 @@
         <url-pattern>/contractdetail</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
+        <servlet-name>DetailDailyAttendanceServlet</servlet-name>
+        <url-pattern>/detail-daily-attendance</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
         <servlet-name>scheduleServlet</servlet-name>
         <url-pattern>/schedule</url-pattern>
     </servlet-mapping>
-
     <!-- ===== SESSION CONFIG & WELCOME FILE ===== -->
+    <servlet-mapping>
+        <servlet-name>InterviewServlet</servlet-name>
+        <url-pattern>/interview</url-pattern>
+        <servlet-name>AttendanceServlet</servlet-name>
+        <url-pattern>/attendance</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>DependantDetailServlet</servlet-name>
+        <url-pattern>/dependantdetail</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>UpdateDependantServlet</servlet-name>
+        <url-pattern>/updatedependant</url-pattern>
+    </servlet-mapping>
     <session-config>
         <session-timeout>30</session-timeout>
     </session-config>
-
     <welcome-file-list>
         <welcome-file>HomePageServlet</welcome-file>
     </welcome-file-list>
