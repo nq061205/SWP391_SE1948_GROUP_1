@@ -7,6 +7,7 @@ package controller.hr;
 import dal.DailyAttendanceDAO;
 import dal.DeptDAO;
 import dal.EmployeeDAO;
+import dal.HolidayDAO;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
@@ -121,14 +122,11 @@ public class DailyAttendanceServlet extends HttpServlet {
         List<DailyAttendance> dailyList = dailyDAO.getAttendanceByEmpIds(empIds, selectedMonth, selectedYear);
 
         Map<Integer, Map<Integer, DailyAttendance>> attendanceByDay = new HashMap<>();
-
         for (DailyAttendance att : dailyList) {
             int empId = att.getEmployee().getEmpId();
-
             java.sql.Date sqlDate = att.getDate();
             LocalDate localDate = sqlDate.toLocalDate();
             int dayOfMonth = localDate.getDayOfMonth();
-
             attendanceByDay.computeIfAbsent(empId, k -> new HashMap<>()).put(dayOfMonth, att);
         }
 
@@ -153,6 +151,17 @@ public class DailyAttendanceServlet extends HttpServlet {
 
         YearMonth yearMonth = YearMonth.of(selectedYear, selectedMonth);
         int daysInMonth = yearMonth.lengthOfMonth();
+
+        HolidayDAO holidayDAO = new HolidayDAO();
+        List<Holiday> holidays = holidayDAO.getHolidaysByMonth(selectedMonth, selectedYear);
+
+        Map<Integer, Holiday> holidaysByDay = new HashMap<>();
+        for (Holiday holiday : holidays) {
+            LocalDate holidayDate = holiday.getDate().toLocalDate();
+            int dayOfMonth = holidayDate.getDayOfMonth();
+            holidaysByDay.put(dayOfMonth, holiday);
+        }
+
         List<Integer> weekendDays = new ArrayList<>();
         for (int d = 1; d <= daysInMonth; d++) {
             LocalDate date = LocalDate.of(selectedYear, selectedMonth, d);
@@ -168,6 +177,7 @@ public class DailyAttendanceServlet extends HttpServlet {
         request.setAttribute("attendanceByDay", attendanceByDay);
         request.setAttribute("daysInMonth", daysInMonth);
         request.setAttribute("weekendDays", weekendDays);
+        request.setAttribute("holidaysByDay", holidaysByDay);  
         request.setAttribute("totalWorkDaysMap", totalWorkDaysMap);
         request.setAttribute("totalOTHoursMap", totalOTHoursMap);
 

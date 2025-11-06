@@ -51,6 +51,8 @@
         <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/assets2/css/dashboard.css">
         <link class="skin" rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/assets2/css/color/color-1.css">
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+        <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/assets2/css/custom.css">
+
     </head>
 
     <body class="ttr-opened-sidebar ttr-pinned-sidebar">
@@ -65,18 +67,12 @@
                 <c:if test="${not empty update}">
                     <div class="alert alert-success">${update}</div>
                 </c:if>
-                <form action="${pageContext.request.contextPath}/application" method="get"
+                <form action="${pageContext.request.contextPath}/applicationmanagement" method="get"
                       class="d-flex align-items-center flex-nowrap w-100" style="gap:12px;">
-                    <input type="hidden" name="typeapplication" value="LEAVE"/>
+                    <input type="hidden" name="typeapplication" value="leave"/>
 
-                    <select name="status" class="form-control filter-h" style="width:160px;" onchange="this.form.submit()">
-                        <option value="">All Status</option>
-                        <option value="Pending"  ${param.status == 'Pending'  ? 'selected' : ''}>Pending</option>
-                        <option value="Approved" ${param.status == 'Approved' ? 'selected' : ''}>Approved</option>
-                        <option value="Rejected" ${param.status == 'Rejected' ? 'selected' : ''}>Rejected</option>
-                        <option value="Invalid" ${param.status == 'Invalid' ? 'selected' : ''}>Invalid</option>
-                    </select>
-
+                    <input type="text" name="search" value="${param.search}"
+                           class="form-control filter-h" placeholder="Search email or name...">
                     <select name="type" class="form-control filter-h" style="width:170px;" onchange="this.form.submit()">
                         <option value="">All Type</option>
                         <option value="Annual Leave" ${param.type == 'Annual Leave' ? 'selected' : ''}>Annual Leave</option>
@@ -93,7 +89,7 @@
                            class="form-control filter-h" style="width:170px;">
 
                     <button type="submit" class="btn btn-outline-secondary filter-h">Apply</button>
-                    <a href="${pageContext.request.contextPath}/application?typeapplication=LEAVE"
+                    <a href="${pageContext.request.contextPath}/applicationmanagement?typeapplication=leave"
                        class="btn btn-warning filter-h">Clear</a>
                 </form>
             </div>
@@ -106,7 +102,7 @@
                                 No.
                             </th>
                             <th style="width: 120px">
-                                Receiver
+                                Sender
                             </th>
                             <th style="width: 120px">
                                 Email
@@ -115,7 +111,7 @@
                                 Leave Type
                             </th>
                             <th style="width:80px">
-                                Status
+                                Reason
                             </th>
                             <th style="width:80px">
                                 Day Request
@@ -133,35 +129,32 @@
                         <c:forEach var="list" items="${listapplication}" varStatus ="loop">
                             <tr>
                                 <td>${(page - 1) * 10 +loop.index+1}</td>
-                                <td>${list.approvedBy.fullname}</td>
-                                <td>${list.approvedBy.email}</td>
+                                <td>${list.employee.fullname}</td>
+                                <td>${list.employee.email}</td>
                                 <td>${list.leaveType}</td>
-                                <td
-                                    style="font-weight: bold;
-                                    color:
-                                    <c:choose>
-                                        <c:when test="${list.status eq 'Approved'}">green</c:when>
-                                        <c:when test="${list.status eq 'Rejected'}">red</c:when>
-                                        <c:when test="${list.status eq 'Pending'}">goldenrod</c:when>
-                                        <c:otherwise>gray</c:otherwise>
-                                    </c:choose>;
-                                    "
-                                    >${list.status}</td>
+                                <td class="reason-cell">${list.reason}</td>
                                 <td>${list.dayRequested}</td>
                                 <td>${list.createdAt}</td>
                                 <td>
-                                    <c:choose>
-                                        <c:when test="${not list.status.equalsIgnoreCase('Pending')}">
-                                            <a href="${pageContext.request.contextPath}/detail?leaveId=${list.leaveId}" class="icon-circle" title="More detail">
-                                                <i class="fa fa-info"></i>
-                                            </a>
-                                        </c:when>
-                                        <c:otherwise>
-                                            <a href="${pageContext.request.contextPath}/editapplication?type=LEAVE&id=${list.leaveId}" class="icon-circle" data-toggle="tooltip" title="Edit">
-                                                <i class="fa fa-pencil"></i>
-                                            </a>   
-                                        </c:otherwise>
-                                    </c:choose>
+                                    <form action="${pageContext.request.contextPath}/applicationmanagement" method="post" style="display:inline;" onsubmit="return confirmAction(this, 'approved')">
+                                        <input type="hidden" name="type" value="leave">
+                                        <input type="hidden" name="action" value="Approved">
+                                        <input type="hidden" name="leaveId" value="${list.leaveId}">
+                                        <input type="hidden" name="note" value="">
+                                        <button type="submit" class="btn btn-success btn-sm" title="Approved">
+                                            <i class="fa fa-check"></i>
+                                        </button>
+                                    </form>
+
+                                    <form action="${pageContext.request.contextPath}/applicationmanagement" method="post" style="display:inline;" onsubmit="return confirmAction(this, 'rejected')">
+                                        <input type="hidden" name="type" value="leave">
+                                        <input type="hidden" name="action" value="Rejected">
+                                        <input type="hidden" name="leaveId" value="${list.leaveId}">
+                                        <input type="hidden" name="note" value="">
+                                        <button type="submit" class="btn btn-danger btn-sm" title="Rejected">
+                                            <i class="fa fa-times"></i>
+                                        </button>
+                                    </form>
                                 </td>
                             </tr>
                         </c:forEach>
@@ -176,9 +169,6 @@
                     </div>
                     <h5 class="text-muted">No Leave Request Found</h5>
                     <p class="text-muted">There are currently no leave request in the system.</p>
-                    <a href="${pageContext.request.contextPath}/compose?type=LEAVE" class="btn btn-primary">
-                        <i class="fa fa-plus"></i> Create First Leave Request
-                    </a>
                 </div>
             </c:if>
             <c:url var="baseUrl" value="/application">
@@ -249,9 +239,22 @@
         <script src="${pageContext.request.contextPath}/assets2/js/admin.js"></script>
         <script src='${pageContext.request.contextPath}/assets2/vendors/switcher/switcher.js'></script>
         <script>
-                        $(document).ready(function () {
-                            $('[data-toggle="tooltip"]').tooltip();
-                        });
+                                        $(document).ready(function () {
+                                            $('[data-toggle="tooltip"]').tooltip();
+                                        });
+        </script>
+        <script>
+            function confirmAction(form, action) {
+                const note = prompt('Please enter a note for ' + action + ':', "");
+
+                if (note === null) {
+                    form.querySelector('input[name="note"]').value = "";
+                } else {
+                    form.querySelector('input[name="note"]').value = note.trim();
+                }
+
+                return confirm('Are you sure you want to ' + action + ' this request?');
+            }
         </script>
         <style>
             .icon-circle {
@@ -273,7 +276,7 @@
             }
 
             .icon-circle:hover {
-                background-color: #d5d5d5; /* xám đậm hơn khi hover */
+                background-color: #d5d5d5;
                 color: #000;
             }
         </style>

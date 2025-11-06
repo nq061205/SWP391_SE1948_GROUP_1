@@ -1,9 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<web-app version="6.0" xmlns="https://jakarta.ee/xml/ns/jakartaee"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="https://jakarta.ee/xml/ns/jakartaee https://jakarta.ee/xml/ns/jakartaee/web-app_6_0.xsd">
-
-    <!-- ===================== SERVLETS ===================== -->
+<!-- ===================== SERVLETS ===================== -->
+<web-app version="6.0" xmlns="https://jakarta.ee/xml/ns/jakartaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="https://jakarta.ee/xml/ns/jakartaee https://jakarta.ee/xml/ns/jakartaee/web-app_6_0.xsd">
     <servlet>
         <servlet-name>HomePageServlet</servlet-name>
         <servlet-class>controller.HomePageServlet</servlet-class>
@@ -168,7 +165,6 @@
         <servlet-name>UpdateDepartmentServlet</servlet-name>
         <servlet-class>controller.UpdateDepartmentServlet</servlet-class>
     </servlet>
-
     <servlet>
         <servlet-name>DepartmentDetailServlet</servlet-name>
         <servlet-class>controller.DepartmentDetailServlet</servlet-class>
@@ -198,7 +194,6 @@
         <servlet-name>ScheduleServlet</servlet-name>
         <servlet-class>controller.ScheduleServlet</servlet-class>
     </servlet>
-
     <servlet>
         <servlet-name>PayrollReportDetailServlet</servlet-name>
         <servlet-class>controller.PayrollReportDetailServlet</servlet-class>
@@ -212,6 +207,23 @@
     <servlet>
         <servlet-name>InterviewServlet</servlet-name>
         <servlet-class>controller.InterviewServlet</servlet-class>
+    </servlet>
+    <!-- ===== SERVLET MAPPINGS ===== -->
+    <servlet>
+        <servlet-name>UpdateDailyAttendanceServlet</servlet-name>
+        <servlet-class>controller.hr.UpdateDailyAttendanceServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>ApplicationManagementServlet</servlet-name>
+        <servlet-class>controller.ApplicationManagementServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>SystemLogManagementServlet</servlet-name>
+        <servlet-class>controller.SystemLogManagementServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>SystemLogDetailServlet</servlet-name>
+        <servlet-class>controller.SystemLogDetailServlet</servlet-class>
     </servlet>
 
     <servlet>
@@ -326,11 +338,6 @@
     </servlet-mapping>
 
     <servlet-mapping>
-        <servlet-name>DepartmentListServlet</servlet-name>
-        <url-pattern>/departmentlist</url-pattern>
-    </servlet-mapping>
-
-    <servlet-mapping>
         <servlet-name>DepartmentDetailServlet</servlet-name>
         <url-pattern>/departmentdetail</url-pattern>
     </servlet-mapping>
@@ -368,6 +375,26 @@
     <servlet-mapping>
         <servlet-name>ApplyJobServlet</servlet-name>
         <url-pattern>/applyjob</url-pattern>
+    </servlet-mapping>
+    
+    <servlet-mapping>
+        <servlet-name>DecentralizationServlet</servlet-name>
+        <url-pattern>/decentralization</url-pattern>
+    </servlet-mapping>
+    
+    <servlet-mapping>
+        <servlet-name>SystemLogDetailServlet</servlet-name>
+        <url-pattern>/systemlogdetail</url-pattern>
+    </servlet-mapping>
+    
+    <servlet-mapping>
+        <servlet-name>SystemLogManagementServlet</servlet-name>
+        <url-pattern>/systemlog</url-pattern>
+    </servlet-mapping>
+    
+    <servlet-mapping>
+        <servlet-name>UpdateDependantServlet</servlet-name>
+        <url-pattern>/updatedependant</url-pattern>
     </servlet-mapping>
 
     <servlet-mapping>
@@ -411,6 +438,10 @@
     </servlet-mapping>
 
     <servlet-mapping>
+        <servlet-name>DependantDetailServlet</servlet-name>
+        <url-pattern>/dependantdetail</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
         <servlet-name>UpdateEmployeeServlet</servlet-name>
         <url-pattern>/updateemployee</url-pattern>
     </servlet-mapping>
@@ -426,48 +457,36 @@
     </servlet-mapping>
 
     <servlet-mapping>
+        <servlet-name>ApplicationManagementServlet</servlet-name>
+        <url-pattern>/applicationmanagement</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
         <servlet-name>ContractDetailServlet</servlet-name>
         <url-pattern>/contractdetail</url-pattern>
     </servlet-mapping>
 
-    <servlet-mapping>
-        <servlet-name>DetailDailyAttendanceServlet</servlet-name>
-        <url-pattern>/detail-daily-attendance</url-pattern>
-    </servlet-mapping>
 
     <servlet-mapping>
         <servlet-name>ScheduleServlet</servlet-name>
         <url-pattern>/schedule</url-pattern>
     </servlet-mapping>
-
     <servlet-mapping>
         <servlet-name>InterviewServlet</servlet-name>
         <url-pattern>/interview</url-pattern>
     </servlet-mapping>
-
     <servlet-mapping>
         <servlet-name>AttendanceServlet</servlet-name>
         <url-pattern>/attendance</url-pattern>
     </servlet-mapping>
-
     <servlet-mapping>
-        <servlet-name>DependantDetailServlet</servlet-name>
-        <url-pattern>/dependantdetail</url-pattern>
-    </servlet-mapping>
-
-    <servlet-mapping>
-        <servlet-name>UpdateDependantServlet</servlet-name>
-        <url-pattern>/updatedependant</url-pattern>
+        <servlet-name>UpdateDailyAttendanceServlet</servlet-name>
+        <url-pattern>/update-daily-attendance</url-pattern>
     </servlet-mapping>
 
     <servlet-mapping>
         <servlet-name>InterviewDetail</servlet-name>
         <url-pattern>/interviewdetail</url-pattern>
-    </servlet-mapping>
-
-    <servlet-mapping>
-        <servlet-name>DecentralizationServlet</servlet-name>
-        <url-pattern>/decentralization</url-pattern>
     </servlet-mapping>
 
     <!-- ===================== SESSION CONFIG & WELCOME FILE ===================== -->

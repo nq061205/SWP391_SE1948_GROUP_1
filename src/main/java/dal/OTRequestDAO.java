@@ -178,6 +178,45 @@ public class OTRequestDAO extends DBContext {
         return 0;
     }
 
+    public int countOTByApproverFiltered(int empId, String search, Date startDate, Date endDate) {
+        StringBuilder sql = new StringBuilder("SELECT COUNT(*) FROM hrm.ot_request WHERE emp_id = ? and ot.status = 'Pending'");
+        List<Object> params = new ArrayList<>();
+        params.add(empId);
+
+        if (search != null && !search.trim().isEmpty()) {
+            String keyword = "%" + search.trim() + "%";
+            sql.append(" AND (e.fullname LIKE ? OR e.email LIKE ?)");
+            params.add(keyword);
+            params.add(keyword);
+        }
+
+        if (startDate != null) {
+            sql.append(" AND date >= ?");
+            params.add(startDate);
+        }
+        if (endDate != null) {
+            sql.append(" AND date <= ?");
+            params.add(endDate);
+        }
+
+        try (Connection cn = DBContext.getConnection(); PreparedStatement ps = cn.prepareStatement(sql.toString())) {
+
+            int index = 1;
+            for (Object p : params) {
+                ps.setObject(index++, p);
+            }
+
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt(1);
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return 0;
+    }
+
     public List<OTRequest> findOTByEmpPaged(int empId, int offset, int size, String search, String status, Date startDate, Date endDate) {
         StringBuilder sql = new StringBuilder(
                 "SELECT ot.ot_id, ot.emp_id, ot.date, ot.ot_hours, ot.approved_by, ot.approved_at, ot.status, ot.created_at, ot.updated_at, "
@@ -242,6 +281,62 @@ public class OTRequestDAO extends DBContext {
         return list;
     }
 
+    public List<OTRequest> findOTByApproverEmpPaged(int empId, int offset, int size, String search, Date startDate, Date endDate) {
+        StringBuilder sql = new StringBuilder(
+                "SELECT ot.ot_id, ot.emp_id, ot.date, ot.ot_hours, ot.approved_by, ot.approved_at, ot.status, ot.created_at, ot.updated_at, "
+                + "e.emp_code as emp_code, e.fullname as emp_fullname, e.email as emp_email, e.position_title as emp_pos, "
+                + "a.emp_code as app_code, a.fullname as app_fullname, a.email as app_email, a.position_title as app_pos "
+                + "FROM hrm.ot_request ot "
+                + "JOIN hrm.employee e ON ot.emp_id = e.emp_id "
+                + "LEFT JOIN hrm.employee a ON ot.approved_by = a.emp_id "
+                + "WHERE ot.emp_id = ? and ot.status = 'Pending' "
+        );
+
+        List<Object> params = new ArrayList<>();
+        params.add(empId);
+
+        if (search != null && !search.trim().isEmpty()) {
+            String keyword = "%" + search.trim() + "%";
+            sql.append(" AND (e.fullname LIKE ? OR e.email LIKE ?)");
+            params.add(keyword);
+            params.add(keyword);
+        }
+
+        if (startDate != null) {
+            sql.append(" AND ot.created_at >= ? ");
+            params.add(startDate);
+        }
+        if (endDate != null) {
+            sql.append(" AND ot.created_at <= ? ");
+            params.add(endDate);
+        }
+
+        sql.append(" ORDER BY ot.created_at DESC LIMIT ? OFFSET ? ");
+
+        List<OTRequest> list = new ArrayList<>();
+
+        try (Connection cn = DBContext.getConnection(); PreparedStatement ps = cn.prepareStatement(sql.toString())) {
+
+            int idx = 1;
+
+            for (Object p : params) {
+                ps.setObject(idx++, p);
+            }
+
+            ps.setInt(idx++, size);
+            ps.setInt(idx, offset);
+
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    list.add(mapResultSetToOTRequest(rs));
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return list;
+    }
+
     public List<OTRequest> getApprovedOTBetween(Date minDate, Date maxDate) {
         List<OTRequest> list = new ArrayList<>();
         String sql = OT_SELECT_SQL + " WHERE ot.status = 'Approved' AND ot.date BETWEEN ? AND ?";
@@ -261,8 +356,28 @@ public class OTRequestDAO extends DBContext {
         return list;
     }
 
-    public static void main(String[] args) {
+    public void updateOTStatus(int id, String action) {
+        String sql = "UPDATE ot_request SET "
+                + "status = ?, "
+                + "approved_at = NOW(), "
+                + "updated_at = NOW() "
+                + "WHERE ot_id = ?";
 
+        try (Connection con = DBContext.getConnection(); PreparedStatement ps = con.prepareStatement(sql)) {
+
+            ps.setString(1, action);
+            ps.setInt(2, id);
+
+            ps.executeUpdate();
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void main(String[] args) {
+        OTRequestDAO dao = new OTRequestDAO();
+        dao.updateOTStatus(1, "Approved");
     }
 
 }
