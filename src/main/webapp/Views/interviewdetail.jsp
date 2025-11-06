@@ -142,14 +142,14 @@
                                 <a href="${pageContext.request.contextPath}/interview" class="btn btn-secondary">
                                     <i class="fa fa-arrow-left"></i> Back
                                 </a>
-                                <c:if test="${candidate.result == null}">
+                                <c:if test="${interview.result eq 'Pending'}">
                                     <div >
-                                        <a style="background-color: green" href="${pageContext.request.contextPath}/candidateaction?id=${candidate.candidateId}&action=approve"
+                                        <a style="background-color: green" href="${pageContext.request.contextPath}/interviewdetail?id=${interview.interviewId}&action=approve"
                                            class="btn btn-success"
                                            onclick="return confirm('Approve this candidate?');">
                                             <i class="fa fa-check"></i> Approve
                                         </a>
-                                        <a style="background-color: red" href="${pageContext.request.contextPath}/candidateaction?id=${candidate.candidateId}&action=reject"
+                                        <a style="background-color: red" href="${pageContext.request.contextPath}/interviewdetail?id=${interview.interviewId}&action=reject"
                                            class="btn btn-danger"
                                            onclick="return confirm('Reject this candidate?');">
                                             <i class="fa fa-times"></i> Reject

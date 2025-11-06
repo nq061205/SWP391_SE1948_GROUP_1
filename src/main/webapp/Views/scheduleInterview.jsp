@@ -44,12 +44,19 @@
                         <li>Schedule</li>
                     </ul>
                 </div>
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h4 class="mb-0"><i class="fa fa-calendar-alt"></i> Schedule New Interview</h4>
+                    <a href="${pageContext.request.contextPath}/viewcreatedinterview" 
+                       class="btn btn-outline-primary btn-sm">
+                        <i class="fa fa-history"></i> View Created History
+                    </a>
+                </div>
 
                 <div class="row">
                     <div class="col-lg-8 offset-lg-2">
                         <div class="widget-box">
                             <form method="post"
-                                  action="schedule">
+                                  action="scheduleinterview">
                                 <div class="form-group mb-3">
                                     <label for="post"><i class="fa fa-briefcase"></i> Recruitment Post:</label>
                                     <select id="post" name="postId" class="form-control" onchange="this.form.submit()" required>
