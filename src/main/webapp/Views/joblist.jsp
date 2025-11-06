@@ -4,7 +4,6 @@
 <!DOCTYPE html>
 <html lang="en">
     <head>
-        <!-- META ============================================= -->
         <meta charset="utf-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta name="keywords" content="" />
@@ -15,26 +14,19 @@
         <meta property="og:description" content="Find your dream job at Human Tech" />
         <meta name="format-detection" content="telephone=no">
 
-        <!-- FAVICONS ICON ============================================= -->
         <link rel="icon" href="${pageContext.request.contextPath}/assets1/images/favicon.ico" type="image/x-icon" />
         <link rel="shortcut icon" type="image/x-icon" href="${pageContext.request.contextPath}/assets1/images/favicon.png" />
 
-        <!-- PAGE TITLE HERE ============================================= -->
         <title>Jobs Search - Human Tech</title>
 
-        <!-- MOBILE SPECIFIC ============================================= -->
         <meta name="viewport" content="width=device-width, initial-scale=1">
 
-        <!-- All PLUGINS CSS ============================================= -->
         <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/assets1/css/assets.css">
 
-        <!-- TYPOGRAPHY ============================================= -->
         <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/assets1/css/typography.css">
 
-        <!-- SHORTCODES ============================================= -->
         <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/assets1/css/shortcodes/shortcodes.css">
 
-        <!-- STYLESHEETS ============================================= -->
         <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/assets1/css/style.css">
         <link class="skin" rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/assets1/css/color/color-1.css">
 
@@ -196,16 +188,55 @@
                 font-size: 12px;
                 color: #666;
             }
+            .pagination-wrapper {
+                margin-top: 40px;
+                display: flex;
+                justify-content: center;
+            }
+            .pagination {
+                display: flex;
+                list-style: none;
+                padding: 0;
+                gap: 5px;
+            }
+            .pagination li {
+                display: inline-block;
+            }
+            .pagination a,
+            .pagination span {
+                display: block;
+                padding: 10px 15px;
+                border: 1px solid #e6e6e6;
+                border-radius: 5px;
+                color: #666;
+                text-decoration: none;
+                transition: all 0.3s ease;
+                background: #fff;
+            }
+            .pagination a:hover {
+                background: #f7b205;
+                color: #000;
+                border-color: #f7b205;
+            }
+            .pagination .active span {
+                background: #f7b205;
+                color: #000;
+                border-color: #f7b205;
+                font-weight: 600;
+            }
+            .pagination .disabled span {
+                background: #f5f5f5;
+                color: #ccc;
+                cursor: not-allowed;
+            }
         </style>
     </head>
 
     <body id="bg">
         <div class="page-wraper">
-            <!-- Header -->
             <%@ include file="CommonItems/Header/homepageHeader.jsp" %>
 
             <div class="page-content bg-white">
-                <!-- Search Section -->
                 <div class="search-section">
                     <div class="container">
                         <h1 class="search-title">Jobs Search</h1>
@@ -214,31 +245,31 @@
                                 <div class="row">
                                     <div class="col-lg-3 col-md-6 mb-3 mb-lg-0">
                                         <div class="form-group mb-0">
-                                            <input type="text" name="keyword" class="form-control" 
-                                                   placeholder="Job title, keywords..." 
+                                            <input type="text" name="keyword" class="form-control"
+                                                   placeholder="Job title, keywords..."
                                                    value="${param.keyword}"
                                                    style="height: 50px; border-radius: 5px;">
                                         </div>
                                     </div>
                                     <div class="col-lg-3 col-md-6 mb-3 mb-lg-0">
                                         <div class="form-group mb-0">
-                                            <input type="date" name="fromDate" class="form-control" 
-                                                   placeholder="From Date" 
+                                            <input type="date" name="fromDate" class="form-control"
+                                                   placeholder="From Date"
                                                    value="${param.fromDate}"
                                                    style="height: 50px; border-radius: 5px;">
                                         </div>
                                     </div>
                                     <div class="col-lg-3 col-md-6 mb-3 mb-lg-0">
                                         <div class="form-group mb-0">
-                                            <input type="date" name="toDate" class="form-control" 
-                                                   placeholder="To Date" 
+                                            <input type="date" name="toDate" class="form-control"
+                                                   placeholder="To Date"
                                                    value="${param.toDate}"
                                                    style="height: 50px; border-radius: 5px;">
                                         </div>
                                     </div>
                                     <div class="col-lg-2 col-md-6 mb-3 mb-lg-0">
                                         <div class="form-group mb-0">
-                                            <select name="sort" class="form-control" 
+                                            <select name="sort" class="form-control"
                                                     style="height: 50px; border-radius: 5px;">
                                                 <option value="desc" ${param.sort == 'desc' ? 'selected' : ''}>Newest First</option>
                                                 <option value="asc" ${param.sort == 'asc' ? 'selected' : ''}>Oldest First</option>
@@ -246,7 +277,7 @@
                                         </div>
                                     </div>
                                     <div class="col-lg-1 col-md-6">
-                                        <button type="submit" class="btn btn-block" 
+                                        <button type="submit" class="btn btn-block"
                                                 style="background: #f7b205; color: #000; height: 50px; font-weight: 600; border-radius: 5px;">
                                             <i class="fa fa-search"></i>
                                         </button>
@@ -257,31 +288,25 @@
                     </div>
                 </div>
 
-                <!-- Jobs List Section -->
                 <div class="content-block">
                     <div class="section-full browse-job content-inner-2">
                         <div class="container">
                             <div class="row">
-                                <!-- Sidebar -->
                                 <div class="col-xl-3 col-lg-4 col-md-4 col-sm-12 m-b30">
-                                    <!-- Department Filter -->
                                     <div class="sidebar-filter">
                                         <h5 class="filter-title">Specialisms</h5>
-                                        
-                                        <!-- All Departments -->
+
                                         <div class="filter-item">
                                             <span>All Departments</span>
-                                            <span class="filter-count">${posts.size()}</span>
+                                            <span class="filter-count">${totalPosts}</span>
                                         </div>
-                                        
-                                        <!-- Dynamic Department List -->
+
                                         <c:set var="departmentMap" value="${{}}" />
                                         <c:forEach items="${posts}" var="post">
                                             <c:if test="${post.department != null}">
                                                 <c:set var="deptId" value="${post.department.depId}" />
                                                 <c:set var="deptName" value="${post.department.depName}" />
-                                                
-                                                <!-- Count posts per department -->
+
                                                 <c:set var="found" value="false" />
                                                 <c:forEach items="${departmentMap}" var="entry">
                                                     <c:if test="${entry.key == deptId}">
@@ -290,8 +315,7 @@
                                                 </c:forEach>
                                             </c:if>
                                         </c:forEach>
-                                        
-                                        <!-- Display unique departments -->
+
                                         <c:set var="processedDepts" value="" />
                                         <c:forEach items="${posts}" var="post">
                                             <c:if test="${post.department != null}">
@@ -303,12 +327,12 @@
                                                             <c:set var="deptCount" value="${deptCount + 1}" />
                                                         </c:if>
                                                     </c:forEach>
-                                                    
+
                                                     <div class="filter-item">
                                                         <span>${post.department.depName}</span>
                                                         <span class="filter-count">${deptCount}</span>
                                                     </div>
-                                                    
+
                                                     <c:set var="processedDepts" value="${processedDepts}${deptId}," />
                                                 </c:if>
                                             </c:if>
@@ -316,14 +340,13 @@
                                     </div>
                                 </div>
 
-                                <!-- Jobs List -->
                                 <div class="col-xl-9 col-lg-8 col-md-8 col-sm-12">
                                     <div class="job-bx-title clearfix">
                                         <h5 class="font-weight-700 pull-left text-uppercase" style="margin-bottom: 30px;">
                                             <c:choose>
-                                                <c:when test="${posts.size() == 0}">0 Jobs Found</c:when>
-                                                <c:when test="${posts.size() == 1}">1 Job Found</c:when>
-                                                <c:otherwise>${posts.size()} Jobs Found</c:otherwise>
+                                                <c:when test="${totalPosts == 0}">0 Jobs Found</c:when>
+                                                <c:when test="${totalPosts == 1}">1 Job Found</c:when>
+                                                <c:otherwise>${totalPosts} Jobs Found</c:otherwise>
                                             </c:choose>
                                         </h5>
                                     </div>
@@ -332,13 +355,11 @@
                                         <c:when test="${not empty posts}">
                                             <c:forEach items="${posts}" var="post">
                                                 <div class="job-card">
-                                                    <!-- Job Title -->
-                                                    <a href="${pageContext.request.contextPath}/jobsite?action=view&postId=${post.postId}" 
+                                                    <a href="${pageContext.request.contextPath}/jobsite?action=view&postId=${post.postId}"
                                                        class="job-title">
                                                         ${post.title}
                                                     </a>
 
-                                                    <!-- Job Meta Info -->
                                                     <div class="job-meta">
                                                         <c:if test="${post.department != null}">
                                                             <div class="job-meta-item">
@@ -360,12 +381,10 @@
                                                         </c:if>
                                                     </div>
 
-                                                    <!-- Job Description Preview -->
                                                     <div class="job-description">
                                                         ${post.content}
                                                     </div>
 
-                                                    <!-- Job Footer -->
                                                     <div class="job-footer">
                                                         <div>
                                                             <span style="color: #666; font-size: 14px;">
@@ -373,7 +392,7 @@
                                                                 Posted <fmt:formatDate value="${post.approvedAt}" pattern="MMM dd, yyyy" />
                                                             </span>
                                                         </div>
-                                                        <a href="${pageContext.request.contextPath}/jobsite?action=view&postId=${post.postId}" 
+                                                        <a href="${pageContext.request.contextPath}/jobsite?action=view&postId=${post.postId}"
                                                            class="apply-btn">
                                                             View Details
                                                         </a>
@@ -389,6 +408,133 @@
                                             </div>
                                         </c:otherwise>
                                     </c:choose>
+
+                                    <c:if test="${totalPages > 1}">
+                                        <div class="pagination-wrapper">
+                                            <ul class="pagination">
+                                                <li class="${currentPage == 1 ? 'disabled' : ''}">
+                                                    <c:choose>
+                                                        <c:when test="${currentPage == 1}">
+                                                            <span>&laquo; Previous</span>
+                                                        </c:when>
+                                                        <c:otherwise>
+                                                            <a href="${pageContext.request.contextPath}/jobsite?page=${currentPage - 1}&pageSize=${pageSize}${not empty param.keyword ? '&keyword='.concat(param.keyword) : ''}${not empty param.fromDate ? '&fromDate='.concat(param.fromDate) : ''}${not empty param.toDate ? '&toDate='.concat(param.toDate) : ''}${not empty param.sort ? '&sort='.concat(param.sort) : ''}">
+                                                                &laquo; Previous
+                                                            </a>
+                                                        </c:otherwise>
+                                                    </c:choose>
+                                                </li>
+
+                                                <c:choose>
+                                                    <c:when test="${totalPages <= 7}">
+                                                        <c:forEach begin="1" end="${totalPages}" var="i">
+                                                            <li class="${i == currentPage ? 'active' : ''}">
+                                                                <c:choose>
+                                                                    <c:when test="${i == currentPage}">
+                                                                        <span>${i}</span>
+                                                                    </c:when>
+                                                                    <c:otherwise>
+                                                                        <a href="${pageContext.request.contextPath}/jobsite?page=${i}&pageSize=${pageSize}${not empty param.keyword ? '&keyword='.concat(param.keyword) : ''}${not empty param.fromDate ? '&fromDate='.concat(param.fromDate) : ''}${not empty param.toDate ? '&toDate='.concat(param.toDate) : ''}${not empty param.sort ? '&sort='.concat(param.sort) : ''}">
+                                                                            ${i}
+                                                                        </a>
+                                                                    </c:otherwise>
+                                                                </c:choose>
+                                                            </li>
+                                                        </c:forEach>
+                                                    </c:when>
+                                                    <c:otherwise>
+                                                        <c:choose>
+                                                            <c:when test="${currentPage <= 4}">
+                                                                <c:forEach begin="1" end="5" var="i">
+                                                                    <li class="${i == currentPage ? 'active' : ''}">
+                                                                        <c:choose>
+                                                                            <c:when test="${i == currentPage}">
+                                                                                <span>${i}</span>
+                                                                            </c:when>
+                                                                            <c:otherwise>
+                                                                                <a href="${pageContext.request.contextPath}/jobsite?page=${i}&pageSize=${pageSize}${not empty param.keyword ? '&keyword='.concat(param.keyword) : ''}${not empty param.fromDate ? '&fromDate='.concat(param.fromDate) : ''}${not empty param.toDate ? '&toDate='.concat(param.toDate) : ''}${not empty param.sort ? '&sort='.concat(param.sort) : ''}">
+                                                                                    ${i}
+                                                                                </a>
+                                                                            </c:otherwise>
+                                                                        </c:choose>
+                                                                    </li>
+                                                                </c:forEach>
+                                                                <li class="disabled"><span>...</span></li>
+                                                                <li>
+                                                                    <a href="${pageContext.request.contextPath}/jobsite?page=${totalPages}&pageSize=${pageSize}${not empty param.keyword ? '&keyword='.concat(param.keyword) : ''}${not empty param.fromDate ? '&fromDate='.concat(param.fromDate) : ''}${not empty param.toDate ? '&toDate='.concat(param.toDate) : ''}${not empty param.sort ? '&sort='.concat(param.sort) : ''}">
+                                                                        ${totalPages}
+                                                                    </a>
+                                                                </li>
+                                                            </c:when>
+                                                            <c:when test="${currentPage >= totalPages - 3}">
+                                                                <li>
+                                                                    <a href="${pageContext.request.contextPath}/jobsite?page=1&pageSize=${pageSize}${not empty param.keyword ? '&keyword='.concat(param.keyword) : ''}${not empty param.fromDate ? '&fromDate='.concat(param.fromDate) : ''}${not empty param.toDate ? '&toDate='.concat(param.toDate) : ''}${not empty param.sort ? '&sort='.concat(param.sort) : ''}">
+                                                                        1
+                                                                    </a>
+                                                                </li>
+                                                                <li class="disabled"><span>...</span></li>
+                                                                <c:forEach begin="${totalPages - 4}" end="${totalPages}" var="i">
+                                                                    <li class="${i == currentPage ? 'active' : ''}">
+                                                                        <c:choose>
+                                                                            <c:when test="${i == currentPage}">
+                                                                                <span>${i}</span>
+                                                                            </c:when>
+                                                                            <c:otherwise>
+                                                                                <a href="${pageContext.request.contextPath}/jobsite?page=${i}&pageSize=${pageSize}${not empty param.keyword ? '&keyword='.concat(param.keyword) : ''}${not empty param.fromDate ? '&fromDate='.concat(param.fromDate) : ''}${not empty param.toDate ? '&toDate='.concat(param.toDate) : ''}${not empty param.sort ? '&sort='.concat(param.sort) : ''}">
+                                                                                    ${i}
+                                                                                </a>
+                                                                            </c:otherwise>
+                                                                        </c:choose>
+                                                                    </li>
+                                                                </c:forEach>
+                                                            </c:when>
+                                                            <c:otherwise>
+                                                                <li>
+                                                                    <a href="${pageContext.request.contextPath}/jobsite?page=1&pageSize=${pageSize}${not empty param.keyword ? '&keyword='.concat(param.keyword) : ''}${not empty param.fromDate ? '&fromDate='.concat(param.fromDate) : ''}${not empty param.toDate ? '&toDate='.concat(param.toDate) : ''}${not empty param.sort ? '&sort='.concat(param.sort) : ''}">
+                                                                        1
+                                                                    </a>
+                                                                </li>
+                                                                <li class="disabled"><span>...</span></li>
+                                                                <c:forEach begin="${currentPage - 1}" end="${currentPage + 1}" var="i">
+                                                                    <li class="${i == currentPage ? 'active' : ''}">
+                                                                        <c:choose>
+                                                                            <c:when test="${i == currentPage}">
+                                                                                <span>${i}</span>
+                                                                            </c:when>
+                                                                            <c:otherwise>
+                                                                                <a href="${pageContext.request.contextPath}/jobsite?page=${i}&pageSize=${pageSize}${not empty param.keyword ? '&keyword='.concat(param.keyword) : ''}${not empty param.fromDate ? '&fromDate='.concat(param.fromDate) : ''}${not empty param.toDate ? '&toDate='.concat(param.toDate) : ''}${not empty param.sort ? '&sort='.concat(param.sort) : ''}">
+                                                                                    ${i}
+                                                                                </a>
+                                                                            </c:otherwise>
+                                                                        </c:choose>
+                                                                    </li>
+                                                                </c:forEach>
+                                                                <li class="disabled"><span>...</span></li>
+                                                                <li>
+                                                                    <a href="${pageContext.request.contextPath}/jobsite?page=${totalPages}&pageSize=${pageSize}${not empty param.keyword ? '&keyword='.concat(param.keyword) : ''}${not empty param.fromDate ? '&fromDate='.concat(param.fromDate) : ''}${not empty param.toDate ? '&toDate='.concat(param.toDate) : ''}${not empty param.sort ? '&sort='.concat(param.sort) : ''}">
+                                                                        ${totalPages}
+                                                                    </a>
+                                                                </li>
+                                                            </c:otherwise>
+                                                        </c:choose>
+                                                    </c:otherwise>
+                                                </c:choose>
+
+                                                <li class="${currentPage == totalPages ? 'disabled' : ''}">
+                                                    <c:choose>
+                                                        <c:when test="${currentPage == totalPages}">
+                                                            <span>Next &raquo;</span>
+                                                        </c:when>
+                                                        <c:otherwise>
+                                                            <a href="${pageContext.request.contextPath}/jobsite?page=${currentPage + 1}&pageSize=${pageSize}${not empty param.keyword ? '&keyword='.concat(param.keyword) : ''}${not empty param.fromDate ? '&fromDate='.concat(param.fromDate) : ''}${not empty param.toDate ? '&toDate='.concat(param.toDate) : ''}${not empty param.sort ? '&sort='.concat(param.sort) : ''}">
+                                                                Next &raquo;
+                                                            </a>
+                                                        </c:otherwise>
+                                                    </c:choose>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </c:if>
                                 </div>
                             </div>
                         </div>
@@ -396,11 +542,9 @@
                 </div>
             </div>
 
-            <!-- Footer -->
             <%@ include file="CommonItems/Footer/homepageFooter.jsp" %>
         </div>
 
-        <!-- External JavaScripts -->
         <script src="${pageContext.request.contextPath}/assets1/js/jquery.min.js"></script>
         <script src="${pageContext.request.contextPath}/assets1/vendors/bootstrap/js/popper.min.js"></script>
         <script src="${pageContext.request.contextPath}/assets1/vendors/bootstrap/js/bootstrap.min.js"></script>

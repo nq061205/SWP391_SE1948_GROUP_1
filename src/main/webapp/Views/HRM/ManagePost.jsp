@@ -108,7 +108,6 @@
                     </ul>
                 </div>
 
-                <!-- Success/Error Messages -->
                 <c:if test="${not empty successMessage}">
                     <div class="alert alert-success alert-dismissible fade show" role="alert">
                         <strong>Success!</strong> ${successMessage}
@@ -127,7 +126,6 @@
                     </div>
                 </c:if>
 
-                <!-- Manage Posts Section -->
                 <div class="row">
                     <div class="col-lg-12 m-b30">
                         <div class="widget-box">
@@ -135,7 +133,7 @@
                                 <h4><i class="fa fa-tasks"></i> Manage Posts List</h4>
                             </div>
                             <div class="widget-inner">
-                                <!-- Filter Controls in Single Row -->
+
                                 <div class="row mb-3">
                                     <div class="col-md-4">
                                         <form action="${pageContext.request.contextPath}/managepost" method="get" class="form-inline">
@@ -154,7 +152,7 @@
                                             </c:if>
                                             <div class="form-group mr-2">
                                                 <label for="search" class="mr-2">Search:</label>
-                                                <input type="text" class="form-control" id="search" name="search" 
+                                                <input type="text" class="form-control" id="search" name="search"
                                                        value="${searchKeyword}" placeholder="Search by title, department...">
                                             </div>
                                             <button type="submit" class="btn btn-primary">
@@ -181,12 +179,12 @@
                                             <input type="hidden" name="pageSize" value="${pageSize}">
                                             <div class="form-group mr-2">
                                                 <label for="fromDate" class="mr-2" style="white-space: nowrap;">From:</label>
-                                                <input type="date" class="form-control" id="fromDate" name="fromDate" 
+                                                <input type="date" class="form-control" id="fromDate" name="fromDate"
                                                        value="${fromDate}" style="width: 150px;">
                                             </div>
                                             <div class="form-group mr-2">
                                                 <label for="toDate" class="mr-2" style="white-space: nowrap;">To:</label>
-                                                <input type="date" class="form-control" id="toDate" name="toDate" 
+                                                <input type="date" class="form-control" id="toDate" name="toDate"
                                                        value="${toDate}" style="width: 150px;">
                                             </div>
                                             <button type="submit" class="btn btn-info">
@@ -238,7 +236,7 @@
                                     </div>
                                 </div>
 
-                                <!-- Manage Posts Table -->
+
                                 <div class="table-responsive">
                                     <table class="table table-striped table-bordered">
                                         <thead class="thead-success">
@@ -261,7 +259,7 @@
                                                                 <div class="d-flex flex-column">
                                                                     <strong class="text-primary">${post.title}</strong>
                                                                     <small class="text-muted">
-                                                                        <i class="fa fa-building"></i> 
+                                                                        <i class="fa fa-building"></i>
                                                                         <c:choose>
                                                                             <c:when test="${post.department != null}">
                                                                                 ${post.department.depName}
@@ -272,7 +270,7 @@
                                                                         </c:choose>
                                                                     </small>
                                                                     <small class="text-muted">
-                                                                        <i class="fa fa-calendar"></i> 
+                                                                        <i class="fa fa-calendar"></i>
                                                                         <fmt:formatDate value="${post.createdAt}" pattern="MMM dd, yyyy" />
                                                                     </small>
                                                                 </div>
@@ -294,7 +292,7 @@
                                                                 <c:choose>
                                                                     <c:when test="${post.status == 'Approved'}">
                                                                         <div style="display: flex; justify-content: center; align-items: center; gap: 5px;">
-                                                                            <a href="${pageContext.request.contextPath}/managepost?action=view&postId=${post.postId}" 
+                                                                            <a href="${pageContext.request.contextPath}/managepost?action=view&postId=${post.postId}"
                                                                                class="btn btn-sm btn-info" title="View Details" style="min-width: 70px;">
                                                                                 <i class="fa fa-eye"></i> View
                                                                             </a>
@@ -318,7 +316,7 @@
                                                                     </c:when>
                                                                     <c:when test="${post.status == 'Uploaded'}">
                                                                         <div style="display: flex; justify-content: center; align-items: center; gap: 5px;">
-                                                                            <a href="${pageContext.request.contextPath}/managepost?action=view&postId=${post.postId}" 
+                                                                            <a href="${pageContext.request.contextPath}/managepost?action=view&postId=${post.postId}"
                                                                                class="btn btn-sm btn-info" title="View Details" style="min-width: 70px;">
                                                                                 <i class="fa fa-eye"></i> View
                                                                             </a>
@@ -334,7 +332,7 @@
                                                                     </c:when>
                                                                     <c:when test="${post.status == 'Deleted'}">
                                                                         <div style="display: flex; justify-content: center; align-items: center; gap: 5px;">
-                                                                            <a href="${pageContext.request.contextPath}/managepost?action=view&postId=${post.postId}" 
+                                                                            <a href="${pageContext.request.contextPath}/managepost?action=view&postId=${post.postId}"
                                                                                class="btn btn-sm btn-info" title="View Details" style="min-width: 70px;">
                                                                                 <i class="fa fa-eye"></i> View
                                                                             </a>
@@ -359,7 +357,7 @@
                                     </table>
                                 </div>
 
-                                <!-- Pagination -->
+
                                 <c:if test="${totalPages > 1}">
                                     <div class="row mt-3">
                                         <div class="col-md-12">

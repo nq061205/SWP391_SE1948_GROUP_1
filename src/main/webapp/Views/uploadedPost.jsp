@@ -4,7 +4,6 @@
 <!DOCTYPE html>
 <html lang="en">
     <head>
-        <!-- META ============================================= -->
         <meta charset="utf-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta name="keywords" content="" />
@@ -15,26 +14,19 @@
         <meta property="og:description" content="${post.title}" />
         <meta name="format-detection" content="telephone=no">
 
-        <!-- FAVICONS ICON ============================================= -->
         <link rel="icon" href="${pageContext.request.contextPath}/assets1/images/favicon.ico" type="image/x-icon" />
         <link rel="shortcut icon" type="image/x-icon" href="${pageContext.request.contextPath}/assets1/images/favicon.png" />
 
-        <!-- PAGE TITLE HERE ============================================= -->
         <title>${post.title} - Human Tech</title>
 
-        <!-- MOBILE SPECIFIC ============================================= -->
         <meta name="viewport" content="width=device-width, initial-scale=1">
 
-        <!-- All PLUGINS CSS ============================================= -->
         <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/assets1/css/assets.css">
 
-        <!-- TYPOGRAPHY ============================================= -->
         <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/assets1/css/typography.css">
 
-        <!-- SHORTCODES ============================================= -->
         <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/assets1/css/shortcodes/shortcodes.css">
 
-        <!-- STYLESHEETS ============================================= -->
         <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/assets1/css/style.css">
         <link class="skin" rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/assets1/css/color/color-1.css">
 
@@ -170,11 +162,10 @@
     </head>
     <body id="bg">
         <div class="page-wraper">
-            <!-- Header -->
             <%@ include file="CommonItems/Header/homepageHeader.jsp" %>
 
             <div class="page-content bg-white">
-                <!-- Header Section -->
+
                 <div class="detail-header-section">
                     <div class="container">
                         <h1 class="detail-header-title">Job Details</h1>
@@ -183,10 +174,10 @@
 
                 <div class="container">
                     <div class="job-detail-container">
-                        <!-- Job Header -->
+
                         <div class="job-header">
                             <h1 class="job-title-main">${post.title}</h1>
-                            
+
                             <div class="job-meta-row">
                                 <c:if test="${post.department != null}">
                                     <div class="job-meta-item-detail">
@@ -194,7 +185,7 @@
                                         <span>${post.department.depName}</span>
                                     </div>
                                 </c:if>
-                                
+
                                 <c:if test="${post.approvedAt != null}">
                                     <div class="job-meta-item-detail">
                                         <i class="fa fa-calendar"></i>
@@ -202,7 +193,7 @@
                                     </div>
                                 </c:if>
                             </div>
-                            
+
                             <div class="button-group" style="border: none; margin-top: 20px; padding-top: 0;">
                                 <a href="${pageContext.request.contextPath}/jobsite" class="back-btn">
                                     <i class="fa fa-arrow-left"></i> Back to Jobs
@@ -210,7 +201,7 @@
                             </div>
                         </div>
 
-                        <!-- Job Description -->
+
                         <div>
                             <h3 class="section-title">Job Description</h3>
                             <div class="job-description-section">
@@ -218,9 +209,9 @@
                             </div>
                         </div>
 
-                        <!-- Action Buttons -->
+
                         <div class="button-group">
-                            <a href="${pageContext.request.contextPath}/applyjob?postId=${post.postId}" 
+                            <a href="${pageContext.request.contextPath}/applyjob?postId=${post.postId}"
                                class="apply-btn-large">
                                 Apply Now <i class="fa fa-arrow-right"></i>
                             </a>
@@ -230,10 +221,8 @@
             </div>
         </div>
 
-        <!-- Footer -->
         <%@ include file="CommonItems/Footer/homepageFooter.jsp" %>
 
-        <!-- External JavaScripts -->
         <script src="${pageContext.request.contextPath}/assets1/js/jquery.min.js"></script>
         <script src="${pageContext.request.contextPath}/assets1/vendors/bootstrap/js/popper.min.js"></script>
         <script src="${pageContext.request.contextPath}/assets1/vendors/bootstrap/js/bootstrap.min.js"></script>

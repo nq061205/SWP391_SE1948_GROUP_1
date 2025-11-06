@@ -19,23 +19,21 @@ import jakarta.servlet.http.HttpServletResponse;
 public class HRRecruitmentServlet extends HttpServlet {
 
     private RecruitmentPostDAO recruitmentPostDAO;
-    
-    // Constants
+
+
     private static final int DEFAULT_PAGE_SIZE = 10;
     private static final int DEFAULT_NOTIF_PAGE_SIZE = 5;
     private static final int MIN_PAGE_SIZE = 5;
     private static final int MAX_PAGE_SIZE = 100;
     private static final int MAX_NOTIF_PAGE_SIZE = 50;
-    
+
     @Override
     public void init() throws ServletException {
         super.init();
         recruitmentPostDAO = new RecruitmentPostDAO();
     }
-    
-    /**
-     * Parse and validate page number from request parameter
-     */
+
+
     private int parsePageNumber(String pageStr, int defaultPage) {
         if (pageStr == null || pageStr.trim().isEmpty()) {
             return defaultPage;
@@ -47,10 +45,8 @@ public class HRRecruitmentServlet extends HttpServlet {
             return defaultPage;
         }
     }
-    
-    /**
-     * Parse and validate page size from request parameter
-     */
+
+
     private int parsePageSize(String pageSizeStr, int defaultSize, int minSize, int maxSize) {
         if (pageSizeStr == null || pageSizeStr.trim().isEmpty()) {
             return defaultSize;
@@ -64,62 +60,58 @@ public class HRRecruitmentServlet extends HttpServlet {
             return defaultSize;
         }
     }
-    
-    /**
-     * Filter posts by search keyword
-     */
+
+
     private List<RecruitmentPost> filterBySearch(List<RecruitmentPost> posts, String keyword) {
         if (keyword == null || keyword.trim().isEmpty() || posts == null) {
             return posts;
         }
-        
+
         List<RecruitmentPost> filtered = new ArrayList<>();
         String searchTerm = keyword.trim().toLowerCase();
-        
+
         for (RecruitmentPost post : posts) {
-            boolean matchesTitle = post.getTitle() != null && 
+            boolean matchesTitle = post.getTitle() != null &&
                                   post.getTitle().toLowerCase().contains(searchTerm);
-            boolean matchesDept = post.getDepartment() != null && 
+            boolean matchesDept = post.getDepartment() != null &&
                                  post.getDepartment().getDepName() != null &&
                                  post.getDepartment().getDepName().toLowerCase().contains(searchTerm);
-            
+
             if (matchesTitle || matchesDept) {
                 filtered.add(post);
             }
         }
         return filtered;
     }
-    
-    /**
-     * Filter posts by date range
-     */
-    private List<RecruitmentPost> filterByDateRange(List<RecruitmentPost> posts, 
-                                                    String fromDateStr, 
+
+
+    private List<RecruitmentPost> filterByDateRange(List<RecruitmentPost> posts,
+                                                    String fromDateStr,
                                                     String toDateStr,
                                                     boolean useApprovedDate) {
-        if (fromDateStr == null || fromDateStr.trim().isEmpty() || 
+        if (fromDateStr == null || fromDateStr.trim().isEmpty() ||
             toDateStr == null || toDateStr.trim().isEmpty() || posts == null) {
             return posts;
         }
-        
+
         List<RecruitmentPost> filtered = new ArrayList<>();
-        
+
         try {
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
             Date startDate = sdf.parse(fromDateStr.trim());
             Date endDate = sdf.parse(toDateStr.trim());
-            
-            // Set end date to end of day (23:59:59)
+
+
             Calendar cal = Calendar.getInstance();
             cal.setTime(endDate);
             cal.set(Calendar.HOUR_OF_DAY, 23);
             cal.set(Calendar.MINUTE, 59);
             cal.set(Calendar.SECOND, 59);
             endDate = cal.getTime();
-            
+
             for (RecruitmentPost post : posts) {
                 Timestamp timestamp = useApprovedDate ? post.getApprovedAt() : post.getCreatedAt();
-                
+
                 if (timestamp != null) {
                     Date postDate = new Date(timestamp.getTime());
                     if (!postDate.before(startDate) && !postDate.after(endDate)) {
@@ -129,23 +121,21 @@ public class HRRecruitmentServlet extends HttpServlet {
             }
         } catch (ParseException e) {
             System.err.println("Error parsing date: " + e.getMessage());
-            return posts; // Return original list if parse fails
+            return posts;
         }
-        
+
         return filtered;
     }
-    
-    /**
-     * Filter posts by status
-     */
+
+
     private List<RecruitmentPost> filterByStatus(List<RecruitmentPost> posts, String status) {
         if (status == null || status.trim().isEmpty() || posts == null) {
             return posts;
         }
-        
+
         List<RecruitmentPost> filtered = new ArrayList<>();
         String statusFilter = status.trim();
-        
+
         for (RecruitmentPost post : posts) {
             if (statusFilter.equalsIgnoreCase(post.getStatus())) {
                 filtered.add(post);
@@ -153,18 +143,16 @@ public class HRRecruitmentServlet extends HttpServlet {
         }
         return filtered;
     }
-    
-    /**
-     * Filter posts by department
-     */
+
+
     private List<RecruitmentPost> filterByDepartment(List<RecruitmentPost> posts, String depId) {
         if (depId == null || depId.trim().isEmpty() || posts == null) {
             return posts;
         }
-        
+
         List<RecruitmentPost> filtered = new ArrayList<>();
         String departmentId = depId.trim();
-        
+
         for (RecruitmentPost post : posts) {
             if (post.getDepartment() != null && departmentId.equals(post.getDepartment().getDepId())) {
                 filtered.add(post);
@@ -176,12 +164,12 @@ public class HRRecruitmentServlet extends HttpServlet {
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
-        
+
         String action = request.getParameter("action");
         if (action == null) {
             action = "list";
         }
-        
+
         switch (action) {
             case "list":
                 showApprovedPostsList(request, response);
@@ -206,21 +194,21 @@ public class HRRecruitmentServlet extends HttpServlet {
                 break;
         }
     }
-    
+
     private void showApprovedPostsList(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         try {
-            // Handle session messages
+
             transferSessionMessage(request, "successMessage");
             transferSessionMessage(request, "errorMessage");
-            
-            // Parse pagination parameters
+
+
             int currentPage = parsePageNumber(request.getParameter("page"), 1);
             int pageSize = parsePageSize(request.getParameter("pageSize"), DEFAULT_PAGE_SIZE, MIN_PAGE_SIZE, MAX_PAGE_SIZE);
             int notifCurrentPage = parsePageNumber(request.getParameter("notifPage"), 1);
             int notifPageSize = parsePageSize(request.getParameter("notifPageSize"), DEFAULT_NOTIF_PAGE_SIZE, MIN_PAGE_SIZE, MAX_NOTIF_PAGE_SIZE);
-            
-            // Get filter parameters
+
+
             String searchKeyword = request.getParameter("search");
             String notifSearchKeyword = request.getParameter("notifSearch");
             String notifStatusFilter = request.getParameter("notifStatus");
@@ -230,72 +218,72 @@ public class HRRecruitmentServlet extends HttpServlet {
             String toDate = request.getParameter("toDate");
             String notifFromDate = request.getParameter("notifFromDate");
             String notifToDate = request.getParameter("notifToDate");
-            
-            // Fetch data from DAO
+
+
             List<RecruitmentPost> allApprovedPosts = recruitmentPostDAO.getApprovedPosts();
             List<RecruitmentPost> allPendingAndRejectedPosts = recruitmentPostDAO.getPendingAndRejectedPosts();
             List<Department> departments = recruitmentPostDAO.getDepartments();
-            
-            // Apply filters for approved posts
+
+
             List<RecruitmentPost> filteredApprovedPosts = filterBySearch(allApprovedPosts, searchKeyword);
             filteredApprovedPosts = filterByDepartment(filteredApprovedPosts, depIdFilter);
             filteredApprovedPosts = filterByDateRange(filteredApprovedPosts, fromDate, toDate, true);
-            
-            // Apply filters for notification posts
+
+
             List<RecruitmentPost> filteredPendingAndRejected = filterBySearch(allPendingAndRejectedPosts, notifSearchKeyword);
             filteredPendingAndRejected = filterByDepartment(filteredPendingAndRejected, notifDepIdFilter);
             filteredPendingAndRejected = filterByStatus(filteredPendingAndRejected, notifStatusFilter);
             filteredPendingAndRejected = filterByDateRange(filteredPendingAndRejected, notifFromDate, notifToDate, false);
-            
-            // Calculate pagination for approved posts
+
+
             int totalPosts = (filteredApprovedPosts != null) ? filteredApprovedPosts.size() : 0;
             int totalPages = Math.max(1, (int) Math.ceil((double) totalPosts / pageSize));
             currentPage = Math.min(currentPage, totalPages);
-            
+
             int startIndex = (currentPage - 1) * pageSize;
             int endIndex = Math.min(startIndex + pageSize, totalPosts);
-            List<RecruitmentPost> approvedPosts = (filteredApprovedPosts != null && !filteredApprovedPosts.isEmpty()) 
-                ? filteredApprovedPosts.subList(startIndex, endIndex) 
+            List<RecruitmentPost> approvedPosts = (filteredApprovedPosts != null && !filteredApprovedPosts.isEmpty())
+                ? filteredApprovedPosts.subList(startIndex, endIndex)
                 : new ArrayList<>();
-            
-            // Calculate pagination for notification posts
+
+
             int totalNotifPosts = (filteredPendingAndRejected != null) ? filteredPendingAndRejected.size() : 0;
             int totalNotifPages = Math.max(1, (int) Math.ceil((double) totalNotifPosts / notifPageSize));
             notifCurrentPage = Math.min(notifCurrentPage, totalNotifPages);
-            
+
             int notifStartIndex = (notifCurrentPage - 1) * notifPageSize;
             int notifEndIndex = Math.min(notifStartIndex + notifPageSize, totalNotifPosts);
             List<RecruitmentPost> pendingAndRejectedPosts = (filteredPendingAndRejected != null && !filteredPendingAndRejected.isEmpty())
                 ? filteredPendingAndRejected.subList(notifStartIndex, notifEndIndex)
                 : new ArrayList<>();
-            
-            // Set attributes for JSP
+
+
             setListAttributes(request, approvedPosts, pendingAndRejectedPosts, departments);
             setPaginationAttributes(request, currentPage, totalPages, pageSize, totalPosts,
                                    notifCurrentPage, totalNotifPages, notifPageSize, totalNotifPosts);
             setFilterAttributes(request, searchKeyword, notifSearchKeyword, notifStatusFilter,
                               depIdFilter, notifDepIdFilter, fromDate, toDate, notifFromDate, notifToDate);
-            
-            // Calculate display indices to avoid calculation in JSP
+
+
             int notifStartDisplay = totalNotifPosts > 0 ? (notifCurrentPage - 1) * notifPageSize + 1 : 0;
             int notifEndDisplay = (notifCurrentPage - 1) * notifPageSize + pendingAndRejectedPosts.size();
             int approvedStartDisplay = totalPosts > 0 ? (currentPage - 1) * pageSize + 1 : 0;
             int approvedEndDisplay = (currentPage - 1) * pageSize + approvedPosts.size();
-            
+
             request.setAttribute("notifStartDisplay", notifStartDisplay);
             request.setAttribute("notifEndDisplay", notifEndDisplay);
             request.setAttribute("approvedStartDisplay", approvedStartDisplay);
             request.setAttribute("approvedEndDisplay", approvedEndDisplay);
             request.setAttribute("notifStartIndex", (notifCurrentPage - 1) * notifPageSize);
             request.setAttribute("approvedStartIndex", (currentPage - 1) * pageSize);
-            
+
             request.setAttribute("hasApprovedPosts", !approvedPosts.isEmpty());
             request.setAttribute("hasPendingOrRejected", totalNotifPosts > 0);
             request.setAttribute("hasDepartments", departments != null && !departments.isEmpty());
             request.setAttribute("pageTitle", "Approved Posts List");
-            
+
             request.getRequestDispatcher("/Views/HR/recruitmentManagement.jsp").forward(request, response);
-            
+
         } catch (Exception e) {
             System.err.println("Error in showApprovedPostsList: " + e.getMessage());
             e.printStackTrace();
@@ -303,10 +291,8 @@ public class HRRecruitmentServlet extends HttpServlet {
             request.getRequestDispatcher("/Views/HR/recruitmentManagement.jsp").forward(request, response);
         }
     }
-    
-    /**
-     * Transfer session message to request attribute
-     */
+
+
     private void transferSessionMessage(HttpServletRequest request, String attributeName) {
         String message = (String) request.getSession().getAttribute(attributeName);
         if (message != null) {
@@ -314,11 +300,9 @@ public class HRRecruitmentServlet extends HttpServlet {
             request.getSession().removeAttribute(attributeName);
         }
     }
-    
-    /**
-     * Set list data attributes
-     */
-    private void setListAttributes(HttpServletRequest request, 
+
+
+    private void setListAttributes(HttpServletRequest request,
                                    List<RecruitmentPost> approvedPosts,
                                    List<RecruitmentPost> pendingPosts,
                                    List<Department> departments) {
@@ -326,10 +310,8 @@ public class HRRecruitmentServlet extends HttpServlet {
         request.setAttribute("pendingAndRejectedPosts", pendingPosts);
         request.setAttribute("departments", departments);
     }
-    
-    /**
-     * Set pagination attributes
-     */
+
+
     private void setPaginationAttributes(HttpServletRequest request,
                                         int currentPage, int totalPages, int pageSize, int totalPosts,
                                         int notifCurrentPage, int notifTotalPages, int notifPageSize, int totalNotifPosts) {
@@ -342,10 +324,8 @@ public class HRRecruitmentServlet extends HttpServlet {
         request.setAttribute("notifPageSize", notifPageSize);
         request.setAttribute("totalNotifPosts", totalNotifPosts);
     }
-    
-    /**
-     * Set filter attributes
-     */
+
+
     private void setFilterAttributes(HttpServletRequest request,
                                      String searchKeyword, String notifSearchKeyword, String notifStatusFilter,
                                      String depIdFilter, String notifDepIdFilter,
@@ -359,30 +339,28 @@ public class HRRecruitmentServlet extends HttpServlet {
         request.setAttribute("toDate", toDate != null ? toDate : "");
         request.setAttribute("notifFromDate", notifFromDate != null ? notifFromDate : "");
         request.setAttribute("notifToDate", notifToDate != null ? notifToDate : "");
-        
-        // Build URL parameters for JSP reuse - BUSINESS LOGIC should be in Servlet
+
+
         String contextPath = request.getContextPath();
         request.setAttribute("baseUrl", contextPath + "/hrrecruitment?action=list");
         request.setAttribute("notifParams", buildNotifParams(notifSearchKeyword, notifStatusFilter, notifDepIdFilter, notifFromDate, notifToDate, request.getAttribute("notifPageSize")));
         request.setAttribute("approvedParams", buildApprovedParams(searchKeyword, depIdFilter, fromDate, toDate, request.getAttribute("pageSize"), request.getAttribute("currentPage")));
         request.setAttribute("approvedPostParams", buildApprovedPostParams(searchKeyword, depIdFilter, fromDate, toDate, request.getAttribute("pageSize")));
         request.setAttribute("notifPostParams", buildNotifPostParams(notifSearchKeyword, notifDepIdFilter, request.getAttribute("notifPageSize"), request.getAttribute("notifCurrentPage")));
-        
-        // Build "Clear" button URLs - Remove specific filter while keeping others
+
+
         request.setAttribute("notifSearchClearUrl", contextPath + "/hrrecruitment?action=list&" + buildNotifParams("", notifStatusFilter, notifDepIdFilter, notifFromDate, notifToDate, request.getAttribute("notifPageSize")) + buildApprovedParams(searchKeyword, depIdFilter, fromDate, toDate, request.getAttribute("pageSize"), request.getAttribute("currentPage")));
         request.setAttribute("notifDateClearUrl", contextPath + "/hrrecruitment?action=list&notifPageSize=" + request.getAttribute("notifPageSize") + (notifSearchKeyword != null && !notifSearchKeyword.isEmpty() ? "&notifSearch=" + notifSearchKeyword : "") + (notifStatusFilter != null && !notifStatusFilter.isEmpty() ? "&notifStatus=" + notifStatusFilter : "") + (notifDepIdFilter != null && !notifDepIdFilter.isEmpty() ? "&notifDepId=" + notifDepIdFilter : "") + buildApprovedParams(searchKeyword, depIdFilter, fromDate, toDate, request.getAttribute("pageSize"), request.getAttribute("currentPage")));
         request.setAttribute("approvedSearchClearUrl", contextPath + "/hrrecruitment?action=list&pageSize=" + request.getAttribute("pageSize") + (depIdFilter != null && !depIdFilter.isEmpty() ? "&depId=" + depIdFilter : "") + buildNotifPostParams(notifSearchKeyword, notifDepIdFilter, request.getAttribute("notifPageSize"), request.getAttribute("notifCurrentPage")) + (fromDate != null && !fromDate.isEmpty() ? "&fromDate=" + fromDate : "") + (toDate != null && !toDate.isEmpty() ? "&toDate=" + toDate : ""));
         request.setAttribute("approvedDateClearUrl", contextPath + "/hrrecruitment?action=list&pageSize=" + request.getAttribute("pageSize") + (searchKeyword != null && !searchKeyword.isEmpty() ? "&search=" + searchKeyword : "") + (depIdFilter != null && !depIdFilter.isEmpty() ? "&depId=" + depIdFilter : "") + buildNotifPostParams(notifSearchKeyword, notifDepIdFilter, request.getAttribute("notifPageSize"), request.getAttribute("notifCurrentPage")));
     }
-    
-    /**
-     * Build notification table URL parameters
-     */
+
+
     private String buildNotifParams(String notifSearchKeyword, String notifStatusFilter, String notifDepIdFilter,
                                     String notifFromDate, String notifToDate, Object notifPageSize) {
         StringBuilder params = new StringBuilder();
         params.append("notifPageSize=").append(notifPageSize);
-        
+
         if (notifSearchKeyword != null && !notifSearchKeyword.isEmpty()) {
             params.append("&notifSearch=").append(notifSearchKeyword);
         }
@@ -398,17 +376,15 @@ public class HRRecruitmentServlet extends HttpServlet {
         if (notifToDate != null && !notifToDate.isEmpty()) {
             params.append("&notifToDate=").append(notifToDate);
         }
-        
+
         return params.toString();
     }
-    
-    /**
-     * Build approved posts table URL parameters (for notification table links)
-     */
-    private String buildApprovedParams(String searchKeyword, String depIdFilter, String fromDate, String toDate, 
+
+
+    private String buildApprovedParams(String searchKeyword, String depIdFilter, String fromDate, String toDate,
                                        Object pageSize, Object currentPage) {
         StringBuilder params = new StringBuilder();
-        
+
         if (searchKeyword != null && !searchKeyword.isEmpty()) {
             params.append("&search=").append(searchKeyword);
         }
@@ -427,16 +403,14 @@ public class HRRecruitmentServlet extends HttpServlet {
         if (toDate != null && !toDate.isEmpty()) {
             params.append("&toDate=").append(toDate);
         }
-        
+
         return params.toString();
     }
-    
-    /**
-     * Build approved posts pagination parameters
-     */
+
+
     private String buildApprovedPostParams(String searchKeyword, String depIdFilter, String fromDate, String toDate, Object pageSize) {
         StringBuilder params = new StringBuilder();
-        
+
         if (pageSize != null) {
             params.append("pageSize=").append(pageSize);
         }
@@ -452,16 +426,14 @@ public class HRRecruitmentServlet extends HttpServlet {
         if (toDate != null && !toDate.isEmpty()) {
             params.append("&toDate=").append(toDate);
         }
-        
+
         return params.toString();
     }
-    
-    /**
-     * Build notification posts parameters (for approved table links)
-     */
+
+
     private String buildNotifPostParams(String notifSearchKeyword, String notifDepIdFilter, Object notifPageSize, Object notifCurrentPage) {
         StringBuilder params = new StringBuilder();
-        
+
         if (notifSearchKeyword != null && !notifSearchKeyword.isEmpty()) {
             params.append("&notifSearch=").append(notifSearchKeyword);
         }
@@ -474,10 +446,10 @@ public class HRRecruitmentServlet extends HttpServlet {
         if (notifCurrentPage != null) {
             params.append("&notifPage=").append(notifCurrentPage);
         }
-        
+
         return params.toString();
     }
-    
+
     private void viewPostDetail(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         try {
@@ -485,7 +457,7 @@ public class HRRecruitmentServlet extends HttpServlet {
             if (postIdStr != null && !postIdStr.trim().isEmpty()) {
                 int postId = Integer.parseInt(postIdStr.trim());
                 RecruitmentPost post = recruitmentPostDAO.getPostById(postId);
-                
+
                 if (post != null) {
                     boolean hasPost = true;
                     boolean hasContent = (post.getContent() != null && !post.getContent().trim().isEmpty());
@@ -495,7 +467,7 @@ public class HRRecruitmentServlet extends HttpServlet {
                     boolean hasCreatedAt = (post.getCreatedAt() != null);
                     boolean hasApprovedAt = (post.getApprovedAt() != null);
                     boolean hasUpdatedAt = (post.getUpdatedAt() != null);
-                    
+
                     request.setAttribute("post", post);
                     request.setAttribute("hasPost", hasPost);
                     request.setAttribute("hasContent", hasContent);
@@ -516,7 +488,7 @@ public class HRRecruitmentServlet extends HttpServlet {
                 request.setAttribute("errorMessage", "Invalid post ID.");
                 showApprovedPostsList(request, response);
             }
-            
+
         } catch (NumberFormatException e) {
             System.err.println("Invalid post ID format: " + e.getMessage());
             request.setAttribute("errorMessage", "Invalid post ID format.");
@@ -528,7 +500,7 @@ public class HRRecruitmentServlet extends HttpServlet {
             showApprovedPostsList(request, response);
         }
     }
-    
+
     private void createPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         try {
@@ -536,38 +508,38 @@ public class HRRecruitmentServlet extends HttpServlet {
             String content = request.getParameter("content");
             String depId = request.getParameter("depId");
             StringBuilder validationErrors = new StringBuilder();
-            
+
             if (title == null || title.trim().isEmpty()) {
                 validationErrors.append("Title is required. ");
             } else if (title.trim().length() > 255) {
                 validationErrors.append("Title must not exceed 255 characters. ");
             }
-            
+
             if (content == null || content.trim().isEmpty()) {
                 validationErrors.append("Job description is required. ");
             }
-            
+
             if (depId == null || depId.trim().isEmpty() || depId.equals("")) {
                 validationErrors.append("Please select a department. ");
             }
-            
+
             if (validationErrors.length() > 0) {
                 request.getSession().setAttribute("errorMessage", validationErrors.toString().trim());
                 response.sendRedirect(request.getContextPath() + "/hrrecruitment");
                 return;
             }
-            
+
             int createdBy = 1;
             boolean success = recruitmentPostDAO.createPost(title.trim(), content.trim(), depId.trim(), createdBy);
-            
+
             if (success) {
                 request.getSession().setAttribute("successMessage", "Post created successfully! Status is now 'New'.");
             } else {
                 request.getSession().setAttribute("errorMessage", "Failed to create post. Please try again.");
             }
-            
+
             response.sendRedirect(request.getContextPath() + "/hrrecruitment");
-            
+
         } catch (Exception e) {
             System.err.println("Error in createPost: " + e.getMessage());
             e.printStackTrace();
@@ -575,7 +547,7 @@ public class HRRecruitmentServlet extends HttpServlet {
             response.sendRedirect(request.getContextPath() + "/hrrecruitment");
         }
     }
-    
+
     private void editPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         try {
@@ -583,19 +555,19 @@ public class HRRecruitmentServlet extends HttpServlet {
             if (postIdStr != null && !postIdStr.trim().isEmpty()) {
                 int postId = Integer.parseInt(postIdStr.trim());
                 RecruitmentPost post = recruitmentPostDAO.getPostById(postId);
-                
+
                 if (post != null && ("Rejected".equals(post.getStatus()) || "New".equals(post.getStatus()))) {
                     List<Department> departments = recruitmentPostDAO.getDepartments();
                     List<RecruitmentPost> approvedPosts = recruitmentPostDAO.getApprovedPosts();
                     List<RecruitmentPost> pendingAndRejectedPosts = recruitmentPostDAO.getPendingAndRejectedPosts();
-                    
+
                     int totalPosts = (approvedPosts != null) ? approvedPosts.size() : 0;
                     int totalNotifPosts = (pendingAndRejectedPosts != null) ? pendingAndRejectedPosts.size() : 0;
                     boolean hasApprovedPosts = (approvedPosts != null && !approvedPosts.isEmpty());
                     boolean hasPendingOrRejected = (pendingAndRejectedPosts != null && !pendingAndRejectedPosts.isEmpty());
                     boolean hasDepartments = (departments != null && !departments.isEmpty());
-                    
-                    // Set pagination defaults to prevent JSP errors
+
+
                     request.setAttribute("editPost", post);
                     request.setAttribute("departments", departments);
                     request.setAttribute("approvedPosts", approvedPosts != null ? approvedPosts : new java.util.ArrayList<>());
@@ -628,7 +600,7 @@ public class HRRecruitmentServlet extends HttpServlet {
                 request.getSession().setAttribute("errorMessage", "Invalid post ID.");
                 response.sendRedirect(request.getContextPath() + "/hrrecruitment");
             }
-            
+
         } catch (NumberFormatException e) {
             System.err.println("Invalid post ID format: " + e.getMessage());
             request.getSession().setAttribute("errorMessage", "Invalid post ID format.");
@@ -640,7 +612,7 @@ public class HRRecruitmentServlet extends HttpServlet {
             response.sendRedirect(request.getContextPath() + "/hrrecruitment");
         }
     }
-    
+
     private void updatePost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         try {
@@ -649,42 +621,42 @@ public class HRRecruitmentServlet extends HttpServlet {
             String content = request.getParameter("content");
             String depId = request.getParameter("depId");
             StringBuilder validationErrors = new StringBuilder();
-            
+
             if (postIdStr == null || postIdStr.trim().isEmpty()) {
                 validationErrors.append("Post ID is required. ");
             }
-            
+
             if (title == null || title.trim().isEmpty()) {
                 validationErrors.append("Title is required. ");
             } else if (title.trim().length() > 255) {
                 validationErrors.append("Title must not exceed 255 characters. ");
             }
-            
+
             if (content == null || content.trim().isEmpty()) {
                 validationErrors.append("Job description is required. ");
             }
-            
+
             if (depId == null || depId.trim().isEmpty() || depId.equals("")) {
                 validationErrors.append("Please select a department. ");
             }
-            
+
             if (validationErrors.length() > 0) {
                 request.getSession().setAttribute("errorMessage", validationErrors.toString().trim());
                 response.sendRedirect(request.getContextPath() + "/hrrecruitment");
                 return;
             }
-            
+
             int postId = Integer.parseInt(postIdStr.trim());
             boolean success = recruitmentPostDAO.updatePost(postId, title.trim(), content.trim(), depId.trim());
-            
+
             if (success) {
                 request.getSession().setAttribute("successMessage", "Post updated successfully! Status is now 'New'.");
             } else {
                 request.getSession().setAttribute("errorMessage", "Failed to update post. Please ensure the post status is 'New' or 'Rejected'.");
             }
-            
+
             response.sendRedirect(request.getContextPath() + "/hrrecruitment");
-            
+
         } catch (NumberFormatException e) {
             System.err.println("Invalid post ID format: " + e.getMessage());
             request.getSession().setAttribute("errorMessage", "Invalid post ID format.");
@@ -701,24 +673,24 @@ public class HRRecruitmentServlet extends HttpServlet {
             throws ServletException, IOException {
         try {
             String postIdStr = request.getParameter("postId");
-            
+
             if (postIdStr == null || postIdStr.trim().isEmpty()) {
                 request.getSession().setAttribute("errorMessage", "Post ID is required.");
                 response.sendRedirect(request.getContextPath() + "/hrrecruitment");
                 return;
             }
-            
+
             int postId = Integer.parseInt(postIdStr.trim());
             boolean success = recruitmentPostDAO.sendPost(postId);
-            
+
             if (success) {
                 request.getSession().setAttribute("successMessage", "Post sent successfully! Status changed to 'Waiting' for approval.");
             } else {
                 request.getSession().setAttribute("errorMessage", "Failed to send post. Please ensure the post status is 'New'.");
             }
-            
+
             response.sendRedirect(request.getContextPath() + "/hrrecruitment");
-            
+
         } catch (NumberFormatException e) {
             System.err.println("Invalid post ID format: " + e.getMessage());
             request.getSession().setAttribute("errorMessage", "Invalid post ID format.");

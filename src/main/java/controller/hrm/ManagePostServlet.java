@@ -19,7 +19,7 @@ import jakarta.servlet.http.HttpServletResponse;
 public class ManagePostServlet extends HttpServlet {
 
     private RecruitmentPostDAO recruitmentPostDAO;
-    
+
     @Override
     public void init() throws ServletException {
         super.init();
@@ -29,12 +29,12 @@ public class ManagePostServlet extends HttpServlet {
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
-        
+
         String action = request.getParameter("action");
         if (action == null) {
             action = "list";
         }
-        
+
         switch (action) {
             case "list":
                 showManagePostList(request, response);
@@ -56,31 +56,31 @@ public class ManagePostServlet extends HttpServlet {
                 break;
         }
     }
-    
+
     private void showManagePostList(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         try {
-            // Handle session messages
+
             String successMessage = (String) request.getSession().getAttribute("successMessage");
             String errorMessage = (String) request.getSession().getAttribute("errorMessage");
-            
+
             if (successMessage != null) {
                 request.setAttribute("successMessage", successMessage);
                 request.getSession().removeAttribute("successMessage");
             }
-            
+
             if (errorMessage != null) {
                 request.setAttribute("errorMessage", errorMessage);
                 request.getSession().removeAttribute("errorMessage");
             }
-            
-            // Parse pagination parameters
+
+
             String pageStr = request.getParameter("page");
             String pageSizeStr = request.getParameter("pageSize");
-            
+
             int currentPage = 1;
             int pageSize = 10;
-            
+
             if (pageStr != null && !pageStr.trim().isEmpty()) {
                 try {
                     currentPage = Integer.parseInt(pageStr);
@@ -89,7 +89,7 @@ public class ManagePostServlet extends HttpServlet {
                     currentPage = 1;
                 }
             }
-            
+
             if (pageSizeStr != null && !pageSizeStr.trim().isEmpty()) {
                 try {
                     pageSize = Integer.parseInt(pageSizeStr);
@@ -99,33 +99,33 @@ public class ManagePostServlet extends HttpServlet {
                     pageSize = 10;
                 }
             }
-            
-            // Get filter parameters
+
+
             String searchKeyword = request.getParameter("search");
-            String statusFilter = request.getParameter("status"); // All, Approved, Uploaded, Deleted
+            String statusFilter = request.getParameter("status");
             String depIdFilter = request.getParameter("depId");
             String fromDate = request.getParameter("fromDate");
             String toDate = request.getParameter("toDate");
-            
-            // Fetch all approved, uploaded and deleted posts
+
+
             List<RecruitmentPost> allPosts = recruitmentPostDAO.getApprovedUploadedDeletedPosts();
             List<Department> departments = recruitmentPostDAO.getDepartments();
-            
-            // Apply filters
+
+
             List<RecruitmentPost> filteredPosts = filterPosts(allPosts, searchKeyword, statusFilter, depIdFilter, fromDate, toDate);
-            
-            // Calculate pagination
+
+
             int totalPosts = filteredPosts != null ? filteredPosts.size() : 0;
             int totalPages = Math.max(1, (int) Math.ceil((double) totalPosts / pageSize));
             if (currentPage > totalPages) currentPage = totalPages;
-            
+
             int startIndex = (currentPage - 1) * pageSize;
             int endIndex = Math.min(startIndex + pageSize, totalPosts);
             List<RecruitmentPost> posts = (filteredPosts != null && !filteredPosts.isEmpty())
                 ? filteredPosts.subList(startIndex, endIndex)
                 : new ArrayList<>();
-            
-            // Count posts by status for badges
+
+
             int approvedCount = 0;
             int uploadedCount = 0;
             int deletedCount = 0;
@@ -140,8 +140,8 @@ public class ManagePostServlet extends HttpServlet {
                     }
                 }
             }
-            
-            // Set attributes for JSP
+
+
             request.setAttribute("posts", posts);
             request.setAttribute("departments", departments);
             request.setAttribute("totalPosts", totalPosts);
@@ -158,11 +158,11 @@ public class ManagePostServlet extends HttpServlet {
             request.setAttribute("deletedCount", deletedCount);
             request.setAttribute("hasPosts", totalPosts > 0);
             request.setAttribute("hasDepartments", departments != null && !departments.isEmpty());
-            
-            // Build URL helpers
+
+
             String baseUrl = request.getContextPath() + "/managepost?pageSize=" + pageSize;
-            
-            // Search Clear URL
+
+
             StringBuilder searchClearUrl = new StringBuilder(baseUrl);
             if (statusFilter != null && !statusFilter.isEmpty()) {
                 searchClearUrl.append("&status=").append(statusFilter);
@@ -177,8 +177,8 @@ public class ManagePostServlet extends HttpServlet {
                 searchClearUrl.append("&toDate=").append(toDate);
             }
             request.setAttribute("searchClearUrl", searchClearUrl.toString());
-            
-            // Date Clear URL
+
+
             StringBuilder dateClearUrl = new StringBuilder(baseUrl);
             if (searchKeyword != null && !searchKeyword.isEmpty()) {
                 dateClearUrl.append("&search=").append(searchKeyword);
@@ -190,8 +190,8 @@ public class ManagePostServlet extends HttpServlet {
                 dateClearUrl.append("&depId=").append(depIdFilter);
             }
             request.setAttribute("dateClearUrl", dateClearUrl.toString());
-            
-            // Pagination Base URL
+
+
             StringBuilder paginationUrl = new StringBuilder(baseUrl);
             if (searchKeyword != null && !searchKeyword.isEmpty()) {
                 paginationUrl.append("&search=").append(searchKeyword);
@@ -209,12 +209,12 @@ public class ManagePostServlet extends HttpServlet {
                 paginationUrl.append("&toDate=").append(toDate);
             }
             request.setAttribute("paginationBaseUrl", paginationUrl.toString());
-            
+
             request.setAttribute("pageName", "Manage Posts");
             request.setAttribute("pageTitle", "Manage Recruitment Posts");
-            
+
             request.getRequestDispatcher("/Views/HRM/ManagePost.jsp").forward(request, response);
-            
+
         } catch (Exception e) {
             System.err.println("Error in showManagePostList: " + e.getMessage());
             e.printStackTrace();
@@ -222,63 +222,61 @@ public class ManagePostServlet extends HttpServlet {
             request.getRequestDispatcher("/Views/HRM/ManagePost.jsp").forward(request, response);
         }
     }
-    
-    /**
-     * Filter posts by multiple criteria
-     */
-    private List<RecruitmentPost> filterPosts(List<RecruitmentPost> posts, String searchKeyword, 
+
+
+    private List<RecruitmentPost> filterPosts(List<RecruitmentPost> posts, String searchKeyword,
                                               String statusFilter, String depIdFilter, String fromDate, String toDate) {
         if (posts == null) {
             return new ArrayList<>();
         }
-        
+
         List<RecruitmentPost> filtered = new ArrayList<>(posts);
-        
-        // Filter by search keyword
+
+
         if (searchKeyword != null && !searchKeyword.trim().isEmpty()) {
             String keyword = searchKeyword.trim().toLowerCase();
             filtered = filtered.stream()
-                .filter(post -> 
+                .filter(post ->
                     post.getTitle().toLowerCase().contains(keyword) ||
                     (post.getDepartment() != null && post.getDepartment().getDepName().toLowerCase().contains(keyword))
                 )
                 .collect(java.util.stream.Collectors.toList());
         }
-        
-        // Filter by status
+
+
         if (statusFilter != null && !statusFilter.trim().isEmpty() && !"All".equalsIgnoreCase(statusFilter)) {
             String status = statusFilter.trim();
             filtered = filtered.stream()
                 .filter(post -> status.equalsIgnoreCase(post.getStatus()))
                 .collect(java.util.stream.Collectors.toList());
         }
-        
-        // Filter by department
+
+
         if (depIdFilter != null && !depIdFilter.trim().isEmpty()) {
             String depId = depIdFilter.trim();
             filtered = filtered.stream()
                 .filter(post -> post.getDepartment() != null && depId.equals(post.getDepartment().getDepId()))
                 .collect(java.util.stream.Collectors.toList());
         }
-        
-        // Filter by date range (approved_at for approved posts)
+
+
         if (fromDate != null && !fromDate.trim().isEmpty() && toDate != null && !toDate.trim().isEmpty()) {
             try {
                 SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
                 Date startDate = sdf.parse(fromDate.trim());
                 Date endDate = sdf.parse(toDate.trim());
-                
-                // Set end date to end of day
+
+
                 Calendar cal = Calendar.getInstance();
                 cal.setTime(endDate);
                 cal.set(Calendar.HOUR_OF_DAY, 23);
                 cal.set(Calendar.MINUTE, 59);
                 cal.set(Calendar.SECOND, 59);
                 endDate = cal.getTime();
-                
+
                 final Date finalStartDate = startDate;
                 final Date finalEndDate = endDate;
-                
+
                 filtered = filtered.stream()
                     .filter(post -> {
                         Timestamp timestamp = post.getApprovedAt();
@@ -291,10 +289,10 @@ public class ManagePostServlet extends HttpServlet {
                 System.err.println("Error parsing date: " + e.getMessage());
             }
         }
-        
+
         return filtered;
     }
-    
+
     private void viewPostDetail(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         try {
@@ -302,7 +300,7 @@ public class ManagePostServlet extends HttpServlet {
             if (postIdStr != null && !postIdStr.trim().isEmpty()) {
                 int postId = Integer.parseInt(postIdStr.trim());
                 RecruitmentPost post = recruitmentPostDAO.getPostById(postId);
-                
+
                 if (post != null) {
                     boolean hasPost = true;
                     boolean hasContent = (post.getContent() != null && !post.getContent().trim().isEmpty());
@@ -315,7 +313,7 @@ public class ManagePostServlet extends HttpServlet {
                     boolean isApproved = "Approved".equals(post.getStatus());
                     boolean isUploaded = "Uploaded".equals(post.getStatus());
                     boolean isDeleted = "Deleted".equals(post.getStatus());
-                    
+
                     request.setAttribute("post", post);
                     request.setAttribute("hasPost", hasPost);
                     request.setAttribute("hasContent", hasContent);
@@ -328,7 +326,7 @@ public class ManagePostServlet extends HttpServlet {
                     request.setAttribute("isApproved", isApproved);
                     request.setAttribute("isUploaded", isUploaded);
                     request.setAttribute("isDeleted", isDeleted);
-                    
+
                     request.getRequestDispatcher("/Views/HRM/PostReviewDetail.jsp").forward(request, response);
                 } else {
                     request.getSession().setAttribute("errorMessage", "Post not found.");
@@ -338,7 +336,7 @@ public class ManagePostServlet extends HttpServlet {
                 request.getSession().setAttribute("errorMessage", "Invalid post ID.");
                 response.sendRedirect(request.getContextPath() + "/managepost");
             }
-            
+
         } catch (NumberFormatException e) {
             System.err.println("Invalid post ID format: " + e.getMessage());
             request.getSession().setAttribute("errorMessage", "Invalid post ID format.");
@@ -350,48 +348,48 @@ public class ManagePostServlet extends HttpServlet {
             response.sendRedirect(request.getContextPath() + "/managepost");
         }
     }
-    
+
     private void uploadPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         try {
             String postIdStr = request.getParameter("postId");
             StringBuilder validationErrors = new StringBuilder();
-            
+
             if (postIdStr == null || postIdStr.trim().isEmpty()) {
                 validationErrors.append("Post ID is required. ");
             }
-            
+
             if (validationErrors.length() > 0) {
                 request.getSession().setAttribute("errorMessage", validationErrors.toString().trim());
                 response.sendRedirect(request.getContextPath() + "/managepost");
                 return;
             }
-            
+
             int postId = Integer.parseInt(postIdStr.trim());
             RecruitmentPost post = recruitmentPostDAO.getPostById(postId);
-            
+
             if (post == null) {
                 request.getSession().setAttribute("errorMessage", "Post not found.");
                 response.sendRedirect(request.getContextPath() + "/managepost");
                 return;
             }
-            
+
             if (!"Approved".equals(post.getStatus())) {
                 request.getSession().setAttribute("errorMessage", "Only approved posts can be uploaded.");
                 response.sendRedirect(request.getContextPath() + "/managepost");
                 return;
             }
-            
+
             boolean success = recruitmentPostDAO.uploadPost(postId);
-            
+
             if (success) {
                 request.getSession().setAttribute("successMessage", "Post '" + post.getTitle() + "' uploaded successfully!");
             } else {
                 request.getSession().setAttribute("errorMessage", "Failed to upload post. Please try again.");
             }
-            
+
             response.sendRedirect(request.getContextPath() + "/managepost");
-            
+
         } catch (NumberFormatException e) {
             System.err.println("Invalid post ID format: " + e.getMessage());
             request.getSession().setAttribute("errorMessage", "Invalid post ID format.");
@@ -403,48 +401,48 @@ public class ManagePostServlet extends HttpServlet {
             response.sendRedirect(request.getContextPath() + "/managepost");
         }
     }
-    
+
     private void deletePost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         try {
             String postIdStr = request.getParameter("postId");
             StringBuilder validationErrors = new StringBuilder();
-            
+
             if (postIdStr == null || postIdStr.trim().isEmpty()) {
                 validationErrors.append("Post ID is required. ");
             }
-            
+
             if (validationErrors.length() > 0) {
                 request.getSession().setAttribute("errorMessage", validationErrors.toString().trim());
                 response.sendRedirect(request.getContextPath() + "/managepost");
                 return;
             }
-            
+
             int postId = Integer.parseInt(postIdStr.trim());
             RecruitmentPost post = recruitmentPostDAO.getPostById(postId);
-            
+
             if (post == null) {
                 request.getSession().setAttribute("errorMessage", "Post not found.");
                 response.sendRedirect(request.getContextPath() + "/managepost");
                 return;
             }
-            
+
             if (!"Approved".equals(post.getStatus())) {
                 request.getSession().setAttribute("errorMessage", "Only approved posts can be deleted.");
                 response.sendRedirect(request.getContextPath() + "/managepost");
                 return;
             }
-            
+
             boolean success = recruitmentPostDAO.deletePost(postId);
-            
+
             if (success) {
                 request.getSession().setAttribute("successMessage", "Post '" + post.getTitle() + "' deleted successfully.");
             } else {
                 request.getSession().setAttribute("errorMessage", "Failed to delete post. Please try again.");
             }
-            
+
             response.sendRedirect(request.getContextPath() + "/managepost");
-            
+
         } catch (NumberFormatException e) {
             System.err.println("Invalid post ID format: " + e.getMessage());
             request.getSession().setAttribute("errorMessage", "Invalid post ID format.");
@@ -456,48 +454,48 @@ public class ManagePostServlet extends HttpServlet {
             response.sendRedirect(request.getContextPath() + "/managepost");
         }
     }
-    
+
     private void takeDownPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         try {
             String postIdStr = request.getParameter("postId");
             StringBuilder validationErrors = new StringBuilder();
-            
+
             if (postIdStr == null || postIdStr.trim().isEmpty()) {
                 validationErrors.append("Post ID is required. ");
             }
-            
+
             if (validationErrors.length() > 0) {
                 request.getSession().setAttribute("errorMessage", validationErrors.toString().trim());
                 response.sendRedirect(request.getContextPath() + "/managepost");
                 return;
             }
-            
+
             int postId = Integer.parseInt(postIdStr.trim());
             RecruitmentPost post = recruitmentPostDAO.getPostById(postId);
-            
+
             if (post == null) {
                 request.getSession().setAttribute("errorMessage", "Post not found.");
                 response.sendRedirect(request.getContextPath() + "/managepost");
                 return;
             }
-            
+
             if (!"Uploaded".equals(post.getStatus())) {
                 request.getSession().setAttribute("errorMessage", "Only uploaded posts can be taken down.");
                 response.sendRedirect(request.getContextPath() + "/managepost");
                 return;
             }
-            
+
             boolean success = recruitmentPostDAO.takeDownPost(postId);
-            
+
             if (success) {
                 request.getSession().setAttribute("successMessage", "Post '" + post.getTitle() + "' taken down successfully.");
             } else {
                 request.getSession().setAttribute("errorMessage", "Failed to take down post. Please try again.");
             }
-            
+
             response.sendRedirect(request.getContextPath() + "/managepost");
-            
+
         } catch (NumberFormatException e) {
             System.err.println("Invalid post ID format: " + e.getMessage());
             request.getSession().setAttribute("errorMessage", "Invalid post ID format.");

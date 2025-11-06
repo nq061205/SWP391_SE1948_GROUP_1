@@ -280,7 +280,7 @@
                                             <div class="col-lg-12">
                                                 <div class="text-center">
                                                     <c:if test="${isPending}">
-                                                        <form action="${pageContext.request.contextPath}/postreview" method="post" style="display:inline;" 
+                                                        <form action="${pageContext.request.contextPath}/postreview" method="post" style="display:inline;"
                                                               onsubmit="return confirm('Are you sure you want to approve this post: ${post.title}?');">
                                                             <input type="hidden" name="action" value="approve">
                                                             <input type="hidden" name="postId" value="${post.postId}">
@@ -288,7 +288,7 @@
                                                                 <i class="fa fa-check"></i> Approve Post
                                                             </button>
                                                         </form>
-                                                        <form action="${pageContext.request.contextPath}/postreview" method="post" style="display:inline;" 
+                                                        <form action="${pageContext.request.contextPath}/postreview" method="post" style="display:inline;"
                                                               onsubmit="return confirm('Are you sure you want to reject this post: ${post.title}?');">
                                                             <input type="hidden" name="action" value="reject">
                                                             <input type="hidden" name="postId" value="${post.postId}">

@@ -104,7 +104,6 @@
                     </ul>
                 </div>
 
-                <!-- Success/Error Messages -->
                 <c:if test="${not empty successMessage}">
                     <div class="alert alert-success alert-dismissible fade show" role="alert">
                         <strong>Success!</strong> ${successMessage}
@@ -123,7 +122,6 @@
                     </div>
                 </c:if>
 
-                <!-- Post Review Section -->
                 <div class="row">
                     <div class="col-lg-12 m-b30">
                         <div class="widget-box">
@@ -131,7 +129,7 @@
                                 <h4><i class="fa fa-list-alt"></i> Post Review List</h4>
                             </div>
                             <div class="widget-inner">
-                                <!-- Filter Controls in Single Row -->
+
                                 <div class="row mb-3">
                                     <div class="col-md-4">
                                         <form action="${pageContext.request.contextPath}/postreview" method="get" class="form-inline">
@@ -150,7 +148,7 @@
                                             </c:if>
                                             <div class="form-group mr-2">
                                                 <label for="search" class="mr-2">Search:</label>
-                                                <input type="text" class="form-control" id="search" name="search" 
+                                                <input type="text" class="form-control" id="search" name="search"
                                                        value="${searchKeyword}" placeholder="Search by title, department...">
                                             </div>
                                             <button type="submit" class="btn btn-primary">
@@ -177,12 +175,12 @@
                                             <input type="hidden" name="pageSize" value="${pageSize}">
                                             <div class="form-group mr-2">
                                                 <label for="fromDate" class="mr-2" style="white-space: nowrap;">From:</label>
-                                                <input type="date" class="form-control" id="fromDate" name="fromDate" 
+                                                <input type="date" class="form-control" id="fromDate" name="fromDate"
                                                        value="${fromDate}" style="width: 150px;">
                                             </div>
                                             <div class="form-group mr-2">
                                                 <label for="toDate" class="mr-2" style="white-space: nowrap;">To:</label>
-                                                <input type="date" class="form-control" id="toDate" name="toDate" 
+                                                <input type="date" class="form-control" id="toDate" name="toDate"
                                                        value="${toDate}" style="width: 150px;">
                                             </div>
                                             <button type="submit" class="btn btn-info">
@@ -233,7 +231,7 @@
                                     </div>
                                 </div>
 
-                                <!-- Post Review Table -->
+
                                 <div class="table-responsive">
                                     <table class="table table-striped table-bordered">
                                         <thead class="thead-warning">
@@ -256,7 +254,7 @@
                                                                 <div class="d-flex flex-column">
                                                                     <strong class="text-primary">${post.title}</strong>
                                                                     <small class="text-muted">
-                                                                        ID: ${post.postId} | 
+                                                                        ID: ${post.postId} |
                                                                         <c:choose>
                                                                             <c:when test="${not empty post.department}">
                                                                                 Department: ${post.department.depName}
@@ -280,7 +278,7 @@
                                                             </td>
                                                             <td class="text-center">
                                                                 <div style="display: flex; justify-content: center; align-items: center; gap: 5px;">
-                                                                    <a href="${pageContext.request.contextPath}/postreview?action=view&postId=${post.postId}" 
+                                                                    <a href="${pageContext.request.contextPath}/postreview?action=view&postId=${post.postId}"
                                                                        class="btn btn-sm btn-info" title="View details"
                                                                        style="min-width: 70px;">
                                                                         <i class="fa fa-eye"></i> View
@@ -322,7 +320,7 @@
                                     </table>
                                 </div>
 
-                                <!-- Pagination -->
+
                                 <c:if test="${totalPages > 1}">
                                     <div class="row mt-3">
                                         <div class="col-md-12">

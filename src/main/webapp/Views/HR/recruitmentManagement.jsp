@@ -25,8 +25,7 @@
         <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/assets2/css/style.css">
         <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/assets2/css/dashboard.css">
         <link class="skin" rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/assets2/css/color/color-1.css">
-        
-        <!-- Summernote CSS - Try CDN if local fails -->
+
         <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/assets2/vendors/summernote/summernote.css">
         <link href="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote-lite.min.css" rel="stylesheet">
     </head>
@@ -43,7 +42,7 @@
                         <li>Recruitment</li>
                         <li>Approved Posts</li>
                     </ul>
-                </div>	
+                </div>
 
                 <c:if test="${not empty successMessage}">
                     <div class="alert alert-success alert-dismissible fade show" role="alert">
@@ -77,7 +76,7 @@
                                             <div class="col-md-6">
                                                 <div class="form-group">
                                                     <label for="title">Title <span class="text-danger">*</span></label>
-                                                    <input type="text" class="form-control" id="title" name="title" 
+                                                    <input type="text" class="form-control" id="title" name="title"
                                                            placeholder="Enter job title" required maxlength="255">
                                                 </div>
                                             </div>
@@ -135,7 +134,7 @@
                                             <div class="col-md-6">
                                                 <div class="form-group">
                                                     <label for="editTitle">Title <span class="text-danger">*</span></label>
-                                                    <input type="text" class="form-control" id="editTitle" name="title" 
+                                                    <input type="text" class="form-control" id="editTitle" name="title"
                                                            value="${editPost.title}" required maxlength="255">
                                                 </div>
                                             </div>
@@ -145,7 +144,7 @@
                                                     <select class="form-control" id="editDepId" name="depId" required>
                                                         <option value="">Select Department</option>
                                                         <c:forEach var="dept" items="${departments}">
-                                                            <option value="${dept.depId}" 
+                                                            <option value="${dept.depId}"
                                                                     ${editPost.department.depId == dept.depId ? 'selected' : ''}>
                                                                 ${dept.depName}
                                                             </option>
@@ -213,7 +212,7 @@
                                                     </c:if>
                                                     <div class="form-group mr-2">
                                                         <label for="notifSearch" class="mr-2">Search:</label>
-                                                        <input type="text" class="form-control" id="notifSearch" name="notifSearch" 
+                                                        <input type="text" class="form-control" id="notifSearch" name="notifSearch"
                                                                value="${notifSearchKeyword}" placeholder="Search by title, department...">
                                                     </div>
                                                     <button type="submit" class="btn btn-primary">
@@ -247,12 +246,12 @@
                                                     <input type="hidden" name="notifPageSize" value="${notifPageSize}">
                                                     <div class="form-group mr-2">
                                                         <label for="notifFromDate" class="mr-2" style="white-space: nowrap;">From:</label>
-                                                        <input type="date" class="form-control" id="notifFromDate" name="notifFromDate" 
+                                                        <input type="date" class="form-control" id="notifFromDate" name="notifFromDate"
                                                                value="${notifFromDate}" style="width: 150px;">
                                                     </div>
                                                     <div class="form-group mr-2">
                                                         <label for="notifToDate" class="mr-2" style="white-space: nowrap;">To:</label>
-                                                        <input type="date" class="form-control" id="notifToDate" name="notifToDate" 
+                                                        <input type="date" class="form-control" id="notifToDate" name="notifToDate"
                                                                value="${notifToDate}" style="width: 150px;">
                                                     </div>
                                                     <button type="submit" class="btn btn-info">
@@ -356,7 +355,7 @@
                                                                         <div style="display: flex; justify-content: center; align-items: center; gap: 5px; flex-wrap: wrap;">
                                                                             <c:choose>
                                                                                 <c:when test="${post.status == 'New'}">
-                                                                                    <a href="${pageContext.request.contextPath}/hrrecruitment?action=edit&postId=${post.postId}" 
+                                                                                    <a href="${pageContext.request.contextPath}/hrrecruitment?action=edit&postId=${post.postId}"
                                                                                        class="btn btn-sm btn-warning" title="Update post"
                                                                                        style="min-width: 80px;">
                                                                                         <i class="fa fa-edit"></i> Update
@@ -372,14 +371,14 @@
                                                                                     </form>
                                                                                 </c:when>
                                                                                 <c:when test="${post.status == 'Waiting'}">
-                                                                                    <a href="${pageContext.request.contextPath}/hrrecruitment?action=view&postId=${post.postId}" 
+                                                                                    <a href="${pageContext.request.contextPath}/hrrecruitment?action=view&postId=${post.postId}"
                                                                                        class="btn btn-sm btn-info" title="View details"
                                                                                        style="min-width: 110px;">
                                                                                         <i class="fa fa-eye"></i> View Detail
                                                                                     </a>
                                                                                 </c:when>
                                                                                 <c:when test="${post.status == 'Rejected'}">
-                                                                                    <a href="${pageContext.request.contextPath}/hrrecruitment?action=edit&postId=${post.postId}" 
+                                                                                    <a href="${pageContext.request.contextPath}/hrrecruitment?action=edit&postId=${post.postId}"
                                                                                        class="btn btn-sm btn-warning" title="Update rejected post"
                                                                                        style="min-width: 80px;">
                                                                                         <i class="fa fa-edit"></i> Update
@@ -403,7 +402,7 @@
                                                 </tbody>
                                             </table>
                                         </div>
-                                        
+
                                         <div class="row mt-3">
                                             <div class="col-md-6">
                                                 <p class="text-muted">
@@ -431,15 +430,15 @@
                                                                 <a class="page-link" href="${baseUrl}&notifPage=${notifCurrentPage - 1}&${notifParams}${approvedParams}">Previous</a>
                                                             </li>
                                                         </c:if>
-                                                        
-                                                        <c:forEach begin="${notifCurrentPage - 2 < 1 ? 1 : notifCurrentPage - 2}" 
-                                                                   end="${notifCurrentPage + 2 > notifTotalPages ? notifTotalPages : notifCurrentPage + 2}" 
+
+                                                        <c:forEach begin="${notifCurrentPage - 2 < 1 ? 1 : notifCurrentPage - 2}"
+                                                                   end="${notifCurrentPage + 2 > notifTotalPages ? notifTotalPages : notifCurrentPage + 2}"
                                                                    var="i">
                                                             <li class="page-item ${i == notifCurrentPage ? 'active' : ''}">
                                                                 <a class="page-link" href="${baseUrl}&notifPage=${i}&${notifParams}${approvedParams}">${i}</a>
                                                             </li>
                                                         </c:forEach>
-                                                        
+
                                                         <c:if test="${notifCurrentPage < notifTotalPages}">
                                                             <li class="page-item">
                                                                 <a class="page-link" href="${baseUrl}&notifPage=${notifCurrentPage + 1}&${notifParams}${approvedParams}">Next</a>
@@ -500,7 +499,7 @@
                                                     </c:if>
                                                     <div class="form-group mr-2">
                                                         <label for="searchInput" class="mr-2">Search:</label>
-                                                        <input type="text" class="form-control" id="searchInput" name="search" 
+                                                        <input type="text" class="form-control" id="searchInput" name="search"
                                                                value="${searchKeyword}" placeholder="Search by title or department...">
                                                     </div>
                                                     <button type="submit" class="btn btn-primary">
@@ -531,12 +530,12 @@
                                                     <input type="hidden" name="pageSize" value="${pageSize}">
                                                     <div class="form-group mr-2">
                                                         <label for="fromDate" class="mr-2" style="white-space: nowrap;">From:</label>
-                                                        <input type="date" class="form-control" id="fromDate" name="fromDate" 
+                                                        <input type="date" class="form-control" id="fromDate" name="fromDate"
                                                                value="${fromDate}" style="width: 150px;">
                                                     </div>
                                                     <div class="form-group mr-2">
                                                         <label for="toDate" class="mr-2" style="white-space: nowrap;">To:</label>
-                                                        <input type="date" class="form-control" id="toDate" name="toDate" 
+                                                        <input type="date" class="form-control" id="toDate" name="toDate"
                                                                value="${toDate}" style="width: 150px;">
                                                     </div>
                                                     <button type="submit" class="btn btn-info">
@@ -659,7 +658,7 @@
                                                                 </c:choose>
                                                             </td>
                                                             <td>
-                                                                <a href="${pageContext.request.contextPath}/hrrecruitment?action=view&postId=${post.postId}" 
+                                                                <a href="${pageContext.request.contextPath}/hrrecruitment?action=view&postId=${post.postId}"
                                                                    class="btn btn-primary btn-sm" title="View Details">
                                                                     <i class="fa fa-eye"></i> View Detail
                                                                 </a>
@@ -669,7 +668,7 @@
                                                 </tbody>
                                             </table>
                                         </div>
-                                        
+
                                         <div class="row mt-3">
                                             <div class="col-md-6">
                                                 <p class="text-muted">
@@ -690,15 +689,15 @@
                                                                 <a class="page-link" href="${baseUrl}&page=${currentPage - 1}&${approvedPostParams}${notifPostParams}">Previous</a>
                                                             </li>
                                                         </c:if>
-                                                        
-                                                        <c:forEach begin="${currentPage - 2 < 1 ? 1 : currentPage - 2}" 
-                                                                   end="${currentPage + 2 > totalPages ? totalPages : currentPage + 2}" 
+
+                                                        <c:forEach begin="${currentPage - 2 < 1 ? 1 : currentPage - 2}"
+                                                                   end="${currentPage + 2 > totalPages ? totalPages : currentPage + 2}"
                                                                    var="i">
                                                             <li class="page-item ${i == currentPage ? 'active' : ''}">
                                                                 <a class="page-link" href="${baseUrl}&page=${i}&${approvedPostParams}${notifPostParams}">${i}</a>
                                                             </li>
                                                         </c:forEach>
-                                                        
+
                                                         <c:if test="${currentPage < totalPages}">
                                                             <li class="page-item">
                                                                 <a class="page-link" href="${baseUrl}&page=${currentPage + 1}&${approvedPostParams}${notifPostParams}">Next</a>
@@ -748,19 +747,19 @@
         <script src="${pageContext.request.contextPath}/assets2/js/functions.js"></script>
         <script src="${pageContext.request.contextPath}/assets2/vendors/chart/chart.min.js"></script>
         <script src="${pageContext.request.contextPath}/assets2/js/admin.js"></script>
-        
-        <!-- Summernote JS - Try CDN if local fails -->
+
+
         <script src="${pageContext.request.contextPath}/assets2/vendors/summernote/summernote.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote-lite.min.js"></script>
-        
+
         <script type="text/javascript">
-            // Use window.onload to ensure everything is loaded
+
             window.addEventListener('load', function() {
                 console.log('Page fully loaded');
                 console.log('jQuery:', typeof $);
                 console.log('Summernote:', typeof $.fn.summernote);
-                
-                // Simple config
+
+
                 var config = {
                     height: 300,
                     toolbar: [
@@ -774,21 +773,21 @@
                         ['view', ['fullscreen', 'codeview']]
                     ]
                 };
-                
-                // Init create form
+
+
                 if ($('#content').length) {
                     console.log('Init #content');
                     $('#content').summernote(config);
                 }
-                
-                // Init edit form  
+
+
                 if ($('#editContent').length) {
                     console.log('Init #editContent');
                     $('#editContent').summernote(config);
                 }
             });
-            
-            // Validation
+
+
             $(document).ready(function() {
                 $('#createPostForm').on('submit', function(e) {
                     var el = $('#content');
@@ -802,7 +801,7 @@
                         }
                     }
                 });
-                
+
                 $('#updatePostForm').on('submit', function(e) {
                     var el = $('#editContent');
                     if (el.length && typeof el.summernote === 'function') {
