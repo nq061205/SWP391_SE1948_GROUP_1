@@ -6,6 +6,7 @@ import java.util.List;
 import model.Interview;
 import model.Candidate;
 import model.Employee;
+import model.RecruitmentPost;
 
 public class InterviewDAO {
 
@@ -29,6 +30,64 @@ public class InterviewDAO {
         } catch (Exception ex) {
             ex.printStackTrace();
         }
+    }
+
+    public void updateInterviewDateTime(int interviewId, Date date, Time time) {
+        String sql = "UPDATE Interview SET date = ?, time = ?, updated_at = NOW() WHERE interview_id = ?";
+        try (Connection conn = DBContext.getConnection(); PreparedStatement stm = conn.prepareStatement(sql)) {
+
+            stm.setDate(1, date);
+            stm.setTime(2, time);
+            stm.setInt(3, interviewId);
+            stm.executeUpdate();
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public List<Interview> getInterviewsCreatedBy(int empId) {
+        List<Interview> list = new ArrayList<>();
+        String sql = "SELECT i.interview_id, i.date, i.time, "
+                + "c.name AS candidate_name, c.email, "
+                + "p.title AS post_title, "
+                + "e.fullname AS interviewer_name "
+                + "FROM Interview i "
+                + "JOIN Candidate c ON i.candidate_id = c.candidate_id "
+                + "JOIN RecruitmentPost p ON c.post_id = p.post_id "
+                + "JOIN Employee e ON i.interviewed_by = e.emp_id "
+                + "WHERE i.created_by = ? "
+                + "ORDER BY i.date DESC, i.time DESC";
+
+        try (Connection conn = DBContext.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, empId);
+            ResultSet rs = ps.executeQuery();
+
+            while (rs.next()) {
+                Interview iv = new Interview();
+                iv.setInterviewId(rs.getInt("interview_id"));
+                iv.setDate(rs.getDate("date"));
+                iv.setTime(rs.getTime("time"));
+
+                Candidate c = new Candidate();
+                c.setName(rs.getString("candidate_name"));
+                c.setEmail(rs.getString("email"));
+
+                RecruitmentPost p = new RecruitmentPost();
+                p.setTitle(rs.getString("post_title"));
+                c.setPost(p);
+
+                Employee interviewer = new Employee();
+                interviewer.setFullname(rs.getString("interviewer_name"));
+                iv.setInterviewedBy(interviewer);
+                iv.setCandidate(c);
+
+                list.add(iv);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return list;
     }
 
     public List<Interview> getAllPassNotInEmployee(String result) {
@@ -151,6 +210,19 @@ public class InterviewDAO {
         return list;
     }
 
+    public void updateInterviewResult(int interviewId, String result) {
+        String sql = "UPDATE Interview SET result = ? WHERE interview_id = ?";
+        try (Connection conn = DBContext.getConnection(); PreparedStatement stm = conn.prepareStatement(sql)) {
+
+            stm.setString(1, result);
+            stm.setInt(2, interviewId);
+
+            int rowsUpdated = stm.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
     public Interview getInterviewById(int interviewId) {
         String sql = "SELECT i.*, "
                 + "c.candidate_id, c.name AS candidate_name, c.email AS candidate_email, c.phone AS candidate_phone, "
@@ -176,7 +248,6 @@ public class InterviewDAO {
                     interview.setCreatedAt(rs.getTimestamp("created_at"));
                     interview.setUpdatedAt(rs.getTimestamp("updated_at"));
 
-                    // Lấy các đối tượng liên quan
                     Candidate candidate = cDAO.getCandidateById(rs.getInt("candidate_id"));
                     interview.setCandidate(candidate);
 
@@ -194,11 +265,13 @@ public class InterviewDAO {
             ex.printStackTrace();
         }
 
-        return null; 
+        return null;
     }
 
     public static void main(String[] args) {
         InterviewDAO d = new InterviewDAO();
-        System.out.println(d.getInterviewById(36));
+        for (Interview arg : d.getInterviewsCreatedBy(2)) {
+            System.out.println(arg);
+        }
     }
 }
