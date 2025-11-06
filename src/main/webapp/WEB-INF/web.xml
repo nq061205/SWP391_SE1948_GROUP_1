@@ -297,6 +297,11 @@
         <url-pattern>/departmentdetail</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
+        <servlet-name>DepartmentListServlet</servlet-name>
+        <url-pattern>/departmentlist</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
         <servlet-name>CandidateListServlet</servlet-name>
         <url-pattern>/candidatelist</url-pattern>
     </servlet-mapping>
