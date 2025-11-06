@@ -155,24 +155,24 @@
                 color: white;
                 font-weight: 600;
             }
-            .full-day {
+            .present {
                 background-color: #28a745;
-            }      /* xanh lá */
-            .half-day {
-                background-color: #58d68d;
-            }      /* xanh nhạt */
+            }      
             .absent {
                 background-color: #e74c3c;
-            }        /* đỏ */
+            }     
             .leave {
                 background-color: #17a2b8;
-            }         /* xanh dương */
+            }       
             .holiday {
                 background-color: #7f8c8d;
-            }       /* xám */
+            }     
             .weekend {
                 background-color: #2c3e50;
-            }       /* đen xanh */
+            }   
+            .future {
+                background-color: #fef7e1;
+            } 
             .today {
                 border: 2px solid #f1c40f;
             }
