@@ -20,10 +20,8 @@ public class HolidayDAO extends DBContext {
     public List<Holiday> getAllHolidays() {
         List<Holiday> list = new ArrayList<>();
         String sql = "SELECT * FROM holiday";
-        try (Connection conn = DBContext.getConnection();
-             PreparedStatement st = conn.prepareStatement(sql); 
-             ResultSet rs = st.executeQuery()) {
-            
+        try (Connection conn = DBContext.getConnection(); PreparedStatement st = conn.prepareStatement(sql); ResultSet rs = st.executeQuery()) {
+
             while (rs.next()) {
                 Holiday h = new Holiday(
                         rs.getInt("holiday_id"),
@@ -41,16 +39,15 @@ public class HolidayDAO extends DBContext {
         }
         return list;
     }
-    
+
     public List<Holiday> getAllHolidayByYear(int year) {
         List<Holiday> holidays = new ArrayList<>();
         String sql = "SELECT * FROM holiday WHERE YEAR(date) = ?";
 
-        try (Connection conn = DBContext.getConnection();
-             PreparedStatement st = conn.prepareStatement(sql)) {
-            
+        try (Connection conn = DBContext.getConnection(); PreparedStatement st = conn.prepareStatement(sql)) {
+
             st.setInt(1, year);
-            
+
             try (ResultSet rs = st.executeQuery()) {
                 while (rs.next()) {
                     Holiday h = new Holiday(
@@ -63,6 +60,33 @@ public class HolidayDAO extends DBContext {
                     );
                     holidays.add(h);
                 }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return holidays;
+    }
+
+    public List<Holiday> getHolidaysByMonth(int month, int year) {
+        List<Holiday> holidays = new ArrayList<>();
+        String query = "SELECT * FROM Holiday WHERE MONTH(date) = ? AND YEAR(date) = ?";
+
+        try (Connection conn = DBContext.getConnection(); PreparedStatement ps = conn.prepareStatement(query)) {
+
+            ps.setInt(1, month);
+            ps.setInt(2, year);
+            ResultSet rs = ps.executeQuery();
+
+            while (rs.next()) {
+                Holiday h = new Holiday(
+                        rs.getInt("holiday_id"),
+                        rs.getDate("date"),
+                        rs.getString("name"),
+                        rs.getString("source"),
+                        rs.getTimestamp("created_at"),
+                        rs.getTimestamp("updated_at")
+                );
+                holidays.add(h);
             }
         } catch (Exception e) {
             e.printStackTrace();

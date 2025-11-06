@@ -120,6 +120,25 @@ public class DeptDAO extends DBContext {
         return departments;
     }
 
+    public List<String> getDepartmentsHavingManager() {
+        List<String> depIds = new ArrayList<>();
+        String sql = "SELECT DISTINCT e.dep_id\n"
+                + "        FROM employee e\n"
+                + "        JOIN role r ON e.role_id = r.role_id\n"
+                + "        WHERE r.role_name Like '%Manager%'";
+
+        try (Connection conn = DBContext.getConnection(); PreparedStatement ps = conn.prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
+            while (rs.next()) {
+                depIds.add(rs.getString("dep_id"));
+            }
+
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
+
+        return depIds;
+    }
+
     public void createDepartment(Department department) {
         String sql = "INSERT INTO department VALUES(?,?,?)";
         try (Connection conn = DBContext.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
