@@ -117,7 +117,7 @@
                     <div class="col-lg-12 m-b30">
                         <div class="widget-box">
                             <div class="wc-title">
-                                <h4>Passed Candidate Profile List</h4>
+                                <h4>Passed Interview Profile List</h4>
                             </div>
                             <form action="${pageContext.request.contextPath}/createaccount" method="get"
                                   class="d-flex align-items-center flex-nowrap w-100" style="gap:12px;">
