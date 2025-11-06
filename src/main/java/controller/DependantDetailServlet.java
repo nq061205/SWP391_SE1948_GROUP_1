@@ -85,7 +85,7 @@ public class DependantDetailServlet extends HttpServlet {
             e.printStackTrace();
         }
         int page = 1;
-        int pageSize = 1;
+        int pageSize = 3;
         try {
             page = Integer.parseInt(request.getParameter("page"));
         } catch (NumberFormatException e) {
@@ -128,6 +128,7 @@ public class DependantDetailServlet extends HttpServlet {
         String phone = request.getParameter("phone");
         String empIdStr = request.getParameter("empId");
         String tab = request.getParameter("tab");
+        String searchKey = request.getParameter("searchkey");
 
         boolean hasError = false;
         String nameErr = null, dobErr = null, phoneErr = null;
@@ -154,6 +155,15 @@ public class DependantDetailServlet extends HttpServlet {
         } catch (Exception e) {
             gender = null;
         }
+        int page = 1;
+        int pageSize = 3;
+        try {
+            page = Integer.parseInt(request.getParameter("page"));
+        } catch (NumberFormatException e) {
+            page = 1;
+        }
+        int totalRecords = depDAO.countFilteredDependantsByEmpId(empId, searchKey, relationship, genderStr);
+        int totalPages = (int) Math.ceil((double) totalRecords / pageSize);
 
         if (dob != null) {
             LocalDate today = LocalDate.now();
@@ -170,10 +180,11 @@ public class DependantDetailServlet extends HttpServlet {
                 }
             }
         }
-        List<Dependant> dependantList = depDAO.getAllDependantByEmpId(empId);
+        List<Dependant> dependantList = depDAO.getFilteredDependantsByEmpId(empId, searchKey, relationship, genderStr, page, pageSize);
         List<String> relationList = depDAO.getRelationshipListEnumValues();
 
         if (hasError) {
+            request.setAttribute("searchkey", searchKey);
             request.setAttribute("DobErr", dobErr);
             request.setAttribute("dependantList", dependantList);
             request.setAttribute("relationList", relationList);
@@ -184,6 +195,8 @@ public class DependantDetailServlet extends HttpServlet {
             request.setAttribute("dob", dob);
             request.setAttribute("empId", empId);
             request.setAttribute("tab", tab);
+            request.setAttribute("page", page);
+            request.setAttribute("totalPages", totalPages);
             request.setAttribute("showModal", true);
             request.getRequestDispatcher("Views/employeedetails.jsp").forward(request, response);
             return;

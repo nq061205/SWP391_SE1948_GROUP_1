@@ -30,8 +30,15 @@
                 <div class="widget-box">
                     <h4><i class="fa fa-pen"></i> Edit Interview Details</h4>
                     <hr>
+                    <c:if test="${not empty errorMessage}">
+                        <div class="alert alert-danger text-center">
+                            <i class="fa fa-exclamation-triangle"></i> ${errorMessage}
+                        </div>
+                    </c:if>
 
-                    <form method="post" action="${pageContext.request.contextPath}/editInterview" style="max-width:600px; margin:auto;">
+                    <form method="post" action="${pageContext.request.contextPath}/editinterview"
+                          style="max-width:600px; margin:auto;" id="editForm">
+
                         <input type="hidden" name="interviewId" value="${interview.interviewId}" />
 
                         <div class="form-group mb-3">
@@ -48,21 +55,24 @@
 
                         <div class="form-group mb-3">
                             <label><i class="fa fa-calendar"></i> Date:</label>
-                            <input type="date" name="date" class="form-control"
+                            <input type="date" name="date" id="date" class="form-control"
                                    value="${interview.date.toLocalDate()}" required>
+                            <small id="dateError" class="text-danger"></small>
                         </div>
 
                         <div class="form-group mb-3">
                             <label><i class="fa fa-clock"></i> Time:</label>
-                            <input type="time" name="time" class="form-control"
+                            <input type="time" name="time" id="time" class="form-control"
                                    value="${interview.time.toLocalTime()}" required>
+                            <small id="timeError" class="text-danger"></small>
                         </div>
 
                         <div class="text-end">
-                            <a href="${pageContext.request.contextPath}/viewcreatedinterviews" 
+                            <a href="${pageContext.request.contextPath}/viewcreatedinterview?id=${interview.interviewId}" 
                                class="btn btn-outline-secondary me-2">
                                 <i class="fa fa-arrow-left"></i> Back
                             </a>
+
                             <button type="submit" class="btn btn-success">
                                 <i class="fa fa-save"></i> Save Changes
                             </button>
@@ -75,5 +85,7 @@
         <script src="${pageContext.request.contextPath}/assets2/js/jquery.min.js"></script>
         <script src="${pageContext.request.contextPath}/assets2/vendors/bootstrap/js/bootstrap.bundle.min.js"></script>
         <script src="${pageContext.request.contextPath}/assets2/js/functions.js"></script>
+
+
     </body>
 </html>

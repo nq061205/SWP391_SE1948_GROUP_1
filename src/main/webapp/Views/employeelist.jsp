@@ -117,9 +117,6 @@
                                 <input type="hidden" name="order" value="${order}">
                             </c:if>
                             <div class="input-group w-100">
-                                <span class="input-group-text bg-white border-end-0">
-                                    <i class="fa fa-search text-muted"></i>
-                                </span>
                                 <input type="text" name="searchkey" class="form-control border-start-0"
                                        placeholder="Search by code or name"
                                        value="${searchkey}">

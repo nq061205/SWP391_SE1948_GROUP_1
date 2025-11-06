@@ -33,7 +33,7 @@ public class AttendanceServlet extends HttpServlet {
         HttpSession session = request.getSession();
         Employee user = (Employee) session.getAttribute("user");
         if (user == null) {
-            request.getRequestDispatcher("Views/login.jsp").forward(request, response);
+            response.sendRedirect(request.getContextPath() + "/login");
             return;
         }
         DailyAttendanceDAO dailyDAO = new DailyAttendanceDAO();

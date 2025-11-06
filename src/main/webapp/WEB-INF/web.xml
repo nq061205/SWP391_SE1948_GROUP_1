@@ -10,7 +10,7 @@
         <servlet-class>controller.LoginServlet</servlet-class>
     </servlet>
     <servlet>
-        <servlet-name>ChangePassword</servlet-name>
+        <servlet-name>ChangePasswordServlet</servlet-name>
         <servlet-class>controller.ChangePasswordServlet</servlet-class>
     </servlet>
     <servlet>
@@ -232,7 +232,7 @@
         <url-pattern>/recovery</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
-        <servlet-name>ChangePassword</servlet-name>
+        <servlet-name>ChangePasswordServlet</servlet-name>
         <url-pattern>/changepassword</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
@@ -296,6 +296,7 @@
         <servlet-name>DepartmentDetailServlet</servlet-name>
         <url-pattern>/departmentdetail</url-pattern>
     </servlet-mapping>
+
     <servlet-mapping>
         <servlet-name>CandidateListServlet</servlet-name>
         <url-pattern>/candidatelist</url-pattern>

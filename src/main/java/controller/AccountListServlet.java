@@ -190,7 +190,7 @@ public class AccountListServlet extends HttpServlet {
         RoleDAO rDAO = new RoleDAO();
         DeptDAO dDAO = new DeptDAO();
 
-        int quantityOfPage = 3;
+        int quantityOfPage = 5;
         int currentPage = 1;
         String currentPageStr = request.getParameter("page");
         if (currentPageStr != null && !currentPageStr.trim().isEmpty()) {

@@ -48,13 +48,25 @@ public class DepartmentListServlet extends HttpServlet {
         HttpSession ses = request.getSession();
         RolePermissionDAO rperDAO = new RolePermissionDAO();
         Employee user = (Employee) ses.getAttribute("user");
+
         if (user == null || !rperDAO.hasPermission(user.getRole().getRoleId(), 3)) {
             response.sendRedirect("login");
             return;
         }
+        String searchKey = request.getParameter("searchkey");
+        String deptId = request.getParameter("deptId");
+        int page = 1;
+        int pageSize = 5;
+        String pageParam = request.getParameter("page");
+        if (pageParam != null && pageParam.matches("\\d+")) {
+            page = Integer.parseInt(pageParam);
+        }
         DeptDAO deptDAO = new DeptDAO();
+        int totalResults = deptDAO.countDepartmentsByFilter(deptId, searchKey);
+        int totalPages = (int) Math.ceil((double) totalResults / pageSize);
         List<Department> deptList;
-        deptList = deptDAO.getAllDepartment();
+        deptList = deptDAO.getDepartmentsByFilter(deptId, searchKey, page, pageSize);
+        List<Department> deptNameList = deptDAO.getAllDepartment();
         String type = request.getParameter("type");
         String depId = request.getParameter("depId");
 
@@ -62,6 +74,10 @@ public class DepartmentListServlet extends HttpServlet {
             Department editDept = deptDAO.getDepartmentByDepartmentId(depId);
             request.setAttribute("editDept", editDept);
         }
+        request.setAttribute("totalPages", totalPages);
+        request.setAttribute("searchkey", searchKey);
+        request.setAttribute("deptNameList", deptNameList);
+        request.setAttribute("page", page);
         ses.setAttribute("deptList", deptList);
         request.getRequestDispatcher("Views/departmentlist.jsp").forward(request, response);
     }
@@ -71,29 +87,42 @@ public class DepartmentListServlet extends HttpServlet {
             throws ServletException, IOException {
         HttpSession ses = request.getSession();
         String action = request.getParameter("action");
-        String editDepId = request.getParameter("depId");
         String addDepId = request.getParameter("deptID");
         String addDepName = request.getParameter("deptName");
         String addDescription = request.getParameter("description");
-        DeptDAO depDAO = new DeptDAO();
-        if ("save".equalsIgnoreCase(action)) {
-            String depName = request.getParameter("depName");
-            String description = request.getParameter("description");
-            Department dept = depDAO.getDepartmentByDepartmentId(editDepId);
-            if (dept != null) {
-                dept.setDepName(depName);
-                dept.setDescription(description);
-                depDAO.updateDepartment(dept);
-            }
-        } else if ("add".equalsIgnoreCase(action)) {
-            Department dept = new Department();
-            dept.setDepId(addDepId.toUpperCase());
-            dept.setDepName(addDepName);
-            dept.setDescription(addDescription);
-            depDAO.createDepartment(dept);
+        String searchKey = request.getParameter("searchkey");
+        String deptId = request.getParameter("deptId");
+        int page = 1;
+        int pageSize = 5;
+        String pageParam = request.getParameter("page");
+        if (pageParam != null && pageParam.matches("\\d+")) {
+            page = Integer.parseInt(pageParam);
         }
-        List<Department> departmentList = depDAO.getAllDepartment();
+        DeptDAO depDAO = new DeptDAO();
+        List<Department> deptNameList = depDAO.getAllDepartment();
+        int totalResults = depDAO.countDepartmentsByFilter(deptId, searchKey);
+        int totalPages = (int) Math.ceil((double) totalResults / pageSize);
+        if ("add".equalsIgnoreCase(action)) {
+            if (depDAO.existsById(addDepId.trim().toUpperCase())) {
+                request.setAttribute("errorMessage", "Department ID already exists!");
+            } else {
+                Department dept = new Department();
+                dept.setDepId(addDepId.trim().toUpperCase());
+                dept.setDepName(addDepName != null ? addDepName.trim() : "");
+                dept.setDescription(addDescription != null ? addDescription.trim() : "");
+                depDAO.createDepartment(dept);
+                response.sendRedirect("departmentlist");
+                return;
+            }
+        }
+
+        List<Department> departmentList = depDAO.getDepartmentsByFilter(deptId, searchKey, page, pageSize);
+        request.setAttribute("deptNameList", deptNameList);
+        request.setAttribute("totalPages", totalPages);
+        request.setAttribute("searchkey", searchKey);
+        request.setAttribute("page", page);
         ses.setAttribute("deptList", departmentList);
+
         request.getRequestDispatcher("Views/departmentlist.jsp").forward(request, response);
 
     }

@@ -113,10 +113,6 @@
     <body class="ttr-opened-sidebar ttr-pinned-sidebar">
         <%@ include file="CommonItems/Header/dashboardHeader.jsp" %>
         <%@ include file="CommonItems/Navbar/empNavbar.jsp" %>
-        <%
-            model.Payroll payroll = (model.Payroll) request.getAttribute("payroll");
-            model.Salary salary = (model.Salary) request.getAttribute("salary");
-        %>
         <main class="ttr-wrapper">
             <div class="filter-row mb-3">
                 <form action="${pageContext.request.contextPath}/payrollreportdetail" method="get"
@@ -124,119 +120,150 @@
                     <select name="month" class="form-control filter-h" style="width:160px;" onchange="this.form.submit()">
                         <option value="<%= java.time.LocalDate.now().getMonthValue() %>" selected>Now</option>
                         <c:forEach var="i" begin="1" end="12">
-                            <option value="${i}">${i}</option>
+                            <option value="${i}"
+                                    <c:if test="${month == i}">selected</c:if>>
+                                ${i}
+                            </option>
                         </c:forEach>
                     </select>
 
                     <select name="year" class="form-control filter-h" style="width:170px;" onchange="this.form.submit()">
                         <option value="<%= java.time.Year.now().getValue() %>" selected>Now</option>
                         <c:forEach var="i" begin="2020" end="<%= java.time.Year.now().getValue() %>">
-                            <option value="${i}">${i}</option>
+                            <option value="${i}"
+                                    <c:if test="${year == i}">selected</c:if>>
+                                ${i}
+                            </option>
                         </c:forEach>
                     </select>
 
-                    <a href="" class="btn btn-warning filter-h">Now</a>
+                    <a href="${pageContext.request.contextPath}/payrollreportdetail" class="btn btn-warning filter-h">Now</a>
                 </form>
             </div>
-            <div class="salary-container">
-                <div class="salary-header">
-                    <h3>${payroll.month} - ${payroll.year}</h3>
-                    <div class="salary-info">
-                        <p><strong>Employee:</strong> ${sessionScope.user.fullname} &nbsp; | &nbsp;
-                            <strong>Department:</strong> ${sessionScope.user.dept.depName} &nbsp; | &nbsp;
-                            <strong>Base Salary:</strong> <%= String.format("%,.0f", salary.getBaseSalary()) %></p>
+
+            <%
+                model.Payroll payroll = (model.Payroll) request.getAttribute("payroll");
+                model.Salary salary = (model.Salary) request.getAttribute("salary");
+            %>
+
+            <c:choose>
+                <c:when test="${payroll != null && salary != null}">
+                    <div class="salary-container">
+                        <div class="salary-header">
+                            <h3>${payroll.month} - ${payroll.year}</h3>
+                            <div class="salary-info">
+                                <p>
+                                    <strong>Employee:</strong> ${sessionScope.user.fullname} &nbsp; | &nbsp;
+                                    <strong>Department:</strong> ${sessionScope.user.dept.depName} &nbsp; | &nbsp;
+                                    <strong>Base Salary:</strong>
+                                    <%= String.format("%,.0f", salary.getBaseSalary()) %>
+                                </p>
+                            </div>
+                        </div>
+
+                        <div class="salary-section">
+                            <div class="salary-section-title"><i class="fa fa-money"></i> Gross Earnings</div>
+                            <table class="salary-table">
+                                <thead>
+                                    <tr>
+                                        <th>#</th>
+                                        <th>Description</th>
+                                        <th>Amount (VND)</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>1</td>
+                                        <td>Regular Salary</td>
+                                        <td><%= String.format("%,.0f", payroll.getRegularSalary()) %></td>
+                                    </tr>
+                                    <tr>
+                                        <td>2</td>
+                                        <td>OT Earning</td>
+                                        <td><%= String.format("%,.0f", payroll.getOtEarning()) %></td>
+                                    </tr>
+                                    <tr>
+                                        <td>3</td>
+                                        <td>Allowance</td>
+                                        <td><%= String.format("%,.0f", salary.getAllowance()) %></td>
+                                    </tr>
+                                    <tr class="highlight">
+                                        <td>4</td>
+                                        <td><strong>Total Gross</strong></td>
+                                        <td><strong><%= String.format("%,.0f",
+                                    payroll.getRegularSalary() + payroll.getOtEarning() + salary.getAllowance()) %></strong></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <div class="salary-section">
+                            <div class="salary-section-title"><i class="fa fa-scissors"></i> Mandatory Deductions</div>
+                            <table class="salary-table">
+                                <thead>
+                                    <tr>
+                                        <th>#</th>
+                                        <th>Description</th>
+                                        <th>Amount (VND)</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>5</td>
+                                        <td>Insurance Base</td>
+                                        <td><%= String.format("%,.0f", payroll.getInsuranceBase()) %></td>
+                                    </tr>
+                                    <tr>
+                                        <td>6</td>
+                                        <td>SI</td>
+                                        <td><%= String.format("%,.0f", payroll.getSi()) %></td>
+                                    </tr>
+                                    <tr>
+                                        <td>7</td>
+                                        <td>HI</td>
+                                        <td><%= String.format("%,.0f", payroll.getHi()) %></td>
+                                    </tr>
+                                    <tr>
+                                        <td>8</td>
+                                        <td>UI</td>
+                                        <td><%= String.format("%,.0f", payroll.getUi()) %></td>
+                                    </tr>
+                                    <tr>
+                                        <td>9</td>
+                                        <td>Taxable Income</td>
+                                        <td><%= String.format("%,.0f", payroll.getTaxIncome()) %></td>
+                                    </tr>
+                                    <tr>
+                                        <td>10</td>
+                                        <td>Tax</td>
+                                        <td><%= String.format("%,.0f", payroll.getTax()) %></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <div class="salary-section">
+                            <div class="salary-section-title"><i class="fa fa-credit-card"></i> Net Salary</div>
+                            <div class="net-box">
+                                👉 <strong>
+                                    <%= String.format("%,.0f",
+                                        payroll.getRegularSalary() + payroll.getOtEarning() + salary.getAllowance()
+                                        - payroll.getSi() - payroll.getHi() - payroll.getUi() - payroll.getTax()) %>
+                                </strong>
+                            </div>
+                        </div>
                     </div>
-                </div>
+                </c:when>
 
-                <div class="salary-section">
-                    <div class="salary-section-title"><i class="fa fa-money"></i> Gross Earnings</div>
-                    <table class="salary-table">
-                        <thead>
-                            <tr>
-                                <th>#</th>
-                                <th>Description</th>
-                                <th>Amount (VND)</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td>1</td>
-                                <td>Regular Salary</td>
-                                <td><%= String.format("%,.0f", payroll.getRegularSalary()) %></td>
-                            </tr>
-                            <tr>
-                                <td>2</td>
-                                <td>OT Earning</td>
-                                <td><%= String.format("%,.0f", payroll.getOtEarning()) %></td>
-                            </tr>
-                            <tr>
-                                <td>3</td>
-                                <td>Allowance</td>
-                                <td><%= String.format("%,.0f", salary.getAllowance()) %></td>
-                            </tr>
-                            <tr class="highlight">
-                                <td>4</td>
-                                <td colspan="1"><strong>Total Gross</strong></td>
-                                <td><strong><%= String.format("%,.0f", payroll.getRegularSalary()+payroll.getOtEarning()+salary.getAllowance()) %></strong></td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-
-                <div class="salary-section">
-                    <div class="salary-section-title"><i class="fa fa-scissors"></i> Mandatory Deductions</div>
-                    <table class="salary-table">
-                        <thead>
-                            <tr>
-                                <th>#</th>
-                                <th>Description</th>
-                                <th>Amount (VND)</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td>(5)</td>
-                                <td>Insurance Base</td>
-                                <td><%= String.format("%,.0f", payroll.getInsuranceBase()) %></td>
-                            </tr>
-                            <tr>
-                                <td>6</td>
-                                <td>SI</td>
-                                <td><%= String.format("%,.0f", payroll.getSi()) %></td>
-                            </tr>
-                            <tr>
-                                <td>7</td>
-                                <td>HI</td>
-                                <td><%= String.format("%,.0f", payroll.getHi()) %></td>
-                            </tr>
-                            <tr>
-                                <td>8</td>
-                                <td>UI</td>
-                                <td><%= String.format("%,.0f", payroll.getUi()) %></td>
-                            </tr>
-                            <tr>
-                                <td>9</td>
-                                <td>Taxable Income</td>
-                                <td><%= String.format("%,.0f", payroll.getTaxIncome()) %></td>
-                            </tr>
-                            <tr>
-                                <td>10</td>
-                                <td>Tax</td>
-                                <td><%= String.format("%,.0f", payroll.getTax()) %></td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-
-                <!-- Net Salary -->
-                <div class="salary-section">
-                    <div class="salary-section-title"><i class="fa fa-credit-card"></i>Net Salary</div>
-                    <div class="net-box">
-                        <br>👉 <strong><%= String.format("%,.0f", payroll.getRegularSalary()+payroll.getOtEarning()+salary.getAllowance()-payroll.getSi()-payroll.getHi()-payroll.getUi()-payroll.getTax()) %></strong>
+                <c:otherwise>
+                    <div class="salary-container" style="text-align:center; padding:60px;">
+                        <h3 style="color:#999;">❌ No salary records for this month</h3>
+                        <p>Please select another month/year or contact HR for assistance.</p>
                     </div>
-                </div>
-            </div>
+                </c:otherwise>
+            </c:choose>
         </main>
+
 
         <script src="${pageContext.request.contextPath}/assets2/js/jquery.min.js"></script>
         <script src="${pageContext.request.contextPath}/assets2/vendors/bootstrap/js/popper.min.js"></script>

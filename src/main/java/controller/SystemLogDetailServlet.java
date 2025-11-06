@@ -31,7 +31,7 @@ public class SystemLogDetailServlet extends HttpServlet {
         HttpSession session = request.getSession();
         Employee user = (Employee) session.getAttribute("user");
         if (user == null) {
-            response.sendRedirect("Views/login.jsp");
+            response.sendRedirect(request.getContextPath() + "/login");
             return;
         }
         LeaveRequestDAO leaveDAO = new LeaveRequestDAO();
@@ -53,7 +53,6 @@ public class SystemLogDetailServlet extends HttpServlet {
         LeaveRequest leave = leaveDAO.getLeaveRequestByLeaveId(id);
         EmployeeDAO empDAO = new EmployeeDAO();
 
-        // Lưu lại dữ liệu để forward khi có lỗi
         request.setAttribute("leave", leave);
 
         if ("Invalid".equalsIgnoreCase(action)) {
