@@ -16,7 +16,7 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
-public class HRManagerRecruitmentServlet extends HttpServlet {
+public class ManagePostServlet extends HttpServlet {
 
     private RecruitmentPostDAO recruitmentPostDAO;
     
@@ -37,24 +37,27 @@ public class HRManagerRecruitmentServlet extends HttpServlet {
         
         switch (action) {
             case "list":
-                showPostReviewList(request, response);
+                showManagePostList(request, response);
                 break;
             case "view":
                 viewPostDetail(request, response);
                 break;
-            case "approve":
-                approvePost(request, response);
+            case "upload":
+                uploadPost(request, response);
                 break;
-            case "reject":
-                rejectPost(request, response);
+            case "delete":
+                deletePost(request, response);
+                break;
+            case "takedown":
+                takeDownPost(request, response);
                 break;
             default:
-                showPostReviewList(request, response);
+                showManagePostList(request, response);
                 break;
         }
     }
     
-    private void showPostReviewList(HttpServletRequest request, HttpServletResponse response)
+    private void showManagePostList(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         try {
             // Handle session messages
@@ -99,13 +102,13 @@ public class HRManagerRecruitmentServlet extends HttpServlet {
             
             // Get filter parameters
             String searchKeyword = request.getParameter("search");
-            String statusFilter = request.getParameter("status"); // All, Waiting, Rejected
+            String statusFilter = request.getParameter("status"); // All, Approved, Uploaded, Deleted
             String depIdFilter = request.getParameter("depId");
             String fromDate = request.getParameter("fromDate");
             String toDate = request.getParameter("toDate");
             
-            // Fetch all pending and rejected posts
-            List<RecruitmentPost> allPosts = recruitmentPostDAO.getWaitingAndRejectedPosts();
+            // Fetch all approved, uploaded and deleted posts
+            List<RecruitmentPost> allPosts = recruitmentPostDAO.getApprovedUploadedDeletedPosts();
             List<Department> departments = recruitmentPostDAO.getDepartments();
             
             // Apply filters
@@ -123,14 +126,17 @@ public class HRManagerRecruitmentServlet extends HttpServlet {
                 : new ArrayList<>();
             
             // Count posts by status for badges
-            int waitingCount = 0;
-            int rejectedCount = 0;
+            int approvedCount = 0;
+            int uploadedCount = 0;
+            int deletedCount = 0;
             if (allPosts != null) {
                 for (RecruitmentPost post : allPosts) {
-                    if ("Waiting".equals(post.getStatus())) {
-                        waitingCount++;
-                    } else if ("Rejected".equals(post.getStatus())) {
-                        rejectedCount++;
+                    if ("Approved".equals(post.getStatus())) {
+                        approvedCount++;
+                    } else if ("Uploaded".equals(post.getStatus())) {
+                        uploadedCount++;
+                    } else if ("Deleted".equals(post.getStatus())) {
+                        deletedCount++;
                     }
                 }
             }
@@ -147,13 +153,14 @@ public class HRManagerRecruitmentServlet extends HttpServlet {
             request.setAttribute("depIdFilter", depIdFilter != null ? depIdFilter : "");
             request.setAttribute("fromDate", fromDate != null ? fromDate : "");
             request.setAttribute("toDate", toDate != null ? toDate : "");
-            request.setAttribute("waitingCount", waitingCount);
-            request.setAttribute("rejectedCount", rejectedCount);
+            request.setAttribute("approvedCount", approvedCount);
+            request.setAttribute("uploadedCount", uploadedCount);
+            request.setAttribute("deletedCount", deletedCount);
             request.setAttribute("hasPosts", totalPosts > 0);
             request.setAttribute("hasDepartments", departments != null && !departments.isEmpty());
             
             // Build URL helpers
-            String baseUrl = request.getContextPath() + "/postreview?pageSize=" + pageSize;
+            String baseUrl = request.getContextPath() + "/managepost?pageSize=" + pageSize;
             
             // Search Clear URL
             StringBuilder searchClearUrl = new StringBuilder(baseUrl);
@@ -203,16 +210,16 @@ public class HRManagerRecruitmentServlet extends HttpServlet {
             }
             request.setAttribute("paginationBaseUrl", paginationUrl.toString());
             
-            request.setAttribute("pageName", "Post Review");
-            request.setAttribute("pageTitle", "Review Recruitment Posts");
+            request.setAttribute("pageName", "Manage Posts");
+            request.setAttribute("pageTitle", "Manage Recruitment Posts");
             
-            request.getRequestDispatcher("/Views/HRM/PostReview.jsp").forward(request, response);
+            request.getRequestDispatcher("/Views/HRM/ManagePost.jsp").forward(request, response);
             
         } catch (Exception e) {
-            System.err.println("Error in showPostReviewList: " + e.getMessage());
+            System.err.println("Error in showManagePostList: " + e.getMessage());
             e.printStackTrace();
             request.setAttribute("errorMessage", "Unable to load recruitment posts. Please try again.");
-            request.getRequestDispatcher("/Views/HRM/PostReview.jsp").forward(request, response);
+            request.getRequestDispatcher("/Views/HRM/ManagePost.jsp").forward(request, response);
         }
     }
     
@@ -254,7 +261,7 @@ public class HRManagerRecruitmentServlet extends HttpServlet {
                 .collect(java.util.stream.Collectors.toList());
         }
         
-        // Filter by date range (created_at)
+        // Filter by date range (approved_at for approved posts)
         if (fromDate != null && !fromDate.trim().isEmpty() && toDate != null && !toDate.trim().isEmpty()) {
             try {
                 SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
@@ -274,7 +281,7 @@ public class HRManagerRecruitmentServlet extends HttpServlet {
                 
                 filtered = filtered.stream()
                     .filter(post -> {
-                        Timestamp timestamp = post.getCreatedAt();
+                        Timestamp timestamp = post.getApprovedAt();
                         if (timestamp == null) return false;
                         Date postDate = new Date(timestamp.getTime());
                         return !postDate.before(finalStartDate) && !postDate.after(finalEndDate);
@@ -305,8 +312,9 @@ public class HRManagerRecruitmentServlet extends HttpServlet {
                     boolean hasCreatedAt = (post.getCreatedAt() != null);
                     boolean hasApprovedAt = (post.getApprovedAt() != null);
                     boolean hasUpdatedAt = (post.getUpdatedAt() != null);
-                    boolean isPending = "Waiting".equals(post.getStatus());
-                    boolean isRejected = "Rejected".equals(post.getStatus());
+                    boolean isApproved = "Approved".equals(post.getStatus());
+                    boolean isUploaded = "Uploaded".equals(post.getStatus());
+                    boolean isDeleted = "Deleted".equals(post.getStatus());
                     
                     request.setAttribute("post", post);
                     request.setAttribute("hasPost", hasPost);
@@ -317,88 +325,33 @@ public class HRManagerRecruitmentServlet extends HttpServlet {
                     request.setAttribute("hasCreatedAt", hasCreatedAt);
                     request.setAttribute("hasApprovedAt", hasApprovedAt);
                     request.setAttribute("hasUpdatedAt", hasUpdatedAt);
-                    request.setAttribute("isPending", isPending);
-                    request.setAttribute("isRejected", isRejected);
-                    request.setAttribute("pageName", "Post Review");
-                    request.setAttribute("pageTitle", "Post Detail");
+                    request.setAttribute("isApproved", isApproved);
+                    request.setAttribute("isUploaded", isUploaded);
+                    request.setAttribute("isDeleted", isDeleted);
+                    
                     request.getRequestDispatcher("/Views/HRM/PostReviewDetail.jsp").forward(request, response);
                 } else {
-                    request.getSession().setAttribute("errorMessage", "Recruitment post not found.");
-                    response.sendRedirect(request.getContextPath() + "/postreview");
+                    request.getSession().setAttribute("errorMessage", "Post not found.");
+                    response.sendRedirect(request.getContextPath() + "/managepost");
                 }
             } else {
                 request.getSession().setAttribute("errorMessage", "Invalid post ID.");
-                response.sendRedirect(request.getContextPath() + "/postreview");
+                response.sendRedirect(request.getContextPath() + "/managepost");
             }
             
         } catch (NumberFormatException e) {
             System.err.println("Invalid post ID format: " + e.getMessage());
             request.getSession().setAttribute("errorMessage", "Invalid post ID format.");
-            response.sendRedirect(request.getContextPath() + "/postreview");
+            response.sendRedirect(request.getContextPath() + "/managepost");
         } catch (Exception e) {
             System.err.println("Error in viewPostDetail: " + e.getMessage());
             e.printStackTrace();
             request.getSession().setAttribute("errorMessage", "Unable to load post detail. Please try again.");
-            response.sendRedirect(request.getContextPath() + "/postreview");
+            response.sendRedirect(request.getContextPath() + "/managepost");
         }
     }
     
-    private void approvePost(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-        try {
-            String postIdStr = request.getParameter("postId");
-            String note = request.getParameter("note");
-            StringBuilder validationErrors = new StringBuilder();
-            
-            if (postIdStr == null || postIdStr.trim().isEmpty()) {
-                validationErrors.append("Post ID is required. ");
-            }
-            
-            if (validationErrors.length() > 0) {
-                request.getSession().setAttribute("errorMessage", validationErrors.toString().trim());
-                response.sendRedirect(request.getContextPath() + "/postreview");
-                return;
-            }
-            
-            int postId = Integer.parseInt(postIdStr.trim());
-            RecruitmentPost post = recruitmentPostDAO.getPostById(postId);
-            
-            if (post == null) {
-                request.getSession().setAttribute("errorMessage", "Post not found.");
-                response.sendRedirect(request.getContextPath() + "/postreview");
-                return;
-            }
-            
-            if (!"Waiting".equals(post.getStatus())) {
-                request.getSession().setAttribute("errorMessage", "Only waiting posts can be approved.");
-                response.sendRedirect(request.getContextPath() + "/postreview");
-                return;
-            }
-            
-            int approvedBy = 2;
-            boolean success = recruitmentPostDAO.approvePost(postId, approvedBy, note != null ? note.trim() : null);
-            
-            if (success) {
-                request.getSession().setAttribute("successMessage", "Post '" + post.getTitle() + "' approved successfully!");
-            } else {
-                request.getSession().setAttribute("errorMessage", "Failed to approve post. Please try again.");
-            }
-            
-            response.sendRedirect(request.getContextPath() + "/postreview");
-            
-        } catch (NumberFormatException e) {
-            System.err.println("Invalid post ID format: " + e.getMessage());
-            request.getSession().setAttribute("errorMessage", "Invalid post ID format.");
-            response.sendRedirect(request.getContextPath() + "/postreview");
-        } catch (Exception e) {
-            System.err.println("Error in approvePost: " + e.getMessage());
-            e.printStackTrace();
-            request.getSession().setAttribute("errorMessage", "Unable to approve post. Please try again.");
-            response.sendRedirect(request.getContextPath() + "/postreview");
-        }
-    }
-    
-    private void rejectPost(HttpServletRequest request, HttpServletResponse response)
+    private void uploadPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         try {
             String postIdStr = request.getParameter("postId");
@@ -410,7 +363,7 @@ public class HRManagerRecruitmentServlet extends HttpServlet {
             
             if (validationErrors.length() > 0) {
                 request.getSession().setAttribute("errorMessage", validationErrors.toString().trim());
-                response.sendRedirect(request.getContextPath() + "/postreview");
+                response.sendRedirect(request.getContextPath() + "/managepost");
                 return;
             }
             
@@ -419,36 +372,141 @@ public class HRManagerRecruitmentServlet extends HttpServlet {
             
             if (post == null) {
                 request.getSession().setAttribute("errorMessage", "Post not found.");
-                response.sendRedirect(request.getContextPath() + "/postreview");
+                response.sendRedirect(request.getContextPath() + "/managepost");
                 return;
             }
             
-            if (!"Waiting".equals(post.getStatus())) {
-                request.getSession().setAttribute("errorMessage", "Only waiting posts can be rejected.");
-                response.sendRedirect(request.getContextPath() + "/postreview");
+            if (!"Approved".equals(post.getStatus())) {
+                request.getSession().setAttribute("errorMessage", "Only approved posts can be uploaded.");
+                response.sendRedirect(request.getContextPath() + "/managepost");
                 return;
             }
             
-            int rejectedBy = 2;
-            boolean success = recruitmentPostDAO.rejectPost(postId, rejectedBy);
+            boolean success = recruitmentPostDAO.uploadPost(postId);
             
             if (success) {
-                request.getSession().setAttribute("successMessage", "Post '" + post.getTitle() + "' rejected successfully.");
+                request.getSession().setAttribute("successMessage", "Post '" + post.getTitle() + "' uploaded successfully!");
             } else {
-                request.getSession().setAttribute("errorMessage", "Failed to reject post. Please try again.");
+                request.getSession().setAttribute("errorMessage", "Failed to upload post. Please try again.");
             }
             
-            response.sendRedirect(request.getContextPath() + "/postreview");
+            response.sendRedirect(request.getContextPath() + "/managepost");
             
         } catch (NumberFormatException e) {
             System.err.println("Invalid post ID format: " + e.getMessage());
             request.getSession().setAttribute("errorMessage", "Invalid post ID format.");
-            response.sendRedirect(request.getContextPath() + "/postreview");
+            response.sendRedirect(request.getContextPath() + "/managepost");
         } catch (Exception e) {
-            System.err.println("Error in rejectPost: " + e.getMessage());
+            System.err.println("Error in uploadPost: " + e.getMessage());
             e.printStackTrace();
-            request.getSession().setAttribute("errorMessage", "Unable to reject post. Please try again.");
-            response.sendRedirect(request.getContextPath() + "/postreview");
+            request.getSession().setAttribute("errorMessage", "Unable to upload post. Please try again.");
+            response.sendRedirect(request.getContextPath() + "/managepost");
+        }
+    }
+    
+    private void deletePost(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        try {
+            String postIdStr = request.getParameter("postId");
+            StringBuilder validationErrors = new StringBuilder();
+            
+            if (postIdStr == null || postIdStr.trim().isEmpty()) {
+                validationErrors.append("Post ID is required. ");
+            }
+            
+            if (validationErrors.length() > 0) {
+                request.getSession().setAttribute("errorMessage", validationErrors.toString().trim());
+                response.sendRedirect(request.getContextPath() + "/managepost");
+                return;
+            }
+            
+            int postId = Integer.parseInt(postIdStr.trim());
+            RecruitmentPost post = recruitmentPostDAO.getPostById(postId);
+            
+            if (post == null) {
+                request.getSession().setAttribute("errorMessage", "Post not found.");
+                response.sendRedirect(request.getContextPath() + "/managepost");
+                return;
+            }
+            
+            if (!"Approved".equals(post.getStatus())) {
+                request.getSession().setAttribute("errorMessage", "Only approved posts can be deleted.");
+                response.sendRedirect(request.getContextPath() + "/managepost");
+                return;
+            }
+            
+            boolean success = recruitmentPostDAO.deletePost(postId);
+            
+            if (success) {
+                request.getSession().setAttribute("successMessage", "Post '" + post.getTitle() + "' deleted successfully.");
+            } else {
+                request.getSession().setAttribute("errorMessage", "Failed to delete post. Please try again.");
+            }
+            
+            response.sendRedirect(request.getContextPath() + "/managepost");
+            
+        } catch (NumberFormatException e) {
+            System.err.println("Invalid post ID format: " + e.getMessage());
+            request.getSession().setAttribute("errorMessage", "Invalid post ID format.");
+            response.sendRedirect(request.getContextPath() + "/managepost");
+        } catch (Exception e) {
+            System.err.println("Error in deletePost: " + e.getMessage());
+            e.printStackTrace();
+            request.getSession().setAttribute("errorMessage", "Unable to delete post. Please try again.");
+            response.sendRedirect(request.getContextPath() + "/managepost");
+        }
+    }
+    
+    private void takeDownPost(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        try {
+            String postIdStr = request.getParameter("postId");
+            StringBuilder validationErrors = new StringBuilder();
+            
+            if (postIdStr == null || postIdStr.trim().isEmpty()) {
+                validationErrors.append("Post ID is required. ");
+            }
+            
+            if (validationErrors.length() > 0) {
+                request.getSession().setAttribute("errorMessage", validationErrors.toString().trim());
+                response.sendRedirect(request.getContextPath() + "/managepost");
+                return;
+            }
+            
+            int postId = Integer.parseInt(postIdStr.trim());
+            RecruitmentPost post = recruitmentPostDAO.getPostById(postId);
+            
+            if (post == null) {
+                request.getSession().setAttribute("errorMessage", "Post not found.");
+                response.sendRedirect(request.getContextPath() + "/managepost");
+                return;
+            }
+            
+            if (!"Uploaded".equals(post.getStatus())) {
+                request.getSession().setAttribute("errorMessage", "Only uploaded posts can be taken down.");
+                response.sendRedirect(request.getContextPath() + "/managepost");
+                return;
+            }
+            
+            boolean success = recruitmentPostDAO.takeDownPost(postId);
+            
+            if (success) {
+                request.getSession().setAttribute("successMessage", "Post '" + post.getTitle() + "' taken down successfully.");
+            } else {
+                request.getSession().setAttribute("errorMessage", "Failed to take down post. Please try again.");
+            }
+            
+            response.sendRedirect(request.getContextPath() + "/managepost");
+            
+        } catch (NumberFormatException e) {
+            System.err.println("Invalid post ID format: " + e.getMessage());
+            request.getSession().setAttribute("errorMessage", "Invalid post ID format.");
+            response.sendRedirect(request.getContextPath() + "/managepost");
+        } catch (Exception e) {
+            System.err.println("Error in takeDownPost: " + e.getMessage());
+            e.printStackTrace();
+            request.getSession().setAttribute("errorMessage", "Unable to take down post. Please try again.");
+            response.sendRedirect(request.getContextPath() + "/managepost");
         }
     }
 
@@ -466,7 +524,7 @@ public class HRManagerRecruitmentServlet extends HttpServlet {
 
     @Override
     public String getServletInfo() {
-        return "HRM Manager Recruitment Post Review Servlet";
+        return "HRM Manager Manage Posts Servlet";
     }
 
 }

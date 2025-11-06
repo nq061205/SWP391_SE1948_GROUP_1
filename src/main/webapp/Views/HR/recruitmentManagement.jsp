@@ -26,8 +26,9 @@
         <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/assets2/css/dashboard.css">
         <link class="skin" rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/assets2/css/color/color-1.css">
         
-        <!-- Summernote CSS -->
+        <!-- Summernote CSS - Try CDN if local fails -->
         <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/assets2/vendors/summernote/summernote.css">
+        <link href="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote-lite.min.css" rel="stylesheet">
     </head>
 
     <body class="ttr-opened-sidebar ttr-pinned-sidebar">
@@ -96,7 +97,7 @@
                                             <div class="col-md-12">
                                                 <div class="form-group">
                                                     <label for="content">Job Description <span class="text-danger">*</span></label>
-                                                    <textarea class="form-control" id="content" name="content" rows="5" 
+                                                    <textarea class="form-control summernote-editor" id="content" name="content"
                                                               placeholder="Enter detailed job description, requirements, and benefits" required></textarea>
                                                 </div>
                                             </div>
@@ -157,7 +158,7 @@
                                             <div class="col-md-12">
                                                 <div class="form-group">
                                                     <label for="editContent">Job Description <span class="text-danger">*</span></label>
-                                                    <textarea class="form-control" id="editContent" name="content" rows="5" required>${editPost.content}</textarea>
+                                                    <textarea class="form-control summernote-editor" id="editContent" name="content" required><c:out value="${editPost.content}" escapeXml="false"/></textarea>
                                                 </div>
                                             </div>
                                         </div>
@@ -188,7 +189,7 @@
                                 <c:choose>
                                     <c:when test="${hasPendingOrRejected}">
                                         <div class="row mb-3">
-                                            <div class="col-md-6">
+                                            <div class="col-md-4">
                                                 <form action="${pageContext.request.contextPath}/hrrecruitment" method="get" class="form-inline">
                                                     <input type="hidden" name="action" value="list">
                                                     <input type="hidden" name="notifPageSize" value="${notifPageSize}">
@@ -204,6 +205,12 @@
                                                     <c:if test="${not empty notifStatusFilter}">
                                                         <input type="hidden" name="notifStatus" value="${notifStatusFilter}">
                                                     </c:if>
+                                                    <c:if test="${not empty notifFromDate}">
+                                                        <input type="hidden" name="notifFromDate" value="${notifFromDate}">
+                                                    </c:if>
+                                                    <c:if test="${not empty notifToDate}">
+                                                        <input type="hidden" name="notifToDate" value="${notifToDate}">
+                                                    </c:if>
                                                     <div class="form-group mr-2">
                                                         <label for="notifSearch" class="mr-2">Search:</label>
                                                         <input type="text" class="form-control" id="notifSearch" name="notifSearch" 
@@ -213,13 +220,52 @@
                                                         <i class="fa fa-search"></i> Search
                                                     </button>
                                                     <c:if test="${not empty notifSearchKeyword}">
-                                                        <a href="${pageContext.request.contextPath}/hrrecruitment?action=list&notifPageSize=${notifPageSize}${not empty searchKeyword ? '&search='.concat(searchKeyword) : ''}${not empty pageSize ? '&pageSize='.concat(pageSize) : ''}${not empty currentPage ? '&page='.concat(currentPage) : ''}${not empty notifStatusFilter ? '&notifStatus='.concat(notifStatusFilter) : ''}" class="btn btn-secondary ml-2">
+                                                        <a href="${notifSearchClearUrl}" class="btn btn-secondary ml-2">
                                                             <i class="fa fa-times"></i> Clear
                                                         </a>
                                                     </c:if>
                                                 </form>
                                             </div>
-                                            <div class="col-md-6 text-right">
+                                            <div class="col-md-4 text-center">
+                                                <form action="${pageContext.request.contextPath}/hrrecruitment" method="get" class="form-inline justify-content-center">
+                                                    <input type="hidden" name="action" value="list">
+                                                    <c:if test="${not empty notifSearchKeyword}">
+                                                        <input type="hidden" name="notifSearch" value="${notifSearchKeyword}">
+                                                    </c:if>
+                                                    <c:if test="${not empty searchKeyword}">
+                                                        <input type="hidden" name="search" value="${searchKeyword}">
+                                                    </c:if>
+                                                    <c:if test="${not empty pageSize}">
+                                                        <input type="hidden" name="pageSize" value="${pageSize}">
+                                                    </c:if>
+                                                    <c:if test="${not empty currentPage}">
+                                                        <input type="hidden" name="page" value="${currentPage}">
+                                                    </c:if>
+                                                    <c:if test="${not empty notifStatusFilter}">
+                                                        <input type="hidden" name="notifStatus" value="${notifStatusFilter}">
+                                                    </c:if>
+                                                    <input type="hidden" name="notifPageSize" value="${notifPageSize}">
+                                                    <div class="form-group mr-2">
+                                                        <label for="notifFromDate" class="mr-2" style="white-space: nowrap;">From:</label>
+                                                        <input type="date" class="form-control" id="notifFromDate" name="notifFromDate" 
+                                                               value="${notifFromDate}" style="width: 150px;">
+                                                    </div>
+                                                    <div class="form-group mr-2">
+                                                        <label for="notifToDate" class="mr-2" style="white-space: nowrap;">To:</label>
+                                                        <input type="date" class="form-control" id="notifToDate" name="notifToDate" 
+                                                               value="${notifToDate}" style="width: 150px;">
+                                                    </div>
+                                                    <button type="submit" class="btn btn-info">
+                                                        <i class="fa fa-filter"></i> Filter
+                                                    </button>
+                                                    <c:if test="${not empty notifFromDate || not empty notifToDate}">
+                                                        <a href="${notifDateClearUrl}" class="btn btn-secondary ml-2">
+                                                            <i class="fa fa-times"></i> Clear
+                                                        </a>
+                                                    </c:if>
+                                                </form>
+                                            </div>
+                                            <div class="col-md-4 text-right">
                                                 <form action="${pageContext.request.contextPath}/hrrecruitment" method="get" class="form-inline float-right" style="display: flex !important; align-items: center; flex-wrap: nowrap;">
                                                     <input type="hidden" name="action" value="list">
                                                     <c:if test="${not empty notifSearchKeyword}">
@@ -234,14 +280,27 @@
                                                     <c:if test="${not empty currentPage}">
                                                         <input type="hidden" name="page" value="${currentPage}">
                                                     </c:if>
-                                                    <label for="notifStatusFilter" class="mr-2" style="white-space: nowrap;">Filter Status:</label>
-                                                    <select class="form-control mr-2" id="notifStatusFilter" name="notifStatus" style="width: 120px; height: 38px; flex-shrink: 0;">
+                                                    <c:if test="${not empty notifFromDate}">
+                                                        <input type="hidden" name="notifFromDate" value="${notifFromDate}">
+                                                    </c:if>
+                                                    <c:if test="${not empty notifToDate}">
+                                                        <input type="hidden" name="notifToDate" value="${notifToDate}">
+                                                    </c:if>
+                                                    <label for="notifDepIdFilter" class="mr-2" style="white-space: nowrap;">Department:</label>
+                                                    <select class="form-control mr-2" id="notifDepIdFilter" name="notifDepId" style="width: 120px; height: 38px; flex-shrink: 0;">
+                                                        <option value="">All</option>
+                                                        <c:forEach items="${departments}" var="dept">
+                                                            <option value="${dept.depId}" ${notifDepIdFilter == dept.depId ? 'selected' : ''}>${dept.depName}</option>
+                                                        </c:forEach>
+                                                    </select>
+                                                    <label for="notifStatusFilter" class="mr-2" style="white-space: nowrap;">Status:</label>
+                                                    <select class="form-control mr-2" id="notifStatusFilter" name="notifStatus" style="width: 100px; height: 38px; flex-shrink: 0;">
                                                         <option value="" ${empty notifStatusFilter ? 'selected' : ''}>All</option>
                                                         <option value="New" ${notifStatusFilter == 'New' ? 'selected' : ''}>New</option>
                                                         <option value="Waiting" ${notifStatusFilter == 'Waiting' ? 'selected' : ''}>Waiting</option>
                                                         <option value="Rejected" ${notifStatusFilter == 'Rejected' ? 'selected' : ''}>Rejected</option>
                                                     </select>
-                                                    <select class="form-control" id="notifPageSizeSelect" name="notifPageSize" style="width: 70px; height: 38px; margin-right: 8px; flex-shrink: 0;">
+                                                    <select class="form-control" id="notifPageSizeSelect" name="notifPageSize" style="width: 60px; height: 38px; margin-right: 8px; flex-shrink: 0;">
                                                         <option value="5" ${notifPageSize == 5 ? 'selected' : ''}>5</option>
                                                         <option value="10" ${notifPageSize == 10 ? 'selected' : ''}>10</option>
                                                         <option value="25" ${notifPageSize == 25 ? 'selected' : ''}>25</option>
@@ -250,7 +309,7 @@
                                                     <button type="submit" class="btn btn-primary" style="height: 38px; padding: 0.375rem 0.75rem; margin-right: 8px; flex-shrink: 0; white-space: nowrap;">
                                                         <i class="fa fa-check"></i> Apply
                                                     </button>
-                                                    <span style="white-space: nowrap; height: 38px; display: flex; align-items: center; flex-shrink: 0;">items per page</span>
+                                                    <span style="white-space: nowrap; height: 38px; display: flex; align-items: center; flex-shrink: 0;">per page</span>
                                                 </form>
                                             </div>
                                         </div>
@@ -270,7 +329,7 @@
                                                             <c:forEach var="post" items="${pendingAndRejectedPosts}" varStatus="status">
                                                                 <tr>
                                                                     <td class="text-center">
-                                                                        <span class="badge badge-secondary">${(notifCurrentPage - 1) * notifPageSize + status.index + 1}</span>
+                                                                        <span class="badge badge-secondary">${notifStartIndex + status.index + 1}</span>
                                                                     </td>
                                                                     <td>
                                                                         <div class="d-flex flex-column">
@@ -350,7 +409,7 @@
                                                 <p class="text-muted">
                                                     <c:choose>
                                                         <c:when test="${totalNotifPosts > 0}">
-                                                            Showing ${(notifCurrentPage - 1) * notifPageSize + 1} to ${(notifCurrentPage - 1) * notifPageSize + pendingAndRejectedPosts.size()} of ${totalNotifPosts} notifications
+                                                            Showing ${notifStartDisplay} to ${notifEndDisplay} of ${totalNotifPosts} notifications
                                                         </c:when>
                                                         <c:otherwise>
                                                             Showing 0 to 0 of 0 notifications
@@ -366,10 +425,10 @@
                                                     <ul class="pagination justify-content-end">
                                                         <c:if test="${notifCurrentPage > 1}">
                                                             <li class="page-item">
-                                                                <a class="page-link" href="${pageContext.request.contextPath}/hrrecruitment?action=list&notifPage=1&notifPageSize=${notifPageSize}${not empty notifSearchKeyword ? '&notifSearch='.concat(notifSearchKeyword) : ''}${not empty notifStatusFilter ? '&notifStatus='.concat(notifStatusFilter) : ''}${not empty searchKeyword ? '&search='.concat(searchKeyword) : ''}${not empty pageSize ? '&pageSize='.concat(pageSize) : ''}">First</a>
+                                                                <a class="page-link" href="${baseUrl}&notifPage=1&${notifParams}${approvedParams}">First</a>
                                                             </li>
                                                             <li class="page-item">
-                                                                <a class="page-link" href="${pageContext.request.contextPath}/hrrecruitment?action=list&notifPage=${notifCurrentPage - 1}&notifPageSize=${notifPageSize}${not empty notifSearchKeyword ? '&notifSearch='.concat(notifSearchKeyword) : ''}${not empty notifStatusFilter ? '&notifStatus='.concat(notifStatusFilter) : ''}${not empty searchKeyword ? '&search='.concat(searchKeyword) : ''}${not empty pageSize ? '&pageSize='.concat(pageSize) : ''}">Previous</a>
+                                                                <a class="page-link" href="${baseUrl}&notifPage=${notifCurrentPage - 1}&${notifParams}${approvedParams}">Previous</a>
                                                             </li>
                                                         </c:if>
                                                         
@@ -377,16 +436,16 @@
                                                                    end="${notifCurrentPage + 2 > notifTotalPages ? notifTotalPages : notifCurrentPage + 2}" 
                                                                    var="i">
                                                             <li class="page-item ${i == notifCurrentPage ? 'active' : ''}">
-                                                                <a class="page-link" href="${pageContext.request.contextPath}/hrrecruitment?action=list&notifPage=${i}&notifPageSize=${notifPageSize}${not empty notifSearchKeyword ? '&notifSearch='.concat(notifSearchKeyword) : ''}${not empty notifStatusFilter ? '&notifStatus='.concat(notifStatusFilter) : ''}${not empty searchKeyword ? '&search='.concat(searchKeyword) : ''}${not empty pageSize ? '&pageSize='.concat(pageSize) : ''}">${i}</a>
+                                                                <a class="page-link" href="${baseUrl}&notifPage=${i}&${notifParams}${approvedParams}">${i}</a>
                                                             </li>
                                                         </c:forEach>
                                                         
                                                         <c:if test="${notifCurrentPage < notifTotalPages}">
                                                             <li class="page-item">
-                                                                <a class="page-link" href="${pageContext.request.contextPath}/hrrecruitment?action=list&notifPage=${notifCurrentPage + 1}&notifPageSize=${notifPageSize}${not empty notifSearchKeyword ? '&notifSearch='.concat(notifSearchKeyword) : ''}${not empty notifStatusFilter ? '&notifStatus='.concat(notifStatusFilter) : ''}${not empty searchKeyword ? '&search='.concat(searchKeyword) : ''}${not empty pageSize ? '&pageSize='.concat(pageSize) : ''}">Next</a>
+                                                                <a class="page-link" href="${baseUrl}&notifPage=${notifCurrentPage + 1}&${notifParams}${approvedParams}">Next</a>
                                                             </li>
                                                             <li class="page-item">
-                                                                <a class="page-link" href="${pageContext.request.contextPath}/hrrecruitment?action=list&notifPage=${notifTotalPages}&notifPageSize=${notifPageSize}${not empty notifSearchKeyword ? '&notifSearch='.concat(notifSearchKeyword) : ''}${not empty notifStatusFilter ? '&notifStatus='.concat(notifStatusFilter) : ''}${not empty searchKeyword ? '&search='.concat(searchKeyword) : ''}${not empty pageSize ? '&pageSize='.concat(pageSize) : ''}">Last</a>
+                                                                <a class="page-link" href="${baseUrl}&notifPage=${notifTotalPages}&${notifParams}${approvedParams}">Last</a>
                                                             </li>
                                                         </c:if>
                                                     </ul>
@@ -420,7 +479,7 @@
                                 <c:choose>
                                     <c:when test="${hasApprovedPosts}">
                                         <div class="row mb-3">
-                                            <div class="col-md-6">
+                                            <div class="col-md-4">
                                                 <form action="${pageContext.request.contextPath}/hrrecruitment" method="get" class="form-inline">
                                                     <input type="hidden" name="action" value="list">
                                                     <input type="hidden" name="pageSize" value="${pageSize}">
@@ -433,6 +492,12 @@
                                                     <c:if test="${not empty notifCurrentPage}">
                                                         <input type="hidden" name="notifPage" value="${notifCurrentPage}">
                                                     </c:if>
+                                                    <c:if test="${not empty fromDate}">
+                                                        <input type="hidden" name="fromDate" value="${fromDate}">
+                                                    </c:if>
+                                                    <c:if test="${not empty toDate}">
+                                                        <input type="hidden" name="toDate" value="${toDate}">
+                                                    </c:if>
                                                     <div class="form-group mr-2">
                                                         <label for="searchInput" class="mr-2">Search:</label>
                                                         <input type="text" class="form-control" id="searchInput" name="search" 
@@ -442,13 +507,49 @@
                                                         <i class="fa fa-search"></i> Search
                                                     </button>
                                                     <c:if test="${not empty searchKeyword}">
-                                                        <a href="${pageContext.request.contextPath}/hrrecruitment?action=list&pageSize=${pageSize}${not empty notifSearchKeyword ? '&notifSearch='.concat(notifSearchKeyword) : ''}${not empty notifPageSize ? '&notifPageSize='.concat(notifPageSize) : ''}${not empty notifCurrentPage ? '&notifPage='.concat(notifCurrentPage) : ''}" class="btn btn-secondary ml-2">
+                                                        <a href="${approvedSearchClearUrl}" class="btn btn-secondary ml-2">
                                                             <i class="fa fa-times"></i> Clear
                                                         </a>
                                                     </c:if>
                                                 </form>
                                             </div>
-                                            <div class="col-md-6 text-right">
+                                            <div class="col-md-4 text-center">
+                                                <form action="${pageContext.request.contextPath}/hrrecruitment" method="get" class="form-inline justify-content-center">
+                                                    <input type="hidden" name="action" value="list">
+                                                    <c:if test="${not empty searchKeyword}">
+                                                        <input type="hidden" name="search" value="${searchKeyword}">
+                                                    </c:if>
+                                                    <c:if test="${not empty notifSearchKeyword}">
+                                                        <input type="hidden" name="notifSearch" value="${notifSearchKeyword}">
+                                                    </c:if>
+                                                    <c:if test="${not empty notifPageSize}">
+                                                        <input type="hidden" name="notifPageSize" value="${notifPageSize}">
+                                                    </c:if>
+                                                    <c:if test="${not empty notifCurrentPage}">
+                                                        <input type="hidden" name="notifPage" value="${notifCurrentPage}">
+                                                    </c:if>
+                                                    <input type="hidden" name="pageSize" value="${pageSize}">
+                                                    <div class="form-group mr-2">
+                                                        <label for="fromDate" class="mr-2" style="white-space: nowrap;">From:</label>
+                                                        <input type="date" class="form-control" id="fromDate" name="fromDate" 
+                                                               value="${fromDate}" style="width: 150px;">
+                                                    </div>
+                                                    <div class="form-group mr-2">
+                                                        <label for="toDate" class="mr-2" style="white-space: nowrap;">To:</label>
+                                                        <input type="date" class="form-control" id="toDate" name="toDate" 
+                                                               value="${toDate}" style="width: 150px;">
+                                                    </div>
+                                                    <button type="submit" class="btn btn-info">
+                                                        <i class="fa fa-filter"></i> Filter
+                                                    </button>
+                                                    <c:if test="${not empty fromDate || not empty toDate}">
+                                                        <a href="${approvedDateClearUrl}" class="btn btn-secondary ml-2">
+                                                            <i class="fa fa-times"></i> Clear
+                                                        </a>
+                                                    </c:if>
+                                                </form>
+                                            </div>
+                                            <div class="col-md-4 text-right">
                                                 <form action="${pageContext.request.contextPath}/hrrecruitment" method="get" class="form-inline float-right" style="display: flex !important; align-items: center; flex-wrap: nowrap;">
                                                     <input type="hidden" name="action" value="list">
                                                     <c:if test="${not empty searchKeyword}">
@@ -463,7 +564,20 @@
                                                     <c:if test="${not empty notifCurrentPage}">
                                                         <input type="hidden" name="notifPage" value="${notifCurrentPage}">
                                                     </c:if>
-                                                    <select class="form-control" id="pageSizeSelect" name="pageSize" style="width: 70px; height: 38px; margin-right: 8px; flex-shrink: 0;">
+                                                    <c:if test="${not empty fromDate}">
+                                                        <input type="hidden" name="fromDate" value="${fromDate}">
+                                                    </c:if>
+                                                    <c:if test="${not empty toDate}">
+                                                        <input type="hidden" name="toDate" value="${toDate}">
+                                                    </c:if>
+                                                    <label for="depIdFilter" class="mr-2" style="white-space: nowrap;">Department:</label>
+                                                    <select class="form-control mr-2" id="depIdFilter" name="depId" style="width: 120px; height: 38px; flex-shrink: 0;">
+                                                        <option value="">All</option>
+                                                        <c:forEach items="${departments}" var="dept">
+                                                            <option value="${dept.depId}" ${depIdFilter == dept.depId ? 'selected' : ''}>${dept.depName}</option>
+                                                        </c:forEach>
+                                                    </select>
+                                                    <select class="form-control" id="pageSizeSelect" name="pageSize" style="width: 60px; height: 38px; margin-right: 8px; flex-shrink: 0;">
                                                         <option value="5" ${pageSize == 5 ? 'selected' : ''}>5</option>
                                                         <option value="10" ${pageSize == 10 ? 'selected' : ''}>10</option>
                                                         <option value="25" ${pageSize == 25 ? 'selected' : ''}>25</option>
@@ -473,7 +587,7 @@
                                                     <button type="submit" class="btn btn-primary" style="height: 38px; padding: 0.375rem 0.75rem; margin-right: 8px; flex-shrink: 0; white-space: nowrap;">
                                                         <i class="fa fa-check"></i> Show
                                                     </button>
-                                                    <span style="white-space: nowrap; height: 38px; display: flex; align-items: center; flex-shrink: 0;">posts per page</span>
+                                                    <span style="white-space: nowrap; height: 38px; display: flex; align-items: center; flex-shrink: 0;">per page</span>
                                                 </form>
                                             </div>
                                         </div>
@@ -493,7 +607,7 @@
                                                     <c:forEach var="post" items="${approvedPosts}" varStatus="status">
                                                         <tr>
                                                             <td class="text-center">
-                                                                <span class="badge badge-secondary">${(currentPage - 1) * pageSize + status.index + 1}</span>
+                                                                <span class="badge badge-secondary">${approvedStartIndex + status.index + 1}</span>
                                                             </td>
                                                             <td>
                                                                 <div class="d-flex flex-column">
@@ -559,7 +673,7 @@
                                         <div class="row mt-3">
                                             <div class="col-md-6">
                                                 <p class="text-muted">
-                                                    Showing ${(currentPage - 1) * pageSize + 1} to ${(currentPage - 1) * pageSize + approvedPosts.size()} of ${totalPosts} posts
+                                                    Showing ${approvedStartDisplay} to ${approvedEndDisplay} of ${totalPosts} posts
                                                     <c:if test="${not empty searchKeyword}">
                                                         (filtered from total posts)
                                                     </c:if>
@@ -570,10 +684,10 @@
                                                     <ul class="pagination justify-content-end">
                                                         <c:if test="${currentPage > 1}">
                                                             <li class="page-item">
-                                                                <a class="page-link" href="${pageContext.request.contextPath}/hrrecruitment?action=list&page=1&pageSize=${pageSize}${not empty searchKeyword ? '&search='.concat(searchKeyword) : ''}${not empty notifSearchKeyword ? '&notifSearch='.concat(notifSearchKeyword) : ''}${not empty notifPageSize ? '&notifPageSize='.concat(notifPageSize) : ''}">First</a>
+                                                                <a class="page-link" href="${baseUrl}&page=1&${approvedPostParams}${notifPostParams}">First</a>
                                                             </li>
                                                             <li class="page-item">
-                                                                <a class="page-link" href="${pageContext.request.contextPath}/hrrecruitment?action=list&page=${currentPage - 1}&pageSize=${pageSize}${not empty searchKeyword ? '&search='.concat(searchKeyword) : ''}${not empty notifSearchKeyword ? '&notifSearch='.concat(notifSearchKeyword) : ''}${not empty notifPageSize ? '&notifPageSize='.concat(notifPageSize) : ''}">Previous</a>
+                                                                <a class="page-link" href="${baseUrl}&page=${currentPage - 1}&${approvedPostParams}${notifPostParams}">Previous</a>
                                                             </li>
                                                         </c:if>
                                                         
@@ -581,16 +695,16 @@
                                                                    end="${currentPage + 2 > totalPages ? totalPages : currentPage + 2}" 
                                                                    var="i">
                                                             <li class="page-item ${i == currentPage ? 'active' : ''}">
-                                                                <a class="page-link" href="${pageContext.request.contextPath}/hrrecruitment?action=list&page=${i}&pageSize=${pageSize}${not empty searchKeyword ? '&search='.concat(searchKeyword) : ''}${not empty notifSearchKeyword ? '&notifSearch='.concat(notifSearchKeyword) : ''}${not empty notifPageSize ? '&notifPageSize='.concat(notifPageSize) : ''}">${i}</a>
+                                                                <a class="page-link" href="${baseUrl}&page=${i}&${approvedPostParams}${notifPostParams}">${i}</a>
                                                             </li>
                                                         </c:forEach>
                                                         
                                                         <c:if test="${currentPage < totalPages}">
                                                             <li class="page-item">
-                                                                <a class="page-link" href="${pageContext.request.contextPath}/hrrecruitment?action=list&page=${currentPage + 1}&pageSize=${pageSize}${not empty searchKeyword ? '&search='.concat(searchKeyword) : ''}${not empty notifSearchKeyword ? '&notifSearch='.concat(notifSearchKeyword) : ''}${not empty notifPageSize ? '&notifPageSize='.concat(notifPageSize) : ''}">Next</a>
+                                                                <a class="page-link" href="${baseUrl}&page=${currentPage + 1}&${approvedPostParams}${notifPostParams}">Next</a>
                                                             </li>
                                                             <li class="page-item">
-                                                                <a class="page-link" href="${pageContext.request.contextPath}/hrrecruitment?action=list&page=${totalPages}&pageSize=${pageSize}${not empty searchKeyword ? '&search='.concat(searchKeyword) : ''}${not empty notifSearchKeyword ? '&notifSearch='.concat(notifSearchKeyword) : ''}${not empty notifPageSize ? '&notifPageSize='.concat(notifPageSize) : ''}">Last</a>
+                                                                <a class="page-link" href="${baseUrl}&page=${totalPages}&${approvedPostParams}${notifPostParams}">Last</a>
                                                             </li>
                                                         </c:if>
                                                     </ul>
@@ -635,96 +749,70 @@
         <script src="${pageContext.request.contextPath}/assets2/vendors/chart/chart.min.js"></script>
         <script src="${pageContext.request.contextPath}/assets2/js/admin.js"></script>
         
-        <!-- Summernote JS -->
+        <!-- Summernote JS - Try CDN if local fails -->
         <script src="${pageContext.request.contextPath}/assets2/vendors/summernote/summernote.js"></script>
-        <script>
+        <script src="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote-lite.min.js"></script>
+        
+        <script type="text/javascript">
+            // Use window.onload to ensure everything is loaded
+            window.addEventListener('load', function() {
+                console.log('Page fully loaded');
+                console.log('jQuery:', typeof $);
+                console.log('Summernote:', typeof $.fn.summernote);
+                
+                // Simple config
+                var config = {
+                    height: 300,
+                    toolbar: [
+                        ['style', ['bold', 'italic', 'underline', 'clear']],
+                        ['font', ['strikethrough']],
+                        ['fontsize', ['fontsize']],
+                        ['color', ['color']],
+                        ['para', ['ul', 'ol', 'paragraph']],
+                        ['table', ['table']],
+                        ['insert', ['link']],
+                        ['view', ['fullscreen', 'codeview']]
+                    ]
+                };
+                
+                // Init create form
+                if ($('#content').length) {
+                    console.log('Init #content');
+                    $('#content').summernote(config);
+                }
+                
+                // Init edit form  
+                if ($('#editContent').length) {
+                    console.log('Init #editContent');
+                    $('#editContent').summernote(config);
+                }
+            });
+            
+            // Validation
             $(document).ready(function() {
-                // Initialize Summernote for create form
-                $('#content').summernote({
-                    height: 300,
-                    placeholder: 'Enter detailed job description, requirements, and benefits...',
-                    toolbar: [
-                        ['style', ['style']],
-                        ['font', ['bold', 'italic', 'underline', 'clear']],
-                        ['fontname', ['fontname']],
-                        ['fontsize', ['fontsize']],
-                        ['color', ['color']],
-                        ['para', ['ul', 'ol', 'paragraph']],
-                        ['height', ['height']],
-                        ['table', ['table']],
-                        ['insert', ['link', 'picture']],
-                        ['view', ['fullscreen', 'codeview', 'help']]
-                    ],
-                    fontNames: ['Arial', 'Arial Black', 'Comic Sans MS', 'Courier New', 'Helvetica', 'Impact', 'Tahoma', 'Times New Roman', 'Verdana'],
-                    fontSizes: ['8', '9', '10', '11', '12', '14', '16', '18', '20', '24', '36', '48'],
-                    callbacks: {
-                        onImageUpload: function(files) {
-                            // Handle image upload if needed
-                            for (let i = 0; i < files.length; i++) {
-                                let reader = new FileReader();
-                                reader.onloadend = function() {
-                                    $('#content').summernote('insertImage', reader.result);
-                                }
-                                reader.readAsDataURL(files[i]);
-                            }
-                        }
-                    }
-                });
-                
-                // Initialize Summernote for edit form
-                $('#editContent').summernote({
-                    height: 300,
-                    placeholder: 'Enter detailed job description, requirements, and benefits...',
-                    toolbar: [
-                        ['style', ['style']],
-                        ['font', ['bold', 'italic', 'underline', 'clear']],
-                        ['fontname', ['fontname']],
-                        ['fontsize', ['fontsize']],
-                        ['color', ['color']],
-                        ['para', ['ul', 'ol', 'paragraph']],
-                        ['height', ['height']],
-                        ['table', ['table']],
-                        ['insert', ['link', 'picture']],
-                        ['view', ['fullscreen', 'codeview', 'help']]
-                    ],
-                    fontNames: ['Arial', 'Arial Black', 'Comic Sans MS', 'Courier New', 'Helvetica', 'Impact', 'Tahoma', 'Times New Roman', 'Verdana'],
-                    fontSizes: ['8', '9', '10', '11', '12', '14', '16', '18', '20', '24', '36', '48'],
-                    callbacks: {
-                        onImageUpload: function(files) {
-                            // Handle image upload
-                            for (let i = 0; i < files.length; i++) {
-                                let reader = new FileReader();
-                                reader.onloadend = function() {
-                                    $('#editContent').summernote('insertImage', reader.result);
-                                }
-                                reader.readAsDataURL(files[i]);
-                            }
-                        }
-                    }
-                });
-                
-                // Form validation to ensure Summernote content is not empty
                 $('#createPostForm').on('submit', function(e) {
-                    var content = $('#content').summernote('code');
-                    var text = $('<div>').html(content).text().trim();
-                    
-                    if (text === '' || content === '<p><br></p>') {
-                        e.preventDefault();
-                        alert('Please enter job description');
-                        $('#content').summernote('focus');
-                        return false;
+                    var el = $('#content');
+                    if (el.length && typeof el.summernote === 'function') {
+                        var code = el.summernote('code');
+                        var text = $('<div>').html(code).text().trim();
+                        if (!text || code === '<p><br></p>') {
+                            e.preventDefault();
+                            alert('Please enter job description');
+                            return false;
+                        }
                     }
                 });
                 
                 $('#updatePostForm').on('submit', function(e) {
-                    var content = $('#editContent').summernote('code');
-                    var text = $('<div>').html(content).text().trim();
-                    
-                    if (text === '' || content === '<p><br></p>') {
-                        e.preventDefault();
-                        alert('Please enter job description');
-                        $('#editContent').summernote('focus');
-                        return false;
+                    var el = $('#editContent');
+                    if (el.length && typeof el.summernote === 'function') {
+                        var code = el.summernote('code');
+                        var text = $('<div>').html(code).text().trim();
+                        if (!text || code === '<p><br></p>') {
+                            e.preventDefault();
+                            alert('Please enter job description');
+                            return false;
+                        }
                     }
                 });
             });

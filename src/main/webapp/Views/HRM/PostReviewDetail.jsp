@@ -28,14 +28,14 @@
 
     <body class="ttr-opened-sidebar ttr-pinned-sidebar">
         <jsp:include page="../CommonItems/Header/dashboardHeader.jsp" />
-        <jsp:include page="../CommonItems/Navbar/empNavbar.jsp" />
+        <jsp:include page="../CommonItems/Navbar/hrManNavbar.jsp" />
 
         <main class="ttr-wrapper">
             <div class="container-fluid">
                 <div class="db-breadcrumb">
                     <h4 class="breadcrumb-title">Recruitment Post Review Detail</h4>
                     <ul class="db-breadcrumb-list">
-                        <li><a href="${pageContext.request.contextPath}/Views/Admin/adminDashboard.jsp"><i class="fa fa-home"></i>Home</a></li>
+                        <li><a href="${pageContext.request.contextPath}/Views/HRM/hrmDashboard.jsp"><i class="fa fa-home"></i>Home</a></li>
                         <li><a href="${pageContext.request.contextPath}/postreview">Post Review</a></li>
                         <li>Detail</li>
                     </ul>
@@ -67,9 +67,14 @@
                                                 <h2 class="text-primary mb-2">${post.title}</h2>
                                                 <div class="d-flex flex-wrap">
                                                     <c:choose>
-                                                        <c:when test="${post.status == 'Pending'}">
+                                                        <c:when test="${post.status == 'Waiting'}">
                                                             <span class="badge badge-warning mr-2 mb-2">
                                                                 <i class="fa fa-clock"></i> ${post.status}
+                                                            </span>
+                                                        </c:when>
+                                                        <c:when test="${post.status == 'New'}">
+                                                            <span class="badge badge-info mr-2 mb-2">
+                                                                <i class="fa fa-file"></i> ${post.status}
                                                             </span>
                                                         </c:when>
                                                         <c:when test="${post.status == 'Rejected'}">
@@ -80,6 +85,11 @@
                                                         <c:when test="${post.status == 'Approved'}">
                                                             <span class="badge badge-success mr-2 mb-2">
                                                                 <i class="fa fa-check-circle"></i> ${post.status}
+                                                            </span>
+                                                        </c:when>
+                                                        <c:when test="${post.status == 'Uploaded'}">
+                                                            <span class="badge badge-primary mr-2 mb-2">
+                                                                <i class="fa fa-upload"></i> ${post.status}
                                                             </span>
                                                         </c:when>
                                                     </c:choose>
@@ -126,8 +136,11 @@
                                                             <div class="col-sm-5"><strong>Status:</strong></div>
                                                             <div class="col-sm-7">
                                                                 <c:choose>
-                                                                    <c:when test="${post.status == 'Pending'}">
+                                                                    <c:when test="${post.status == 'Waiting'}">
                                                                         <span class="badge badge-warning">${post.status}</span>
+                                                                    </c:when>
+                                                                    <c:when test="${post.status == 'New'}">
+                                                                        <span class="badge badge-info">${post.status}</span>
                                                                     </c:when>
                                                                     <c:when test="${post.status == 'Rejected'}">
                                                                         <span class="badge badge-danger">${post.status}</span>
@@ -135,6 +148,12 @@
                                                                     <c:when test="${post.status == 'Approved'}">
                                                                         <span class="badge badge-success">${post.status}</span>
                                                                     </c:when>
+                                                                    <c:when test="${post.status == 'Uploaded'}">
+                                                                        <span class="badge badge-primary">${post.status}</span>
+                                                                    </c:when>
+                                                                    <c:otherwise>
+                                                                        <span class="badge badge-secondary">${post.status}</span>
+                                                                    </c:otherwise>
                                                                 </c:choose>
                                                             </div>
                                                         </div>
@@ -153,24 +172,6 @@
                                                                 </c:choose>
                                                             </div>
                                                         </div>
-                                                        <hr>
-                                                        <div class="row">
-                                                            <div class="col-sm-5"><strong>Created:</strong></div>
-                                                            <div class="col-sm-7">
-                                                                <c:if test="${hasCreatedAt}">
-                                                                    <fmt:formatDate value="${post.createdAt}" pattern="MMM dd, yyyy 'at' HH:mm" />
-                                                                </c:if>
-                                                            </div>
-                                                        </div>
-                                                        <c:if test="${hasUpdatedAt}">
-                                                            <hr>
-                                                            <div class="row">
-                                                                <div class="col-sm-5"><strong>Last Updated:</strong></div>
-                                                                <div class="col-sm-7">
-                                                                    <fmt:formatDate value="${post.updatedAt}" pattern="MMM dd, yyyy 'at' HH:mm" />
-                                                                </div>
-                                                            </div>
-                                                        </c:if>
                                                     </div>
                                                 </div>
                                             </div>
@@ -198,10 +199,28 @@
                                                                 </c:choose>
                                                             </div>
                                                         </div>
-                                                        <c:if test="${hasApprovedBy || hasApprovedAt}">
+                                                        <c:if test="${hasCreatedAt}">
                                                             <hr>
                                                             <div class="row">
-                                                                <div class="col-sm-5"><strong>Reviewed by:</strong></div>
+                                                                <div class="col-sm-5"><strong>Created on:</strong></div>
+                                                                <div class="col-sm-7">
+                                                                    <fmt:formatDate value="${post.createdAt}" pattern="MMM dd, yyyy 'at' HH:mm" />
+                                                                </div>
+                                                            </div>
+                                                        </c:if>
+                                                        <c:if test="${hasUpdatedAt}">
+                                                            <hr>
+                                                            <div class="row">
+                                                                <div class="col-sm-5"><strong>Last Updated:</strong></div>
+                                                                <div class="col-sm-7">
+                                                                    <fmt:formatDate value="${post.updatedAt}" pattern="MMM dd, yyyy 'at' HH:mm" />
+                                                                </div>
+                                                            </div>
+                                                        </c:if>
+                                                        <c:if test="${(post.status == 'Approved' || post.status == 'Uploaded') && (hasApprovedBy || hasApprovedAt)}">
+                                                            <hr>
+                                                            <div class="row">
+                                                                <div class="col-sm-5"><strong>Approved by:</strong></div>
                                                                 <div class="col-sm-7">
                                                                     <c:choose>
                                                                         <c:when test="${hasApprovedBy}">
@@ -210,20 +229,20 @@
                                                                             <br><small class="text-muted"><i class="fa fa-envelope"></i> ${post.approvedBy.email}</small>
                                                                         </c:when>
                                                                         <c:otherwise>
-                                                                            <span class="text-muted">Not reviewed yet</span>
+                                                                            <span class="text-muted">N/A</span>
                                                                         </c:otherwise>
                                                                     </c:choose>
                                                                 </div>
                                                             </div>
-                                                        </c:if>
-                                                        <c:if test="${hasApprovedAt}">
-                                                            <hr>
-                                                            <div class="row">
-                                                                <div class="col-sm-5"><strong>Reviewed on:</strong></div>
-                                                                <div class="col-sm-7">
-                                                                    <fmt:formatDate value="${post.approvedAt}" pattern="MMM dd, yyyy 'at' HH:mm" />
+                                                            <c:if test="${hasApprovedAt}">
+                                                                <hr>
+                                                                <div class="row">
+                                                                    <div class="col-sm-5"><strong>Approved on:</strong></div>
+                                                                    <div class="col-sm-7">
+                                                                        <fmt:formatDate value="${post.approvedAt}" pattern="MMM dd, yyyy 'at' HH:mm" />
+                                                                    </div>
                                                                 </div>
-                                                            </div>
+                                                            </c:if>
                                                         </c:if>
                                                     </div>
                                                 </div>
@@ -303,6 +322,7 @@
 
                 </div>
         </main>
+        <jsp:include page="../CommonItems/Footer/dashboardFooter.jsp" />
 
         <script src="${pageContext.request.contextPath}/assets2/js/jquery.min.js"></script>
         <script src="${pageContext.request.contextPath}/assets2/vendors/bootstrap/js/popper.min.js"></script>
