@@ -31,7 +31,7 @@ public class ProfileServlet extends HttpServlet {
         HttpSession session = request.getSession();
         Employee user = (Employee) session.getAttribute("user");
         if (user == null) {
-            response.sendRedirect("Views/login.jsp");
+            response.sendRedirect(request.getContextPath() + "/login");
             return;
         }
         session.setAttribute("user", user);

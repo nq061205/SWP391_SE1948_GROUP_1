@@ -32,7 +32,7 @@ public class ApplicationManagementServlet extends HttpServlet {
         HttpSession session = request.getSession();
         Employee user = (Employee) session.getAttribute("user");
         if (user == null) {
-            request.getRequestDispatcher("Views/login.jsp").forward(request, response);
+            response.sendRedirect(request.getContextPath() + "/login");
             return;
         }
         String typeApplication = request.getParameter("typeapplication");
