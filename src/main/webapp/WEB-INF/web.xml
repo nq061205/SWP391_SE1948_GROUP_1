@@ -42,6 +42,11 @@
         <servlet-class>controller.hrm.HRManagerRecruitmentServlet</servlet-class>
     </servlet>
     <servlet>
+        <servlet-name>ManagePostServlet</servlet-name>
+        <servlet-class>controller.hrm.ManagePostServlet</servlet-class>
+    </servlet>
+
+    <servlet>
         <servlet-name>DownloadRawTemplateServlet</servlet-name>
         <servlet-class>controller.hr.DownloadRawTemplateServlet</servlet-class>
     </servlet>
@@ -270,6 +275,11 @@
         <servlet-name>HRManagerRecruitmentServlet</servlet-name>
         <url-pattern>/postreview</url-pattern>
     </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>ManagePostServlet</servlet-name>
+        <url-pattern>/managepost</url-pattern>
+    </servlet-mapping>
+
     <servlet-mapping>
         <servlet-name>DownloadRawTemplateServlet</servlet-name>
         <url-pattern>/download-template</url-pattern>
