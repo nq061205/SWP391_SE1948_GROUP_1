@@ -220,15 +220,6 @@
                                                         </c:otherwise>
                                                     </c:choose>
                                                 </div>
-
-                                                <c:if test="${option eq 'edit'}">
-                                                    <div class="mt-3">
-                                                        <label for="contractFile" style="font-weight:600;">Replace file:</label>
-                                                        <input type="file" name="contractFile"
-                                                               accept=".pdf,image/*" class="form-control mb-2">
-                                                        <p style="color:red;">${avatarErr}</p>
-                                                    </div>
-                                                </c:if>
                                             </c:otherwise>
                                         </c:choose>
                                     </div>
@@ -267,6 +258,12 @@
                                                 <input class="form-control" type="date"
                                                        name="end" value="${contract.endDate}">
                                                 <p>${DateErr}</p>
+                                            </div>
+                                            <div class="mt-3">
+                                                <label for="contractFile" style="font-weight:600;">Replace file:</label>
+                                                <input type="file" name="contractFile"
+                                                       accept=".pdf,image/*" class="form-control mb-2">
+                                                <p style="color:red;">${avatarErr}</p>
                                             </div>
 
                                             <hr>
@@ -319,6 +316,36 @@
                                     data-bs-target="#addDependantModal">
                                 <i class="fa-solid fa-user-plus"></i> Add New Dependant
                             </button>
+                        </div>
+                        <div class="filter-row mb-3" style="margin: 0% 1%">
+                            <form action="${pageContext.request.contextPath}/dependantdetail" method="get"
+                                  class="d-flex align-items-center justify-content-between flex-nowrap gap-3 h-100" style="gap:12px;">
+                                <input type="hidden" name="tab" value="${param.tab}">
+                                <input type="hidden" name="empId" value="${param.empId}">
+                                <input type="hidden" name="page" value="1">
+                                <input  type="text" name="searchkey" class="form-control filter-h"
+                                        placeholder="Search by name"
+                                        value="${searchkey}">
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="fa fa-search me-1"></i> Search
+                                </button>
+                                <select name="relationship" class="form-control filter-h" style="width:170px;"
+                                        >
+                                    <option value="">-- All --</option>
+                                    <c:forEach items="${relationList}" var="rl">
+                                        <option value="${rl}" ${param.relationship == rl ? 'selected' : ''}>${rl}</option>
+                                    </c:forEach>
+                                </select>
+
+                                <select name="gender" class="form-control filter-h">
+                                    <option value="">-- All --</option>
+                                    <option value="true" ${param.gender == 'true' ? 'selected' : ''}>Male</option>
+                                    <option value="false" ${param.gender == 'false' ? 'selected' : ''}>Female</option>
+                                </select>
+                                <button type="submit" class="btn btn-outline-secondary filter-h"> <i class="fa fa-filter"></i>Apply</button>
+                                <a href="${pageContext.request.contextPath}/createaccount"
+                                   class="btn btn-warning filter-h"><i class="fa fa-times"></i>Clear</a>
+                            </form>
                         </div>
                         <div class="modal fade" id="addDependantModal" tabindex="-1" aria-labelledby="addDependantModalLabel" aria-hidden="true">
                             <div class="modal-dialog modal-dialog-centered modal-lg">
@@ -382,7 +409,7 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="table-responsive" style="overflow-x:auto;">
+                        <div style="margin-left: 1%;margin-right:1%">
                             <table class="table table-striped table-bordered table-hover align-middle text-center" 
                                    style="table-layout: fixed; width: 100%; border-collapse: collapse;">
                                 <thead class="thead-dark">
@@ -414,7 +441,57 @@
                                 </tbody>
                             </table>
                         </div>
+                        <c:url var="baseUrlWithSort" value="dependantdetail">
+                            <c:if test="${not empty param.relationship}">
+                                <c:param name="relationship" value="${param.relationship}" />
+                            </c:if>
+                            <c:if test="${not empty param.gender}">
+                                <c:param name="gender" value="${param.gender}" />
+                            </c:if>
+                            <c:if test="${not empty searchkey}">
+                                <c:param name="searchkey" value="${searchkey}" />
+                            </c:if>
+                            <c:if test="${not empty param.tab}">
+                                <c:param name="tab" value="${param.tab}" />
+                            </c:if>
+                            <c:if test="${not empty param.empId}">
+                                <c:param name="empId" value="${param.empId}" />
+                            </c:if>
+                        </c:url>
+                        <c:set var="urlPrefixWithSort" value="${baseUrlWithSort}${fn:contains(baseUrlWithSort, '?') ? '&' : '?'}" />
+                        <nav class="mt-3">
+                            <ul class="pagination justify-content-center">
+                                <c:set var="startPage" value="${page - 1}" />
+                                <c:set var="endPage" value="${page + 1}" />
 
+                                <c:if test="${startPage < 1}">
+                                    <c:set var="endPage" value="${endPage + (1 - startPage)}" />
+                                    <c:set var="startPage" value="1" />
+                                </c:if>
+
+                                <c:if test="${endPage > totalPages}">
+                                    <c:set var="startPage" value="${startPage - (endPage - totalPages)}" />
+                                    <c:set var="endPage" value="${totalPages}" />
+                                </c:if>
+
+                                <c:if test="${startPage < 1}">
+                                    <c:set var="startPage" value="1" />
+                                </c:if>
+                                <li class="page-item ${page <= 1 ? 'disabled' : ''}">
+                                    <a class="page-link" href="${urlPrefixWithSort}&page=${page-1}">Prev</a>
+                                </li>
+
+                                <c:forEach var="p" begin="${startPage}" end="${endPage}">
+                                    <li class="page-item ${p == page ? 'active' : ''}">
+                                        <a class="page-link" href="${urlPrefixWithSort}&page=${p}">${p}</a>
+                                    </li>
+                                </c:forEach>
+
+                                <li class="page-item ${page >= totalPages ? 'disabled' : ''}">
+                                    <a class="page-link" href="${urlPrefixWithSort}&page=${page+1}">Next</a>
+                                </li>
+                            </ul>
+                        </nav>
                     </div>
                 </c:if>
             </div>

@@ -749,10 +749,10 @@ public class EmployeeDAO extends DBContext {
 
             ps.setString(4, emp.getEmail());
             ps.setString(5, emp.getPhone());
-            ps.setBoolean(6, emp.isGender()); // true = nam, false = nữ
+            ps.setBoolean(6, emp.isGender());
             ps.setString(7, emp.getDept().getDepId());
             ps.setInt(8, emp.getRole().getRoleId());
-            ps.setBoolean(9, emp.isStatus()); // true = active
+            ps.setBoolean(9, emp.isStatus());
 
             ps.executeUpdate();
 
@@ -945,7 +945,7 @@ public class EmployeeDAO extends DBContext {
     }
 
     public Employee getManagerByDepartment(String depId) {
-        String sql = BASE_SELECT_SQL + " WHERE e.dep_id = ? AND r.role_name = 'Manager'";
+        String sql = BASE_SELECT_SQL + " WHERE e.dep_id = ? AND r.role_name like '%Manager%'";
         try (Connection conn = DBContext.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
 
             ps.setString(1, depId);

@@ -64,19 +64,36 @@ public class DependantDetailServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         DependantDAO depenDAO = new DependantDAO();
-        String empIdStr = (String) request.getAttribute("empId");
-        String tab = (String) request.getAttribute("tab");
+        String empIdStr = request.getParameter("empId");
+        String tab = request.getParameter("tab");
+        String searchKey = request.getParameter("searchkey");
+        String relationship = request.getParameter("relationship");
+        String gender = request.getParameter("gender");
         int empId = 0;
         try {
             empId = Integer.parseInt(empIdStr);
         } catch (Exception e) {
             e.printStackTrace();
         }
-        List<Dependant> dependantList = depenDAO.getAllDependantByEmpId(empId);
+        int page = 1;
+        int pageSize = 1;
+        try {
+            page = Integer.parseInt(request.getParameter("page"));
+        } catch (NumberFormatException e) {
+            page = 1;
+        }
+        int totalRecords = depenDAO.countFilteredDependantsByEmpId(empId, searchKey, relationship, gender);
+        int totalPages = (int) Math.ceil((double) totalRecords / pageSize);
+
+        List<Dependant> dependantList = depenDAO.getFilteredDependantsByEmpId(empId, searchKey, relationship, gender, page, pageSize);
         List<String> relationList = depenDAO.getRelationshipListEnumValues();
 
         request.setAttribute("relationList", relationList);
         request.setAttribute("dependantList", dependantList);
+        request.setAttribute("page", page);
+        request.setAttribute("totalPages", totalPages);
+        request.setAttribute("searchkey", searchKey);
+
         request.setAttribute("tab", tab);
         request.setAttribute("empId", empId);
         request.getRequestDispatcher("Views/employeedetails.jsp").forward(request, response);
