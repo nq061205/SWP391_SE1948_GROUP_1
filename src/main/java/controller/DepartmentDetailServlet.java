@@ -6,6 +6,7 @@ package controller;
 
 import dal.DeptDAO;
 import dal.EmployeeDAO;
+import dal.RolePermissionDAO;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
@@ -62,6 +63,12 @@ public class DepartmentDetailServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         HttpSession ses = request.getSession();
+        RolePermissionDAO rperDAO = new RolePermissionDAO();
+        Employee user = (Employee) ses.getAttribute("user");
+        if (user == null || !rperDAO.hasPermission(user.getRole().getRoleId(), 3)) {
+            response.sendRedirect("login");
+            return;
+        }
         DeptDAO depDAO = new DeptDAO();
         EmployeeDAO empDAO = new EmployeeDAO();
         String searchkey = request.getParameter("searchkey");

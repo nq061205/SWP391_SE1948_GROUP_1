@@ -7,6 +7,7 @@ package controller;
 import dal.OTRequestDAO;
 import dal.LeaveRequestDAO;
 import dal.EmployeeDAO;
+import dal.RolePermissionDAO;
 import model.*;
 import java.io.IOException;
 import jakarta.servlet.ServletException;
@@ -28,7 +29,9 @@ public class ComposeApplicationServlet extends HttpServlet {
         HttpSession session = request.getSession();
         EmployeeDAO empDAO = new EmployeeDAO();
         Employee user = (Employee) session.getAttribute("user");
-        if (user == null) {
+        RolePermissionDAO rperDAO = new RolePermissionDAO();
+
+        if (user == null || !rperDAO.hasPermission(user.getRole().getRoleId(), 7)) {
             response.sendRedirect("Views/login.jsp");
             return;
         }

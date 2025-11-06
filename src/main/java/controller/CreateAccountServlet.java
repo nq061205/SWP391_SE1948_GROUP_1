@@ -9,6 +9,7 @@ import dal.DeptDAO;
 import dal.EmployeeDAO;
 import dal.InterviewDAO;
 import dal.RoleDAO;
+import dal.RolePermissionDAO;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
@@ -71,6 +72,12 @@ public class CreateAccountServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         HttpSession ses = request.getSession();
+        RolePermissionDAO rperDAO = new RolePermissionDAO();
+        Employee user = (Employee) ses.getAttribute("user");
+        if (user == null || !rperDAO.hasPermission(user.getRole().getRoleId(), 1)) {
+            response.sendRedirect("login");
+            return;
+        }
         InterviewDAO interDAO = new InterviewDAO();
         DeptDAO deptDAO = new DeptDAO();
         RoleDAO rDAO = new RoleDAO();
