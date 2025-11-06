@@ -171,7 +171,6 @@
                                         </c:if> 
                                     </div>
                                     <div class="text-left">
-
                                         <p
                                             style="color:
                                             <c:choose>

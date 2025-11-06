@@ -111,6 +111,9 @@
                                 Leave Type
                             </th>
                             <th style="width:80px">
+                                Reason
+                            </th>
+                            <th style="width:80px">
                                 Day Request
                             </th>
                             <th style="width:120px">
@@ -129,26 +132,29 @@
                                 <td>${list.employee.fullname}</td>
                                 <td>${list.employee.email}</td>
                                 <td>${list.leaveType}</td>
+                                <td class="reason-cell">${list.reason}</td>
                                 <td>${list.dayRequested}</td>
                                 <td>${list.createdAt}</td>
                                 <td>
-                                    <form action="${pageContext.request.contextPath}/applicationmanagement" method="post" style="display:inline;">
+                                    <form action="${pageContext.request.contextPath}/applicationmanagement" method="post" style="display:inline;" onsubmit="return confirmAction(this, 'approved')">
                                         <input type="hidden" name="type" value="leave">
                                         <input type="hidden" name="action" value="Approved">
                                         <input type="hidden" name="leaveId" value="${list.leaveId}">
+                                        <input type="hidden" name="note" value="">
                                         <button type="submit" class="btn btn-success btn-sm" title="Approved">
                                             <i class="fa fa-check"></i>
                                         </button>
                                     </form>
 
-                                    <form action="${pageContext.request.contextPath}/applicationmanagement" method="post" style="display:inline;">
+                                    <form action="${pageContext.request.contextPath}/applicationmanagement" method="post" style="display:inline;" onsubmit="return confirmAction(this, 'rejected')">
                                         <input type="hidden" name="type" value="leave">
                                         <input type="hidden" name="action" value="Rejected">
                                         <input type="hidden" name="leaveId" value="${list.leaveId}">
-                                        <button type="submit" class="btn btn-danger btn-danger" title="Rejected">
+                                        <input type="hidden" name="note" value="">
+                                        <button type="submit" class="btn btn-danger btn-sm" title="Rejected">
                                             <i class="fa fa-times"></i>
                                         </button>
-                                    </form> 
+                                    </form>
                                 </td>
                             </tr>
                         </c:forEach>
@@ -233,9 +239,22 @@
         <script src="${pageContext.request.contextPath}/assets2/js/admin.js"></script>
         <script src='${pageContext.request.contextPath}/assets2/vendors/switcher/switcher.js'></script>
         <script>
-                        $(document).ready(function () {
-                            $('[data-toggle="tooltip"]').tooltip();
-                        });
+                                        $(document).ready(function () {
+                                            $('[data-toggle="tooltip"]').tooltip();
+                                        });
+        </script>
+        <script>
+            function confirmAction(form, action) {
+                const note = prompt('Please enter a note for ' + action + ':', "");
+
+                if (note === null) {
+                    form.querySelector('input[name="note"]').value = "";
+                } else {
+                    form.querySelector('input[name="note"]').value = note.trim();
+                }
+
+                return confirm('Are you sure you want to ' + action + ' this request?');
+            }
         </script>
         <style>
             .icon-circle {

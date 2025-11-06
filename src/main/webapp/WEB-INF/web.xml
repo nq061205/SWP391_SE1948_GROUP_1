@@ -172,6 +172,14 @@
         <servlet-name>ApplicationManagementServlet</servlet-name>
         <servlet-class>controller.ApplicationManagementServlet</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>SystemLogManagementServlet</servlet-name>
+        <servlet-class>controller.SystemLogManagementServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>SystemLogDetailServlet</servlet-name>
+        <servlet-class>controller.SystemLogDetailServlet</servlet-class>
+    </servlet>
     <servlet-mapping>
         <servlet-name>HomePageServlet</servlet-name>
         <url-pattern>/homepage</url-pattern>
@@ -343,6 +351,14 @@
     <servlet-mapping>
         <servlet-name>ApplicationManagementServlet</servlet-name>
         <url-pattern>/applicationmanagement</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>SystemLogManagementServlet</servlet-name>
+        <url-pattern>/systemlog</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>SystemLogDetailServlet</servlet-name>
+        <url-pattern>/systemlogdetail</url-pattern>
     </servlet-mapping>
     <session-config>
         <session-timeout>30</session-timeout>

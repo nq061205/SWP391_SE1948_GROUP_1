@@ -4,6 +4,7 @@
  */
 package controller;
 
+import dal.EmployeeDAO;
 import dal.LeaveRequestDAO;
 import dal.OTRequestDAO;
 import java.io.IOException;
@@ -52,8 +53,14 @@ public class ApplicationManagementServlet extends HttpServlet {
         Employee user = (Employee) session.getAttribute("user");
         if ("leave".equalsIgnoreCase(type)) {
             int id = Integer.parseInt(request.getParameter("leaveId"));
+            String note = request.getParameter("note");
             LeaveRequestDAO leaveDAO = new LeaveRequestDAO();
-            leaveDAO.updateLeaveStatus(id, action, user.getDept().getDepName());
+            LeaveRequest leaveRequest = leaveDAO.getLeaveRequestByLeaveId(id);
+            if("Annual Leave".equalsIgnoreCase(leaveRequest.getLeaveType()) && "Approved".equalsIgnoreCase(action)){
+                 EmployeeDAO empDAO = new EmployeeDAO();
+                 empDAO.updateDecreasePaidLeaveDaysByEmployeeId(user.getEmpId(),leaveRequest.getDayRequested());
+            }
+                 leaveDAO.updateLeaveStatus(id, action,note);
             response.sendRedirect(request.getContextPath() + "/applicationmanagement?typeapplication=leave");
             return;
         } else if ("ot".equalsIgnoreCase(type)) {

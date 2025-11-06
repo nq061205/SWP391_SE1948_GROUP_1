@@ -34,19 +34,17 @@ public class ApplicationDetailServlet extends HttpServlet {
             response.sendRedirect("Views/login.jsp");
             return;
         }
-        EmployeeDAO employeeDAO = new EmployeeDAO();
         OTRequestDAO OTDAO = new OTRequestDAO();
         LeaveRequestDAO leaveDAO = new LeaveRequestDAO();
         String leaveId = request.getParameter("leaveId");
         String OTId = request.getParameter("otId");
-        Employee employee = employeeDAO.getEmployeeByEmpId(user.getEmpId());
         if(OTId != null && !OTId.isEmpty()){
             OTRequest ot = OTDAO.getOTRequestByOTId(Integer.parseInt(OTId));
             request.setAttribute("type", "ot");
             request.setAttribute("ot", ot);
             
         }else if(leaveId != null && !leaveId.isEmpty()){
-            LeaveRequest leave = leaveDAO.getLeaveRequestByLeaveId(Integer.parseInt(leaveId), employee.getEmpId());
+            LeaveRequest leave = leaveDAO.getLeaveRequestByLeaveId(Integer.parseInt(leaveId));
             request.setAttribute("type", "leave");
             request.setAttribute("leave", leave);
         }

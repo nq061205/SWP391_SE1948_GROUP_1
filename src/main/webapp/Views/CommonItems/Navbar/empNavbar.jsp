@@ -124,6 +124,12 @@
                     </a>
                 </li>
                 <li>
+                    <a href="${pageContext.request.contextPath}/systemlog" class="ttr-material-button">
+                        <span class="ttr-icon"><i class="ti-heart"></i></span>
+                        <span class="ttr-label">System Log</span>
+                    </a>
+                </li>
+                <li>
                     <a href="${pageContext.request.contextPath}/Views/listapplication.jsp" class="ttr-material-button">
                         <span class="ttr-icon"><i class="ti-write"></i></span>
                         <span class="ttr-label">Application Management</span>

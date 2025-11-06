@@ -42,7 +42,7 @@ public class EditApplicationServlet extends HttpServlet {
         request.setAttribute("receiver", empDAO.getEmployeeReceiverByRole(user.getRole().getRoleName(), user.getDept().getDepId()));
         switch (type) {
             case "LEAVE":
-                LeaveRequest leaveRequest = leaveRequestDAO.getLeaveRequestByLeaveId(id, user.getEmpId());
+                LeaveRequest leaveRequest = leaveRequestDAO.getLeaveRequestByLeaveId(id);
                 request.setAttribute("email", leaveRequest.getApprovedBy().getEmail());
                 request.setAttribute("type_leave", leaveRequest.getLeaveType());
                 request.setAttribute("startdate", leaveRequest.getStartDate());
@@ -73,6 +73,7 @@ public class EditApplicationServlet extends HttpServlet {
             switch (type.toUpperCase()) {
                 case "LEAVE": {
                     int id = Integer.parseInt(request.getParameter("id"));
+                    LeaveRequest leave = leaveDAO.getLeaveRequestByLeaveId(id);
                     String leaveType = request.getParameter("type_leave");
                     String content = request.getParameter("content");
                     Date startDate = Date.valueOf(request.getParameter("startdate"));
@@ -90,7 +91,7 @@ public class EditApplicationServlet extends HttpServlet {
                     } else {
                         HttpSession session = request.getSession();
                         session.setAttribute("flashMessage", "Updated Successfully!");
-                        leaveDAO.updateLeaveRequest(id, leaveType, content, startDate, endDate);
+                        leaveDAO.updateLeaveRequest(id, leaveType, content, startDate, endDate,leave.getNote());
                         response.sendRedirect("application?typeapplication=leave");
                     }
                     break;
