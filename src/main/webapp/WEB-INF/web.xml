@@ -142,8 +142,8 @@
         <servlet-class>controller.hr.DetailDailyAttendanceServlet</servlet-class>
     </servlet>
     <servlet>
-        <servlet-name>scheduleServlet</servlet-name>
-        <servlet-class>controller.scheduleServlet</servlet-class>
+        <servlet-name>ScheduleServlet</servlet-name>
+        <servlet-class>controller.ScheduleServlet</servlet-class>
     </servlet>
     <!-- ===== SERVLET MAPPINGS ===== -->
     <servlet>
@@ -157,6 +157,14 @@
     <servlet>
         <servlet-name>InterviewServlet</servlet-name>
         <servlet-class>controller.InterviewServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>InterviewDetail</servlet-name>
+        <servlet-class>controller.InterviewDetail</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>DecentralizationServlet</servlet-name>
+        <servlet-class>controller.DecentralizationServlet</servlet-class>
     </servlet>
     <servlet-mapping>
         <servlet-name>HomePageServlet</servlet-name>
@@ -311,13 +319,21 @@
         <url-pattern>/detail-daily-attendance</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
-        <servlet-name>scheduleServlet</servlet-name>
+        <servlet-name>ScheduleServlet</servlet-name>
         <url-pattern>/schedule</url-pattern>
     </servlet-mapping>
     <!-- ===== SESSION CONFIG & WELCOME FILE ===== -->
     <servlet-mapping>
         <servlet-name>InterviewServlet</servlet-name>
         <url-pattern>/interview</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>InterviewDetail</servlet-name>
+        <url-pattern>/interviewdetail</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>DecentralizationServlet</servlet-name>
+        <url-pattern>/decentralization</url-pattern>
     </servlet-mapping>
     <session-config>
         <session-timeout>30</session-timeout>
