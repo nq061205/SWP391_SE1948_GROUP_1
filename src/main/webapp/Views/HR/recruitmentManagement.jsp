@@ -185,11 +185,9 @@
                                 <h4><i class="fa fa-bell"></i> Notification: Pending & Rejected Posts</h4>
                             </div>
                             <div class="widget-inner">
-                                <c:choose>
-                                    <c:when test="${hasPendingOrRejected}">
-                                        <div class="row mb-3">
-                                            <div class="col-md-4">
-                                                <form action="${pageContext.request.contextPath}/hrrecruitment" method="get" class="form-inline">
+                                <div class="row mb-3">
+                                    <div class="col-md-4">
+                                        <form action="${pageContext.request.contextPath}/hrrecruitment" method="get" class="form-inline">
                                                     <input type="hidden" name="action" value="list">
                                                     <input type="hidden" name="notifPageSize" value="${notifPageSize}">
                                                     <c:if test="${not empty searchKeyword}">
@@ -312,6 +310,8 @@
                                                 </form>
                                             </div>
                                         </div>
+                                <c:choose>
+                                    <c:when test="${hasPendingOrRejected}">
                                         <div class="table-responsive">
                                             <table class="table table-striped table-bordered">
                                                 <thead class="thead-warning">
@@ -475,11 +475,9 @@
                                 <span class="badge badge-success">Total: ${totalPosts} posts</span>
                             </div>
                             <div class="widget-inner">
-                                <c:choose>
-                                    <c:when test="${hasApprovedPosts}">
-                                        <div class="row mb-3">
-                                            <div class="col-md-4">
-                                                <form action="${pageContext.request.contextPath}/hrrecruitment" method="get" class="form-inline">
+                                <div class="row mb-3">
+                                    <div class="col-md-4">
+                                        <form action="${pageContext.request.contextPath}/hrrecruitment" method="get" class="form-inline">
                                                     <input type="hidden" name="action" value="list">
                                                     <input type="hidden" name="pageSize" value="${pageSize}">
                                                     <c:if test="${not empty notifSearchKeyword}">
@@ -590,6 +588,8 @@
                                                 </form>
                                             </div>
                                         </div>
+                                <c:choose>
+                                    <c:when test="${hasApprovedPosts}">
                                         <div class="table-responsive">
                                             <table class="table table-striped table-bordered">
                                                 <thead class="thead-dark">

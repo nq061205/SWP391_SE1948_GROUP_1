@@ -124,21 +124,39 @@
                 <% if (rpDAO.hasPermission(roleId, 10)) { %>
                 <li>
                     <a href="${pageContext.request.contextPath}/hrrecruitment" class="ttr-material-button">
-                        <span class="ttr-icon"><i class="ti-clipboard"></i></span>
+                        <span class="ttr-icon"><i class="ti-write"></i></span>
                         <span class="ttr-label">HR Recruitment</span>
                     </a>
                 </li>
                 <% } %>
 
-                <!-- HRM Recruitment -->
+                <!-- HRM Recruitment (Post Review) -->
                 <% if (rpDAO.hasPermission(roleId, 11)) { %>
                 <li>
-                    <a href="${pageContext.request.contextPath}/hrmanagerrecruitment" class="ttr-material-button">
-                        <span class="ttr-icon"><i class="ti-briefcase"></i></span>
-                        <span class="ttr-label">HRM Recruitment</span>
+                    <a href="${pageContext.request.contextPath}/postreview" class="ttr-material-button">
+                        <span class="ttr-icon"><i class="ti-check-box"></i></span>
+                        <span class="ttr-label">Post Review</span>
                     </a>
                 </li>
                 <% } %>
+
+                <!-- Manage Post -->
+                <% if (rpDAO.hasPermission(roleId, 11)) { %>
+                <li>
+                    <a href="${pageContext.request.contextPath}/managepost" class="ttr-material-button">
+                        <span class="ttr-icon"><i class="ti-settings"></i></span>
+                        <span class="ttr-label">Manage Post</span>
+                    </a>
+                </li>
+                <% } %>
+
+                <!-- Job Site -->
+                <li>
+                    <a href="${pageContext.request.contextPath}/jobsite" class="ttr-material-button">
+                        <span class="ttr-icon"><i class="ti-briefcase"></i></span>
+                        <span class="ttr-label">Job Site</span>
+                    </a>
+                </li>
 
                 <!-- Attendance -->
                 <li>
