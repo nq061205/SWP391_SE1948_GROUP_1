@@ -33,8 +33,7 @@ CREATE TABLE Employee (
     phone VARCHAR(20),
     position_title VARCHAR(100),
     image VARCHAR(255),
-    dependant_count INT DEFAULT 0,
-    paid_leave_days int DEFAULT 12,   -- Số ngày nghỉ có lương
+    paid_leave_days int DEFAULT 0,   -- Số ngày nghỉ có lương
     dep_id VARCHAR(5),
     role_id INT,
     status BOOLEAN DEFAULT TRUE,
@@ -45,15 +44,14 @@ CREATE TABLE Employee (
 CREATE TABLE RecruitmentPost (
     post_id INT AUTO_INCREMENT PRIMARY KEY,
     title VARCHAR(200) NOT NULL,
-    content TEXT NOT NULL,
-    status ENUM('Approved', 'Rejected', 'Pending') DEFAULT 'Pending',
-    is_delete BOOLEAN DEFAULT FALSE,
+    content mediumtext NOT NULL,
+    status ENUM('New', 'Rejected', 'Waiting','Approved', 'Uploaded','Deleted') DEFAULT 'New',
     created_by INT NOT NULL,
     approved_by INT,
     dep_id VARCHAR(5),
-    approved_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    approved_at TIMESTAMP DEFAULT NULL,
+    created_at TIMESTAMP DEFAULT NULL,
+    updated_at TIMESTAMP DEFAULT NULL,
     FOREIGN KEY (created_by) REFERENCES Employee(emp_id) ON DELETE CASCADE,
     FOREIGN KEY (approved_by) REFERENCES Employee(emp_id) ON DELETE SET NULL,
     FOREIGN KEY (dep_id) REFERENCES Department(dep_id) ON DELETE SET NULL
@@ -90,14 +88,18 @@ CREATE TABLE Payroll (
     payroll_id INT AUTO_INCREMENT PRIMARY KEY,
     emp_id INT NOT NULL,
     total_work_day DECIMAL(5,2) DEFAULT 0.00,
-    total_work_hours DECIMAL(7,2) DEFAULT 0.00, 
+    total_ot_hours DECIMAL(7,2) DEFAULT 0.00, 
+    regular_salary DECIMAL(15,2) DEFAULT 0.00,
+    ot_earning DECIMAL(15,2) DEFAULT 0.00,
+	insurance_base DECIMAL(15,2) DEFAULT 0.00,
     SI DECIMAL(10,2) DEFAULT 0.00,
     HI DECIMAL(10,2) DEFAULT 0.00,
     UI DECIMAL(10,2) DEFAULT 0.00,
+    tax_income DECIMAL(10,2) DEFAULT 0.00,
     tax DECIMAL(10,2) DEFAULT 0.00,
-    total_salary DECIMAL(15,2) DEFAULT 0.00,
     month TINYINT NOT NULL CHECK (month BETWEEN 1 AND 12),
     year YEAR NOT NULL,
+    is_paid boolean not null,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     FOREIGN KEY (emp_id) REFERENCES Employee(emp_id) ON DELETE CASCADE
@@ -134,6 +136,7 @@ CREATE TABLE Daily_Attendance (
     ot_hours DECIMAL(5,2) DEFAULT 0.00,
     status ENUM('Present','Absent','Holiday','Leave') DEFAULT 'Absent',
     is_locked BOOLEAN DEFAULT FALSE,
+    note text,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     FOREIGN KEY (emp_id) REFERENCES Employee(emp_id) ON DELETE CASCADE,
@@ -157,7 +160,7 @@ CREATE TABLE OT_Request (
 CREATE TABLE Leave_Request (
     leave_id INT AUTO_INCREMENT PRIMARY KEY,
     emp_id INT NOT NULL,
-    leave_type ENUM('Annual Leave','Sick','Unpaid','Maternity','Other') NOT NULL,
+    leave_type ENUM('Annual Leave','Sick Leave','Maternity','Personal Reason','Other','Family Business leave') NOT NULL,
     reason VARCHAR(255),
     day_requested DECIMAL(5,2) NOT NULL,    
     start_date DATE NOT NULL,            
@@ -166,6 +169,7 @@ CREATE TABLE Leave_Request (
     approved_at TIMESTAMP NULL,
     status ENUM('Pending','Approved','Rejected','Invalid') DEFAULT 'Pending',
     note TEXT,
+    system_log text,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     FOREIGN KEY (emp_id) REFERENCES Employee(emp_id) ON DELETE CASCADE,
@@ -190,3 +194,32 @@ CREATE TABLE Holiday (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );
+CREATE TABLE Dependant (
+    dependant_id INT AUTO_INCREMENT PRIMARY KEY,
+    emp_id INT NOT NULL,
+    name VARCHAR(100) NOT NULL,
+    relationship ENUM('Spouse', 'Child', 'Parent', 'Sibling', 'Other') NOT NULL,
+    dob DATE,
+    gender BOOLEAN,
+    phone VARCHAR(20),
+    FOREIGN KEY (emp_id) REFERENCES Employee(emp_id) ON DELETE CASCADE
+);
+
+SET GLOBAL event_scheduler = ON;
+
+DROP EVENT IF EXISTS add_paid_leave_each_month;
+
+CREATE EVENT add_paid_leave_each_month
+ON SCHEDULE
+    EVERY 1 MONTH
+    STARTS TIMESTAMP(
+        DATE_FORMAT(CURRENT_DATE, '%Y-%m-1 00:00:00')
+    )
+DO
+  UPDATE Employee
+  SET paid_leave_days = paid_leave_days + 1
+  WHERE status = TRUE
+    AND start_date IS NOT NULL
+    AND TIMESTAMPDIFF(MONTH, start_date, CURDATE()) >= 1;
+
+
