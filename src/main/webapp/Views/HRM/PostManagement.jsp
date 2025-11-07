@@ -1,9 +1,3 @@
-<%-- 
-    Document   : PostManagement
-    Created on : Oct 14, 2025, 5:52:46 AM
-    Author     : Twiash
---%>
-
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <!DOCTYPE html>
 <html>

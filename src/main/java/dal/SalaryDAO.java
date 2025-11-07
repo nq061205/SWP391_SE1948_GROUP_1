@@ -81,22 +81,18 @@ public class SalaryDAO {
         return null;
     }
 
-    public Salary getSalaryDeatailByTime(int emp_id, int month, int year) {
-        String sql = SALARY_SELECT_SQL + " WHERE s.emp_id = ?\n"
-                + "  AND (\n"
-                + "        (\n"
-                + "          (MONTH(s.start_date) <= ? AND YEAR(s.start_date) <= ?)\n"
-                + "          AND (\n"
-                + "               (MONTH(s.end_date) >= ? AND YEAR(s.end_date) >= ?)\n"
-                + "               OR s.end_date IS NULL\n"
-                + "              )\n"
-                + "        )\n"
-                + "      )";
+    public Salary getSalaryDeatailByTime(int empId, int month, int year) {
+        String sql = SALARY_SELECT_SQL
+                + " WHERE s.emp_id = ? "
+                + "   AND (? BETWEEN MONTH(s.start_date) AND IFNULL(MONTH(s.end_date), ?)) "
+                + "   AND (? BETWEEN YEAR(s.start_date) AND IFNULL(YEAR(s.end_date), ?))";
+
         try (Connection conn = DBContext.getConnection(); PreparedStatement stm = conn.prepareStatement(sql)) {
-            stm.setInt(1, emp_id);
+
+            stm.setInt(1, empId);
             stm.setInt(2, month);
-            stm.setInt(3, year);
-            stm.setInt(4, month);
+            stm.setInt(3, month);
+            stm.setInt(4, year);
             stm.setInt(5, year);
 
             try (ResultSet rs = stm.executeQuery()) {
@@ -112,6 +108,7 @@ public class SalaryDAO {
 
     public static void main(String[] args) {
         SalaryDAO dao = new SalaryDAO();
-        System.out.println(dao.getSalaryDeatailByTime(1,2,2024));
+        System.out.println(dao.getSalaryDeatailByTime(18, 10, 2025));
+        
     }
 }

@@ -33,7 +33,7 @@ public class ApplicationDetailServlet extends HttpServlet {
         RolePermissionDAO rperDAO = new RolePermissionDAO();
         Employee user = (Employee) session.getAttribute("user");
         if (user == null || !rperDAO.hasPermission(user.getRole().getRoleId(), 7)) {
-            response.sendRedirect("Views/login.jsp");
+            response.sendRedirect(request.getContextPath() + "/login");
             return;
         }
         OTRequestDAO OTDAO = new OTRequestDAO();

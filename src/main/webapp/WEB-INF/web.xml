@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- ===================== SERVLETS ===================== -->
 <web-app version="6.0" xmlns="https://jakarta.ee/xml/ns/jakartaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="https://jakarta.ee/xml/ns/jakartaee https://jakarta.ee/xml/ns/jakartaee/web-app_6_0.xsd">
+
     <servlet>
         <servlet-name>HomePageServlet</servlet-name>
         <servlet-class>controller.HomePageServlet</servlet-class>
@@ -10,7 +10,7 @@
         <servlet-class>controller.LoginServlet</servlet-class>
     </servlet>
     <servlet>
-        <servlet-name>ChangePassword</servlet-name>
+        <servlet-name>ChangePasswordServlet</servlet-name>
         <servlet-class>controller.ChangePasswordServlet</servlet-class>
     </servlet>
     <servlet>
@@ -41,6 +41,11 @@
         <servlet-name>HRManagerRecruitmentServlet</servlet-name>
         <servlet-class>controller.hrm.HRManagerRecruitmentServlet</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>ManagePostServlet</servlet-name>
+        <servlet-class>controller.hrm.ManagePostServlet</servlet-class>
+    </servlet>
+
     <servlet>
         <servlet-name>DownloadRawTemplateServlet</servlet-name>
         <servlet-class>controller.hr.DownloadRawTemplateServlet</servlet-class>
@@ -165,7 +170,6 @@
         <servlet-name>InterviewServlet</servlet-name>
         <servlet-class>controller.InterviewServlet</servlet-class>
     </servlet>
-    <!-- ===== SERVLET MAPPINGS ===== -->
     <servlet>
         <servlet-name>UpdateDailyAttendanceServlet</servlet-name>
         <servlet-class>controller.hr.UpdateDailyAttendanceServlet</servlet-class>
@@ -199,10 +203,18 @@
         <servlet-class>controller.DecentralizationServlet</servlet-class>
     </servlet>
     <servlet>
-        <servlet-name>MonthlyPayrollServlet</servlet-name>
-        <servlet-class>controller.hrm.MonthlyPayrollServlet</servlet-class>
+        <servlet-name>ScheduleInterviewServlet</servlet-name>
+        <servlet-class>controller.ScheduleInterviewServlet</servlet-class>
     </servlet>
-    <!-- ===================== SERVLET MAPPINGS ===================== -->
+    <servlet>
+        <servlet-name>ViewCreatedInterviewsServlet</servlet-name>
+        <servlet-class>controller.ViewCreatedInterviewsServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>EditInterviewServlet</servlet-name>
+        <servlet-class>controller.EditInterviewServlet</servlet-class>
+    </servlet>
+
     <servlet-mapping>
         <servlet-name>HomePageServlet</servlet-name>
         <url-pattern>/homepage</url-pattern>
@@ -220,7 +232,7 @@
         <url-pattern>/recovery</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
-        <servlet-name>ChangePassword</servlet-name>
+        <servlet-name>ChangePasswordServlet</servlet-name>
         <url-pattern>/changepassword</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
@@ -264,12 +276,21 @@
         <url-pattern>/postreview</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
+        <servlet-name>ManagePostServlet</servlet-name>
+        <url-pattern>/managepost</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
         <servlet-name>DownloadRawTemplateServlet</servlet-name>
         <url-pattern>/download-template</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>AccountListServlet</servlet-name>
         <url-pattern>/accountlist</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>DepartmentListServlet</servlet-name>
+        <url-pattern>/departmentlist</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>DepartmentDetailServlet</servlet-name>
@@ -376,6 +397,10 @@
         <url-pattern>/contractdetail</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
+        <servlet-name>DetailDailyAttendanceServlet</servlet-name>
+        <url-pattern>/detail-daily-attendance</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
         <servlet-name>ScheduleServlet</servlet-name>
         <url-pattern>/schedule</url-pattern>
     </servlet-mapping>
@@ -388,12 +413,24 @@
         <url-pattern>/attendance</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
+        <servlet-name>InterviewDetail</servlet-name>
+        <url-pattern>/interviewdetail</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
         <servlet-name>UpdateDailyAttendanceServlet</servlet-name>
         <url-pattern>/update-daily-attendance</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
-        <servlet-name>InterviewDetail</servlet-name>
-        <url-pattern>/interviewdetail</url-pattern>
+        <servlet-name>ScheduleInterviewServlet</servlet-name>
+        <url-pattern>/scheduleinterview</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>ViewCreatedInterviewsServlet</servlet-name>
+        <url-pattern>/viewcreatedinterview</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>EditInterviewServlet</servlet-name>
+        <url-pattern>/editinterview</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>MonthlyPayrollServlet</servlet-name>

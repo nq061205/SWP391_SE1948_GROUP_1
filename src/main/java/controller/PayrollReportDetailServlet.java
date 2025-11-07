@@ -31,7 +31,7 @@ public class PayrollReportDetailServlet extends HttpServlet {
         HttpSession session = request.getSession();
         Employee user = (Employee) session.getAttribute("user");
         if (user == null) {
-            request.getRequestDispatcher("Views/login.jsp");
+            response.sendRedirect(request.getContextPath() + "/login");
             return;
         }
         String monthParam = request.getParameter("month");
@@ -57,8 +57,8 @@ public class PayrollReportDetailServlet extends HttpServlet {
 
         PayrollDAO payrollDAO = new PayrollDAO();
         SalaryDAO salaryDAO = new SalaryDAO();
-        Payroll payroll = payrollDAO.getPayrollDeatailByTime(user.getEmpId(),month,year);
-        Salary salary = salaryDAO.getSalaryDeatailByTime(user.getEmpId(),month,year);
+        Payroll payroll = payrollDAO.getPayrollDeatailByTime(user.getEmpId(), month, year);
+        Salary salary = salaryDAO.getSalaryDeatailByTime(user.getEmpId(), month, year);
         request.setAttribute("payroll", payroll);
         request.setAttribute("salary", salary);
         request.getRequestDispatcher("Views/payrollreportdetail.jsp").forward(request, response);

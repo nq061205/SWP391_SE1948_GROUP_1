@@ -34,7 +34,7 @@ public class EditApplicationServlet extends HttpServlet {
         RolePermissionDAO rperDAO = new RolePermissionDAO();
 
         if (user == null || !rperDAO.hasPermission(user.getRole().getRoleId(), 7)) {
-            response.sendRedirect("Views/login.jsp");
+            response.sendRedirect(request.getContextPath() + "/login");
             return;
         }
         EmployeeDAO empDAO = new EmployeeDAO();

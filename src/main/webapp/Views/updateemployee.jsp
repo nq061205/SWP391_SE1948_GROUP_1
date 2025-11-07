@@ -3,7 +3,7 @@
     Created on : Oct 4, 2025, 9:18:37 PM
     Author     : Lenovo
 --%>
-
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ page contentType="text/html" pageEncoding="UTF-8"%>
 <!DOCTYPE html>
@@ -104,7 +104,7 @@
                                             <div class="form-group row">
                                                 <label class="col-sm-3 col-form-label">Email:</label>
                                                 <div class="col-sm-9">
-                                                    <input name="email" class="form-control"  type="email" value="${sessionScope.emp.email}">
+                                                    <input name="email" class="form-control"  type="email" value="${sessionScope.emp.email}" required>
                                                 </div>
                                             </div>
                                             <div class="form-group row mt-2">
@@ -116,7 +116,7 @@
                                             <div class="form-group row mt-2">
                                                 <label class="col-sm-3 col-form-label">Date of birth:</label>
                                                 <div class="col-sm-9">
-                                                    <input class="form-control" name="dob" type="date" value="${sessionScope.emp.dob}" >
+                                                    <input class="form-control" name="dob" type="date" value="${sessionScope.emp.dob}"  required>
                                                     <p>${dobErr}</p>
                                                 </div>
                                             </div>
@@ -125,9 +125,13 @@
                                                 <div class="col-sm-9">
                                                     <select name="positionTitle" class="form-control">
                                                         <c:forEach var="pos" items="${posList}">
-                                                            <option value="${pos}" 
-                                                                    <c:if test="${pos == sessionScope.emp.positionTitle}">selected</c:if>>
+                                                            <option value="${pos}"
+                                                                    <c:if test="${pos == emp.positionTitle}">selected</c:if>
+                                                                    <c:if test="${hasManager and fn:containsIgnoreCase(pos, 'manager')}">disabled</c:if>>
                                                                 ${pos}
+                                                                <c:if test="${hasManager and fn:containsIgnoreCase(pos, 'manager')}">
+                                                                    (Already Assigned)
+                                                                </c:if>
                                                             </option>
                                                         </c:forEach>
                                                     </select>

@@ -32,7 +32,7 @@ public class ApplicationManagementServlet extends HttpServlet {
         HttpSession session = request.getSession();
         Employee user = (Employee) session.getAttribute("user");
         if (user == null) {
-            request.getRequestDispatcher("Views/login.jsp").forward(request, response);
+            response.sendRedirect(request.getContextPath() + "/login");
             return;
         }
         String typeApplication = request.getParameter("typeapplication");
@@ -46,11 +46,9 @@ public class ApplicationManagementServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        HttpSession session = request.getSession();
         String type = request.getParameter("type");
         String action = request.getParameter("action");
         
-        Employee user = (Employee) session.getAttribute("user");
         if ("leave".equalsIgnoreCase(type)) {
             int id = Integer.parseInt(request.getParameter("leaveId"));
             String note = request.getParameter("note");
@@ -58,7 +56,7 @@ public class ApplicationManagementServlet extends HttpServlet {
             LeaveRequest leaveRequest = leaveDAO.getLeaveRequestByLeaveId(id);
             if("Annual Leave".equalsIgnoreCase(leaveRequest.getLeaveType()) && "Approved".equalsIgnoreCase(action)){
                  EmployeeDAO empDAO = new EmployeeDAO();
-                 empDAO.updateDecreasePaidLeaveDaysByEmployeeId(user.getEmpId(),leaveRequest.getDayRequested());
+                 empDAO.updateDecreasePaidLeaveDaysByEmployeeId(leaveRequest.getEmployee().getEmpId(),leaveRequest.getDayRequested());
             }
                  leaveDAO.updateLeaveStatus(id, action,note);
             response.sendRedirect(request.getContextPath() + "/applicationmanagement?typeapplication=leave");

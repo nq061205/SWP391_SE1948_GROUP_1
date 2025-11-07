@@ -4,48 +4,23 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <!-- META ============================================= -->
         <meta charset="utf-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta name="keywords" content="" />
         <meta name="author" content="" />
         <meta name="robots" content="" />
-
-        <!-- DESCRIPTION -->
-        <meta name="description" content="Human Tech" />
-
-        <!-- OG -->
-        <meta property="og:title" content="Human Tech" />
-        <meta property="og:description" content="Profile" />
+        <meta name="description" content="HRM - Manage Recruitment Posts" />
+        <meta property="og:title" content="Manage Posts - HRM System" />
+        <meta property="og:description" content="Manage Approved, Uploaded and Deleted Posts" />
         <meta property="og:image" content="" />
         <meta name="format-detection" content="telephone=no">
-
-        <!-- FAVICONS ICON ============================================= -->
         <link rel="icon" href="${pageContext.request.contextPath}/assets2/images/favicon.ico" type="image/x-icon" />
         <link rel="shortcut icon" type="image/x-icon" href="${pageContext.request.contextPath}/assets2/images/favicon.png" />
-
-        <!-- PAGE TITLE HERE ============================================= -->
-        <title>My Profile</title>
-
-        <!-- MOBILE SPECIFIC ============================================= -->
+        <title>Manage Posts - HRM System</title>
         <meta name="viewport" content="width=device-width, initial-scale=1">
-
-        <!--[if lt IE 9]>
-        <script src="${pageContext.request.contextPath}/assets2/js/html5shiv.min.js"></script>
-        <script src="${pageContext.request.contextPath}/assets2/js/respond.min.js"></script>
-        <![endif]-->
-
-        <!-- All PLUGINS CSS ============================================= -->
         <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/assets2/css/assets.css">
-        <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/assets2/vendors/calendar/fullcalendar.css">
-
-        <!-- TYPOGRAPHY ============================================= -->
         <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/assets2/css/typography.css">
-
-        <!-- SHORTCODES ============================================= -->
         <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/assets2/css/shortcodes/shortcodes.css">
-
-        <!-- STYLESHEETS ============================================= -->
         <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/assets2/css/style.css">
         <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/assets2/css/dashboard.css">
         <link class="skin" rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/assets2/css/color/color-1.css">
@@ -82,12 +57,16 @@
                 padding: 6px 12px;
                 border-radius: 20px;
             }
-            .badge-waiting {
-                background-color: #ffc107;
-                color: #000;
+            .badge-approved {
+                background-color: #28a745;
+                color: #fff;
             }
-            .badge-rejected {
-                background-color: #dc3545;
+            .badge-uploaded {
+                background-color: #007bff;
+                color: #fff;
+            }
+            .badge-deleted {
+                background-color: #6c757d;
                 color: #fff;
             }
             .post-content {
@@ -117,15 +96,15 @@
     </head>
     <body class="ttr-opened-sidebar ttr-pinned-sidebar">
         <jsp:include page="../CommonItems/Header/dashboardHeader.jsp" />
-        <jsp:include page="../CommonItems/Navbar/empNavbar.jsp" />
+        <jsp:include page="../CommonItems/Navbar/hrManNavbar.jsp" />
         <main class="ttr-wrapper">
             <div class="container-fluid">
                 <div class="db-breadcrumb">
-                    <h4 class="breadcrumb-title">Post Review</h4>
+                    <h4 class="breadcrumb-title">Manage Posts</h4>
                     <ul class="db-breadcrumb-list">
                         <li><a href="${pageContext.request.contextPath}/Views/HRM/hrmDashboard.jsp"><i class="fa fa-home"></i>Home</a></li>
                         <li>Recruitment</li>
-                        <li>Post Review</li>
+                        <li>Manage Posts</li>
                     </ul>
                 </div>
 
@@ -151,13 +130,13 @@
                     <div class="col-lg-12 m-b30">
                         <div class="widget-box">
                             <div class="wc-title">
-                                <h4><i class="fa fa-list-alt"></i> Post Review List</h4>
+                                <h4><i class="fa fa-tasks"></i> Manage Posts List</h4>
                             </div>
                             <div class="widget-inner">
 
                                 <div class="row mb-3">
                                     <div class="col-md-4">
-                                        <form action="${pageContext.request.contextPath}/postreview" method="get" class="form-inline">
+                                        <form action="${pageContext.request.contextPath}/managepost" method="get" class="form-inline">
                                             <input type="hidden" name="pageSize" value="${pageSize}">
                                             <c:if test="${not empty statusFilter}">
                                                 <input type="hidden" name="status" value="${statusFilter}">
@@ -187,7 +166,7 @@
                                         </form>
                                     </div>
                                     <div class="col-md-4 text-center">
-                                        <form action="${pageContext.request.contextPath}/postreview" method="get" class="form-inline justify-content-center">
+                                        <form action="${pageContext.request.contextPath}/managepost" method="get" class="form-inline justify-content-center">
                                             <c:if test="${not empty searchKeyword}">
                                                 <input type="hidden" name="search" value="${searchKeyword}">
                                             </c:if>
@@ -219,7 +198,7 @@
                                         </form>
                                     </div>
                                     <div class="col-md-4 text-right">
-                                        <form action="${pageContext.request.contextPath}/postreview" method="get" class="form-inline float-right" style="display: flex !important; align-items: center; flex-wrap: nowrap;">
+                                        <form action="${pageContext.request.contextPath}/managepost" method="get" class="form-inline float-right" style="display: flex !important; align-items: center; flex-wrap: nowrap;">
                                             <c:if test="${not empty searchKeyword}">
                                                 <input type="hidden" name="search" value="${searchKeyword}">
                                             </c:if>
@@ -237,10 +216,11 @@
                                                 </c:forEach>
                                             </select>
                                             <label for="statusFilter" class="mr-2" style="white-space: nowrap;">Status:</label>
-                                            <select class="form-control mr-2" id="statusFilter" name="status" style="width: 100px; height: 38px; flex-shrink: 0;">
+                                            <select class="form-control mr-2" id="statusFilter" name="status" style="width: 120px; height: 38px; flex-shrink: 0;">
                                                 <option value="" ${empty statusFilter ? 'selected' : ''}>All</option>
-                                                <option value="Waiting" ${statusFilter == 'Waiting' ? 'selected' : ''}>Waiting</option>
-                                                <option value="Rejected" ${statusFilter == 'Rejected' ? 'selected' : ''}>Rejected</option>
+                                                <option value="Approved" ${statusFilter == 'Approved' ? 'selected' : ''}>Approved</option>
+                                                <option value="Uploaded" ${statusFilter == 'Uploaded' ? 'selected' : ''}>Uploaded</option>
+                                                <option value="Deleted" ${statusFilter == 'Deleted' ? 'selected' : ''}>Deleted</option>
                                             </select>
                                             <select class="form-control" id="pageSizeSelect" name="pageSize" style="width: 60px; height: 38px; margin-right: 8px; flex-shrink: 0;">
                                                 <option value="5" ${pageSize == 5 ? 'selected' : ''}>5</option>
@@ -259,12 +239,12 @@
 
                                 <div class="table-responsive">
                                     <table class="table table-striped table-bordered">
-                                        <thead class="thead-warning">
+                                        <thead class="thead-success">
                                             <tr>
                                                 <th width="60">Index</th>
                                                 <th>Title</th>
                                                 <th width="100">Status</th>
-                                                <th width="180">Actions</th>
+                                                <th width="250">Actions</th>
                                             </tr>
                                         </thead>
                                         <tbody>
@@ -279,54 +259,86 @@
                                                                 <div class="d-flex flex-column">
                                                                     <strong class="text-primary">${post.title}</strong>
                                                                     <small class="text-muted">
-                                                                        ID: ${post.postId} |
+                                                                        <i class="fa fa-building"></i>
                                                                         <c:choose>
-                                                                            <c:when test="${not empty post.department}">
-                                                                                Department: ${post.department.depName}
+                                                                            <c:when test="${post.department != null}">
+                                                                                ${post.department.depName}
                                                                             </c:when>
                                                                             <c:otherwise>
-                                                                                Department: N/A
+                                                                                N/A
                                                                             </c:otherwise>
                                                                         </c:choose>
+                                                                    </small>
+                                                                    <small class="text-muted">
+                                                                        <i class="fa fa-calendar"></i>
+                                                                        <fmt:formatDate value="${post.createdAt}" pattern="MMM dd, yyyy" />
                                                                     </small>
                                                                 </div>
                                                             </td>
                                                             <td class="text-center">
                                                                 <c:choose>
-                                                                    <c:when test="${post.status == 'Waiting'}">
-                                                                        <span class="badge badge-warning">Waiting</span>
+                                                                    <c:when test="${post.status == 'Approved'}">
+                                                                        <span class="badge badge-approved badge-status">${post.status}</span>
                                                                     </c:when>
-                                                                    <c:when test="${post.status == 'Rejected'}">
-                                                                        <span class="badge badge-danger">Rejected</span>
+                                                                    <c:when test="${post.status == 'Uploaded'}">
+                                                                        <span class="badge badge-uploaded badge-status">${post.status}</span>
+                                                                    </c:when>
+                                                                    <c:when test="${post.status == 'Deleted'}">
+                                                                        <span class="badge badge-deleted badge-status">${post.status}</span>
                                                                     </c:when>
                                                                 </c:choose>
                                                             </td>
                                                             <td class="text-center">
-                                                                <div style="display: flex; justify-content: center; align-items: center; gap: 5px;">
-                                                                    <a href="${pageContext.request.contextPath}/postreview?action=view&postId=${post.postId}"
-                                                                       class="btn btn-sm btn-info" title="View details"
-                                                                       style="min-width: 70px;">
-                                                                        <i class="fa fa-eye"></i> View
-                                                                    </a>
-                                                                    <c:if test="${post.status == 'Waiting'}">
-                                                                        <form action="${pageContext.request.contextPath}/postreview" method="post" style="display: inline; margin: 0;" onsubmit="return confirm('Are you sure you want to approve this post?');">
-                                                                            <input type="hidden" name="action" value="approve">
-                                                                            <input type="hidden" name="postId" value="${post.postId}">
-                                                                            <button type="submit" class="btn btn-sm btn-success" title="Approve"
-                                                                                    style="min-width: 80px;">
-                                                                                <i class="fa fa-check"></i> Approve
-                                                                            </button>
-                                                                        </form>
-                                                                        <form action="${pageContext.request.contextPath}/postreview" method="post" style="display: inline; margin: 0;" onsubmit="return confirm('Are you sure you want to reject this post?');">
-                                                                            <input type="hidden" name="action" value="reject">
-                                                                            <input type="hidden" name="postId" value="${post.postId}">
-                                                                            <button type="submit" class="btn btn-sm btn-danger" title="Reject"
-                                                                                    style="min-width: 80px;">
-                                                                                <i class="fa fa-times"></i> Reject
-                                                                            </button>
-                                                                        </form>
-                                                                    </c:if>
-                                                                </div>
+                                                                <c:choose>
+                                                                    <c:when test="${post.status == 'Approved'}">
+                                                                        <div style="display: flex; justify-content: center; align-items: center; gap: 5px;">
+                                                                            <a href="${pageContext.request.contextPath}/managepost?action=view&postId=${post.postId}"
+                                                                               class="btn btn-sm btn-info" title="View Details" style="min-width: 70px;">
+                                                                                <i class="fa fa-eye"></i> View
+                                                                            </a>
+                                                                            <form action="${pageContext.request.contextPath}/managepost?action=upload" method="post" style="display:inline; margin: 0;">
+                                                                                <input type="hidden" name="postId" value="${post.postId}">
+                                                                                <button type="submit" class="btn btn-sm btn-primary" title="Upload Post"
+                                                                                        onclick="return confirm('Are you sure you want to upload this post?')"
+                                                                                        style="min-width: 80px;">
+                                                                                    <i class="fa fa-upload"></i> Upload
+                                                                                </button>
+                                                                            </form>
+                                                                            <form action="${pageContext.request.contextPath}/managepost?action=delete" method="post" style="display:inline; margin: 0;">
+                                                                                <input type="hidden" name="postId" value="${post.postId}">
+                                                                                <button type="submit" class="btn btn-sm btn-danger" title="Delete Post"
+                                                                                        onclick="return confirm('Are you sure you want to delete this post?')"
+                                                                                        style="min-width: 80px;">
+                                                                                    <i class="fa fa-trash"></i> Delete
+                                                                                </button>
+                                                                            </form>
+                                                                        </div>
+                                                                    </c:when>
+                                                                    <c:when test="${post.status == 'Uploaded'}">
+                                                                        <div style="display: flex; justify-content: center; align-items: center; gap: 5px;">
+                                                                            <a href="${pageContext.request.contextPath}/managepost?action=view&postId=${post.postId}"
+                                                                               class="btn btn-sm btn-info" title="View Details" style="min-width: 70px;">
+                                                                                <i class="fa fa-eye"></i> View
+                                                                            </a>
+                                                                            <form action="${pageContext.request.contextPath}/managepost?action=takedown" method="post" style="display:inline; margin: 0;">
+                                                                                <input type="hidden" name="postId" value="${post.postId}">
+                                                                                <button type="submit" class="btn btn-sm btn-warning" title="Take Down Post"
+                                                                                        onclick="return confirm('Are you sure you want to take down this post?')"
+                                                                                        style="min-width: 100px;">
+                                                                                    <i class="fa fa-arrow-down"></i> Take Down
+                                                                                </button>
+                                                                            </form>
+                                                                        </div>
+                                                                    </c:when>
+                                                                    <c:when test="${post.status == 'Deleted'}">
+                                                                        <div style="display: flex; justify-content: center; align-items: center; gap: 5px;">
+                                                                            <a href="${pageContext.request.contextPath}/managepost?action=view&postId=${post.postId}"
+                                                                               class="btn btn-sm btn-info" title="View Details" style="min-width: 70px;">
+                                                                                <i class="fa fa-eye"></i> View
+                                                                            </a>
+                                                                        </div>
+                                                                    </c:when>
+                                                                </c:choose>
                                                             </td>
                                                         </tr>
                                                     </c:forEach>
@@ -335,7 +347,7 @@
                                                     <tr>
                                                         <td colspan="4" class="text-center">
                                                             <div class="alert alert-info" role="alert" style="margin: 20px 0;">
-                                                                <i class="fa fa-info-circle"></i> No posts found matching your criteria
+                                                                <i class="fa fa-info-circle"></i> No posts found.
                                                             </div>
                                                         </td>
                                                     </tr>
@@ -354,7 +366,7 @@
                                                     <c:if test="${currentPage > 1}">
                                                         <li class="page-item">
                                                             <a class="page-link" href="${paginationBaseUrl}&page=${currentPage - 1}">
-                                                                <i class="fa fa-angle-left"></i> Previous
+                                                                <i class="fa fa-chevron-left"></i> Previous
                                                             </a>
                                                         </li>
                                                     </c:if>
@@ -370,7 +382,7 @@
                                                     <c:if test="${currentPage < totalPages}">
                                                         <li class="page-item">
                                                             <a class="page-link" href="${paginationBaseUrl}&page=${currentPage + 1}">
-                                                                Next <i class="fa fa-angle-right"></i>
+                                                                Next <i class="fa fa-chevron-right"></i>
                                                             </a>
                                                         </li>
                                                     </c:if>
@@ -387,21 +399,4 @@
         </main>
         <jsp:include page="../CommonItems/Footer/dashboardFooter.jsp" />
     </body>
-    <script src="${pageContext.request.contextPath}/assets2/js/jquery.min.js"></script>
-    <script src="${pageContext.request.contextPath}/assets2/vendors/bootstrap/js/popper.min.js"></script>
-    <script src="${pageContext.request.contextPath}/assets2/vendors/bootstrap/js/bootstrap.min.js"></script>
-    <script src="${pageContext.request.contextPath}/assets2/vendors/bootstrap-select/bootstrap-select.min.js"></script>
-    <script src="${pageContext.request.contextPath}/assets2/vendors/bootstrap-touchspin/jquery.bootstrap-touchspin.js"></script>
-    <script src="${pageContext.request.contextPath}/assets2/vendors/magnific-popup/magnific-popup.js"></script>
-    <script src="${pageContext.request.contextPath}/assets2/vendors/counter/waypoints-min.js"></script>
-    <script src="${pageContext.request.contextPath}/assets2/vendors/counter/counterup.min.js"></script>
-    <script src="${pageContext.request.contextPath}/assets2/vendors/imagesloaded/imagesloaded.js"></script>
-    <script src="${pageContext.request.contextPath}/assets2/vendors/masonry/masonry.js"></script>
-    <script src="${pageContext.request.contextPath}/assets2/vendors/masonry/filter.js"></script>
-    <script src="${pageContext.request.contextPath}/assets2/vendors/owl-carousel/owl.carousel.js"></script>
-    <script src="${pageContext.request.contextPath}/assets2/vendors/scroll/scrollbar.min.js"></script>
-    <script src="${pageContext.request.contextPath}/assets2/js/functions.js"></script>
-    <script src="${pageContext.request.contextPath}/assets2/vendors/chart/chart.min.js"></script>
-    <script src="${pageContext.request.contextPath}/assets2/js/admin.js"></script>
-    <script src="${pageContext.request.contextPath}/assets2/vendors/switcher/switcher.js"></script>
 </html>

@@ -2,16 +2,51 @@
 <!DOCTYPE html>
 <html lang="en">
     <head>
-        <meta charset="UTF-8">
-        <title>Schedule Interview</title>
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <!-- META ============================================= -->
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="keywords" content="" />
+        <meta name="author" content="" />
+        <meta name="robots" content="" />
 
-        <!-- CSS -->
-        <link rel="stylesheet" href="${pageContext.request.contextPath}/assets2/css/assets.css">
-        <link rel="stylesheet" href="${pageContext.request.contextPath}/assets2/css/style.css">
-        <link rel="stylesheet" href="${pageContext.request.contextPath}/assets2/css/dashboard.css">
-        <link rel="stylesheet" href="${pageContext.request.contextPath}/assets2/css/color/color-1.css">
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+        <!-- DESCRIPTION -->
+        <meta name="description" content="Human Tech" />
+
+        <!-- OG -->
+        <meta property="og:title" content="Human Tech" />
+        <meta property="og:description" content="Profile" />
+        <meta property="og:image" content="" />
+        <meta name="format-detection" content="telephone=no">
+
+        <!-- FAVICONS ICON ============================================= -->
+        <link rel="icon" href="${pageContext.request.contextPath}/assets2/images/favicon.ico" type="image/x-icon" />
+        <link rel="shortcut icon" type="image/x-icon" href="${pageContext.request.contextPath}/assets2/images/favicon.png" />
+
+        <!-- PAGE TITLE HERE ============================================= -->
+        <title>Schedule Interview</title>
+
+        <!-- MOBILE SPECIFIC ============================================= -->
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <!--[if lt IE 9]>
+        <script src="${pageContext.request.contextPath}/assets2/js/html5shiv.min.js"></script>
+        <script src="${pageContext.request.contextPath}/assets2/js/respond.min.js"></script>
+        <![endif]-->
+
+        <!-- All PLUGINS CSS ============================================= -->
+        <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/assets2/css/assets.css">
+        <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/assets2/vendors/calendar/fullcalendar.css">
+
+        <!-- TYPOGRAPHY ============================================= -->
+        <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/assets2/css/typography.css">
+
+        <!-- SHORTCODES ============================================= -->
+        <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/assets2/css/shortcodes/shortcodes.css">
+
+        <!-- STYLESHEETS ============================================= -->
+        <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/assets2/css/style.css">
+        <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/assets2/css/dashboard.css">
+        <link class="skin" rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/assets2/css/color/color-1.css">
 
         <style>
             .dropdown-menu {
@@ -44,12 +79,19 @@
                         <li>Schedule</li>
                     </ul>
                 </div>
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h4 class="mb-0"><i class="fa fa-calendar-alt"></i> Schedule New Interview</h4>
+                    <a href="${pageContext.request.contextPath}/viewcreatedinterview" 
+                       class="btn btn-outline-primary btn-sm">
+                        <i class="fa fa-history"></i> View Created History
+                    </a>
+                </div>
 
                 <div class="row">
                     <div class="col-lg-8 offset-lg-2">
                         <div class="widget-box">
                             <form method="post"
-                                  action="schedule">
+                                  action="scheduleinterview">
                                 <div class="form-group mb-3">
                                     <label for="post"><i class="fa fa-briefcase"></i> Recruitment Post:</label>
                                     <select id="post" name="postId" class="form-control" onchange="this.form.submit()" required>
@@ -162,9 +204,22 @@
 
         <!-- JS -->
         <script src="${pageContext.request.contextPath}/assets2/js/jquery.min.js"></script>
-        <script src="${pageContext.request.contextPath}/assets2/vendors/bootstrap/js/bootstrap.bundle.min.js"></script>
+        <script src="${pageContext.request.contextPath}/assets2/vendors/bootstrap/js/popper.min.js"></script>
+        <script src="${pageContext.request.contextPath}/assets2/vendors/bootstrap/js/bootstrap.min.js"></script>
+        <script src="${pageContext.request.contextPath}/assets2/vendors/bootstrap-select/bootstrap-select.min.js"></script>
+        <script src="${pageContext.request.contextPath}/assets2/vendors/bootstrap-touchspin/jquery.bootstrap-touchspin.js"></script>
+        <script src="${pageContext.request.contextPath}/assets2/vendors/magnific-popup/magnific-popup.js"></script>
+        <script src="${pageContext.request.contextPath}/assets2/vendors/counter/waypoints-min.js"></script>
+        <script src="${pageContext.request.contextPath}/assets2/vendors/counter/counterup.min.js"></script>
+        <script src="${pageContext.request.contextPath}/assets2/vendors/imagesloaded/imagesloaded.js"></script>
+        <script src="${pageContext.request.contextPath}/assets2/vendors/masonry/masonry.js"></script>
+        <script src="${pageContext.request.contextPath}/assets2/vendors/masonry/filter.js"></script>
+        <script src="${pageContext.request.contextPath}/assets2/vendors/owl-carousel/owl.carousel.js"></script>
+        <script src="${pageContext.request.contextPath}/assets2/vendors/scroll/scrollbar.min.js"></script>
         <script src="${pageContext.request.contextPath}/assets2/js/functions.js"></script>
+        <script src="${pageContext.request.contextPath}/assets2/vendors/chart/chart.min.js"></script>
         <script src="${pageContext.request.contextPath}/assets2/js/admin.js"></script>
+        <script src="${pageContext.request.contextPath}/assets2/vendors/switcher/switcher.js"></script>
 
         <script>
                                                     function confirmDelete(id) {

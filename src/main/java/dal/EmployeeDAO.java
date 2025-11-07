@@ -690,6 +690,21 @@ public class EmployeeDAO extends DBContext {
         return empList;
     }
 
+    public boolean hasManager(String depId) {
+        String sql = "SELECT COUNT(*) FROM employee WHERE dep_id = ? AND position_title LIKE '%Manager%'";
+        try (Connection conn = DBContext.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, depId);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt(1) > 0;
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
     public int countAllRecordOfEmployee() {
         String sql = "Select count(*) from Employee";
         try (Connection conn = DBContext.getConnection(); PreparedStatement ps = conn.prepareStatement(sql); ResultSet rs = ps.executeQuery();) {
@@ -902,18 +917,16 @@ public class EmployeeDAO extends DBContext {
         switch (requesterRole) {
             case "Employee":
                 approverRole = "Dept Manager";
-                filterByDept = true;
+                filterByDept = true; 
                 break;
             case "Dept Manager":
+                approverRole = "HR";
+                break;
             case "HR":
-                approverRole = "HR Manager";
+                approverRole = "HR Manager"; 
                 break;
             case "HR Manager":
-                approverRole = "Admin";
-                break;
-            case "Admin":
-                approverRole = "Admin";
-                break;
+                return null;
             default:
                 return null;
         }
@@ -933,11 +946,10 @@ public class EmployeeDAO extends DBContext {
             }
 
             try (ResultSet rs = ps.executeQuery()) {
-                while (rs.next()) {
+                if (rs.next()) {
                     return mapResultSetToEmployee(rs);
                 }
             }
-
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -976,6 +988,7 @@ public class EmployeeDAO extends DBContext {
             e.printStackTrace();
         }
     }
+
     public void updateIncreasePaidLeaveDaysByEmployeeId(int empId, double dayRequested) {
         String sql = "UPDATE Employee "
                 + "SET paid_leave_days = paid_leave_days + ? "
@@ -994,7 +1007,7 @@ public class EmployeeDAO extends DBContext {
 
     public static void main(String[] args) {
         EmployeeDAO dao = new EmployeeDAO();
-        dao.updateIncreasePaidLeaveDaysByEmployeeId(1, 1);
+        dao.updateDecreasePaidLeaveDaysByEmployeeId(18, 2);
     }
 
 }

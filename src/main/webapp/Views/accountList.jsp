@@ -78,6 +78,25 @@
                 align-items: center !important;
                 gap: 20px !important; /* khoảng cách giữa các combo box */
             }
+            .status-active,
+            .status-inactive {
+                display: inline-block;
+                padding: 4px 10px;
+                border-radius: 12px; /* tròn cạnh */
+                color: #fff;          /* chữ trắng */
+                font-size: 0.85rem;
+                font-weight: 500;
+                text-align: center;
+                min-width: 70px;
+            }
+
+            .status-active {
+                background-color: #28a745; /* xanh lá */
+            }
+
+            .status-inactive {
+                background-color: #dc3545; /* đỏ */
+            }
         </style>
 
     </head>
@@ -147,9 +166,6 @@
                             </c:if>
 
                             <div class="input-group w-100">
-                                <span class="input-group-text bg-white border-end-0">
-                                    <i class="fa fa-search text-muted"></i>
-                                </span>
                                 <input type="text" name="searchkey" class="form-control border-start-0"
                                        placeholder="Search by code or name"
                                        value="${param.keyword}">
@@ -274,7 +290,9 @@
                                     </td>
                                     <td style="overflow-wrap: break-word;">${el.dept.depName}</td>
                                     <td style="overflow-wrap: break-word;">${el.role.roleName}</td>
-                                    <td>${el.status ? 'Active' : 'Inactive'}</td>
+                                    <td class="${el.status ? 'status-active' : 'status-inactive'}">
+                                        ${el.status ? 'Active' : 'Inactive'}
+                                    </td>
                                     <td>
                                         <a href="${pageContext.request.contextPath}/updateaccount?empCode=${el.empCode}"
                                            class="btn btn-sm btn-primary">
