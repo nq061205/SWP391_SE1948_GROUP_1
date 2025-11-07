@@ -30,13 +30,6 @@
         <div class="ttr-sidebar">
     <div class="ttr-sidebar-wrapper content-scroll">
 
-        <div class="ttr-sidebar-logo">
-            <a href="#"><img alt="" src="/HRMSystem/assets1/images/logo-white.png" width="100" height="50"></a>
-            <div class="ttr-sidebar-toggle-button">
-                <i class="ti-arrow-left"></i>
-            </div>
-        </div>
-
         <nav class="ttr-sidebar-navi">
             <ul>
                 <!-- Dashboard -->
@@ -149,14 +142,6 @@
                     </a>
                 </li>
                 <% } %>
-
-                <!-- Job Site -->
-                <li>
-                    <a href="${pageContext.request.contextPath}/jobsite" class="ttr-material-button">
-                        <span class="ttr-icon"><i class="ti-briefcase"></i></span>
-                        <span class="ttr-label">Job Site</span>
-                    </a>
-                </li>
 
                 <!-- Attendance -->
                 <li>

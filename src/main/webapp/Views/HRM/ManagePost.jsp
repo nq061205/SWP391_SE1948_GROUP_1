@@ -96,7 +96,7 @@
     </head>
     <body class="ttr-opened-sidebar ttr-pinned-sidebar">
         <jsp:include page="../CommonItems/Header/dashboardHeader.jsp" />
-        <jsp:include page="../CommonItems/Navbar/hrManNavbar.jsp" />
+        <jsp:include page="../CommonItems/Navbar/empNavbar.jsp" />
         <main class="ttr-wrapper">
             <div class="container-fluid">
                 <div class="db-breadcrumb">
@@ -397,6 +397,22 @@
                 </div>
             </div>
         </main>
-        <jsp:include page="../CommonItems/Footer/dashboardFooter.jsp" />
+        <script src="${pageContext.request.contextPath}/assets2/js/jquery.min.js"></script>
+        <script src="${pageContext.request.contextPath}/assets2/vendors/bootstrap/js/popper.min.js"></script>
+        <script src="${pageContext.request.contextPath}/assets2/vendors/bootstrap/js/bootstrap.min.js"></script>
+        <script src="${pageContext.request.contextPath}/assets2/vendors/bootstrap-select/bootstrap-select.min.js"></script>
+        <script src="${pageContext.request.contextPath}/assets2/vendors/bootstrap-touchspin/jquery.bootstrap-touchspin.js"></script>
+        <script src="${pageContext.request.contextPath}/assets2/vendors/magnific-popup/magnific-popup.js"></script>
+        <script src="${pageContext.request.contextPath}/assets2/vendors/counter/waypoints-min.js"></script>
+        <script src="${pageContext.request.contextPath}/assets2/vendors/counter/counterup.min.js"></script>
+        <script src="${pageContext.request.contextPath}/assets2/vendors/imagesloaded/imagesloaded.js"></script>
+        <script src="${pageContext.request.contextPath}/assets2/vendors/masonry/masonry.js"></script>
+        <script src="${pageContext.request.contextPath}/assets2/vendors/masonry/filter.js"></script>
+        <script src="${pageContext.request.contextPath}/assets2/vendors/owl-carousel/owl.carousel.js"></script>
+        <script src="${pageContext.request.contextPath}/assets2/vendors/scroll/scrollbar.min.js"></script>
+        <script src="${pageContext.request.contextPath}/assets2/js/functions.js"></script>
+        <script src="${pageContext.request.contextPath}/assets2/vendors/chart/chart.min.js"></script>
+        <script src="${pageContext.request.contextPath}/assets2/js/admin.js"></script>
+        <script src="${pageContext.request.contextPath}/assets2/vendors/switcher/switcher.js"></script>
     </body>
 </html>
