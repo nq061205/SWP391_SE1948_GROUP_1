@@ -2,34 +2,59 @@
 <!DOCTYPE html>
 <html lang="en">
     <head>
-        <meta charset="UTF-8">
-        <title>Schedule Interview</title>
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta charset="utf-8">
+        <title>Candidate Management</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
 
-        <!-- CSS -->
+        <!-- Base CSS -->
+        <link rel="icon" href="${pageContext.request.contextPath}/assets2/images/favicon.ico" type="image/x-icon" />
         <link rel="stylesheet" href="${pageContext.request.contextPath}/assets2/css/assets.css">
         <link rel="stylesheet" href="${pageContext.request.contextPath}/assets2/css/style.css">
         <link rel="stylesheet" href="${pageContext.request.contextPath}/assets2/css/dashboard.css">
-        <link rel="stylesheet" href="${pageContext.request.contextPath}/assets2/css/color/color-1.css">
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-
+        <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/assets2/vendors/calendar/fullcalendar.css">
+        <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/assets2/css/typography.css">
+        <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/assets2/css/shortcodes/shortcodes.css">
+        <link class="skin" rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/assets2/css/color/color-1.css">
         <style>
-            .dropdown-menu {
-                z-index: 1050 !important;
+            .nav-tabs .nav-link.active {
+                background-color: #007bff !important;
+                color: #fff !important;
+                border-color: #007bff #007bff #fff;
             }
-
-            select.form-control {
-                z-index: 1;
-                position: relative;
+            .nav-tabs .nav-link:hover {
+                background-color: #e9f2ff;
             }
-
+        </style>
+        <style>
             .widget-box {
                 background: #fff;
                 border-radius: 10px;
-                padding: 25px;
+                padding: 30px 40px !important; /* thêm khoảng cách trong form */
+                margin-bottom: 40px;
                 box-shadow: 0 2px 10px rgba(0,0,0,0.1);
             }
+
+            form .form-group {
+                margin-bottom: 20px; /* tạo khoảng cách giữa các ô nhập */
+            }
+
+            label {
+                font-weight: 600;
+                margin-bottom: 6px;
+                display: block;
+            }
+
+            .form-control, .form-select {
+                border-radius: 8px;
+                padding: 10px;
+            }
+
+            .text-end {
+                margin-top: 25px;
+            }
         </style>
+
     </head>
     <body class="ttr-opened-sidebar ttr-pinned-sidebar">
         <%@ include file="CommonItems/Header/dashboardHeader.jsp" %>
@@ -171,6 +196,11 @@
         <script src="${pageContext.request.contextPath}/assets2/js/jquery.min.js"></script>
         <script src="${pageContext.request.contextPath}/assets2/vendors/bootstrap/js/bootstrap.bundle.min.js"></script>
         <script src="${pageContext.request.contextPath}/assets2/js/functions.js"></script>
+        <script src="${pageContext.request.contextPath}/assets2/js/admin.js"></script>
+ <!-- JS libraries -->
+        <script src="${pageContext.request.contextPath}/assets2/js/jquery.min.js"></script>
+        <script src="${pageContext.request.contextPath}/assets2/vendors/bootstrap/js/bootstrap.bundle.min.js"></script>
+        <script src="${pageContext.request.contextPath}/assets2/vendors/bootstrap/js/popper.min.js"></script>
         <script src="${pageContext.request.contextPath}/assets2/js/admin.js"></script>
 
         <script>
