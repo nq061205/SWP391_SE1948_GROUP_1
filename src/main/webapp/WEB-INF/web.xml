@@ -296,7 +296,6 @@
         <servlet-name>DepartmentDetailServlet</servlet-name>
         <url-pattern>/departmentdetail</url-pattern>
     </servlet-mapping>
-
     <servlet-mapping>
         <servlet-name>CandidateListServlet</servlet-name>
         <url-pattern>/candidatelist</url-pattern>
@@ -433,7 +432,11 @@
         <servlet-name>EditInterviewServlet</servlet-name>
         <url-pattern>/editinterview</url-pattern>
     </servlet-mapping>
-
+    <servlet-mapping>
+        <servlet-name>MonthlyPayrollServlet</servlet-name>
+        <url-pattern>/monthly-payroll</url-pattern>
+    </servlet-mapping>
+    <!-- ===================== SESSION CONFIG & WELCOME FILE ===================== -->
     <session-config>
         <session-timeout>30</session-timeout>
     </session-config>
