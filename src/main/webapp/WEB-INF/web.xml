@@ -214,6 +214,11 @@
         <servlet-name>EditInterviewServlet</servlet-name>
         <servlet-class>controller.EditInterviewServlet</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>MonthlyPayrollServlet</servlet-name>
+        <servlet-class>controller.hrm.MonthlyPayrollServlet</servlet-class>
+    </servlet>
+
 
     <servlet-mapping>
         <servlet-name>HomePageServlet</servlet-name>
@@ -266,10 +271,6 @@
     <servlet-mapping>
         <servlet-name>HRRecruitmentServlet</servlet-name>
         <url-pattern>/hrrecruitment</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>HRManagerRecruitmentServlet</servlet-name>
-        <url-pattern>/hrmanagerrecruitment</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>HRManagerRecruitmentServlet</servlet-name>
