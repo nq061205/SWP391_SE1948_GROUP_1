@@ -616,9 +616,11 @@
     <script src="${pageContext.request.contextPath}/assets2/vendors/switcher/switcher.js"></script>
     <script>
                                                     $(document).ready(function () {
-                                                        $(document).on('click', 'td.day-cell', function () {
+                                                        // ========== SHOW MODAL KHI CLICK VÀO CELL ==========
+                                                        $(document).on('click', 'td.day-cell.status-Present, td.day-cell.status-Absent, td.day-cell.status-Leave', function () {
                                                             var cell = $(this);
 
+                                                            // Lấy dữ liệu từ cell
                                                             var empId = cell.data('emp-id');
                                                             var empCode = cell.data('emp-code');
                                                             var empFullname = cell.data('emp-name');
@@ -626,13 +628,14 @@
                                                             var empPosition = cell.data('emp-position');
                                                             var empDepartment = cell.data('emp-department');
                                                             var day = cell.data('day');
-                                                            var status = cell.data('status') || 'Unknown';
+                                                            var status = cell.attr('data-status');
                                                             var workDay = cell.data('work-day') || 0;
                                                             var otHours = cell.data('ot-hours') || 0;
                                                             var checkIn = cell.data('check-in') || '';
                                                             var checkOut = cell.data('check-out') || '';
                                                             var note = cell.data('note') || '';
 
+                                                            // Format ngày tháng
                                                             var selectedMonth = $('#selectedMonth').val() || '${selectedMonth}';
                                                             var selectedYear = $('#selectedYear').val() || '${selectedYear}';
                                                             var dayStr = (day < 10 ? '0' + day : day);
@@ -640,6 +643,7 @@
                                                             var formattedDate_ddMMyyyy = dayStr + '/' + monthStr + '/' + selectedYear;
                                                             var formattedDate_yyyyMMdd = selectedYear + '-' + monthStr + '-' + dayStr;
 
+                                                            // Gán giá trị vào các field
                                                             $('#modalEmpId').val(empId);
                                                             $('#modalEmpCode').val(empCode);
                                                             $('#modalFullname').val(empFullname);
@@ -647,49 +651,67 @@
                                                             $('#modalPosition').val(empPosition);
                                                             $('#modalDepartment').val(empDepartment);
                                                             $('#modalDate').val(formattedDate_ddMMyyyy);
-                                                            $('#modalStatusSelect').val(status);
+
+                                                            // ✅ GÁN STATUS BẰNG BOOTSTRAP SELECT
+                                                            $('#modalStatusSelect').selectpicker('val', status);
+
                                                             $('#modalWorkDay').val(workDay);
                                                             $('#modalOTHours').val(otHours);
                                                             $('#modalCheckInTime').val(checkIn);
                                                             $('#modalCheckOutTime').val(checkOut);
                                                             $('#modalNote').val(note);
 
+                                                            // Set link Raw Attendance
                                                             $('#rawAttendanceLink').attr('href', 'raw-attendance?search=' + empCode + '&date=' + formattedDate_yyyyMMdd);
 
+                                                            // Ẩn/hiện note container
                                                             if (note.trim() === '') {
                                                                 $('#noteContainer').hide();
                                                             } else {
                                                                 $('#noteContainer').show();
                                                             }
 
-                                                            $('#attendanceDetailModal input, #attendanceDetailModal textarea, #attendanceDetailModal select')
+                                                            // ✅ DISABLE INPUT/TEXTAREA (chế độ readonly)
+                                                            $('#attendanceDetailModal input, #attendanceDetailModal textarea')
                                                                     .prop('readonly', true)
                                                                     .prop('disabled', true);
 
+                                                            // ✅ DISABLE SELECT BOX bằng Bootstrap Select
+                                                            $('#modalStatusSelect').prop('disabled', true).selectpicker('refresh');
+
+                                                            // Hiển thị nút Update, ẩn nút Save
                                                             $('#modalUpdateBtn').show();
                                                             $('#modalSaveBtn').hide();
 
+                                                            // Mở modal
                                                             $('#attendanceDetailModal').modal('show');
                                                         });
 
-                                                        // Update button
+                                                        // ========== UPDATE BUTTON ==========
                                                         $('#modalUpdateBtn').on('click', function () {
-                                                            $('#attendanceDetailModal select, #modalWorkDay, #modalOTHours, #modalNote')
+                                                            // Enable các field để có thể edit
+                                                            $('#modalWorkDay, #modalOTHours, #modalNote')
                                                                     .prop('readonly', false)
                                                                     .prop('disabled', false);
 
+                                                            // ✅ ENABLE SELECT BOX bằng Bootstrap Select
+                                                            $('#modalStatusSelect').prop('disabled', false).selectpicker('refresh');
+
+                                                            // Hiển thị note container
                                                             $('#noteContainer').show();
 
+                                                            // Đổi nút
                                                             $('#modalUpdateBtn').hide();
                                                             $('#modalSaveBtn').show();
                                                         });
 
-                                                        // Save button
+                                                        // ========== SAVE BUTTON ==========
                                                         $('#modalSaveBtn').on('click', function () {
                                                             var workDay = parseFloat($('#modalWorkDay').val());
                                                             var otHours = parseFloat($('#modalOTHours').val());
                                                             var note = $('#modalNote').val().trim();
 
+                                                            // Validation
                                                             if (![0, 0.5, 1].includes(workDay)) {
                                                                 alert('Workday only accepts value 0, 0.5 or 1!');
                                                                 $('#modalWorkDay').focus();
@@ -700,13 +722,13 @@
                                                                 $('#modalOTHours').focus();
                                                                 return;
                                                             }
-
                                                             if (note === '') {
                                                                 alert('Please add note before Save!');
                                                                 $('#modalNote').focus();
                                                                 return;
                                                             }
 
+                                                            // Chuẩn bị data
                                                             var data = {
                                                                 empId: $('#modalEmpId').val(),
                                                                 date: $('#modalDate').val(),
@@ -716,6 +738,7 @@
                                                                 note: note
                                                             };
 
+                                                            // AJAX call
                                                             $.ajax({
                                                                 url: 'update-daily-attendance',
                                                                 type: 'POST',
@@ -724,23 +747,14 @@
                                                                 success: function (response) {
                                                                     alert(response.message || 'Updated successfully!');
                                                                     $('#attendanceDetailModal').modal('hide');
+                                                                    location.reload(); // Reload trang để cập nhật
                                                                 },
                                                                 error: function (xhr) {
                                                                     alert('Error updating attendance!');
                                                                 }
                                                             });
-
-                                                            $('#attendanceDetailModal input, #attendanceDetailModal textarea, #attendanceDetailModal select')
-                                                                    .prop('readonly', true)
-                                                                    .prop('disabled', true);
-                                                            $('#modalUpdateBtn').show();
-                                                            $('#modalSaveBtn').hide();
-                                                            $('#attendanceDetailModal').modal('hide');
-                                                            location.reload();
                                                         });
-
                                                     });
-
     </script>
     <script>
         var isProcessing = false;
