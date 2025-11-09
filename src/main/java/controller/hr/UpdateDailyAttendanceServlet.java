@@ -90,7 +90,6 @@ public class UpdateDailyAttendanceServlet extends HttpServlet {
         try {
             DailyAttendanceDAO dao = new DailyAttendanceDAO();
             boolean success = dao.updateDailyAttendance(empId, formattedDate, status, workDay, otHours, note);
-            System.out.println(success);
             if (success) {
                 json.put("status", "success");
                 json.put("message", "Attendance updated successfully!");
