@@ -43,7 +43,7 @@ public class ScheduleInterviewServlet extends HttpServlet {
             response.sendRedirect("dashboard");
             return;
         }
-        List<RecruitmentPost> posts = rpDAO.getApprovedPosts();
+        List<RecruitmentPost> posts = rpDAO.getUploadedPosts();
         request.setAttribute("postList", posts);
         request.getRequestDispatcher("Views/scheduleInterview.jsp").forward(request, response);
     }
@@ -69,7 +69,7 @@ public class ScheduleInterviewServlet extends HttpServlet {
             response.sendRedirect("login");
             return;
         }
-        List<RecruitmentPost> posts = rpDAO.getApprovedPosts();
+        List<RecruitmentPost> posts = rpDAO.getUploadedPosts();
         request.setAttribute("postList", posts);
         if (action == null) {
             if (postIdStr != null && !postIdStr.equals("all") && !postIdStr.isEmpty()) {
