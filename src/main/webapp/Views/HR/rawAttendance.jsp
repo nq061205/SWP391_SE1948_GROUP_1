@@ -655,7 +655,6 @@
                                                             let isProcessing = false;
 
                                                             $(document).ready(function () {
-                                                                // Handle Confirm Import button click
                                                                 $('form').on('submit', function (e) {
                                                                     const action = $(this).find('input[name="action"]').val();
 

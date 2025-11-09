@@ -214,6 +214,11 @@
         <servlet-name>EditInterviewServlet</servlet-name>
         <servlet-class>controller.EditInterviewServlet</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>MonthlyPayrollServlet</servlet-name>
+        <servlet-class>controller.hrm.MonthlyPayrollServlet</servlet-class>
+    </servlet>
+
 
     <servlet-mapping>
         <servlet-name>HomePageServlet</servlet-name>
@@ -269,10 +274,6 @@
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>HRManagerRecruitmentServlet</servlet-name>
-        <url-pattern>/hrmanagerrecruitment</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>HRManagerRecruitmentServlet</servlet-name>
         <url-pattern>/postreview</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
@@ -296,7 +297,6 @@
         <servlet-name>DepartmentDetailServlet</servlet-name>
         <url-pattern>/departmentdetail</url-pattern>
     </servlet-mapping>
-
     <servlet-mapping>
         <servlet-name>CandidateListServlet</servlet-name>
         <url-pattern>/candidatelist</url-pattern>
@@ -433,7 +433,11 @@
         <servlet-name>EditInterviewServlet</servlet-name>
         <url-pattern>/editinterview</url-pattern>
     </servlet-mapping>
-
+    <servlet-mapping>
+        <servlet-name>MonthlyPayrollServlet</servlet-name>
+        <url-pattern>/monthly-payroll</url-pattern>
+    </servlet-mapping>
+    <!-- ===================== SESSION CONFIG & WELCOME FILE ===================== -->
     <session-config>
         <session-timeout>30</session-timeout>
     </session-config>

@@ -320,12 +320,10 @@ public class RawAttendanceServlet extends HttpServlet {
             pageSize = 10;
         }
 
-        // ✅ SET DATE MẶC ĐỊNH NGÀY HÔM QUA NẾU CHƯA CÓ PARAMETER
         if (date == null || date.trim().isEmpty()) {
             LocalDate yesterday = LocalDate.now().minusDays(1);
             date = yesterday.toString();
         } else {
-            // Validate định dạng date
             try {
                 LocalDate.parse(date);
             } catch (Exception e) {
@@ -353,11 +351,6 @@ public class RawAttendanceServlet extends HttpServlet {
             int offset = (page - 1) * pageSize;
             List<AttendanceRaw> rawList = rawDAO.getRawRecordsByDate(offset, pageSize, search, date, filterType, department);
 
-            // ✅ TÍNH NGÀY TRƯỚC VÀ NGÀY SAU
-            LocalDate currentDate = LocalDate.parse(date);
-            LocalDate previousDate = currentDate.minusDays(1);
-            LocalDate nextDate = currentDate.plusDays(1);
-
             request.setAttribute("rawList", rawList);
             request.setAttribute("currentPage", page);
             request.setAttribute("pageSize", pageSize);
@@ -365,8 +358,6 @@ public class RawAttendanceServlet extends HttpServlet {
             request.setAttribute("totalRecords", totalRecords);
             request.setAttribute("search", search != null ? search : "");
             request.setAttribute("date", date);
-            request.setAttribute("previousDate", previousDate.toString());
-            request.setAttribute("nextDate", nextDate.toString());
             request.setAttribute("filterType", filterType != null ? filterType : "");
             request.setAttribute("department", department != null ? department : "");
             request.setAttribute("departments", departments);
