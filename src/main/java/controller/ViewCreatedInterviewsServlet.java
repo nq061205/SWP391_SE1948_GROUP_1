@@ -137,6 +137,6 @@ public class ViewCreatedInterviewsServlet extends HttpServlet {
         request.setAttribute("totalPages", totalPages); 
         request.setAttribute("totalRecordsUnfiltered", totalRecordsUnfiltered);
 
-        request.getRequestDispatcher("Views/viewcreatedinterview.jsp").forward(request, response);
+        request.getRequestDispatcher("Views/viewcreatedinterviews.jsp").forward(request, response);
     }
 }
