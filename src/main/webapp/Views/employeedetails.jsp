@@ -310,6 +310,9 @@
                             <h4>Dependant information</h4>
                         </div>
                         <div style="margin: 1% 3% 1%;">
+                            <a href="${pageContext.request.contextPath}/employeelist" class="btn btn-secondary">
+                                <i class="fa fa-arrow-left"></i> Back
+                            </a>
                             <button type="button"
                                     class="btn btn-sm btn-primary"
                                     data-bs-toggle="modal"
@@ -350,6 +353,11 @@
                         <div class="modal fade" id="addDependantModal" tabindex="-1" aria-labelledby="addDependantModalLabel" aria-hidden="true">
                             <div class="modal-dialog modal-dialog-centered modal-lg">
                                 <div class="modal-content">
+                                    <div style="margin-left:5%">
+                                        <a href="${pageContext.request.contextPath}/employeelist" class="btn btn-secondary">
+                                            <i class="fa fa-arrow-left"></i> Back
+                                        </a>
+                                    </div>
                                     <div class="modal-header">
                                         <h5 class="modal-title" id="addDependantModalLabel">Add New Dependant</h5>
                                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">X</button>
@@ -458,6 +466,7 @@
                                 <c:param name="empId" value="${param.empId}" />
                             </c:if>
                         </c:url>
+
                         <c:set var="urlPrefixWithSort" value="${baseUrlWithSort}${fn:contains(baseUrlWithSort, '?') ? '&' : '?'}" />
                         <nav class="mt-3">
                             <ul class="pagination justify-content-center">
