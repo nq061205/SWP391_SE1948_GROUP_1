@@ -510,7 +510,7 @@ public class RecruitmentPostDAO extends DBContext { // Kế thừa DBContext đ�
         }
     }
 
-    public boolean rejectPost(int postId, int rejectedBy) {
+    public boolean rejectPost(int postId) {
         String sql = "UPDATE RecruitmentPost SET status = 'Rejected', updated_at = ? "
                 + "WHERE post_id = ? AND status = 'Waiting'";
 

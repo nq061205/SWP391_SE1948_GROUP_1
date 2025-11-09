@@ -66,9 +66,8 @@
         <main class="ttr-wrapper">
             <div class="container-fluid">
                 <div class="db-breadcrumb">
-                    <h4 class="breadcrumb-title">Personal information</h4>
                     <ul class="db-breadcrumb-list">
-                        <li><a href="#"><i class="fa fa-home"></i>Home</a></li>
+                        <li><i class="fa fa-home"></i>Home</li>
                         <li>Personal Profile</li>
                     </ul>
                 </div>	
