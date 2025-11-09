@@ -40,7 +40,8 @@ public class CandidateListServlet extends HttpServlet {
         HttpSession session = request.getSession();
         Employee user = (Employee) session.getAttribute("user");
         if(user == null || !rperDAO.hasPermission(user.getRole().getRoleId(), 2)){
-            response.sendRedirect("login");
+            session.setAttribute("logMessage", "You do not have permission to access this page.");
+            response.sendRedirect("dashboard");
             return;
         }
         
