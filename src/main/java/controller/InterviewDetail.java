@@ -23,9 +23,13 @@ public class InterviewDetail extends HttpServlet {
         HttpSession session = request.getSession();
         RolePermissionDAO rperDAO = new RolePermissionDAO();
         Employee user = (Employee) session.getAttribute("user");
-
-        if (user == null || !rperDAO.hasPermission(user.getRole().getRoleId(), 6)) {
+        if (user == null) {
             response.sendRedirect("login");
+            return;
+        }
+        if (!rperDAO.hasPermission(user.getRole().getRoleId(), 6)) {
+            session.setAttribute("logMessage", "You do not have permission to access this page.");
+            response.sendRedirect("dashboard");
             return;
         }
 

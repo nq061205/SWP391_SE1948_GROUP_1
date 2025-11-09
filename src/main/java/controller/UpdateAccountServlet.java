@@ -73,8 +73,13 @@ public class UpdateAccountServlet extends HttpServlet {
         HttpSession ses = request.getSession();
         RolePermissionDAO rperDAO = new RolePermissionDAO();
         Employee user = (Employee) ses.getAttribute("user");
-        if (user == null || !rperDAO.hasPermission(user.getRole().getRoleId(), 1)) {
+        if(user == null){
             response.sendRedirect("login");
+            return;
+        }
+        if (!rperDAO.hasPermission(user.getRole().getRoleId(), 1)) {
+            ses.setAttribute("logMessage", "You do not have permission to access this page.");
+            response.sendRedirect("dashboard");
             return;
         }
         String empCode = request.getParameter("empCode");

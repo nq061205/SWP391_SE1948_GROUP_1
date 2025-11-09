@@ -32,8 +32,13 @@ public class ApplicationDetailServlet extends HttpServlet {
         HttpSession session = request.getSession();
         RolePermissionDAO rperDAO = new RolePermissionDAO();
         Employee user = (Employee) session.getAttribute("user");
-        if (user == null || !rperDAO.hasPermission(user.getRole().getRoleId(), 7)) {
-            response.sendRedirect(request.getContextPath() + "/login");
+        if (user == null) {
+            response.sendRedirect("login");
+            return;
+        }
+        if (!rperDAO.hasPermission(user.getRole().getRoleId(), 7)) {
+            session.setAttribute("logMessage", "You do not have permission to access this page.");
+            response.sendRedirect(request.getContextPath() + "/dashboard");
             return;
         }
         OTRequestDAO OTDAO = new OTRequestDAO();

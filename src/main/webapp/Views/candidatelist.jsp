@@ -85,10 +85,7 @@
                                 </div>
                             </form>
 
-                            <!-- ✅ Create Interview Schedule Button -->
-                            <a href="${pageContext.request.contextPath}/scheduleinterview" class="btn btn-success">
-                                <i class="fa fa-calendar-plus me-1"></i> Create Interview Schedule
-                            </a>
+                           
                         </div>
 
                         <!-- ✅ Tabs -->

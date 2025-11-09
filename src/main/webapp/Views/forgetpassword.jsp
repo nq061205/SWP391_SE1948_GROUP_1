@@ -50,7 +50,7 @@
     <div class="account-form">
         <div class="account-head"
              style="background-image:url(${pageContext.request.contextPath}/assets1/images/background/bg2.jpg);">
-            <a href="index.html">
+            <a href="${pageContext.request.contextPath}/homepage">
                 <img src="${pageContext.request.contextPath}/assets1/images/logo-white.png" alt="">
             </a>
         </div>

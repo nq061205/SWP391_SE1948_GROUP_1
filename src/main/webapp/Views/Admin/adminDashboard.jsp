@@ -1,23 +1,17 @@
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <!DOCTYPE html>
 <html lang="en">
     <head>
         <!-- META ============================================= -->
         <meta charset="utf-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
-        <meta name="keywords" content="" />
-        <meta name="author" content="" />
-        <meta name="robots" content="" />
-        <meta name="description" content="Human Tech Dashboard Template" />
-        <meta property="og:title" content="Human Tech Admin Dashboard" />
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <title>Dashboard | Human Tech HR System</title>
 
-        <!-- FAVICONS -->
         <link rel="icon" href="${pageContext.request.contextPath}/assets2/images/favicon.ico" type="image/x-icon" />
         <link rel="shortcut icon" type="image/x-icon" href="${pageContext.request.contextPath}/assets2/images/favicon.png" />
 
-        <!-- STYLES -->
         <link rel="stylesheet" href="${pageContext.request.contextPath}/assets2/css/assets.css">
         <link rel="stylesheet" href="${pageContext.request.contextPath}/assets2/vendors/calendar/fullcalendar.css">
         <link rel="stylesheet" href="${pageContext.request.contextPath}/assets2/css/typography.css">
@@ -31,9 +25,11 @@
         <%@ include file="../CommonItems/Header/dashboardHeader.jsp" %>
         <%@ include file="../CommonItems/Navbar/empNavbar.jsp" %>
 
-        <!-- MAIN CONTENT -->
         <main class="ttr-wrapper">
             <div class="container-fluid">
+
+
+
                 <!-- Breadcrumb -->
                 <div class="db-breadcrumb">
                     <h4 class="breadcrumb-title">Dashboard</h4>
@@ -43,7 +39,6 @@
                     </ul>
                 </div>
 
-                <!-- STATISTICS CARDS -->
                 <div class="row">
                     <div class="col-md-6 col-lg-3">
                         <div class="widget-card widget-bg1">
@@ -56,6 +51,7 @@
                             </div>
                         </div>
                     </div>
+
                     <div class="col-md-6 col-lg-3">
                         <div class="widget-card widget-bg2">
                             <div class="wc-item">
@@ -67,6 +63,7 @@
                             </div>
                         </div>
                     </div>
+
                     <div class="col-md-6 col-lg-3">
                         <div class="widget-card widget-bg3">
                             <div class="wc-item">
@@ -78,6 +75,7 @@
                             </div>
                         </div>
                     </div>
+
                     <div class="col-md-6 col-lg-3">
                         <div class="widget-card widget-bg4">
                             <div class="wc-item">
@@ -91,7 +89,6 @@
                     </div>
                 </div>
 
-                <!-- CHARTS AND NOTIFICATIONS -->
                 <div class="row">
                     <div class="col-lg-8 m-b30">
                         <div class="widget-box">
@@ -140,6 +137,11 @@
                 </div>
             </div>
         </main>
+        <c:if test="${not empty logMessage}">
+            <script>
+                alert("${logMessage}");
+            </script>
+        </c:if>
 
         <!-- JS FILES -->
         <script src="${pageContext.request.contextPath}/assets2/js/jquery.min.js"></script>
@@ -158,37 +160,41 @@
         <script src="${pageContext.request.contextPath}/assets2/js/admin.js"></script>
 
         <script>
-            $(document).ready(function () {
-                // Chart Example
-                var ctx = document.getElementById("chart").getContext("2d");
-                new Chart(ctx, {
-                    type: 'line',
-                    data: {
-                        labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun"],
-                        datasets: [{
-                            label: 'Employee Growth',
-                            data: [5, 10, 8, 15, 12, 20],
-                            backgroundColor: 'rgba(66,165,245,0.2)',
-                            borderColor: '#42a5f5',
-                            borderWidth: 2,
-                            fill: true
-                        }]
-                    },
-                    options: {responsive: true, maintainAspectRatio: false}
-                });
+                setTimeout(() => {
+                    const logBox = document.getElementById("logBox");
+                    if (logBox)
+                        logBox.remove();
+                }, 3000);
 
-                // Calendar Example
-                $('#calendar').fullCalendar({
-                    header: {left: 'prev,next today', center: 'title', right: 'month,agendaWeek,agendaDay'},
-                    editable: false,
-                    eventLimit: true,
-                    events: [
-                        {title: 'Company Meeting', start: '2025-10-19'},
-                        {title: 'HR Interview', start: '2025-10-21'},
-                        {title: 'System Maintenance', start: '2025-10-23'}
-                    ]
+                $(document).ready(function () {
+                    var ctx = document.getElementById("chart").getContext("2d");
+                    new Chart(ctx, {
+                        type: 'line',
+                        data: {
+                            labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun"],
+                            datasets: [{
+                                    label: 'Employee Growth',
+                                    data: [5, 10, 8, 15, 12, 20],
+                                    backgroundColor: 'rgba(66,165,245,0.2)',
+                                    borderColor: '#42a5f5',
+                                    borderWidth: 2,
+                                    fill: true
+                                }]
+                        },
+                        options: {responsive: true, maintainAspectRatio: false}
+                    });
+
+                    $('#calendar').fullCalendar({
+                        header: {left: 'prev,next today', center: 'title', right: 'month,agendaWeek,agendaDay'},
+                        editable: false,
+                        eventLimit: true,
+                        events: [
+                            {title: 'Company Meeting', start: '2025-10-19'},
+                            {title: 'HR Interview', start: '2025-10-21'},
+                            {title: 'System Maintenance', start: '2025-10-23'}
+                        ]
+                    });
                 });
-            });
         </script>
     </body>
 </html>
