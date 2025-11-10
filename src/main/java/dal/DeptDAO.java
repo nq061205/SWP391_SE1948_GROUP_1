@@ -250,6 +250,24 @@ public class DeptDAO extends DBContext {
         return count;
     }
 
+    public int countAllDepartments() {
+        int count = 0;
+
+        String sql = "SELECT COUNT(*) FROM department";
+
+        try (Connection conn = DBContext.getConnection(); PreparedStatement stm = conn.prepareStatement(sql); ResultSet rs = stm.executeQuery()) {
+
+            if (rs.next()) {
+                count = rs.getInt(1);
+            }
+
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+
+        return count;
+    }
+
     public List<String> getDepartmentsHavingManager() {
         List<String> depIds = new ArrayList<>();
         String sql = "SELECT DISTINCT e.dep_id\n"
