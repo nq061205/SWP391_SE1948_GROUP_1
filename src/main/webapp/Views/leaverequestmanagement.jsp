@@ -73,6 +73,9 @@
 
                     <input type="text" name="search" value="${param.search}"
                            class="form-control filter-h" placeholder="Search email or name...">
+                    <button type="submit" class="btn btn-primary filter-h">
+                        <i class="fa fa-search"></i> Search
+                    </button>
                     <select name="type" class="form-control filter-h" style="width:170px;" onchange="this.form.submit()">
                         <option value="">All Type</option>
                         <option value="Annual Leave" ${param.type == 'Annual Leave' ? 'selected' : ''}>Annual Leave</option>
