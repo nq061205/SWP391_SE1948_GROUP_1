@@ -320,9 +320,9 @@
                                 <i class="fa-solid fa-user-plus"></i> Add New Dependant
                             </button>
                         </div>
-                        <div class="filter-row mb-3" style="margin: 0% 1%">
+                        <div class="filter-row mb-3" style="margin: 0 1%; display:flex; align-items:center; gap:35px;">
                             <form action="${pageContext.request.contextPath}/dependantdetail" method="get"
-                                  class="d-flex align-items-center justify-content-between flex-nowrap gap-3 h-100" style="gap:12px;">
+                                  class="d-flex align-items-center gap-2 flex-grow-1">
                                 <input type="hidden" name="tab" value="${param.tab}">
                                 <input type="hidden" name="empId" value="${param.empId}">
                                 <input type="hidden" name="page" value="${param.page}">
@@ -332,22 +332,27 @@
                                 <button type="submit" class="btn btn-primary">
                                     <i class="fa fa-search me-1"></i> Search
                                 </button>
-                                <select name="relationship" class="form-control filter-h" style="width:170px;"
-                                        >
-                                    <option value="">-- All --</option>
-                                    <c:forEach items="${relationList}" var="rl">
-                                        <option value="${rl}" ${param.relationship == rl ? 'selected' : ''}>${rl}</option>
-                                    </c:forEach>
-                                </select>
-
-                                <select name="gender" class="form-control filter-h">
-                                    <option value="">-- All --</option>
-                                    <option value="true" ${param.gender == 'true' ? 'selected' : ''}>Male</option>
-                                    <option value="false" ${param.gender == 'false' ? 'selected' : ''}>Female</option>
-                                </select>
-                                <button type="submit" class="btn btn-outline-secondary filter-h"> <i class="fa fa-filter"></i>Apply</button>
-                                <a href="${pageContext.request.contextPath}/createaccount"
-                                   class="btn btn-warning filter-h"><i class="fa fa-times"></i>Clear</a>
+                            </form>
+                            <form action="${pageContext.request.contextPath}/dependantdetail" method="get"
+                                  class="d-flex align-items-center gap-2" style="min-width:250px;gap: 25px">
+                                <div style="display:flex;flex-direction: row;min-width:400px;gap: 20px">
+                                    <select name="relationship" class="form-control filter-h" style="width:170px;">                                            >
+                                        <option value="">-- All --</option>
+                                        <c:forEach items="${relationList}" var="rl">
+                                            <option value="${rl}" ${param.relationship == rl ? 'selected' : ''}>${rl}</option>
+                                        </c:forEach>
+                                    </select>
+                                    <select name="gender" class="form-control filter-h">
+                                        <option value="">-- All --</option>
+                                        <option value="true" ${param.gender == 'true' ? 'selected' : ''}>Male</option>
+                                        <option value="false" ${param.gender == 'false' ? 'selected' : ''}>Female</option>
+                                    </select>
+                                </div>
+                                <div style="display:flex;gap: 30px">
+                                    <button type="submit" class="btn btn-outline-secondary filter-h"> <i class="fa fa-filter"></i>Apply</button>
+                                    <a href="${pageContext.request.contextPath}/createaccount"
+                                       class="btn btn-warning filter-h"><i class="fa fa-times"></i>Clear</a>
+                                </div>
                             </form>
                         </div>
                         <div class="modal fade" id="addDependantModal" tabindex="-1" aria-labelledby="addDependantModalLabel" aria-hidden="true">
@@ -434,12 +439,12 @@
                                 <tbody>
                                     <c:forEach items="${dependantList}" var="dl" varStatus="loop">
                                         <tr>
-                                            <td>${loop.index+1}</td>
-                                            <td>${dl.name}</td>
-                                            <td>${dl.relationship}</td>
-                                            <td>${dl.dob}</td>
-                                            <td>${dl.gender ?'Male':'Female'}</td>
-                                            <td>${dl.phone}</td>
+                                            <td style="overflow-wrap: break-word;">${loop.index+1}</td>
+                                            <td style="overflow-wrap: break-word;">${dl.name}</td>
+                                            <td style="overflow-wrap: break-word;">${dl.relationship}</td>
+                                            <td style="overflow-wrap: break-word;">${dl.dob}</td>
+                                            <td style="overflow-wrap: break-word;">${dl.gender ?'Male':'Female'}</td>
+                                            <td style="overflow-wrap: break-word;">${dl.phone}</td>
                                             <td>
                                                 <a href="${pageContext.request.contextPath}/updatedependant?empId=${dl.employee.empId}" 
                                                    class="btn btn-sm btn-primary">Edit</a>

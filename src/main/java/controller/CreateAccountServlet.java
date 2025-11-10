@@ -86,7 +86,6 @@ public class CreateAccountServlet extends HttpServlet {
         InterviewDAO interDAO = new InterviewDAO();
         DeptDAO deptDAO = new DeptDAO();
         RoleDAO rDAO = new RoleDAO();
-        CandidateDAO canDAO = new CandidateDAO();
         String searchKey = request.getParameter("searchkey");
         String startApplyDate = request.getParameter("startApplyDate");
         String endApplyDate = request.getParameter("endApplyDate");
@@ -183,7 +182,7 @@ public class CreateAccountServlet extends HttpServlet {
 
             Role role = roleDAO.getRoleByRoleId(roleId);
             emp.setRole(role);
-            emp.setPassword(empDAO.generatePassword());
+            emp.setPassword("123456");
             emp.setGender(true);
             emp.setStatus(true);
             empDAO.createEmployee(emp);

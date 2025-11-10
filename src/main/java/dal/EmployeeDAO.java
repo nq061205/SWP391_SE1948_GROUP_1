@@ -690,8 +690,22 @@ public class EmployeeDAO extends DBContext {
         return empList;
     }
 
-    public boolean hasManager(String depId) {
-        String sql = "SELECT COUNT(*) FROM employee WHERE dep_id = ? AND position_title LIKE '%Manager%'";
+    public boolean hasDeptManager(String depId) {
+        String sql = "SELECT COUNT(*) FROM employee WHERE dep_id = ? AND position_title LIKE '%Dept Manager%'";
+        try (Connection conn = DBContext.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, depId);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt(1) > 0;
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+     public boolean hasHRManager(String depId) {
+        String sql = "SELECT COUNT(*) FROM employee WHERE dep_id = ? AND position_title LIKE '%HR Manager%'";
         try (Connection conn = DBContext.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setString(1, depId);
             try (ResultSet rs = ps.executeQuery()) {
@@ -738,18 +752,18 @@ public class EmployeeDAO extends DBContext {
         }
         return "E001";
     }
-
-    public String generatePassword() {
-        String chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-        StringBuilder sb = new StringBuilder();
-        Random random = new Random();
-
-        for (int i = 0; i < 6; i++) {
-            int index = random.nextInt(chars.length());
-            sb.append(chars.charAt(index));
-        }
-        return sb.toString();
-    }
+//
+//    public String generatePassword() {
+//        String chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+//        StringBuilder sb = new StringBuilder();
+//        Random random = new Random();
+//
+//        for (int i = 0; i < 6; i++) {
+//            int index = random.nextInt(chars.length());
+//            sb.append(chars.charAt(index));
+//        }
+//        return sb.toString();
+//    }
 
     public void createEmployee(Employee emp) {
         String sql = "INSERT INTO Employee(emp_code, fullname, password, email, phone, gender, dep_id, role_id, status) "

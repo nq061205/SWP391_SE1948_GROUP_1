@@ -78,24 +78,24 @@
                 align-items: center !important;
                 gap: 20px !important; /* khoảng cách giữa các combo box */
             }
-            .status-active,
-            .status-inactive {
-                display: inline-block;
-                padding: 4px 10px;
-                border-radius: 12px; /* tròn cạnh */
-                color: #fff;          /* chữ trắng */
+            .status-active, .status-inactive {
+                display: flex !important;
+                justify-content: center;
+                align-items: center;
+                padding: 5px 10px;
+                border-radius: 6px;
+                color: #fff;
                 font-size: 0.85rem;
                 font-weight: 500;
-                text-align: center;
-                min-width: 70px;
+                margin-top: 11%;
+                margin-left: 5%;
+                margin-right: 5%;
             }
-
             .status-active {
-                background-color: #28a745; /* xanh lá */
+                background-color: #28a745;
             }
-
             .status-inactive {
-                background-color: #dc3545; /* đỏ */
+                background-color: #dc3545;
             }
         </style>
 
@@ -141,7 +141,7 @@
                         <i class="fa-solid fa-user-plus"></i> Add New Account
                     </a>
                 </div>
-                <div class="row align-items-stretch"> <!-- thêm align-items-stretch -->
+                <div class="row align-items-stretch">
                     <!-- SEARCH -->
                     <div class="col-md-4">
                         <form action="${pageContext.request.contextPath}/accountlist" method="get"
@@ -225,7 +225,7 @@
                                 </c:forEach>
                             </select>
 
-                            <div class="d-flex align-items-center gap-2">
+                            <div class="d-flex align-items-center gap-2" style="display:flex;gap:10px">
                                 <button type="submit" class="btn btn-primary">
                                     <i class="fa fa-filter"></i> Apply
                                 </button>

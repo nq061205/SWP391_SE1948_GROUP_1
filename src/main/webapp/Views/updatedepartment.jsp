@@ -83,7 +83,7 @@
                                     <div class="form-group row mt-2">
                                         <label class="col-sm-3 col-form-label">DepartmentID:</label>
                                         <div class="col-sm-9">
-                                            <input class="form-control" type="text" name="depId" value="${sessionScope.dep.depId}" required>
+                                            <input class="form-control" type="text" name="depId" value="${sessionScope.dep.depId}" readonly>
                                         </div>
                                     </div>
 
@@ -91,12 +91,14 @@
                                         <label class="col-sm-3 col-form-label">Department Name:</label>
                                         <div class="col-sm-9">
                                             <input class="form-control" type="text" name="depName" value="${sessionScope.dep.depName}" required >
+                                            <p style="color:red">${NameErr}</p>
                                         </div>
                                     </div>
                                     <div class="form-group row mt-2">
                                         <label class="col-sm-3 col-form-label">Description:</label>
                                         <div class="col-sm-9">
                                             <textarea class="form-control" name="description" rows="2" required>${sessionScope.dep.description}</textarea>
+                                            <p style="color: red">${descripErr}</p>
                                         </div>
                                     </div>
 
