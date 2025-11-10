@@ -188,10 +188,10 @@
                         <tbody>
                             <c:forEach var="el" items="${sessionScope.deptList}" varStatus ="loop">
                                 <tr style="text-align:center">
-                                    <td>${loop.index+1}</td>
-                                    <td>${el.depId}</td>
-                                    <td>${el.depName}</td>
-                                    <td>${el.description}</td>                                           
+                                    <td style="overflow-wrap: break-word;">${loop.index+1}</td>
+                                    <td style="overflow-wrap: break-word;">${el.depId}</td>
+                                    <td style="overflow-wrap: break-word;">${el.depName}</td>
+                                    <td style="overflow-wrap: break-word;">${el.description}</td>                                           
                                     <td>
                                         <div style="display: flex;gap: 30px">
                                             <a style="width: 50%" href="${pageContext.request.contextPath}/updatedepartment?depId=${el.depId}" class="btn btn-sm btn-primary">Edit</a>

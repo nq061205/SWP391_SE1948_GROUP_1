@@ -105,33 +105,34 @@
                                                 <label class="col-sm-3 col-form-label">Email:</label>
                                                 <div class="col-sm-9">
                                                     <input name="email" class="form-control"  type="email" value="${sessionScope.emp.email}" required>
+                                                    <p style="color: red">${EmailErr}</p>
                                                 </div>
                                             </div>
                                             <div class="form-group row mt-2">
                                                 <label class="col-sm-3 col-form-label">Gender:</label>
                                                 <div class="col-sm-9">
-                                                    <input class="form-control" type="text" value="${sessionScope.emp.gender ?'Male':'Female'}" readonly>
+                                                    <select class="form-control" name="gender">
+                                                        <option value="true" ${sessionScope.emp.gender ? 'selected' : ''}>Male</option>
+                                                        <option value="false" ${!sessionScope.emp.gender ? 'selected' : ''}>Female</option>
+                                                    </select>
                                                 </div>
                                             </div>
                                             <div class="form-group row mt-2">
                                                 <label class="col-sm-3 col-form-label">Date of birth:</label>
                                                 <div class="col-sm-9">
                                                     <input class="form-control" name="dob" type="date" value="${sessionScope.emp.dob}"  required>
-                                                    <p>${dobErr}</p>
+                                                    <p style="color:red">${dobErr}</p>
                                                 </div>
                                             </div>
                                             <div class="form-group row mt-2">
                                                 <label class="col-sm-3 col-form-label">Position Title:</label>
                                                 <div class="col-sm-9">
                                                     <select name="positionTitle" class="form-control">
-                                                        <c:forEach var="pos" items="${posList}">
-                                                            <option value="${pos}"
-                                                                    <c:if test="${pos == emp.positionTitle}">selected</c:if>
-                                                                    <c:if test="${hasManager and fn:containsIgnoreCase(pos, 'manager')}">disabled</c:if>>
-                                                                ${pos}
-                                                                <c:if test="${hasManager and fn:containsIgnoreCase(pos, 'manager')}">
-                                                                    (Already Assigned)
-                                                                </c:if>
+                                                        <c:forEach var="opt" items="${posOptions}">
+                                                            <option value="${opt.value}"
+                                                                    <c:if test="${opt.selected eq 'true'}">selected</c:if>
+                                                                    <c:if test="${opt.disabled eq 'true'}">disabled</c:if>>
+                                                                ${opt.value} ${opt.label}
                                                             </option>
                                                         </c:forEach>
                                                     </select>

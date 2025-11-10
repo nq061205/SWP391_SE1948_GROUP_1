@@ -255,7 +255,7 @@ public class DeptDAO extends DBContext {
         String sql = "SELECT DISTINCT e.dep_id\n"
                 + "        FROM employee e\n"
                 + "        JOIN role r ON e.role_id = r.role_id\n"
-                + "        WHERE r.role_name Like '%Manager%'";
+                + "        WHERE r.role_name Like '%Dept Manager%'";
 
         try (Connection conn = DBContext.getConnection(); PreparedStatement ps = conn.prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
             while (rs.next()) {

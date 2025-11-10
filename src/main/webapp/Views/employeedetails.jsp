@@ -439,12 +439,12 @@
                                 <tbody>
                                     <c:forEach items="${dependantList}" var="dl" varStatus="loop">
                                         <tr>
-                                            <td>${loop.index+1}</td>
-                                            <td>${dl.name}</td>
-                                            <td>${dl.relationship}</td>
-                                            <td>${dl.dob}</td>
-                                            <td>${dl.gender ?'Male':'Female'}</td>
-                                            <td>${dl.phone}</td>
+                                            <td style="overflow-wrap: break-word;">${loop.index+1}</td>
+                                            <td style="overflow-wrap: break-word;">${dl.name}</td>
+                                            <td style="overflow-wrap: break-word;">${dl.relationship}</td>
+                                            <td style="overflow-wrap: break-word;">${dl.dob}</td>
+                                            <td style="overflow-wrap: break-word;">${dl.gender ?'Male':'Female'}</td>
+                                            <td style="overflow-wrap: break-word;">${dl.phone}</td>
                                             <td>
                                                 <a href="${pageContext.request.contextPath}/updatedependant?empId=${dl.employee.empId}" 
                                                    class="btn btn-sm btn-primary">Edit</a>
