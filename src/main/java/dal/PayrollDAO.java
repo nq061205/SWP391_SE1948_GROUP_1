@@ -77,7 +77,7 @@ public class PayrollDAO {
 
     public Payroll getPayrollDeatailByTime(int emp_id, int month, int year) {
         String sql = PAYROLL_SELECT_SQL + " WHERE p.emp_id = ?\n"
-                + "       and   p.month = ? AND p.year= ?\n";
+                + "       and   p.month = ? AND p.year= ? and p.is_paid = 1\n";
         try (Connection conn = DBContext.getConnection(); PreparedStatement stm = conn.prepareStatement(sql)) {
             stm.setInt(1, emp_id);
             stm.setInt(2, month);
@@ -218,10 +218,6 @@ public class PayrollDAO {
     public static void main(String[] args) {
         PayrollDAO dao = new PayrollDAO();
         EmployeeDAO empDAO = new EmployeeDAO();
-        List<Employee> emps = empDAO.getEmployees(0, 2, null, null);
-        List<Integer> empIds = emps.stream().map(e -> e.getEmpId()).collect(Collectors.toList());
-        System.out.println(emps);
-        System.out.println((dao.getPayrollByEmpIds(empIds, 10, 2025).size()));
-
+        System.out.println(dao.getPayrollDeatailByTime(1, 10, 2025));
     }
 }

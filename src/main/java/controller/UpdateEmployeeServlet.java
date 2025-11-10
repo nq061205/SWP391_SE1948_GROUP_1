@@ -173,6 +173,10 @@ public class UpdateEmployeeServlet extends HttpServlet {
             request.setAttribute("EmailErr", "Email have the max length is 100!");
             validate = true;
         }
+        if (empDAO.existsByEmail(email) && !email.equals(emp.getEmail())) {
+            request.setAttribute("EmailErr", "Email have been existed!");
+            validate = true;
+        }
         if ("save".equalsIgnoreCase(button) && validate == false) {
             emp.setEmail(email);
             emp.setDob(dob);

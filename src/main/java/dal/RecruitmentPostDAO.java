@@ -13,7 +13,7 @@ import java.util.List;
 
 public class RecruitmentPostDAO extends DBContext { // Kế thừa DBContext để dùng getConnection
 
-    public List<RecruitmentPost> getApprovedPosts() {
+    public List<RecruitmentPost> getUploadedPosts() {
         List<RecruitmentPost> approvedPosts = new ArrayList<>();
         String sql = "SELECT "
                 + "rp.post_id, "

@@ -61,23 +61,20 @@
         <!-- HEADER + NAVBAR -->
         <%@ include file="CommonItems/Header/dashboardHeader.jsp" %>
         <%@ include file="CommonItems/Navbar/empNavbar.jsp" %>
-        
+
 
         <main class="ttr-wrapper">
             <div class="container-fluid">
-                <div class="db-breadcrumb">
+                <div class="db-breadcrumb mb-3">
+                    <h4 class="breadcrumb-title">Personal Profile</h4>
                     <ul class="db-breadcrumb-list">
-                        <li><i class="fa fa-home"></i>Home</li>
-                        <li>Personal Profile</li>
+                        <li><a href="${pageContext.request.contextPath}/profile"></i> Personal Profile</a></li>
                     </ul>
-                </div>	
+                </div>
 
                 <div class="row">
                     <div class="col-lg-12 m-b30">
                         <div class="widget-box">
-                            <div class="wc-title">
-                                <h4>Personal record</h4>
-                            </div>
                             <div class="widget-inner">
                                 <form class="edit-profile m-b30" action="${pageContext.request.contextPath}/profile" method="POST" enctype="multipart/form-data">
                                     <div class="row">

@@ -5,35 +5,51 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <!-- META ============================================= -->
         <meta charset="utf-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta name="keywords" content="" />
         <meta name="author" content="" />
         <meta name="robots" content="" />
+
+        <!-- DESCRIPTION -->
         <meta name="description" content="Human Tech" />
+
+        <!-- OG -->
         <meta property="og:title" content="Human Tech" />
-        <meta property="og:description" content="Human Tech" />
+        <meta property="og:description" content="Profile" />
+        <meta property="og:image" content="" />
         <meta name="format-detection" content="telephone=no">
 
         <!-- FAVICONS ICON ============================================= -->
+        <link rel="icon" href="${pageContext.request.contextPath}/assets2/images/favicon.ico" type="image/x-icon" />
         <link rel="shortcut icon" type="image/x-icon" href="${pageContext.request.contextPath}/assets2/images/favicon.png" />
 
         <!-- PAGE TITLE HERE ============================================= -->
-        <title>Human Tech - Monthly Payroll Report</title>
+        <title>My Profile</title>
 
         <!-- MOBILE SPECIFIC ============================================= -->
         <meta name="viewport" content="width=device-width, initial-scale=1">
 
+        <!--[if lt IE 9]>
+        <script src="${pageContext.request.contextPath}/assets2/js/html5shiv.min.js"></script>
+        <script src="${pageContext.request.contextPath}/assets2/js/respond.min.js"></script>
+        <![endif]-->
+
         <!-- All PLUGINS CSS ============================================= -->
         <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/assets2/css/assets.css">
+        <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/assets2/vendors/calendar/fullcalendar.css">
+
+        <!-- TYPOGRAPHY ============================================= -->
         <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/assets2/css/typography.css">
+
+        <!-- SHORTCODES ============================================= -->
         <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/assets2/css/shortcodes/shortcodes.css">
+
+        <!-- STYLESHEETS ============================================= -->
         <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/assets2/css/style.css">
         <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/assets2/css/dashboard.css">
         <link class="skin" rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/assets2/css/color/color-1.css">
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
-
         <style>
             .bg-success-light {
                 background-color: #d4edda !important;
@@ -106,7 +122,7 @@
 
     <body class="ttr-opened-sidebar ttr-pinned-sidebar">
         <%@ include file="../CommonItems/Header/dashboardHeader.jsp" %>
-        <%@ include file="../CommonItems/Navbar/hrNavbar.jsp" %>
+        <%@ include file="../CommonItems/Navbar/empNavbar.jsp" %>
         <main class="ttr-wrapper">
             <div class="container-fluid">
                 <!-- Breadcrumb -->
@@ -229,7 +245,7 @@
                                                            placeholder="Code or Name...">
                                                     <div class="input-group-append">
                                                         <button type="submit" onclick="resetPageBeforeSubmit()" class="btn btn-outline-secondary">
-                                                            <i class="fas fa-search"></i>
+                                                            <i class="fa fa-search"></i>
                                                         </button>
                                                     </div>
                                                 </div>
@@ -528,76 +544,87 @@
     <script src="${pageContext.request.contextPath}/assets2/vendors/bootstrap/js/popper.min.js"></script>
     <script src="${pageContext.request.contextPath}/assets2/vendors/bootstrap/js/bootstrap.min.js"></script>
     <script src="${pageContext.request.contextPath}/assets2/vendors/bootstrap-select/bootstrap-select.min.js"></script>
+    <script src="${pageContext.request.contextPath}/assets2/vendors/bootstrap-touchspin/jquery.bootstrap-touchspin.js"></script>
+    <script src="${pageContext.request.contextPath}/assets2/vendors/magnific-popup/magnific-popup.js"></script>
+    <script src="${pageContext.request.contextPath}/assets2/vendors/counter/waypoints-min.js"></script>
+    <script src="${pageContext.request.contextPath}/assets2/vendors/counter/counterup.min.js"></script>
+    <script src="${pageContext.request.contextPath}/assets2/vendors/imagesloaded/imagesloaded.js"></script>
+    <script src="${pageContext.request.contextPath}/assets2/vendors/masonry/masonry.js"></script>
+    <script src="${pageContext.request.contextPath}/assets2/vendors/masonry/filter.js"></script>
+    <script src="${pageContext.request.contextPath}/assets2/vendors/owl-carousel/owl.carousel.js"></script>
+    <script src="${pageContext.request.contextPath}/assets2/vendors/scroll/scrollbar.min.js"></script>
     <script src="${pageContext.request.contextPath}/assets2/js/functions.js"></script>
+    <script src="${pageContext.request.contextPath}/assets2/vendors/chart/chart.min.js"></script>
     <script src="${pageContext.request.contextPath}/assets2/js/admin.js"></script>
+    <script src="${pageContext.request.contextPath}/assets2/vendors/switcher/switcher.js"></script>
 
     <script>
-                            var isProcessing = false;
+                                                            var isProcessing = false;
 
-                            $(document).ready(function () {
-                                setTimeout(function () {
-                                    $('.alert').fadeOut('slow');
-                                }, 5000);
-                            });
+                                                            $(document).ready(function () {
+                                                                setTimeout(function () {
+                                                                    $('.alert').fadeOut('slow');
+                                                                }, 5000);
+                                                            });
 
-                            function changePageSize(newPageSize) {
-                                if (isProcessing) {
-                                    alert('Please wait until processing is complete');
-                                    return;
-                                }
-                                const form = document.getElementById('filterForm');
-                                if (!form) {
-                                    alert('Error: Form not found');
-                                    return;
-                                }
-                                const pageInput = form.querySelector('input[name="page"]');
-                                if (pageInput) {
-                                    pageInput.value = 1;
-                                }
-                                form.submit();
-                            }
+                                                            function changePageSize(newPageSize) {
+                                                                if (isProcessing) {
+                                                                    alert('Please wait until processing is complete');
+                                                                    return;
+                                                                }
+                                                                const form = document.getElementById('filterForm');
+                                                                if (!form) {
+                                                                    alert('Error: Form not found');
+                                                                    return;
+                                                                }
+                                                                const pageInput = form.querySelector('input[name="page"]');
+                                                                if (pageInput) {
+                                                                    pageInput.value = 1;
+                                                                }
+                                                                form.submit();
+                                                            }
 
-                            function resetPageBeforeSubmit() {
-                                const form = document.getElementById('filterForm');
-                                if (form) {
-                                    form.querySelector('input[name="page"]').value = 1;
-                                }
-                            }
+                                                            function resetPageBeforeSubmit() {
+                                                                const form = document.getElementById('filterForm');
+                                                                if (form) {
+                                                                    form.querySelector('input[name="page"]').value = 1;
+                                                                }
+                                                            }
 
-                            function applyFilter() {
-                                const form = document.getElementById('filterForm');
-                                if (!form)
-                                    return;
-                                form.querySelector('input[name="page"]').value = 1;
-                                form.submit();
-                            }
+                                                            function applyFilter() {
+                                                                const form = document.getElementById('filterForm');
+                                                                if (!form)
+                                                                    return;
+                                                                form.querySelector('input[name="page"]').value = 1;
+                                                                form.submit();
+                                                            }
 
-                            function calculatePayroll() {
-                                if (confirm('Calculate payroll for all employees in this month?')) {
-                                    const form = document.getElementById('filterForm');
-                                    const actionInput = document.createElement('input');
-                                    actionInput.type = 'hidden';
-                                    actionInput.name = 'action';
-                                    actionInput.value = 'calculate';
-                                    form.appendChild(actionInput);
-                                    form.submit();
-                                }
-                            }
+                                                            function calculatePayroll() {
+                                                                if (confirm('Calculate payroll for all employees in this month?')) {
+                                                                    const form = document.getElementById('filterForm');
+                                                                    const actionInput = document.createElement('input');
+                                                                    actionInput.type = 'hidden';
+                                                                    actionInput.name = 'action';
+                                                                    actionInput.value = 'calculate';
+                                                                    form.appendChild(actionInput);
+                                                                    form.submit();
+                                                                }
+                                                            }
 
-                            function exportPayroll(format) {
-                                var form = $('#filterForm');
-                                if (!form.length) {
-                                    alert('Form not found!');
-                                    return;
-                                }
-                                var params = form.serialize();
-                                var url;
-                                if (format === 'excel') {
-                                    url = 'export-salary-excel?' + params;
-                                } else if (format === 'pdf') {
-                                    url = 'export-salary-pdf?' + params;
-                                }
-                                window.location.href = url;
-                            }
+                                                            function exportPayroll(format) {
+                                                                var form = $('#filterForm');
+                                                                if (!form.length) {
+                                                                    alert('Form not found!');
+                                                                    return;
+                                                                }
+                                                                var params = form.serialize();
+                                                                var url;
+                                                                if (format === 'excel') {
+                                                                    url = 'export-salary-excel?' + params;
+                                                                } else if (format === 'pdf') {
+                                                                    url = 'export-salary-pdf?' + params;
+                                                                }
+                                                                window.location.href = url;
+                                                            }
     </script>
 </html>

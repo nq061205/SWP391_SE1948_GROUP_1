@@ -86,6 +86,7 @@ public class CreateAccountServlet extends HttpServlet {
         InterviewDAO interDAO = new InterviewDAO();
         DeptDAO deptDAO = new DeptDAO();
         RoleDAO rDAO = new RoleDAO();
+        EmployeeDAO empDAO = new EmployeeDAO();
         String searchKey = request.getParameter("searchkey");
         String startApplyDate = request.getParameter("startApplyDate");
         String endApplyDate = request.getParameter("endApplyDate");
@@ -110,12 +111,14 @@ public class CreateAccountServlet extends HttpServlet {
         );
 
         int totalPages = (int) Math.ceil((double) totalRecords / pageSize);
-        
+
         List<String> managerDepIds = deptDAO.getDepartmentsHavingManager();
+        boolean hasAdmin =empDAO.existsByRoleName("Admin");
 
         List<Interview> interList = interDAO.getFilteredInterviewsNotInEmployee("Pass", searchKey, startApplyDate, endApplyDate, startInterviewDate, endInterviewDate, page, pageSize);
 
         ses.setAttribute("roleList", uniqueRoles);
+        request.setAttribute("hasAdmin", hasAdmin);
         request.setAttribute("page", page);
         request.setAttribute("searchkey", searchKey);
         request.setAttribute("totalPages", totalPages);
@@ -169,8 +172,17 @@ public class CreateAccountServlet extends HttpServlet {
         } catch (Exception e) {
             e.printStackTrace();
         }
+        boolean hasErr = false;
+        if (empDAO.existsByEmail(addEmail)) {
+            request.setAttribute("EmailErr", "Email has been existed");
+            request.setAttribute("canName", addCanName);
+            request.setAttribute("email", addEmail);
+            request.setAttribute("phone", addPhone);
+            request.setAttribute("deptId", addDepartmentId);
+            hasErr = true;
+        }
 
-        if ("add".equalsIgnoreCase(action)) {
+        if ("add".equalsIgnoreCase(action) && !hasErr) {
             Employee emp = new Employee();
             emp.setEmpCode(empDAO.generateUserName());
             emp.setFullname(addCanName);

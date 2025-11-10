@@ -220,7 +220,7 @@ public class HRRecruitmentServlet extends HttpServlet {
             String notifToDate = request.getParameter("notifToDate");
 
 
-            List<RecruitmentPost> allApprovedPosts = recruitmentPostDAO.getApprovedPosts();
+            List<RecruitmentPost> allApprovedPosts = recruitmentPostDAO.getUploadedPosts();
             List<RecruitmentPost> allPendingAndRejectedPosts = recruitmentPostDAO.getPendingAndRejectedPosts();
             List<Department> departments = recruitmentPostDAO.getDepartments();
 
@@ -566,7 +566,7 @@ public class HRRecruitmentServlet extends HttpServlet {
 
                 if (post != null && ("Rejected".equals(post.getStatus()) || "New".equals(post.getStatus()))) {
                     List<Department> departments = recruitmentPostDAO.getDepartments();
-                    List<RecruitmentPost> approvedPosts = recruitmentPostDAO.getApprovedPosts();
+                    List<RecruitmentPost> approvedPosts = recruitmentPostDAO.getUploadedPosts();
                     List<RecruitmentPost> pendingAndRejectedPosts = recruitmentPostDAO.getPendingAndRejectedPosts();
 
                     int totalPosts = (approvedPosts != null) ? approvedPosts.size() : 0;
