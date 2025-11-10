@@ -106,7 +106,7 @@
                                 <div class="form-group mb-3">
                                     <label><i class="fa fa-user"></i> Candidates:</label>
                                     <div class="border rounded p-2" style="max-height: 220px; overflow-y: auto;">
-                                        <c:forEach items="${candidateList}" var="c">
+                                        <c:forEach items="${candidatesList}" var="c">
                                             <div class="form-check">
                                                 <input type="checkbox" class="form-check-input candidate-checkbox"
                                                        id="${c.candidateId}" name="candidateIds" value="${c.candidateId}">

@@ -9,7 +9,7 @@ import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
-import java.util.stream.Collectors; // Thêm import này
+import java.util.stream.Collectors;
 import model.Employee;
 import model.Interview;
 
@@ -26,7 +26,7 @@ public class ViewCreatedInterviewsServlet extends HttpServlet {
             response.sendRedirect("login");
             return;
         }
-        if (!rperDAO.hasPermission(user.getRole().getRoleId(), 2)) {
+        if (!rperDAO.hasPermission(user.getRole().getRoleId(), 5)) {
             session.setAttribute("logMessage", "You do not have permission to access this page.");
             response.sendRedirect("dashboard");
             return;

@@ -251,7 +251,6 @@ public class CandidateDAO extends DBContext {
         String updateSql = "UPDATE candidate SET name=?, phone=?, cv=?, post_id=?, applied_at=CURRENT_TIMESTAMP "
                 + "WHERE email=? and result is null";
 
-        // Đã sử dụng try-with-resources đúng cách (lồng nhau phức tạp)
         try (Connection conn = DBContext.getConnection()) {
             try (PreparedStatement checkPs = conn.prepareStatement(checkSql)) {
                 checkPs.setString(1, c.getEmail());

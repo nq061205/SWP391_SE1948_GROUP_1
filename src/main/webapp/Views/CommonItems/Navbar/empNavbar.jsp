@@ -25,7 +25,6 @@
                 <i class="ti-arrow-left"></i>
             </div>
         </div>
-        <%-- (ĐÃ LOẠI BỎ CÁC THẺ BỊ LẶP ttr-sidebar và ttr-sidebar-wrapper) --%>
         <nav class="ttr-sidebar-navi">
             <ul>
                 <li>
@@ -146,6 +145,9 @@
                 </li>
                 <% } %>
 
+
+                <% if (rpDAO.hasPermission(roleId, 12)) { %>
+
                 <li>
                     <a href="${pageContext.request.contextPath}/raw-attendance" class="ttr-material-button">
                         <span class="ttr-icon"><i class="ti-timer"></i></span>
@@ -158,6 +160,8 @@
                         <span class="ttr-label">Daily Attendance</span>
                     </a>
                 </li>
+                <% } %>
+                <% if (rpDAO.hasPermission(roleId, 13)) { %>
 
                 <li>
                     <a href="${pageContext.request.contextPath}/payrollreportdetail" class="ttr-material-button">
@@ -165,7 +169,8 @@
                         <span class="ttr-label">Payroll Report</span>
                     </a>
                 </li>
-
+                <% } %>
+                
                 <li>
                     <a href="${pageContext.request.contextPath}/attendance" class="ttr-material-button">
                         <span class="ttr-icon"><i class="ti-check-box"></i></span>
