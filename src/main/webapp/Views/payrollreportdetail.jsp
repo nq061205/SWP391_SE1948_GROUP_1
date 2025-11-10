@@ -115,6 +115,12 @@
         <%@ include file="CommonItems/Navbar/empNavbar.jsp" %>
         <main class="ttr-wrapper">
             <div class="filter-row mb-3">
+                <div class="db-breadcrumb mb-3">
+                        <h4 class="breadcrumb-title">Personal Payroll Reports</h4>
+                        <ul class="db-breadcrumb-list">
+                            <li><a href="${pageContext.request.contextPath}/payrollreportdetail"></i> Personal Payroll Reports</a></li>
+                        </ul>
+                    </div>
                 <form action="${pageContext.request.contextPath}/payrollreportdetail" method="get"
                       class="d-flex align-items-center flex-nowrap w-100" style="gap:12px;">
                     <select name="month" class="form-control filter-h" style="width:160px;" onchange="this.form.submit()">

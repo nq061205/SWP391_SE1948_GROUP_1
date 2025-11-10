@@ -28,7 +28,7 @@ public class EditInterviewServlet extends HttpServlet {
             response.sendRedirect("login");
             return;
         }
-        if (!rperDAO.hasPermission(user.getRole().getRoleId(), 2)) {
+        if (!rperDAO.hasPermission(user.getRole().getRoleId(), 5)) {
             session.setAttribute("logMessage", "You do not have permission to access this page.");
             response.sendRedirect("dashboard");
             return;

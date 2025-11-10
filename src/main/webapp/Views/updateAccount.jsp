@@ -105,7 +105,9 @@
                                                 <label class="col-sm-3 col-form-label">Email:</label>
                                                 <div class="col-sm-9">
                                                     <input name="email" class="form-control" name="email" type="email" value="${sessionScope.emp.email}" required>
+                                                    <c:if test="${not empty EmailErr}">
                                                     <p style="color: red">${EmailErr}</p>
+                                                    </c:if>
                                                 </div>
                                             </div>
                                             <div class="form-group row mt-2">

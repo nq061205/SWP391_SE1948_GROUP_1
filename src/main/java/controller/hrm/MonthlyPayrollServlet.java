@@ -219,7 +219,7 @@ public class MonthlyPayrollServlet extends HttpServlet {
 
         request.setAttribute("standardWorkDays", standardWorkDays);
 
-        request.getRequestDispatcher("Views/HRM/payrollManagement.jsp").forward(request, response);
+        request.getRequestDispatcher("Views/HRM/PayrollManagement.jsp").forward(request, response);
     }
 
     /**

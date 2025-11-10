@@ -157,22 +157,22 @@
             }
             .present {
                 background-color: #28a745;
-            }      
+            }
             .absent {
                 background-color: #e74c3c;
-            }     
+            }
             .leave {
                 background-color: #17a2b8;
-            }       
+            }
             .holiday {
                 background-color: #7f8c8d;
-            }     
+            }
             .weekend {
                 background-color: #2c3e50;
-            }   
+            }
             .future {
                 background-color: #fef7e1;
-            } 
+            }
             .today {
                 border: 2px solid #f1c40f;
             }
@@ -217,106 +217,114 @@
         <%@ include file="CommonItems/Navbar/empNavbar.jsp" %>
         <main class="ttr-wrapper">
             <div class="container-fluid">
-                <div id="legendPanel" class="card mb-3">
-                    <div class="card-header">
-                        <h6 class="mb-0"><i class="fa fa-info-circle"></i> Attendance Legend</h6>
+                <div class="container-fluid">
+                    <div class="db-breadcrumb mb-3">
+                        <h4 class="breadcrumb-title">Personal Attendance</h4>
+                        <ul class="db-breadcrumb-list">
+                            <li><a href="${pageContext.request.contextPath}/attendance"></i> Personal Attendance</a></li>
+                        </ul>
                     </div>
-                    <div class="card-body">
-                        <div class="row">
-                            <div class="col text-center">
-                                <div class="legend-box status-Present rounded">1</div>
-                                <small class="d-block mt-1">Full Day</small>
+                    <div id="legendPanel" class="card mb-3">
+                        <div class="card-header">
+                            <h6 class="mb-0"><i class="fa fa-info-circle"></i> Attendance Legend</h6>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col text-center">
+                                    <div class="legend-box status-Present rounded">1</div>
+                                    <small class="d-block mt-1">Full Day</small>
+                                </div>
+                                <div class="col text-center">
+                                    <div class="legend-box status-Present rounded">0.5</div>
+                                    <small class="d-block mt-1">Half Day</small>
+                                </div>
+                                <div class="col text-center">
+                                    <div class="legend-box status-Absent rounded">0</div>
+                                    <small class="d-block mt-1">Absent</small>
+                                </div>
+                                <div class="col text-center">
+                                    <div class="legend-box status-Leave rounded">0/1</div>
+                                    <small class="d-block mt-1">Leave</small>
+                                </div>
+                                <div class="col text-center">
+                                    <div class="legend-box status-Holiday rounded">1</div>
+                                    <small class="d-block mt-1">Holiday</small>
+                                </div>
+                                <div class="col text-center">
+                                    <div class="legend-box status-Present rounded">1 T</div>
+                                    <small class="d-block mt-1">With OT</small>
+                                </div>
+                                <div class="col text-center">
+                                    <div class="legend-box weekend-cell rounded">-</div>
+                                    <small class="d-block mt-1">Weekend</small>
+                                </div>
                             </div>
-                            <div class="col text-center">
-                                <div class="legend-box status-Present rounded">0.5</div>
-                                <small class="d-block mt-1">Half Day</small>
-                            </div>
-                            <div class="col text-center">
-                                <div class="legend-box status-Absent rounded">0</div>
-                                <small class="d-block mt-1">Absent</small>
-                            </div>
-                            <div class="col text-center">
-                                <div class="legend-box status-Leave rounded">0/1</div>
-                                <small class="d-block mt-1">Leave</small>
-                            </div>
-                            <div class="col text-center">
-                                <div class="legend-box status-Holiday rounded">1</div>
-                                <small class="d-block mt-1">Holiday</small>
-                            </div>
-                            <div class="col text-center">
-                                <div class="legend-box status-Present rounded">1 T</div>
-                                <small class="d-block mt-1">With OT</small>
-                            </div>
-                            <div class="col text-center">
-                                <div class="legend-box weekend-cell rounded">-</div>
-                                <small class="d-block mt-1">Weekend</small>
+                            <hr>
+                            <div class="text-center">
+                                <span class="badge badge-success">Present</span>
+                                <span class="badge badge-danger">Absent</span>
+                                <span class="badge badge-info">Leave</span>
+                                <span class="badge badge-secondary">Holiday</span>
+                                <span class="badge badge-dark">Weekend</span>
                             </div>
                         </div>
-                        <hr>
-                        <div class="text-center">
-                            <span class="badge badge-success">Present</span>
-                            <span class="badge badge-danger">Absent</span>
-                            <span class="badge badge-info">Leave</span>
-                            <span class="badge badge-secondary">Holiday</span>
-                            <span class="badge badge-dark">Weekend</span>
-                        </div>
                     </div>
-                </div>
-                <div class="filter-row mb-3">
-                    <form method="get" action="attendance" class="d-flex align-items-center flex-nowrap w-100" style="gap:12px;">
-                        <select name="month" onchange="this.form.submit()" style="width:160px;" class="form-control filter-h">
-                            <c:forEach var="m" begin="1" end="12">
-                                <option value="${m}" ${m == month ? 'selected' : ''}>
-                                    ${m}
-                                </option>
-                            </c:forEach>
-                        </select>
+                    <div class="filter-row mb-3">
+                        <form method="get" action="attendance" class="d-flex align-items-center flex-nowrap w-100" style="gap:12px;">
+                            <select name="month" onchange="this.form.submit()" style="width:160px;" class="form-control filter-h">
+                                <c:forEach var="m" begin="1" end="12">
+                                    <option value="${m}" ${m == month ? 'selected' : ''}>
+                                        ${m}
+                                    </option>
+                                </c:forEach>
+                            </select>
 
-                        <select name="year" onchange="this.form.submit()" style="width:160px;" class="form-control filter-h">
-                            <c:forEach var="y" begin="<%= java.time.Year.now().getValue()-5 %>" end="<%= java.time.Year.now().getValue()+5 %>">
-                                <option value="${y}" ${y == year ? 'selected' : ''}>${y}</option>
-                            </c:forEach>
-                        </select>
+                            <select name="year" onchange="this.form.submit()" style="width:160px;" class="form-control filter-h">
+                                <c:forEach var="y" begin="<%= java.time.Year.now().getValue()-5 %>" end="<%= java.time.Year.now().getValue()+5 %>">
+                                    <option value="${y}" ${y == year ? 'selected' : ''}>${y}</option>
+                                </c:forEach>
+                            </select>
 
-                    </form>
-                </div>
-                <div class="widget-inner">
-                    <table class="calendar-table">
-                        <tr>
-                            <th>Mon</th><th>Tue</th><th>Wed</th>
-                            <th>Thu</th><th>Fri</th><th>Sat</th><th>Sun</th>
-                        </tr>
+                        </form>
+                    </div>
+                    <div class="widget-inner">
+                        <table class="calendar-table">
+                            <tr>
+                                <th>Mon</th><th>Tue</th><th>Wed</th>
+                                <th>Thu</th><th>Fri</th><th>Sat</th><th>Sun</th>
+                            </tr>
 
-                        <tr>
-                            <c:forEach var="i" begin="1" end="${firstDayOfWeek == 7 ? 6 : firstDayOfWeek - 1}">
-                                <td class="inactive"></td>
-                            </c:forEach>
-
-                            <c:forEach var="d" items="${days}">
-                                <c:set var="isSunday" value="${d.dayOfWeek == 7}" />
-                                <td class="calendar-cell ${d.status} ${d.isToday ? 'today' : ''}">
-                                    <strong>${d.day}</strong>
-                                    <div class="attendance-detail">
-                                        <div><b>In:</b> ${d.checkIn}</div>
-                                        <div><b>Out:</b> ${d.checkOut}</div>
-                                        <div><b>Status:</b> ${d.status}</div>
-                                        <div><b>Workday:</b> ${d.workday}</div>
-                                    </div>
-                                </td>
-                                <c:if test="${isSunday}">
-                                </tr>
-                                <tr>
-                                </c:if>
-                            </c:forEach>
-
-                            <c:set var="endDay" value="${days[days.size()-1].dayOfWeek}" />
-                            <c:if test="${endDay != 7}">
-                                <c:forEach var="i" begin="${endDay}" end="6">
+                            <tr>
+                                <c:forEach var="i" begin="1" end="${firstDayOfWeek == 7 ? 6 : firstDayOfWeek - 1}">
                                     <td class="inactive"></td>
                                 </c:forEach>
-                            </c:if>
-                        </tr>
-                    </table>
+
+                                <c:forEach var="d" items="${days}">
+                                    <c:set var="isSunday" value="${d.dayOfWeek == 7}" />
+                                    <td class="calendar-cell ${d.status} ${d.isToday ? 'today' : ''}">
+                                        <strong>${d.day}</strong>
+                                        <div class="attendance-detail">
+                                            <div><b>In:</b> ${d.checkIn}</div>
+                                            <div><b>Out:</b> ${d.checkOut}</div>
+                                            <div><b>Status:</b> ${d.status}</div>
+                                            <div><b>Workday:</b> ${d.workday}</div>
+                                        </div>
+                                    </td>
+                                    <c:if test="${isSunday}">
+                                    </tr>
+                                    <tr>
+                                    </c:if>
+                                </c:forEach>
+
+                                <c:set var="endDay" value="${days[days.size()-1].dayOfWeek}" />
+                                <c:if test="${endDay != 7}">
+                                    <c:forEach var="i" begin="${endDay}" end="6">
+                                        <td class="inactive"></td>
+                                    </c:forEach>
+                                </c:if>
+                            </tr>
+                        </table>
+                    </div>
                 </div>
             </div>
         </main>
