@@ -920,7 +920,7 @@ public class EmployeeDAO extends DBContext {
                 filterByDept = true; 
                 break;
             case "Dept Manager":
-                approverRole = "HR";
+                approverRole = "HR Manager";
                 break;
             case "HR":
                 approverRole = "HR Manager"; 
