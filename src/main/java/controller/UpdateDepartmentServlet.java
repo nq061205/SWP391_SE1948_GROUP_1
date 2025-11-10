@@ -96,7 +96,18 @@ public class UpdateDepartmentServlet extends HttpServlet {
         String description = request.getParameter("description");
         String button = request.getParameter("button");
         Department dept = dDAO.getDepartmentByDepartmentId(deptID);
-        if ("save".equalsIgnoreCase(button)) {
+        
+        boolean hasErr = false;
+        if (depName.length() >100) {
+            request.setAttribute("NameErr", "Name have the max length is 100");
+            hasErr = true;
+        }
+        if (description.length() > 255) {
+            request.setAttribute("descripErr", "Description have the max length is 255");
+            hasErr = true;
+        }
+        
+        if ("save".equalsIgnoreCase(button) && !hasErr) {
             dept.setDepId(deptID);
             dept.setDepName(depName);
             dept.setDescription(description);

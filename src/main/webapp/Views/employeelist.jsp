@@ -83,7 +83,6 @@
                 <div class="db-breadcrumb">
                     <h4 class="breadcrumb-title">Employee Listing</h4>
                     <ul class="db-breadcrumb-list">
-                        <li><a href="${pageContext.request.contextPath}/Views/HR/hrDashboard.jsp"><i class="fa fa-home"></i> Home</a></li>
                         <li><a href="${pageContext.request.contextPath}/employeelist">Employee list</a></li>
                     </ul>
                 </div>
@@ -166,7 +165,7 @@
                             </select>
 
                             <!-- BUTTONS -->
-                            <div class="d-flex align-items-center gap-2">
+                            <div class="d-flex align-items-center gap-2" style="display:flex;gap:10px">
                                 <button type="submit" class="btn btn-primary">
                                     <i class="fa fa-filter"></i> Apply
                                 </button>

@@ -7,6 +7,7 @@ package controller.hrm;
 import dal.EmployeeDAO;
 import dal.DeptDAO;
 import dal.PayrollDAO;
+import helper.PayrollService;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
@@ -15,6 +16,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -73,15 +75,40 @@ public class MonthlyPayrollServlet extends HttpServlet {
         String search = request.getParameter("search");
         String pageParam = request.getParameter("page");
         String pageSizeParam = request.getParameter("pageSize");
+        String action = request.getParameter("action");
 
         DeptDAO deptDAO = new DeptDAO();
         List<Department> departments = deptDAO.getAllDepartment();
 
         LocalDate now = LocalDate.now();
-        int selectedMonth = (monthParam != null && !monthParam.isEmpty()) ? Integer.parseInt(monthParam) : now.getMonthValue();
-        int selectedYear = (yearParam != null && !yearParam.isEmpty()) ? Integer.parseInt(yearParam) : now.getYear();
+        int selectedMonth = (monthParam != null && !monthParam.isEmpty())
+                ? Integer.parseInt(monthParam)
+                : now.getMonthValue();
+        int selectedYear = (yearParam != null && !yearParam.isEmpty())
+                ? Integer.parseInt(yearParam)
+                : now.getYear();
         int startYear = 2020;
         int endYear = now.getYear();
+
+        PayrollService payrollService = new PayrollService();
+        if ("calculate".equals(action)) {
+            try {
+                EmployeeDAO employeeDAO = new EmployeeDAO();
+                List<Employee> allEmployees = employeeDAO.getAllEmployees();
+                List<Integer> empIds = allEmployees.stream()
+                        .map(emp -> emp.getEmpId()) 
+                        .collect(Collectors.toList());
+
+                payrollService.calculatePayrollForMonth(selectedMonth, selectedYear, empIds);
+
+                request.setAttribute("successMessage",
+                        "Payroll calculated successfully for " + empIds.size() + " employees!");
+            } catch (Exception e) {
+                request.setAttribute("errorMessage",
+                        "Error calculating payroll: " + e.getMessage());
+                e.printStackTrace();
+            }
+        }
 
         int page = 1;
         int pageSize = 20;
@@ -112,99 +139,68 @@ public class MonthlyPayrollServlet extends HttpServlet {
         int offset = (page - 1) * pageSize;
 
         List<Employee> employees = employeeDAO.getEmployees(offset, pageSize, search, department);
-        List<Integer> empIds = employees.stream().map(e -> e.getEmpId()).collect(Collectors.toList());
+        List<Integer> empIds = employees.stream()
+                .map(Employee::getEmpId)
+                .collect(Collectors.toList());
 
         PayrollDAO payrollDAO = new PayrollDAO();
-        List<Payroll> salaryList = payrollDAO.getPayrollByEmpIds(empIds, selectedMonth, selectedYear);
+        List<Payroll> payrollList = payrollDAO.getPayrollByEmpIds(empIds, selectedMonth, selectedYear);
 
-        Map<Integer, List<Payroll>> groupedSalary = new HashMap<>();
-        for (Payroll p : salaryList) {
-            int empId = p.getEmployee().getEmpId();
-            groupedSalary.computeIfAbsent(empId, k -> new ArrayList<>()).add(p);
+        Map<Integer, Payroll> payrollMap = new HashMap<>();
+        for (Payroll p : payrollList) {
+            payrollMap.put(p.getEmployee().getEmpId(), p);
         }
 
-        Map<Integer, Double> totalRegularSalaryMap = new HashMap<>();
-        Map<Integer, Double> totalOTEarningMap = new HashMap<>();
-        Map<Integer, Double> totalAllowanceMap = new HashMap<>();
-        Map<Integer, Double> totalInsuranceBaseMap = new HashMap<>();
-        Map<Integer, Double> totalSIMap = new HashMap<>();
-        Map<Integer, Double> totalHIMap = new HashMap<>();
-        Map<Integer, Double> totalUIMap = new HashMap<>();
-        Map<Integer, Double> totalTaxableIncomeMap = new HashMap<>();
-        Map<Integer, Double> totalTaxMap = new HashMap<>();
-        Map<Integer, Double> totalNetSalaryMap = new HashMap<>();
+        double sumRegularSalary = 0;
+        double sumOTEarning = 0;
+        double sumAllowance = 0;
+        double sumGrossSalary = 0;
+        double sumSI = 0;
+        double sumHI = 0;
+        double sumUI = 0;
+        double sumTotalInsurance = 0;
+        double sumTaxableIncome = 0;
+        double sumTax = 0;
+        double sumNetSalary = 0;
 
-        for (Map.Entry<Integer, List<Payroll>> entry : groupedSalary.entrySet()) {
-            double regularSalary = 0;
-            double otEarning = 0;
-            double allowance = 0;
-            double insuranceBase = 0;
-            double si = 0;
-            double hi = 0;
-            double ui = 0;
-            double taxableIncome = 0;
-            double tax = 0;
-            double netSalary = 0;
+        for (Payroll p : payrollList) {
+            sumRegularSalary += p.getRegularSalary();
+            sumOTEarning += p.getOtEarning();
 
-            for (Payroll p : entry.getValue()) {
-                regularSalary += p.getRegularSalary();
-                otEarning += p.getOtEarning();
-//                allowance += p.getAllowance();
-                insuranceBase += p.getInsuranceBase();
-                si += p.getSi();
-                hi += p.getHi();
-                ui += p.getUi();
-                taxableIncome += p.getTaxIncome();
-                tax += p.getTax();
-//                netSalary += p.getNetSalary();
-            }
+            double allowance = p.getInsuranceBase() - p.getRegularSalary();
+            sumAllowance += allowance;
 
-            totalRegularSalaryMap.put(entry.getKey(), regularSalary);
-            totalOTEarningMap.put(entry.getKey(), otEarning);
-            totalAllowanceMap.put(entry.getKey(), allowance);
-            totalInsuranceBaseMap.put(entry.getKey(), insuranceBase);
-            totalSIMap.put(entry.getKey(), si);
-            totalHIMap.put(entry.getKey(), hi);
-            totalUIMap.put(entry.getKey(), ui);
-            totalTaxableIncomeMap.put(entry.getKey(), taxableIncome);
-            totalTaxMap.put(entry.getKey(), tax);
-            totalNetSalaryMap.put(entry.getKey(), netSalary);
+            double grossSalary = p.getRegularSalary() + p.getOtEarning() + allowance;
+            sumGrossSalary += grossSalary;
+
+            sumSI += p.getSi();
+            sumHI += p.getHi();
+            sumUI += p.getUi();
+            double totalInsurance = p.getSi() + p.getHi() + p.getUi();
+            sumTotalInsurance += totalInsurance;
+
+            sumTaxableIncome += p.getTaxIncome();
+            sumTax += p.getTax();
+
+            double netSalary = grossSalary - totalInsurance - p.getTax();
+            sumNetSalary += netSalary;
         }
 
-        // Tính tổng cộng cho toàn bộ danh sách
-        double sumRegularSalary = totalRegularSalaryMap.values().stream().mapToDouble(Double::doubleValue).sum();
-        double sumOTEarning = totalOTEarningMap.values().stream().mapToDouble(Double::doubleValue).sum();
-        double sumAllowance = totalAllowanceMap.values().stream().mapToDouble(Double::doubleValue).sum();
-        double sumInsuranceBase = totalInsuranceBaseMap.values().stream().mapToDouble(Double::doubleValue).sum();
-        double sumSI = totalSIMap.values().stream().mapToDouble(Double::doubleValue).sum();
-        double sumHI = totalHIMap.values().stream().mapToDouble(Double::doubleValue).sum();
-        double sumUI = totalUIMap.values().stream().mapToDouble(Double::doubleValue).sum();
-        double sumTaxableIncome = totalTaxableIncomeMap.values().stream().mapToDouble(Double::doubleValue).sum();
-        double sumTax = totalTaxMap.values().stream().mapToDouble(Double::doubleValue).sum();
-        double sumNetSalary = totalNetSalaryMap.values().stream().mapToDouble(Double::doubleValue).sum();
+        int standardWorkDays = payrollService.getStandardWorkDays(selectedMonth, selectedYear);
 
         request.setAttribute("departments", departments);
         request.setAttribute("employees", employees);
-        request.setAttribute("salaryList", salaryList);
-        request.setAttribute("groupedSalary", groupedSalary);
-        request.setAttribute("totalRegularSalaryMap", totalRegularSalaryMap);
-        request.setAttribute("totalOTEarningMap", totalOTEarningMap);
-        request.setAttribute("totalAllowanceMap", totalAllowanceMap);
-        request.setAttribute("totalInsuranceBaseMap", totalInsuranceBaseMap);
-        request.setAttribute("totalSIMap", totalSIMap);
-        request.setAttribute("totalHIMap", totalHIMap);
-        request.setAttribute("totalUIMap", totalUIMap);
-        request.setAttribute("totalTaxableIncomeMap", totalTaxableIncomeMap);
-        request.setAttribute("totalTaxMap", totalTaxMap);
-        request.setAttribute("totalNetSalaryMap", totalNetSalaryMap);
+        request.setAttribute("payrollMap", payrollMap);
+        request.setAttribute("payrollList", payrollList);
 
         request.setAttribute("sumRegularSalary", sumRegularSalary);
         request.setAttribute("sumOTEarning", sumOTEarning);
         request.setAttribute("sumAllowance", sumAllowance);
-        request.setAttribute("sumInsuranceBase", sumInsuranceBase);
+        request.setAttribute("sumGrossSalary", sumGrossSalary);
         request.setAttribute("sumSI", sumSI);
         request.setAttribute("sumHI", sumHI);
         request.setAttribute("sumUI", sumUI);
+        request.setAttribute("sumTotalInsurance", sumTotalInsurance);
         request.setAttribute("sumTaxableIncome", sumTaxableIncome);
         request.setAttribute("sumTax", sumTax);
         request.setAttribute("sumNetSalary", sumNetSalary);
@@ -220,6 +216,8 @@ public class MonthlyPayrollServlet extends HttpServlet {
         request.setAttribute("selectedYear", selectedYear);
         request.setAttribute("search", search != null ? search : "");
         request.setAttribute("selectedDepartment", department != null ? department : "");
+
+        request.setAttribute("standardWorkDays", standardWorkDays);
 
         request.getRequestDispatcher("Views/HRM/PayrollManagement.jsp").forward(request, response);
     }

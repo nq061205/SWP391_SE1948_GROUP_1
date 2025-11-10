@@ -48,6 +48,16 @@
         <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/assets2/css/style.css">
         <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/assets2/css/dashboard.css">
         <link class="skin" rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/assets2/css/color/color-1.css">
+        <style>
+            .sort {
+                text-decoration: none;
+                color: white;
+            }
+            .sort:hover {
+                color: white;
+                text-decoration: none;
+            }
+        </style> 
 
     </head>
 
@@ -56,40 +66,74 @@
         <%@ include file="CommonItems/Navbar/empNavbar.jsp" %>
         <main class="ttr-wrapper">
             <div class="container-fluid">
+                <c:url var="baseUrl" value="departmentlist">
+                    <c:if test="${not empty param.deptId}">
+                        <c:param name="deptId" value="${param.deptId}" />
+                    </c:if>
+                    <c:if test="${not empty searchkey}">
+                        <c:param name="searchkey" value="${searchkey}" />
+                    </c:if>
+                </c:url>
+                <c:set var="urlPrefix" value="${baseUrl}${fn:contains(baseUrl, '?') ? '&' : '?'}" />
                 <div class="db-breadcrumb">
                     <h4 class="breadcrumb-title">Department Listing</h4>
                     <ul class="db-breadcrumb-list">
-                        <li><a href="${pageContext.request.contextPath}/Views/Admin/adminDashboard.jsp"><i class="fa fa-home"></i>Home</a></li>
                         <li><a href="${pageContext.request.contextPath}/departmentlist">Department list</a></li>
                     </ul>
                 </div>
+
                 <button class="btn btn-primary mb-3" data-bs-toggle="modal" data-bs-target="#addModal">
                     + Add Department
                 </button>
-                <div class="filter-row mb-3" style="margin: 0% 1%">
+                <div class="filter-row mb-3" style="margin: 0 1%; display:flex; align-items:center; gap:35px;">
                     <form action="${pageContext.request.contextPath}/departmentlist" method="get"
-                          class="d-flex align-items-center justify-content-between flex-nowrap gap-3 h-100" style="gap:12px;">
-                        <input type="hidden" name="tab" value="${param.tab}">
+                          class="d-flex align-items-center gap-2 flex-grow-1">
                         <input type="hidden" name="page" value="${param.page}">
-                        <input  type="text" name="searchkey" class="form-control filter-h"
-                                placeholder="Search by id or name"
-                                value="${searchkey}">
+                        <c:if test="${not empty sortBy}">
+                            <input type="hidden" name="sortBy" value="${sortBy}">
+                            <input type="hidden" name="order" value="${order}">
+                        </c:if>
+                        <c:if test="${not empty param.deptId}">
+                            <input type="hidden" name="deptId" value="${param.deptId}" />
+                        </c:if>
+                        <input type="text" name="searchkey" class="form-control filter-h"
+                               placeholder="Search by id or name"
+                               value="${searchkey}">
                         <button type="submit" class="btn btn-primary">
                             <i class="fa fa-search me-1"></i> Search
                         </button>
-                        <select name="deptId" class="form-control filter-h" style="width:170px;">
-                            <option value="">-- All --</option>
-                            <c:forEach var="dl" items="${deptNameList}">
-                                <option value="${dl.depId}"
-                                        <c:if test="${param.deptId == dl.depId}">selected</c:if>>
-                                    ${dl.depName}
-                                </option>
-                            </c:forEach>
-                        </select>
-                        <button type="submit" class="btn btn-outline-secondary filter-h"> <i class="fa fa-filter"></i>Apply</button>
-                        <a href="${pageContext.request.contextPath}/departmentlist"
-                           class="btn btn-warning filter-h"><i class="fa fa-times"></i>Clear</a>
                     </form>
+                    <form action="${pageContext.request.contextPath}/departmentlist" method="get"
+                          class="d-flex align-items-center gap-2" style="min-width:250px;gap: 25px">
+                        <c:if test="${not empty searchkey}">
+                            <input type="hidden" name="searchkey" value="${searchkey}">
+                            <input type="hidden" name="totalSearchResults" value="${totalSearchResults}">
+                        </c:if>
+                        <c:if test="${not empty sortBy}">
+                            <input type="hidden" name="sortBy" value="${sortBy}">
+                            <input type="hidden" name="order" value="${order}">
+                        </c:if>
+                        <div style="min-width:400px;">
+                            <select name="deptId" class="form-control filter-h" style="height:45px; font-size:1.1rem;">
+                                <option value="">-- All --</option>
+                                <c:forEach var="dl" items="${deptNameList}">
+                                    <option value="${dl.depId}" <c:if test="${param.deptId == dl.depId}">selected</c:if>>
+                                        ${dl.depName}
+                                    </option>
+                                </c:forEach>
+                            </select>
+                        </div>
+                        <div style="display:flex;gap: 30px">
+                            <button type="submit" class="btn btn-outline-secondary filter-h">
+                                <i class="fa fa-filter"></i> Apply
+                            </button>
+                            <a href="${pageContext.request.contextPath}/departmentlist"
+                               class="btn btn-warning filter-h">
+                                <i class="fa fa-times"></i> Clear
+                            </a>
+                        </div>
+                    </form>
+
                 </div>
                 <div class="modal fade" id="addModal">
                     <div class="modal-dialog">
@@ -101,12 +145,7 @@
                                     <button type="button" class="btn-close" data-bs-dismiss="modal">X</button>
                                 </div>
 
-
                                 <div class="modal-body">
-                                    <label class="form-label">Department ID</label>
-                                    <input type="text" name="deptID" class="form-control" required>
-                                    <p style="color:red">${errorMessage}</p>
-
                                     <label class="form-label mt-2">Department Name</label>
                                     <input type="text" name="deptName" class="form-control" required>
 
@@ -126,11 +165,21 @@
                 <div class="table-responsive" style="overflow-x:auto;">
                     <table class="table table-striped table-bordered table-hover align-middle text-center" 
                            style="table-layout: fixed; width: 100%; border-collapse: collapse;">
+                        <c:set var="order" value="${order != null ? order : 'asc'}" />
+                        <c:set var="nextOrder" value="${order == 'asc' ? 'desc' : 'asc'}" />
                         <thead class="thead-dark">
                             <tr style="text-align: center">
                                 <th>No</th>
-                                <th>DepartmentID</th>
-                                <th>Department Name</th>
+                                <th>
+                                    <a class="sort" href="${urlPrefix}sortBy=dep_id&order=${nextOrder}&page=${page}">
+                                        Department ID <i class="fa fa-sort"></i>
+                                    </a>
+                                </th>
+                                <th>
+                                    <a class="sort" href="${urlPrefix}sortBy=dep_name&order=${nextOrder}&page=${page}">
+                                        Department Name <i class="fa fa-sort"></i>
+                                    </a>
+                                </th>
                                 <th>Description</th>
                                 <th>Action</th>
                             </tr>                                 
@@ -138,10 +187,10 @@
                         <tbody>
                             <c:forEach var="el" items="${sessionScope.deptList}" varStatus ="loop">
                                 <tr style="text-align:center">
-                                    <td>${loop.index+1}</td>
-                                    <td>${el.depId}</td>
-                                    <td>${el.depName}</td>
-                                    <td>${el.description}</td>                                           
+                                    <td style="overflow-wrap: break-word;">${loop.index+1}</td>
+                                    <td style="overflow-wrap: break-word;">${el.depId}</td>
+                                    <td style="overflow-wrap: break-word;">${el.depName}</td>
+                                    <td style="overflow-wrap: break-word;">${el.description}</td>                                           
                                     <td>
                                         <div style="display: flex;gap: 30px">
                                             <a style="width: 50%" href="${pageContext.request.contextPath}/updatedepartment?depId=${el.depId}" class="btn btn-sm btn-primary">Edit</a>
@@ -161,6 +210,10 @@
                     </c:if>
                     <c:if test="${not empty searchkey}">
                         <c:param name="searchkey" value="${searchkey}" />
+                    </c:if>
+                    <c:if test="${not empty sortBy}">
+                        <input type="hidden" name="sortBy" value="${sortBy}">
+                        <input type="hidden" name="order" value="${order}">
                     </c:if>
                 </c:url>
                 <c:set var="urlPrefixWithSort" value="${baseUrlWithSort}${fn:contains(baseUrlWithSort, '?') ? '&' : '?'}" />

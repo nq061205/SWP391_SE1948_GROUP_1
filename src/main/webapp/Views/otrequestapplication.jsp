@@ -168,7 +168,7 @@
                     </div>
                     <h5 class="text-muted">No Leave Request Found</h5>
                     <p class="text-muted">There are currently no overtime request in the system.</p>
-                    <a href="${pageContext.request.contextPath}/compose?type=LEAVE" class="btn btn-primary">
+                    <a href="${pageContext.request.contextPath}/compose?type=OT" class="btn btn-primary">
                         <i class="fa fa-plus"></i> Create First Leave Request
                     </a>
                 </div>

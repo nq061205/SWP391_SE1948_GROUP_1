@@ -67,8 +67,8 @@
                 <div class="db-breadcrumb">
                     <h4 class="breadcrumb-title">Account information</h4>
                     <ul class="db-breadcrumb-list">
-                        <li><a href="#"><i class="fa fa-home"></i>Home</a></li>
-                        <li>Account information</li>
+                        <li><a href="${pageContext.request.contextPath}/accountlist">Account list</a></li>
+                        <li>Account Update Information</li>
                     </ul>
                 </div>	
 
@@ -105,6 +105,9 @@
                                                 <label class="col-sm-3 col-form-label">Email:</label>
                                                 <div class="col-sm-9">
                                                     <input name="email" class="form-control" name="email" type="email" value="${sessionScope.emp.email}" required>
+                                                    <c:if test="${not empty EmailErr}">
+                                                    <p style="color: red">${EmailErr}</p>
+                                                    </c:if>
                                                 </div>
                                             </div>
                                             <div class="form-group row mt-2">
@@ -150,7 +153,7 @@
                                                     <button type="submit" name="button" value="save"class="btn btn-primary"
                                                             onclick="return confirm('Do you confirm save change?');"
                                                             >Save</button>
-                                                        <p>${message}</p>
+                                                    <p>${message}</p>
                                                 </div>
                                             </div>
                                         </div>

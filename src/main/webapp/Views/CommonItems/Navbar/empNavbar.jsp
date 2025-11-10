@@ -139,6 +139,9 @@
                 </li>
                 <% } %>
 
+
+                <% if (rpDAO.hasPermission(roleId, 12)) { %>
+
                 <li>
                     <a href="${pageContext.request.contextPath}/raw-attendance" class="ttr-material-button">
                         <span class="ttr-icon"><i class="ti-timer"></i></span>
@@ -151,6 +154,7 @@
                         <span class="ttr-label">Daily Attendance</span>
                     </a>
                 </li>
+                <% } %>
 
                 <li>
                     <a href="${pageContext.request.contextPath}/payrollreportdetail" class="ttr-material-button">
@@ -158,7 +162,7 @@
                         <span class="ttr-label">Payroll Report</span>
                     </a>
                 </li>
-
+                
                 <li>
                     <a href="${pageContext.request.contextPath}/attendance" class="ttr-material-button">
                         <span class="ttr-icon"><i class="ti-check-box"></i></span>
@@ -187,6 +191,12 @@
                         <li><a href="${pageContext.request.contextPath}/applicationmanagement?typeapplication=ot" class="ttr-material-button"><span class="ttr-label">Overtime Approval</span></a></li>
                     </ul>
                 </li>
+                <% } %>
+                <% if (rpDAO.hasPermission(roleId, 13)) { %>
+                 <a href="${pageContext.request.contextPath}/monthly-payroll" class="ttr-material-button">
+                        <span class="ttr-icon"><i class="ti-server"></i></span>
+                        <span class="ttr-label">Payroll Management</span>
+                    </a>
                 <% } %>
                 <li class="ttr-seperate"></li>
             </ul>
