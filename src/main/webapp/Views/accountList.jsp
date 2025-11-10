@@ -167,7 +167,7 @@
                             <div class="input-group w-100">
                                 <input type="text" name="searchkey" class="form-control border-start-0"
                                        placeholder="Search by code or name"
-                                       value="${param.keyword}">
+                                       value="${param.searchkey}">
                                 <button type="submit" class="btn btn-primary">
                                     <i class="fa fa-search me-1"></i> Search
                                 </button>
