@@ -110,7 +110,7 @@ public class CreateAccountServlet extends HttpServlet {
         );
 
         int totalPages = (int) Math.ceil((double) totalRecords / pageSize);
-        
+
         List<String> managerDepIds = deptDAO.getDepartmentsHavingManager();
 
         List<Interview> interList = interDAO.getFilteredInterviewsNotInEmployee("Pass", searchKey, startApplyDate, endApplyDate, startInterviewDate, endInterviewDate, page, pageSize);
@@ -169,8 +169,17 @@ public class CreateAccountServlet extends HttpServlet {
         } catch (Exception e) {
             e.printStackTrace();
         }
+        boolean hasErr = false;
+        if (empDAO.existsByEmail(addEmail)) {
+            request.setAttribute("EmailErr", "Email has been existed");
+            request.setAttribute("canName", addCanName);
+            request.setAttribute("email", addEmail);
+            request.setAttribute("phone", addPhone);
+            request.setAttribute("deptId", addDepartmentId);
+            hasErr = true;
+        }
 
-        if ("add".equalsIgnoreCase(action)) {
+        if ("add".equalsIgnoreCase(action) && !hasErr) {
             Employee emp = new Employee();
             emp.setEmpCode(empDAO.generateUserName());
             emp.setFullname(addCanName);

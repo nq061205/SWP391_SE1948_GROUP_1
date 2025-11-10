@@ -273,15 +273,15 @@
 
                                     <div class="modal-body">
                                         <label class="form-label">Candidate Name</label>
-                                        <input type="text" name="canName" class="form-control" id="modalName" required>
+                                        <input type="text" name="canName" value="${canName}" class="form-control" id="modalName" required>
 
                                         <label class="form-label mt-2">Email:</label>
-                                        <input type="email" name="email" class="form-control"  id="modalEmail" required>
-
+                                        <input type="email" value="${email}" name="email" class="form-control"  id="modalEmail" required>
+                                        <c:if test="${not empty EmailErr and param.email ne sessionScope.emp.email}">
+                                            <p style="color: red">${EmailErr}</p>
+                                        </c:if>
                                         <label class="form-label mt-2">Phone:</label>
-                                        <input type="text" name="phone" class="form-control" id="modalPhone" required>
-                                        <c:set var="selectedDepId" value="${param.depId}" />
-                                        <c:set var="managerDepIds" value="${sessionScope.managerDepIds}" />
+                                        <input type="text" name="phone" value="${phone}" class="form-control" id="modalPhone" required>
                                         <label class="form-label mt-2">Department:</label>
                                         <br>
                                         <select id="modalDepId" name="deptId"
@@ -293,19 +293,12 @@
                                                 </option>
                                             </c:forEach>
                                         </select>
-                                        <c:set var="isManagerDep" value="${fn:contains(managerDepIds, selectedDepId)}" />
                                         <br>
                                         <label class="form-label mt-2">Role:</label>
                                         <br>
-                                        <select id="modalRoleId" name="roleId" class="custom-select"
-                                                style="min-width:150px;">
+                                        <select id="modalRoleId" name="roleId" class="custom-select" style="min-width:150px;">
                                             <c:forEach var="rl" items="${sessionScope.roleList}">
-                                                <option value="${rl.roleId}"<c:if test="${isManagerDep and fn:contains(rl.roleName, 'Manager')}">disabled</c:if>>
-                                                    ${rl.roleName}
-                                                    <c:if test="${isManagerDep and fn:contains(rl.roleName, 'Manager')}">
-                                                        (Already Assigned)
-                                                    </c:if>
-                                                </option>
+                                                <option value="${rl.roleId}">${rl.roleName}</option>
                                             </c:forEach>
                                         </select>
                                     </div>
@@ -323,6 +316,17 @@
         </main>
         <script>
             document.addEventListener("DOMContentLoaded", function () {
+                const depSelect = document.getElementById('modalDepId');
+            <% if (request.getAttribute("EmailErr") != null) { %>
+                const addModal = new bootstrap.Modal(document.getElementById('addModal'));
+                addModal.show();
+
+                document.getElementById('modalName').value = '<c:out value="${canName}" />';
+                document.getElementById('modalEmail').value = '<c:out value="${email}" />';
+                document.getElementById('modalPhone').value = '<c:out value="${phone}" />';
+                depSelect.value = '<c:out value="${param.deptId}" />';
+                updateRoleOptions(depSelect.value);
+            <% } %>
                 const openBtns = document.querySelectorAll('.open-modal-btn');
                 openBtns.forEach(btn => {
                     btn.addEventListener('click', function () {
@@ -336,8 +340,14 @@
                         document.getElementById('modalEmail').value = email || '';
                         document.getElementById('modalPhone').value = phone || '';
                         document.querySelector('select[name="roleId"]').value = 3;
+                        updateRoleOptions(depId);
+                        const addModal = new bootstrap.Modal(document.getElementById('addModal'));
+                        addModal.show();
                     });
                 });
+                if (depSelect.value) {
+                    updateRoleOptions(depSelect.value);
+                }
             });
         </script>
         <script>
@@ -347,44 +357,38 @@
             </c:forEach>
             ];
 
-            document.getElementById("modalDepId").addEventListener("change", function () {
-                const selectedDep = this.value;
+            function updateRoleOptions(selectedDep) {
                 const roleSelect = document.getElementById("modalRoleId");
-
                 const isDeptHasManager = managerDepIds.includes(selectedDep);
 
                 for (let opt of roleSelect.options) {
                     const roleName = opt.text.toLowerCase();
+                    opt.text = roleName.includes("hr manager") ? "HR Manager" : roleName.includes("manager") ? "Dept Manager" : opt.text;
+                    opt.disabled = false;
+
                     if (roleName.includes("hr manager")) {
                         if (selectedDep !== "D002") {
                             opt.disabled = true;
                             opt.text = "HR Manager (Only for HR)";
-                        } else {
-                            opt.disabled = false;
-                            opt.text = "HR Manager";
                         }
-                    }
-                    else if (roleName.includes("manager")) {
+                    } else if (roleName.includes("manager")) {
                         if (selectedDep === "D002") {
                             opt.disabled = true;
                             opt.text = "Dept Manager (Not available in HR)";
-                        } else {
-                            if (isDeptHasManager) {
-                                opt.disabled = true;
-                                opt.text = "Dept Manager (Already Assigned)";
-                            } else {
-                                opt.disabled = false;
-                                opt.text = "Dept Manager";
-                            }
+                        } else if (isDeptHasManager) {
+                            opt.disabled = true;
+                            opt.text = "Dept Manager (Already Assigned)";
                         }
                     }
-                    else {
-                        opt.disabled = false;
-                    }
                 }
+
                 if (roleSelect.options[roleSelect.selectedIndex]?.disabled) {
                     roleSelect.selectedIndex = 0;
                 }
+            }
+
+            document.getElementById("modalDepId").addEventListener("change", function () {
+                updateRoleOptions(this.value);
             });
         </script>
         <script>
