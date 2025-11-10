@@ -5,6 +5,8 @@
 
 package controller;
 
+import dal.DeptDAO;
+import dal.EmployeeDAO;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
@@ -36,6 +38,12 @@ public class DashboardServlet extends HttpServlet {
             request.setAttribute("logMessage", logMessage);
             session.removeAttribute("logMessage");
         }
+        EmployeeDAO empDAO = new EmployeeDAO();
+        int totalEmployee = empDAO.countAllRecordOfEmployee();
+        DeptDAO deptDAO = new DeptDAO();
+        int totalDept = deptDAO.countAllDepartments();
+        request.setAttribute("totalDept", totalDept);
+        request.setAttribute("totalEmployee", totalEmployee);
         request.getRequestDispatcher("Views/Admin/adminDashboard.jsp").forward(request, response);
     }
 

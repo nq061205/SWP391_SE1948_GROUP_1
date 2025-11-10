@@ -45,7 +45,7 @@
                             <div class="wc-item">
                                 <h4 class="wc-title">Total Employees</h4>
                                 <span class="wc-des">All active employees</span>
-                                <span class="wc-stats"><span class="counter">150</span></span>
+                                <span class="wc-stats"><span class="counter">${totalEmployee}</span></span>
                                 <div class="progress wc-progress"><div class="progress-bar" style="width: 75%;"></div></div>
                                 <span class="wc-progress-bx"><span class="wc-change">Change</span><span class="wc-number ml-auto">75%</span></span>
                             </div>
@@ -69,7 +69,7 @@
                             <div class="wc-item">
                                 <h4 class="wc-title">Departments</h4>
                                 <span class="wc-des">Active departments</span>
-                                <span class="wc-stats counter">8</span>
+                                <span class="wc-stats counter">${totalDept}</span>
                                 <div class="progress wc-progress"><div class="progress-bar" style="width: 80%;"></div></div>
                                 <span class="wc-progress-bx"><span class="wc-change">Change</span><span class="wc-number ml-auto">80%</span></span>
                             </div>
