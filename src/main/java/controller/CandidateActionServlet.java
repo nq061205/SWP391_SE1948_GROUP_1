@@ -33,8 +33,13 @@ public class CandidateActionServlet extends HttpServlet {
         InterviewDAO iDAO = new InterviewDAO();
         HttpSession ses = request.getSession();
         Employee user = (Employee) ses.getAttribute("user");
-        if (user == null || !rperDAO.hasPermission(user.getRole().getRoleId(), 2)) {
+        if (user == null) {
             response.sendRedirect("login");
+            return;
+        }
+        if (!rperDAO.hasPermission(user.getRole().getRoleId(), 2)) {
+            ses.setAttribute("logMessage", "You do not have permission to access this page.");
+            response.sendRedirect("dashboard");
             return;
         }
         String id = request.getParameter("id");

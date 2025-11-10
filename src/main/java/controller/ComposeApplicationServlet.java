@@ -30,9 +30,13 @@ public class ComposeApplicationServlet extends HttpServlet {
         EmployeeDAO empDAO = new EmployeeDAO();
         Employee user = (Employee) session.getAttribute("user");
         RolePermissionDAO rperDAO = new RolePermissionDAO();
-
-        if (user == null || !rperDAO.hasPermission(user.getRole().getRoleId(), 7)) {
-            response.sendRedirect(request.getContextPath() + "/login");
+        if (user == null) {
+            response.sendRedirect("login");
+            return;
+        }
+        if (!rperDAO.hasPermission(user.getRole().getRoleId(), 7)) {
+            session.setAttribute("logMessage", "You do not have permission to access this page.");
+            response.sendRedirect("dashboard");
             return;
         }
         String type = request.getParameter("type");
@@ -52,6 +56,7 @@ public class ComposeApplicationServlet extends HttpServlet {
         LeaveRequestDAO leaveDAO = new LeaveRequestDAO();
         OTRequestDAO otDAO = new OTRequestDAO();
         String appType = type.trim().toUpperCase();
+        String interviewer = request.getParameter("interviewer");
         request.setAttribute("type", appType);
         HttpSession session = request.getSession();
         Employee user = (Employee) session.getAttribute("user");

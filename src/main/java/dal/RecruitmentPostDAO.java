@@ -42,7 +42,7 @@ public class RecruitmentPostDAO extends DBContext { // Kế thừa DBContext đ�
                 + "LEFT JOIN Department d ON rp.dep_id = d.dep_id "
                 + "LEFT JOIN Employee e1 ON rp.created_by = e1.emp_id "
                 + "LEFT JOIN Employee e2 ON rp.approved_by = e2.emp_id "
-                + "WHERE rp.status = 'Approved' "
+                + "WHERE rp.status = 'Uploaded' "
                 + "ORDER BY rp.approved_at DESC";
 
         try (Connection conn = DBContext.getConnection();
@@ -510,7 +510,7 @@ public class RecruitmentPostDAO extends DBContext { // Kế thừa DBContext đ�
         }
     }
 
-    public boolean rejectPost(int postId, int rejectedBy) {
+    public boolean rejectPost(int postId) {
         String sql = "UPDATE RecruitmentPost SET status = 'Rejected', updated_at = ? "
                 + "WHERE post_id = ? AND status = 'Waiting'";
 

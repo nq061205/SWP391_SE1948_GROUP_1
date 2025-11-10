@@ -220,6 +220,11 @@
                                     <c:param name="searchkey" value="${searchkey}" />
                                 </c:if>
                             </c:url>
+                            <div style="margin-left:5%">
+                                <a href="${pageContext.request.contextPath}/accountlist" class="btn btn-secondary">
+                                    <i class="fa fa-arrow-left"></i> Back
+                                </a>
+                            </div>
                             <c:set var="urlPrefixWithSort" value="${baseUrlWithSort}${fn:contains(baseUrlWithSort, '?') ? '&' : '?'}" />
                             <nav class="mt-3">
                                 <ul class="pagination justify-content-center">

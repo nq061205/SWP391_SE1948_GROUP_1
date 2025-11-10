@@ -504,6 +504,14 @@ public class HRRecruitmentServlet extends HttpServlet {
     private void createPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         try {
+            // Get logged in employee from session
+            model.Employee user = (model.Employee) request.getSession().getAttribute("user");
+            if (user == null) {
+                request.getSession().setAttribute("errorMessage", "You must be logged in to create a post.");
+                response.sendRedirect(request.getContextPath() + "/login");
+                return;
+            }
+
             String title = request.getParameter("title");
             String content = request.getParameter("content");
             String depId = request.getParameter("depId");
@@ -529,7 +537,7 @@ public class HRRecruitmentServlet extends HttpServlet {
                 return;
             }
 
-            int createdBy = 1;
+            int createdBy = user.getEmpId();
             boolean success = recruitmentPostDAO.createPost(title.trim(), content.trim(), depId.trim(), createdBy);
 
             if (success) {

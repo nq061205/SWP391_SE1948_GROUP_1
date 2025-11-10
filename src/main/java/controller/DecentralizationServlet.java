@@ -8,13 +8,16 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 import java.util.ArrayList;
 import java.util.List;
+import model.Employee;
 import model.Permission;
 import model.RolePermission;
 
 /**
  * Servlet for Role-Permission management (Dynamic Decentralization)
+ *
  * @author hgduy
  */
 public class DecentralizationServlet extends HttpServlet {
@@ -24,8 +27,18 @@ public class DecentralizationServlet extends HttpServlet {
             throws ServletException, IOException {
         RoleDAO rDAO = new RoleDAO();
         PermissionDAO pDAO = new PermissionDAO();
+        HttpSession ses = request.getSession();
         RolePermissionDAO rpDAO = new RolePermissionDAO();
-
+        Employee user = (Employee) ses  .getAttribute("user");
+        if (user == null) {
+            response.sendRedirect("login");
+            return;
+        }
+        if (user.getRole().getRoleId() != 1) {
+            ses.setAttribute("logMessage", "You do not have permission to access this page.");
+            response.sendRedirect("dashboard");
+            return;
+        }
         request.setAttribute("roles", rDAO.getAllRoles());
         request.setAttribute("permissions", pDAO.getAllPermission());
         request.setAttribute("rolepermission", getStringRolePermission(rpDAO.getAllRolePermission()));

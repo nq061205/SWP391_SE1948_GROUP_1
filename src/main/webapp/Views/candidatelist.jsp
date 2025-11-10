@@ -14,7 +14,7 @@
         <meta charset="utf-8">
         <title>Candidate Management</title>
         <meta name="viewport" content="width=device-width, initial-scale=1">
-
+        <link rel="shortcut icon" type="image/x-icon" href="${pageContext.request.contextPath}/assets2/images/favicon.png" />
         <!-- Base CSS -->
         <link rel="icon" href="${pageContext.request.contextPath}/assets2/images/favicon.ico" type="image/x-icon" />
         <link rel="stylesheet" href="${pageContext.request.contextPath}/assets2/css/assets.css">
@@ -85,10 +85,7 @@
                                 </div>
                             </form>
 
-                            <!-- ✅ Create Interview Schedule Button -->
-                            <a href="${pageContext.request.contextPath}/scheduleinterview" class="btn btn-success">
-                                <i class="fa fa-calendar-plus me-1"></i> Create Interview Schedule
-                            </a>
+                           
                         </div>
 
                         <!-- ✅ Tabs -->

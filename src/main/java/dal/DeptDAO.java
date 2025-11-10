@@ -285,6 +285,6 @@ public class DeptDAO extends DBContext {
 
     public static void main(String[] args) {
         DeptDAO dao = new DeptDAO();
-        System.out.println(dao.countDepartmentsByFilter("", ""));
+        System.out.println(dao.getDepartmentsHavingManager());
     }
 }

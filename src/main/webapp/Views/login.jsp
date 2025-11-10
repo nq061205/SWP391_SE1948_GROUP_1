@@ -24,7 +24,7 @@
 
         <!-- FAVICONS ICON ============================================= -->
         <link rel="icon" href="assets/images/favicon.ico" type="image/x-icon" />
-        <link rel="shortcut icon" type="image/x-icon" href="assets/images/favicon.png" />
+        <link rel="shortcut icon" type="image/x-icon" href="${pageContext.request.contextPath}/assets2/images/favicon.png" />
 
         <!-- PAGE TITLE HERE ============================================= -->
         <title>Human Tech</title>
@@ -56,7 +56,7 @@
             <div id="loading-icon-bx"></div>
             <div class="account-form">
                 <div class="account-head" style="background-image:url(${pageContext.request.contextPath}/assets1/images/background/bg2.jpg);">
-                    <a href="index.html"><img src="/HRMSystem/assets1/images/logo-white.png"  width="400" height="100" alt=""></a>
+                    <a href="${pageContext.request.contextPath}/homepage"><img src="/HRMSystem/assets1/images/logo-white.png"  width="400" height="100" alt=""></a>
                 </div>
                 <div class="account-form-inner">
                     <div class="account-container">

@@ -344,6 +344,14 @@ public class HRManagerRecruitmentServlet extends HttpServlet {
     private void approvePost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         try {
+            // Get logged in employee from session
+            model.Employee user = (model.Employee) request.getSession().getAttribute("user");
+            if (user == null) {
+                request.getSession().setAttribute("errorMessage", "You must be logged in to approve a post.");
+                response.sendRedirect(request.getContextPath() + "/login");
+                return;
+            }
+
             String postIdStr = request.getParameter("postId");
             String note = request.getParameter("note");
             StringBuilder validationErrors = new StringBuilder();
@@ -373,7 +381,7 @@ public class HRManagerRecruitmentServlet extends HttpServlet {
                 return;
             }
 
-            int approvedBy = 2;
+            int approvedBy = user.getEmpId();
             boolean success = recruitmentPostDAO.approvePost(postId, approvedBy, note != null ? note.trim() : null);
 
             if (success) {
@@ -427,8 +435,7 @@ public class HRManagerRecruitmentServlet extends HttpServlet {
                 return;
             }
 
-            int rejectedBy = 2;
-            boolean success = recruitmentPostDAO.rejectPost(postId, rejectedBy);
+            boolean success = recruitmentPostDAO.rejectPost(postId);
 
             if (success) {
                 request.getSession().setAttribute("successMessage", "Post '" + post.getTitle() + "' rejected successfully.");
