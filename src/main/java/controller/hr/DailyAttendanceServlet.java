@@ -8,12 +8,14 @@ import dal.DailyAttendanceDAO;
 import dal.DeptDAO;
 import dal.EmployeeDAO;
 import dal.HolidayDAO;
+import dal.RolePermissionDAO;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.YearMonth;
@@ -77,7 +79,18 @@ public class DailyAttendanceServlet extends HttpServlet {
         String search = request.getParameter("search");
         String pageParam = request.getParameter("page");
         String pageSizeParam = request.getParameter("pageSize");
-
+        HttpSession session = request.getSession();
+        Employee user = (Employee) session.getAttribute("user");
+        if (user == null) {
+            response.sendRedirect(request.getContextPath() + "/login");
+            return;
+        }
+        RolePermissionDAO rperDAO = new RolePermissionDAO();
+        if (!rperDAO.hasPermission(user.getRole().getRoleId(),12)) {
+            session.setAttribute("logMessage", "You do not have permission to access this page.");
+            response.sendRedirect("dashboard");
+            return;
+        }
         DeptDAO deptDAO = new DeptDAO();
         List<Department> departments = deptDAO.getAllDepartment();
 
@@ -177,7 +190,7 @@ public class DailyAttendanceServlet extends HttpServlet {
         request.setAttribute("attendanceByDay", attendanceByDay);
         request.setAttribute("daysInMonth", daysInMonth);
         request.setAttribute("weekendDays", weekendDays);
-        request.setAttribute("holidaysByDay", holidaysByDay);  
+        request.setAttribute("holidaysByDay", holidaysByDay);
         request.setAttribute("totalWorkDaysMap", totalWorkDaysMap);
         request.setAttribute("totalOTHoursMap", totalOTHoursMap);
 
