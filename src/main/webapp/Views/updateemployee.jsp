@@ -67,7 +67,7 @@
                 <div class="db-breadcrumb">
                     <h4 class="breadcrumb-title">Employee Information</h4>
                     <ul class="db-breadcrumb-list">
-                        <li><a href="#"><i class="fa fa-home"></i>Home</a></li>
+                        <li><a href="${pageContext.request.contextPath}/employeelist">Employee list</a></li>
                         <li>Employee Information</li>
                     </ul>
                 </div>	

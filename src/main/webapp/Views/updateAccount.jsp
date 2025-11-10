@@ -67,8 +67,8 @@
                 <div class="db-breadcrumb">
                     <h4 class="breadcrumb-title">Account information</h4>
                     <ul class="db-breadcrumb-list">
-                        <li><a href="#"><i class="fa fa-home"></i>Home</a></li>
-                        <li>Account information</li>
+                        <li><a href="${pageContext.request.contextPath}/accountlist">Account list</a></li>
+                        <li>Account Update Information</li>
                     </ul>
                 </div>	
 
@@ -151,7 +151,7 @@
                                                     <button type="submit" name="button" value="save"class="btn btn-primary"
                                                             onclick="return confirm('Do you confirm save change?');"
                                                             >Save</button>
-                                                        <p>${message}</p>
+                                                    <p>${message}</p>
                                                 </div>
                                             </div>
                                         </div>

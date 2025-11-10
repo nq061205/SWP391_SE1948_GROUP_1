@@ -107,8 +107,8 @@
                 <div class="db-breadcrumb">
                     <h4 class="breadcrumb-title">Account information</h4>
                     <ul class="db-breadcrumb-list">
-                        <li><a href="#"><i class="fa fa-home"></i>Home</a></li>
-                        <li>Passed Candidate Profile List</li>
+                        <li><a href="${pageContext.request.contextPath}/accountlist">Accountlist</a></li>
+                        <li><a href="${pageContext.request.contextPath}/createaccount">Passed Candidate Profile List</a></li>
                     </ul>
                 </div>
 

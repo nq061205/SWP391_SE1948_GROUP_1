@@ -112,7 +112,6 @@
                 <div class="db-breadcrumb">
                     <h4 class="breadcrumb-title">Account Listing</h4>
                     <ul class="db-breadcrumb-list">
-                        <li><a href="${pageContext.request.contextPath}/Views/Admin/adminDashboard.jsp"><i class="fa fa-home"></i>Home</a></li>
                         <li><a href="${pageContext.request.contextPath}/accountlist">Accountlist</a></li>
                     </ul>
                 </div>
