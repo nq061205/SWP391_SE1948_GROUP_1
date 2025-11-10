@@ -38,7 +38,7 @@ public class ApplicationManagementServlet extends HttpServlet {
             response.sendRedirect("login");
             return;
         }
-        if (!rperDAO.hasPermission(user.getRole().getRoleId(), 7)) {
+        if (!rperDAO.hasPermission(user.getRole().getRoleId(), 8)) {
             session.setAttribute("logMessage", "You do not have permission to access this page.");
             response.sendRedirect("dashboard");
             return;

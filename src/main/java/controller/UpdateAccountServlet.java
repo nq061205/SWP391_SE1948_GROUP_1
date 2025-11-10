@@ -142,6 +142,10 @@ public class UpdateAccountServlet extends HttpServlet {
             hasErr=true;
             
         }
+        if(dao.getEmployeeByEmail(email)!=null){
+            request.setAttribute("EmailErr", "Email has been existed");
+            hasErr=true;
+        }
         if (editEmp != null && "save".equalsIgnoreCase(button) && !hasErr) {
             editEmp.setEmail(email);
             Department dept = dDAO.getDepartmentByDepartmentId(deptID);
