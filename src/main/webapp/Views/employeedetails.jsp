@@ -334,8 +334,11 @@
                             </form>
                             <form action="${pageContext.request.contextPath}/dependantdetail" method="get"
                                   class="d-flex align-items-center gap-2" style="min-width:250px;gap: 25px">
+                                <input type="hidden" name="tab" value="${param.tab}">
+                                <input type="hidden" name="empId" value="${param.empId}">
+                                <input type="hidden" name="page" value="${param.page}">
                                 <div style="display:flex;flex-direction: row;min-width:400px;gap: 20px">
-                                    <select name="relationship" class="form-control filter-h" style="width:170px;">                                            >
+                                    <select name="relationship" class="form-control filter-h" style="width:170px;">
                                         <option value="">-- All --</option>
                                         <c:forEach items="${relationList}" var="rl">
                                             <option value="${rl}" ${param.relationship == rl ? 'selected' : ''}>${rl}</option>
