@@ -298,7 +298,7 @@
                                         <br>
                                         <select id="modalRoleId" name="roleId" class="custom-select" style="min-width:150px;">
                                             <c:forEach var="rl" items="${sessionScope.roleList}">
-                                                <option value="${rl.roleId}">${rl.roleName}</option>
+                                                <option value="${rl.roleId}" <c:if test="${rl.roleName eq 'Admin' && requestScope.hasAdmin}">disabled</c:if>>${rl.roleName}</option>
                                             </c:forEach>
                                         </select>
                                     </div>
@@ -316,17 +316,20 @@
         </main>
         <script>
             document.addEventListener("DOMContentLoaded", function () {
-                const depSelect = document.getElementById('modalDepId');
-            <% if (request.getAttribute("EmailErr") != null) { %>
-                const addModal = new bootstrap.Modal(document.getElementById('addModal'));
-                addModal.show();
+                const addModalEl = document.getElementById('addModal');
+                const addModal = new bootstrap.Modal(addModalEl); // chỉ tạo 1 lần
 
+                const depSelect = document.getElementById('modalDepId');
+
+            <% if (request.getAttribute("EmailErr") != null) { %>
+                addModal.show();
                 document.getElementById('modalName').value = '<c:out value="${canName}" />';
                 document.getElementById('modalEmail').value = '<c:out value="${email}" />';
                 document.getElementById('modalPhone').value = '<c:out value="${phone}" />';
                 depSelect.value = '<c:out value="${param.deptId}" />';
                 updateRoleOptions(depSelect.value);
             <% } %>
+
                 const openBtns = document.querySelectorAll('.open-modal-btn');
                 openBtns.forEach(btn => {
                     btn.addEventListener('click', function () {
@@ -340,11 +343,12 @@
                         document.getElementById('modalEmail').value = email || '';
                         document.getElementById('modalPhone').value = phone || '';
                         document.querySelector('select[name="roleId"]').value = 3;
+
                         updateRoleOptions(depId);
-                        const addModal = new bootstrap.Modal(document.getElementById('addModal'));
-                        addModal.show();
+                        addModal.show(); // dùng instance duy nhất
                     });
                 });
+
                 if (depSelect.value) {
                     updateRoleOptions(depSelect.value);
                 }
@@ -360,11 +364,17 @@
             function updateRoleOptions(selectedDep) {
                 const roleSelect = document.getElementById("modalRoleId");
                 const isDeptHasManager = managerDepIds.includes(selectedDep);
+                const hasAdmin = <c:out value="${requestScope.hasAdmin}" />;
 
                 for (let opt of roleSelect.options) {
                     const roleName = opt.text.toLowerCase();
                     opt.text = roleName.includes("hr manager") ? "HR Manager" : roleName.includes("manager") ? "Dept Manager" : opt.text;
                     opt.disabled = false;
+
+                    if (roleName.includes("admin") && hasAdmin) {
+                        opt.disabled = true;
+                        opt.text = "Admin (Already Exists)";
+                    }
 
                     if (roleName.includes("hr manager")) {
                         if (selectedDep !== "D002") {
@@ -391,12 +401,6 @@
                 updateRoleOptions(this.value);
             });
         </script>
-        <script>
-            $.fn.selectpicker = function () {
-                return this;
-            };
-        </script>
-
         <!-- SCRIPT ZONE -->
         <script src="${pageContext.request.contextPath}/assets2/js/jquery.min.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
