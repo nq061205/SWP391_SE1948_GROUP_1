@@ -2,6 +2,7 @@ package controller;
 
 import api.EmailUtil;
 import dal.CandidateDAO;
+import dal.EmployeeDAO;
 import dal.RecruitmentPostDAO;
 import java.io.IOException;
 import java.io.File;
@@ -33,7 +34,7 @@ public class ApplyJobServlet extends HttpServlet {
             throws ServletException, IOException {
         CandidateDAO cDAO = new CandidateDAO();
         RecruitmentPostDAO rDAO = new RecruitmentPostDAO();
-
+        EmployeeDAO eDAO = new EmployeeDAO();
         String name = request.getParameter("name").trim();
         String email = request.getParameter("email").trim();
         if(EmailUtil.isValidEmail(email) == false){
@@ -95,7 +96,7 @@ public class ApplyJobServlet extends HttpServlet {
             candidate.setPhone(phone);
             candidate.setPost(rDAO.getPostById(post));
 
-            if (cDAO.insertCandidate(candidate)) {
+            if (cDAO.insertCandidate(candidate) && (eDAO.getEmployeeByEmail(candidate.getEmail()) == null || eDAO.getEmployeeByEmail(candidate.getEmail()).isStatus() == false )) {
                 request.setAttribute("successMessage", "Your application has been submitted successfully!");
             } else {
                 request.setAttribute("errorMessage", "Apply failed, Email has been approve in system. Please try again.");

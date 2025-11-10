@@ -1,70 +1,61 @@
+<%@ page contentType="text/html" pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <!DOCTYPE html>
 <html lang="en">
     <head>
-        <!-- META ============================================= -->
         <meta charset="utf-8">
-        <meta http-equiv="X-UA-Compatible" content="IE=edge">
-        <meta name="keywords" content="" />
-        <meta name="author" content="" />
-        <meta name="robots" content="" />
-
-        <!-- DESCRIPTION -->
-        <meta name="description" content="Human Tech" />
-
-        <!-- OG -->
-        <meta property="og:title" content="Human Tech" />
-        <meta property="og:description" content="Profile" />
-        <meta property="og:image" content="" />
-        <meta name="format-detection" content="telephone=no">
-
-        <!-- FAVICONS ICON ============================================= -->
-        <link rel="icon" href="${pageContext.request.contextPath}/assets2/images/favicon.ico" type="image/x-icon" />
-        <link rel="shortcut icon" type="image/x-icon" href="${pageContext.request.contextPath}/assets2/images/favicon.png" />
-
-        <!-- PAGE TITLE HERE ============================================= -->
-        <title>Schedule Interview</title>
-
-        <!-- MOBILE SPECIFIC ============================================= -->
+        <title>Candidate Management</title>
         <meta name="viewport" content="width=device-width, initial-scale=1">
 
-        <!--[if lt IE 9]>
-        <script src="${pageContext.request.contextPath}/assets2/js/html5shiv.min.js"></script>
-        <script src="${pageContext.request.contextPath}/assets2/js/respond.min.js"></script>
-        <![endif]-->
-
-        <!-- All PLUGINS CSS ============================================= -->
-        <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/assets2/css/assets.css">
+        <!-- Base CSS -->
+        <link rel="icon" href="${pageContext.request.contextPath}/assets2/images/favicon.ico" type="image/x-icon" />
+        <link rel="stylesheet" href="${pageContext.request.contextPath}/assets2/css/assets.css">
+        <link rel="stylesheet" href="${pageContext.request.contextPath}/assets2/css/style.css">
+        <link rel="stylesheet" href="${pageContext.request.contextPath}/assets2/css/dashboard.css">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
         <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/assets2/vendors/calendar/fullcalendar.css">
-
-        <!-- TYPOGRAPHY ============================================= -->
         <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/assets2/css/typography.css">
-
-        <!-- SHORTCODES ============================================= -->
         <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/assets2/css/shortcodes/shortcodes.css">
-
-        <!-- STYLESHEETS ============================================= -->
-        <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/assets2/css/style.css">
-        <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/assets2/css/dashboard.css">
         <link class="skin" rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/assets2/css/color/color-1.css">
-
         <style>
-            .dropdown-menu {
-                z-index: 1050 !important;
+            .nav-tabs .nav-link.active {
+                background-color: #007bff !important;
+                color: #fff !important;
+                border-color: #007bff #007bff #fff;
             }
-
-            select.form-control {
-                z-index: 1;
-                position: relative;
+            .nav-tabs .nav-link:hover {
+                background-color: #e9f2ff;
             }
-
+        </style>
+        <style>
             .widget-box {
                 background: #fff;
                 border-radius: 10px;
-                padding: 25px;
+                padding: 30px 40px !important; /* thêm khoảng cách trong form */
+                margin-bottom: 40px;
                 box-shadow: 0 2px 10px rgba(0,0,0,0.1);
             }
+
+            form .form-group {
+                margin-bottom: 20px; /* tạo khoảng cách giữa các ô nhập */
+            }
+
+            label {
+                font-weight: 600;
+                margin-bottom: 6px;
+                display: block;
+            }
+
+            .form-control, .form-select {
+                border-radius: 8px;
+                padding: 10px;
+            }
+
+            .text-end {
+                margin-top: 25px;
+            }
         </style>
+
     </head>
     <body class="ttr-opened-sidebar ttr-pinned-sidebar">
         <%@ include file="CommonItems/Header/dashboardHeader.jsp" %>
@@ -75,7 +66,7 @@
                 <div class="db-breadcrumb">
                     <h4 class="breadcrumb-title">Schedule Interview</h4>
                     <ul class="db-breadcrumb-list">
-                        <li><a href="#"><i class="fa fa-home"></i>Interview</a></li>
+                        <li><i class="fa fa-home"></i>Interview</a></li>
                         <li>Schedule</li>
                     </ul>
                 </div>
@@ -115,7 +106,7 @@
                                 <div class="form-group mb-3">
                                     <label><i class="fa fa-user"></i> Candidates:</label>
                                     <div class="border rounded p-2" style="max-height: 220px; overflow-y: auto;">
-                                        <c:forEach items="${candidateList}" var="c">
+                                        <c:forEach items="${candidatesList}" var="c">
                                             <div class="form-check">
                                                 <input type="checkbox" class="form-check-input candidate-checkbox"
                                                        id="${c.candidateId}" name="candidateIds" value="${c.candidateId}">
@@ -131,14 +122,12 @@
                                 </div>  
                                 <div class="form-group mb-3">
                                     <label><i class="fa fa-user"></i> Interview Employee</label>
-                                    <div class="border rounded p-2" style="max-height: 220px; overflow-y: auto;">
-                                        <select name="interviewer" class="form-select" required>
-                                            <option value="">-- Select Interviewer --</option>
-                                            <c:forEach items="${employeeInterview}" var="c">
-                                                <option value="${c.empId}">${c.fullname}</option>
-                                            </c:forEach>
-                                        </select>
-                                    </div>
+                                    <select name="interviewer" class="form-control" required>
+                                        <option value="">-- Select Interviewer --</option>
+                                        <c:forEach items="${employeeInterview}" var="c">
+                                            <option value="${c.empId}">${c.fullname}</option>
+                                        </c:forEach>
+                                    </select>
 
                                 </div>
 
@@ -204,22 +193,14 @@
 
         <!-- JS -->
         <script src="${pageContext.request.contextPath}/assets2/js/jquery.min.js"></script>
-        <script src="${pageContext.request.contextPath}/assets2/vendors/bootstrap/js/popper.min.js"></script>
-        <script src="${pageContext.request.contextPath}/assets2/vendors/bootstrap/js/bootstrap.min.js"></script>
-        <script src="${pageContext.request.contextPath}/assets2/vendors/bootstrap-select/bootstrap-select.min.js"></script>
-        <script src="${pageContext.request.contextPath}/assets2/vendors/bootstrap-touchspin/jquery.bootstrap-touchspin.js"></script>
-        <script src="${pageContext.request.contextPath}/assets2/vendors/magnific-popup/magnific-popup.js"></script>
-        <script src="${pageContext.request.contextPath}/assets2/vendors/counter/waypoints-min.js"></script>
-        <script src="${pageContext.request.contextPath}/assets2/vendors/counter/counterup.min.js"></script>
-        <script src="${pageContext.request.contextPath}/assets2/vendors/imagesloaded/imagesloaded.js"></script>
-        <script src="${pageContext.request.contextPath}/assets2/vendors/masonry/masonry.js"></script>
-        <script src="${pageContext.request.contextPath}/assets2/vendors/masonry/filter.js"></script>
-        <script src="${pageContext.request.contextPath}/assets2/vendors/owl-carousel/owl.carousel.js"></script>
-        <script src="${pageContext.request.contextPath}/assets2/vendors/scroll/scrollbar.min.js"></script>
+        <script src="${pageContext.request.contextPath}/assets2/vendors/bootstrap/js/bootstrap.bundle.min.js"></script>
         <script src="${pageContext.request.contextPath}/assets2/js/functions.js"></script>
-        <script src="${pageContext.request.contextPath}/assets2/vendors/chart/chart.min.js"></script>
         <script src="${pageContext.request.contextPath}/assets2/js/admin.js"></script>
-        <script src="${pageContext.request.contextPath}/assets2/vendors/switcher/switcher.js"></script>
+        <!-- JS libraries -->
+        <script src="${pageContext.request.contextPath}/assets2/js/jquery.min.js"></script>
+        <script src="${pageContext.request.contextPath}/assets2/vendors/bootstrap/js/bootstrap.bundle.min.js"></script>
+        <script src="${pageContext.request.contextPath}/assets2/vendors/bootstrap/js/popper.min.js"></script>
+        <script src="${pageContext.request.contextPath}/assets2/js/admin.js"></script>
 
         <script>
                                                     function confirmDelete(id) {

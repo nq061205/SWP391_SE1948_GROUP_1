@@ -67,11 +67,10 @@
                 <div class="db-breadcrumb">
                     <h4 class="breadcrumb-title">Department information</h4>
                     <ul class="db-breadcrumb-list">
-                        <li><a href="#"><i class="fa fa-home"></i>Home</a></li>
+                        <li><a href="${pageContext.request.contextPath}/departmentlist">Department list</a></li>
                         <li>Department Detail</li>
                     </ul>
                 </div>
-                <a href="${pageContext.request.contextPath}/departmentlist" class="btn btn-secondary">← Back to list</a>
                 <h4>Department Name: ${dept.depName}</h4>
                 <p><strong>Total employees:</strong> ${employeeCount}</p>
 
@@ -176,6 +175,7 @@
                         </tbody>
                     </table>
                 </div>
+                <a href="${pageContext.request.contextPath}/departmentlist" class="btn btn-secondary">← Back to list</a>
                 <c:url var="baseUrlWithSort" value="departmentdetail">
                     <c:if test="${not empty deptId}">
                         <c:param name="deptId" value="${deptId}" />

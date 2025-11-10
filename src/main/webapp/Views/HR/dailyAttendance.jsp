@@ -616,7 +616,7 @@
     <script src="${pageContext.request.contextPath}/assets2/vendors/switcher/switcher.js"></script>
     <script>
                                                     $(document).ready(function () {
-                                                        $(document).on('click', 'td.day-cell', function () {
+                                                        $(document).on('click', 'td.day-cell.status-Present, td.day-cell.status-Absent, td.day-cell.status-Leave', function () {
                                                             var cell = $(this);
 
                                                             var empId = cell.data('emp-id');
@@ -626,7 +626,7 @@
                                                             var empPosition = cell.data('emp-position');
                                                             var empDepartment = cell.data('emp-department');
                                                             var day = cell.data('day');
-                                                            var status = cell.data('status') || 'Unknown';
+                                                            var status = cell.attr('data-status');
                                                             var workDay = cell.data('work-day') || 0;
                                                             var otHours = cell.data('ot-hours') || 0;
                                                             var checkIn = cell.data('check-in') || '';
@@ -647,7 +647,7 @@
                                                             $('#modalPosition').val(empPosition);
                                                             $('#modalDepartment').val(empDepartment);
                                                             $('#modalDate').val(formattedDate_ddMMyyyy);
-                                                            $('#modalStatusSelect').val(status);
+                                                            $('#modalStatusSelect').selectpicker('val', status);
                                                             $('#modalWorkDay').val(workDay);
                                                             $('#modalOTHours').val(otHours);
                                                             $('#modalCheckInTime').val(checkIn);
@@ -662,9 +662,10 @@
                                                                 $('#noteContainer').show();
                                                             }
 
-                                                            $('#attendanceDetailModal input, #attendanceDetailModal textarea, #attendanceDetailModal select')
+                                                            $('#attendanceDetailModal input, #attendanceDetailModal textarea')
                                                                     .prop('readonly', true)
                                                                     .prop('disabled', true);
+                                                            $('#modalStatusSelect').prop('disabled', true).selectpicker('refresh');
 
                                                             $('#modalUpdateBtn').show();
                                                             $('#modalSaveBtn').hide();
@@ -672,11 +673,13 @@
                                                             $('#attendanceDetailModal').modal('show');
                                                         });
 
-                                                        // Update button
+                                                        // UPDATE BUTTON 
                                                         $('#modalUpdateBtn').on('click', function () {
-                                                            $('#attendanceDetailModal select, #modalWorkDay, #modalOTHours, #modalNote')
+                                                            // Enable các field để có thể edit
+                                                            $('#modalWorkDay, #modalOTHours, #modalNote')
                                                                     .prop('readonly', false)
                                                                     .prop('disabled', false);
+                                                            $('#modalStatusSelect').prop('disabled', false).selectpicker('refresh');
 
                                                             $('#noteContainer').show();
 
@@ -684,7 +687,7 @@
                                                             $('#modalSaveBtn').show();
                                                         });
 
-                                                        // Save button
+                                                        // SAVE BUTTON
                                                         $('#modalSaveBtn').on('click', function () {
                                                             var workDay = parseFloat($('#modalWorkDay').val());
                                                             var otHours = parseFloat($('#modalOTHours').val());
@@ -700,7 +703,6 @@
                                                                 $('#modalOTHours').focus();
                                                                 return;
                                                             }
-
                                                             if (note === '') {
                                                                 alert('Please add note before Save!');
                                                                 $('#modalNote').focus();
@@ -724,23 +726,14 @@
                                                                 success: function (response) {
                                                                     alert(response.message || 'Updated successfully!');
                                                                     $('#attendanceDetailModal').modal('hide');
+                                                                    location.reload(); 
                                                                 },
                                                                 error: function (xhr) {
                                                                     alert('Error updating attendance!');
                                                                 }
                                                             });
-
-                                                            $('#attendanceDetailModal input, #attendanceDetailModal textarea, #attendanceDetailModal select')
-                                                                    .prop('readonly', true)
-                                                                    .prop('disabled', true);
-                                                            $('#modalUpdateBtn').show();
-                                                            $('#modalSaveBtn').hide();
-                                                            $('#attendanceDetailModal').modal('hide');
-                                                            location.reload();
                                                         });
-
                                                     });
-
     </script>
     <script>
         var isProcessing = false;
@@ -807,6 +800,5 @@
             }
             window.location.href = url;
         }
-
     </script>
 </html>

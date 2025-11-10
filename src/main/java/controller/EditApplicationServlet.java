@@ -32,9 +32,13 @@ public class EditApplicationServlet extends HttpServlet {
         String type = request.getParameter("type");
         Employee user = (Employee) session.getAttribute("user");
         RolePermissionDAO rperDAO = new RolePermissionDAO();
-
-        if (user == null || !rperDAO.hasPermission(user.getRole().getRoleId(), 7)) {
-            response.sendRedirect(request.getContextPath() + "/login");
+        if (user == null) {
+            response.sendRedirect("login");
+            return;
+        }
+        if (!rperDAO.hasPermission(user.getRole().getRoleId(), 7)) {
+            session.setAttribute("logMessage", "You do not have permission to access this page.");
+            response.sendRedirect("dashboard");
             return;
         }
         EmployeeDAO empDAO = new EmployeeDAO();
@@ -94,7 +98,7 @@ public class EditApplicationServlet extends HttpServlet {
                     } else {
                         HttpSession session = request.getSession();
                         session.setAttribute("flashMessage", "Updated Successfully!");
-                        leaveDAO.updateLeaveRequest(id, leaveType, content, startDate, endDate,leave.getNote());
+                        leaveDAO.updateLeaveRequest(id, leaveType, content, startDate, endDate, leave.getNote());
                         response.sendRedirect("application?typeapplication=leave");
                     }
                     break;

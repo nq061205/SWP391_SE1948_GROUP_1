@@ -301,7 +301,7 @@
                                             <span class="filter-count">${totalPosts}</span>
                                         </div>
 
-                                        <c:set var="departmentMap" value="${{}}" />
+                                        <%--<c:set var="departmentMap" value="${{}}" />--%>
                                         <c:forEach items="${posts}" var="post">
                                             <c:if test="${post.department != null}">
                                                 <c:set var="deptId" value="${post.department.depId}" />

@@ -74,14 +74,18 @@ public class CreateAccountServlet extends HttpServlet {
         HttpSession ses = request.getSession();
         RolePermissionDAO rperDAO = new RolePermissionDAO();
         Employee user = (Employee) ses.getAttribute("user");
-        if (user == null || !rperDAO.hasPermission(user.getRole().getRoleId(), 1)) {
+        if (user == null) {
             response.sendRedirect("login");
+            return;
+        }
+        if (!rperDAO.hasPermission(user.getRole().getRoleId(), 1)) {
+            ses.setAttribute("logMessage", "You do not have permission to access this page.");
+            response.sendRedirect("dashboard");
             return;
         }
         InterviewDAO interDAO = new InterviewDAO();
         DeptDAO deptDAO = new DeptDAO();
         RoleDAO rDAO = new RoleDAO();
-        CandidateDAO canDAO = new CandidateDAO();
         String searchKey = request.getParameter("searchkey");
         String startApplyDate = request.getParameter("startApplyDate");
         String endApplyDate = request.getParameter("endApplyDate");
@@ -178,7 +182,7 @@ public class CreateAccountServlet extends HttpServlet {
 
             Role role = roleDAO.getRoleByRoleId(roleId);
             emp.setRole(role);
-            emp.setPassword(empDAO.generatePassword());
+            emp.setPassword("123456");
             emp.setGender(true);
             emp.setStatus(true);
             empDAO.createEmployee(emp);

@@ -34,9 +34,13 @@ public class ScheduleInterviewServlet extends HttpServlet {
 
         HttpSession session = request.getSession();
         Employee user = (Employee) session.getAttribute("user");
-
-        if (user == null || !rperDAO.hasPermission(user.getRole().getRoleId(), 5)) {
+        if (user == null) {
             response.sendRedirect("login");
+            return;
+        }
+        if (!rperDAO.hasPermission(user.getRole().getRoleId(), 5)) {
+            session.setAttribute("logMessage", "You do not have permission to access this page.");
+            response.sendRedirect("dashboard");
             return;
         }
         List<RecruitmentPost> posts = rpDAO.getApprovedPosts();
@@ -58,7 +62,7 @@ public class ScheduleInterviewServlet extends HttpServlet {
         String[] selectedIds = request.getParameterValues("candidateIds");
         String dateStr = request.getParameter("date");
         String timeStr = request.getParameter("time");
-
+        String interviewer = request.getParameter("interviewer");
         HttpSession session = request.getSession();
         Employee user = (Employee) session.getAttribute("user");
         if (user == null) {
@@ -78,7 +82,7 @@ public class ScheduleInterviewServlet extends HttpServlet {
                     String deptId = rpDAO.getPostById(postId).getDepartment().getDepId();
                     List<Employee> interviewerList = getEmployeeByDept(eDAO.getAllEmployees(), deptId);
 
-                    request.setAttribute("candidateList", candidateList);
+                    request.setAttribute("candidatesList", candidateList);
                     request.setAttribute("employeeInterview", interviewerList);
                     request.setAttribute("selectedPostId", postId);
 
@@ -101,20 +105,21 @@ public class ScheduleInterviewServlet extends HttpServlet {
                 LocalDate date = LocalDate.parse(dateStr);
                 LocalTime time = LocalTime.parse(timeStr);
 
-                if (date.isBefore(LocalDate.now()) ||
-                        (date.equals(LocalDate.now()) && time.isBefore(LocalTime.now()))) {
+                if (date.isBefore(LocalDate.now())
+                        || (date.equals(LocalDate.now()) && time.isBefore(LocalTime.now()))) {
                     request.setAttribute("errorMessage", "Please select a valid future date and time.");
                 } else {
                     int postId = Integer.parseInt(postIdStr);
                     String deptId = rpDAO.getPostById(postId).getDepartment().getDepId();
-                    Employee interviewer = eDAO.getManagerByDepartment(deptId);
+                    int interviewerId = Integer.parseInt(interviewer);
+                    Employee interviewerBy = eDAO.getEmployeeByEmpId(interviewerId);
 
                     for (String selectedId : selectedIds) {
                         Candidate candidate = cDAO.getCandidateById(Integer.parseInt(selectedId));
                         Interview i = new Interview();
                         i.setCandidate(candidate);
                         i.setCreatedBy(user);
-                        i.setInterviewedBy(interviewer);
+                        i.setInterviewedBy(interviewerBy);
                         i.setDate(Date.valueOf(date));
                         i.setTime(Time.valueOf(time));
                         i.setResult("Pending");
@@ -124,11 +129,11 @@ public class ScheduleInterviewServlet extends HttpServlet {
                             EmailUtil.sendEmail(
                                     candidate.getEmail(),
                                     "Invitation to Interview",
-                                    "Dear " + candidate.getName() +
-                                            ",\n\nCongratulations! You are invited to an interview for the position " +
-                                            candidate.getPost().getTitle() + ".\n\n" +
-                                            "Date: " + dateStr + "\nTime: " + timeStr +
-                                            "\n\nPlease arrive 10 minutes early.\n\nBest regards,\nHR Department"
+                                    "Dear " + candidate.getName()
+                                    + ",\n\nCongratulations! You are invited to an interview for the position "
+                                    + candidate.getPost().getTitle() + ".\n\n"
+                                    + "Date: " + dateStr + "\nTime: " + timeStr
+                                    + "\n\nPlease arrive 10 minutes early.\n\nBest regards,\nHR Department"
                             );
                         } catch (MessagingException ex) {
                             Logger.getLogger(ScheduleInterviewServlet.class.getName()).log(Level.SEVERE, null, ex);
@@ -150,7 +155,7 @@ public class ScheduleInterviewServlet extends HttpServlet {
             String deptId = rpDAO.getPostById(postId).getDepartment().getDepId();
             List<Employee> interviewerList = getEmployeeByDept(eDAO.getAllEmployees(), deptId);
 
-            request.setAttribute("candidateList", candidateList);
+            request.setAttribute("candidatesList", candidateList);
             request.setAttribute("employeeInterview", interviewerList);
             request.setAttribute("selectedPostId", postId);
         }

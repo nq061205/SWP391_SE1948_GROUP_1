@@ -7,6 +7,7 @@ package controller;
 import dal.EmployeeDAO;
 import dal.LeaveRequestDAO;
 import dal.OTRequestDAO;
+import dal.RolePermissionDAO;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
@@ -30,9 +31,16 @@ public class ApplicationManagementServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         HttpSession session = request.getSession();
+        RolePermissionDAO rperDAO = new RolePermissionDAO();
+
         Employee user = (Employee) session.getAttribute("user");
         if (user == null) {
-            response.sendRedirect(request.getContextPath() + "/login");
+            response.sendRedirect("login");
+            return;
+        }
+        if (!rperDAO.hasPermission(user.getRole().getRoleId(), 7)) {
+            session.setAttribute("logMessage", "You do not have permission to access this page.");
+            response.sendRedirect("dashboard");
             return;
         }
         String typeApplication = request.getParameter("typeapplication");
@@ -48,17 +56,17 @@ public class ApplicationManagementServlet extends HttpServlet {
             throws ServletException, IOException {
         String type = request.getParameter("type");
         String action = request.getParameter("action");
-        
+
         if ("leave".equalsIgnoreCase(type)) {
             int id = Integer.parseInt(request.getParameter("leaveId"));
             String note = request.getParameter("note");
             LeaveRequestDAO leaveDAO = new LeaveRequestDAO();
             LeaveRequest leaveRequest = leaveDAO.getLeaveRequestByLeaveId(id);
-            if("Annual Leave".equalsIgnoreCase(leaveRequest.getLeaveType()) && "Approved".equalsIgnoreCase(action)){
-                 EmployeeDAO empDAO = new EmployeeDAO();
-                 empDAO.updateDecreasePaidLeaveDaysByEmployeeId(leaveRequest.getEmployee().getEmpId(),leaveRequest.getDayRequested());
+            if ("Annual Leave".equalsIgnoreCase(leaveRequest.getLeaveType()) && "Approved".equalsIgnoreCase(action)) {
+                EmployeeDAO empDAO = new EmployeeDAO();
+                empDAO.updateDecreasePaidLeaveDaysByEmployeeId(leaveRequest.getEmployee().getEmpId(), leaveRequest.getDayRequested());
             }
-                 leaveDAO.updateLeaveStatus(id, action,note);
+            leaveDAO.updateLeaveStatus(id, action, note);
             response.sendRedirect(request.getContextPath() + "/applicationmanagement?typeapplication=leave");
             return;
         } else if ("ot".equalsIgnoreCase(type)) {

@@ -4,13 +4,16 @@
  */
 package dal;
 
+import static java.lang.System.out;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Types;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 import model.DailyAttendance;
 import model.Employee;
@@ -286,11 +289,94 @@ public class DailyAttendanceDAO extends DBContext {
             return false;
         }
     }
+    
+    public Map<String, Double> getTotalWorkData(int empId, int month, int year) {
+        String sql = "SELECT COALESCE(SUM(work_day), 0) as total_work_day, "
+                + "COALESCE(SUM(ot_hours), 0) as total_ot_hours "
+                + "FROM daily_attendance "
+                + "WHERE emp_id = ? AND MONTH(date) = ? AND YEAR(date) = ? ";
+        
+        Map<String, Double> result = new HashMap<>();
+        result.put("totalWorkDay", 0.0);
+        result.put("totalOTHours", 0.0);
+        
+        try (Connection conn = DBContext.getConnection(); 
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            
+            ps.setInt(1, empId);
+            ps.setInt(2, month);
+            ps.setInt(3, year);
+            
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    double totalWorkDay = rs.getDouble("total_work_day");
+                    double totalOTHours = rs.getDouble("total_ot_hours");
+                    
+                    result.put("totalWorkDay", totalWorkDay);
+                    result.put("totalOTHours", totalOTHours);
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return result;
+    }
+    
+    public Map<Integer, Map<String, Double>> getTotalWorkDataByEmpIds(List<Integer> empIds, int month, int year) {
+        Map<Integer, Map<String, Double>> result = new HashMap<>();
+        
+        if (empIds == null || empIds.isEmpty()) {
+            return result;
+        }
+        
+        StringBuilder sql = new StringBuilder("SELECT emp_id, COALESCE(SUM(work_day), 0) as total_work_day, "
+                + "COALESCE(SUM(ot_hours), 0) as total_ot_hours "
+                + "FROM daily_attendance "
+                + "WHERE MONTH(date) = ? AND YEAR(date) = ? "
+                + "AND emp_id IN (");
+        
+        for (int i = 0; i < empIds.size(); i++) {
+            sql.append("?");
+            if (i < empIds.size() - 1) {
+                sql.append(",");
+            }
+        }
+        sql.append(") GROUP BY emp_id");
+        
+        try (Connection conn = DBContext.getConnection(); 
+             PreparedStatement ps = conn.prepareStatement(sql.toString())) {
+            
+            ps.setInt(1, month);
+            ps.setInt(2, year);
+            
+            for (int i = 0; i < empIds.size(); i++) {
+                ps.setInt(3 + i, empIds.get(i));
+            }
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    int empId = rs.getInt("emp_id");
+                    Map<String, Double> data = new HashMap<>();
+                    data.put("totalWorkDay", rs.getDouble("total_work_day"));
+                    data.put("totalOTHours", rs.getDouble("total_ot_hours"));
+                    result.put(empId, data);
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return result;
+    }
 
     public static void main(String[] args) {
         DailyAttendanceDAO dailyDAO = new DailyAttendanceDAO();
-        boolean success = dailyDAO.updateDailyAttendance(1, "2025-10-25", "Present", 1, 2, "ok");
-        System.out.println(success);
+        int empId = 1;
+        int month = 10;
+        int year = 2025;
+        Map<String, Double> result = dailyDAO.getTotalWorkData(empId, month, year);
+
+
+        System.out.println("Tổng ngày làm việc: " + result.get("totalWorkDay"));
+        System.out.println("Tổng giờ tăng ca: " + result.get("totalOTHours"));
     }
 
 }

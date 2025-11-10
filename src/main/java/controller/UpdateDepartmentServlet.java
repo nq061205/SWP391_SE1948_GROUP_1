@@ -62,8 +62,13 @@ public class UpdateDepartmentServlet extends HttpServlet {
         HttpSession ses = request.getSession();
         RolePermissionDAO rperDAO = new RolePermissionDAO();
         Employee user = (Employee) ses.getAttribute("user");
-        if (user == null || !rperDAO.hasPermission(user.getRole().getRoleId(), 3)) {
+        if(user == null){
             response.sendRedirect("login");
+            return;
+        }
+        if (!rperDAO.hasPermission(user.getRole().getRoleId(), 3)) {
+            ses.setAttribute("logMessage", "You do not have permission to access this page.");
+            response.sendRedirect("dashboard");
             return;
         }
         DeptDAO dDAO = new DeptDAO();
@@ -91,7 +96,18 @@ public class UpdateDepartmentServlet extends HttpServlet {
         String description = request.getParameter("description");
         String button = request.getParameter("button");
         Department dept = dDAO.getDepartmentByDepartmentId(deptID);
-        if ("save".equalsIgnoreCase(button)) {
+        
+        boolean hasErr = false;
+        if (depName.length() >100) {
+            request.setAttribute("NameErr", "Name have the max length is 100");
+            hasErr = true;
+        }
+        if (description.length() > 255) {
+            request.setAttribute("descripErr", "Description have the max length is 255");
+            hasErr = true;
+        }
+        
+        if ("save".equalsIgnoreCase(button) && !hasErr) {
             dept.setDepId(deptID);
             dept.setDepName(depName);
             dept.setDescription(description);

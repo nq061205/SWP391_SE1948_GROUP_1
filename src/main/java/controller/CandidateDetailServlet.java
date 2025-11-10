@@ -75,9 +75,14 @@ public class CandidateDetailServlet extends HttpServlet {
             }
             HttpSession session = request.getSession();
             Employee user = (Employee) session.getAttribute("user");
-            if (user == null || !rperDAO.hasPermission(user.getRole().getRoleId(), 2)) {
-                response.sendRedirect("login");
-                return;
+            if (user == null) {
+            response.sendRedirect("login");
+            return;
+        }
+            if (!rperDAO.hasPermission(user.getRole().getRoleId(), 2)) {
+                session.setAttribute("logMessage", "You do not have permission to access this page.");
+            response.sendRedirect("dashboard");
+            return;
             }
             request.setAttribute("candidate", cDao.getCandidateById(candidateId));
             request.getRequestDispatcher("Views/candidatedetail.jsp").forward(request, response);

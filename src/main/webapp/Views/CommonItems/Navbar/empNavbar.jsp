@@ -1,4 +1,4 @@
-<%-- 
+<%--
     Document   : dashboardNavbar
     Created on : Oct 2, 2025, 4:05:59 PM
     Author     : admin
@@ -17,29 +17,16 @@
 
 <div class="ttr-sidebar">
     <div class="ttr-sidebar-wrapper content-scroll">
-        <!-- side menu logo start -->
         <div class="ttr-sidebar-logo">
-            <a href="#"><img alt="" src="/HRMSystem/assets1/images/logo-white.png" width="100" height="50"></a>
+            <a href="${pageContext.request.contextPath}/dashboard">
+                <img alt="" src="${pageContext.request.contextPath}/assets1/images/logo-white.png" width="100" height="50">
+            </a>
             <div class="ttr-sidebar-toggle-button">
                 <i class="ti-arrow-left"></i>
             </div>
         </div>
-        <!-- side menu logo end -->
-
-        <!-- sidebar menu start -->
-        <div class="ttr-sidebar">
-    <div class="ttr-sidebar-wrapper content-scroll">
-
-        <div class="ttr-sidebar-logo">
-            <a href="#"><img alt="" src="/HRMSystem/assets1/images/logo-white.png" width="100" height="50"></a>
-            <div class="ttr-sidebar-toggle-button">
-                <i class="ti-arrow-left"></i>
-            </div>
-        </div>
-
         <nav class="ttr-sidebar-navi">
             <ul>
-                <!-- Dashboard -->
                 <li>
                     <a href="${pageContext.request.contextPath}/dashboard" class="ttr-material-button">
                         <span class="ttr-icon"><i class="ti-dashboard"></i></span>
@@ -47,7 +34,6 @@
                     </a>
                 </li>
 
-                <!-- Profile -->
                 <li>
                     <a href="${pageContext.request.contextPath}/profile" class="ttr-material-button">
                         <span class="ttr-icon"><i class="ti-user"></i></span>
@@ -55,7 +41,7 @@
                     </a>
                 </li>
 
-                <!-- Applications -->
+                <% if (rpDAO.hasPermission(roleId, 7)) { %>
                 <li>
                     <a href="${pageContext.request.contextPath}/Views/listapplication.jsp" class="ttr-material-button">
                         <span class="ttr-icon"><i class="ti-clipboard"></i></span>
@@ -69,8 +55,8 @@
                         <li><a href="${pageContext.request.contextPath}/compose?type=OT" class="ttr-material-button"><span class="ttr-label">Create Overtime Application</span></a></li>
                     </ul>
                 </li>
+                <% } %>
 
-                <!-- Candidate List -->
                 <% if (rpDAO.hasPermission(roleId, 2)) { %>
                 <li>
                     <a href="${pageContext.request.contextPath}/candidatelist" class="ttr-material-button">
@@ -80,17 +66,15 @@
                 </li>
                 <% } %>
 
-                <!-- Interview List -->
                 <% if (rpDAO.hasPermission(roleId, 6)) { %>
                 <li>
                     <a href="${pageContext.request.contextPath}/interview" class="ttr-material-button">
-                        <span class="ttr-icon"><i class="ti-comments-smiley"></i></span>
+                        <span class="ttr-icon"><i class="ti-agenda"></i></span>
                         <span class="ttr-label">Interview List</span>
                     </a>
                 </li>
                 <% } %>
 
-                <!-- Account List -->
                 <% if (rpDAO.hasPermission(roleId, 1)) { %>
                 <li>
                     <a href="${pageContext.request.contextPath}/accountlist" class="ttr-material-button">
@@ -100,7 +84,6 @@
                 </li>
                 <% } %>
 
-                <!-- Employee List -->
                 <% if (rpDAO.hasPermission(roleId, 4)) { %>
                 <li>
                     <a href="${pageContext.request.contextPath}/employeelist" class="ttr-material-button">
@@ -110,7 +93,6 @@
                 </li>
                 <% } %>
 
-                <!-- Department List -->
                 <% if (rpDAO.hasPermission(roleId, 3)) { %>
                 <li>
                     <a href="${pageContext.request.contextPath}/departmentlist" class="ttr-material-button">
@@ -120,7 +102,6 @@
                 </li>
                 <% } %>
 
-                <!-- HR Recruitment -->
                 <% if (rpDAO.hasPermission(roleId, 10)) { %>
                 <li>
                     <a href="${pageContext.request.contextPath}/hrrecruitment" class="ttr-material-button">
@@ -130,7 +111,6 @@
                 </li>
                 <% } %>
 
-                <!-- HRM Recruitment (Post Review) -->
                 <% if (rpDAO.hasPermission(roleId, 11)) { %>
                 <li>
                     <a href="${pageContext.request.contextPath}/postreview" class="ttr-material-button">
@@ -140,25 +120,34 @@
                 </li>
                 <% } %>
 
-                <!-- Manage Post -->
                 <% if (rpDAO.hasPermission(roleId, 11)) { %>
                 <li>
                     <a href="${pageContext.request.contextPath}/managepost" class="ttr-material-button">
-                        <span class="ttr-icon"><i class="ti-settings"></i></span>
+                        <span class="ttr-icon"><i class="ti-pencil-alt"></i></span>
                         <span class="ttr-label">Manage Post</span>
                     </a>
                 </li>
                 <% } %>
-
-                <!-- Job Site -->
+                <% if (rpDAO.hasPermission(roleId, 5)) { %>
                 <li>
-                    <a href="${pageContext.request.contextPath}/jobsite" class="ttr-material-button">
-                        <span class="ttr-icon"><i class="ti-briefcase"></i></span>
-                        <span class="ttr-label">Job Site</span>
+                    <a href="${pageContext.request.contextPath}/scheduleinterview" class="ttr-material-button">
+                        <span class="ttr-icon"><i class="ti-alarm-clock"></i></span>
+                        <span class="ttr-label">Schedule Interview</span>
                     </a>
                 </li>
+                <% } %>
+                <% if (roleId == 1) { %>
+                <li>
+                    <a href="${pageContext.request.contextPath}/decentralization" class="ttr-material-button">
+                        <span class="ttr-icon"><i class="ti-shield"></i></span>
+                        <span class="ttr-label">Decentralization</span>
+                    </a>
+                </li>
+                <% } %>
 
-                <!-- Attendance -->
+
+                <% if (rpDAO.hasPermission(roleId, 12)) { %>
+
                 <li>
                     <a href="${pageContext.request.contextPath}/raw-attendance" class="ttr-material-button">
                         <span class="ttr-icon"><i class="ti-timer"></i></span>
@@ -171,32 +160,33 @@
                         <span class="ttr-label">Daily Attendance</span>
                     </a>
                 </li>
+                <% } %>
+                <% if (rpDAO.hasPermission(roleId, 13)) { %>
 
-                <!-- Payroll -->
                 <li>
                     <a href="${pageContext.request.contextPath}/payrollreportdetail" class="ttr-material-button">
                         <span class="ttr-icon"><i class="ti-money"></i></span>
                         <span class="ttr-label">Payroll Report</span>
                     </a>
                 </li>
-
-                <!-- Personal Attendance -->
+                <% } %>
+                
                 <li>
                     <a href="${pageContext.request.contextPath}/attendance" class="ttr-material-button">
                         <span class="ttr-icon"><i class="ti-check-box"></i></span>
                         <span class="ttr-label">Personal Attendance</span>
                     </a>
                 </li>
+                <% if (rpDAO.hasPermission(roleId, 9)) { %>
 
-                <!-- System Log -->
                 <li>
                     <a href="${pageContext.request.contextPath}/systemlog" class="ttr-material-button">
-                        <span class="ttr-icon"><i class="ti-clipboard"></i></span>
+                        <span class="ttr-icon"><i class="ti-server"></i></span>
                         <span class="ttr-label">System Log</span>
                     </a>
                 </li>
-
-                <!-- Application Management -->
+                <% } %>
+                <% if (rpDAO.hasPermission(roleId, 8)) { %>
                 <li>
                     <a href="${pageContext.request.contextPath}/Views/listapplication.jsp" class="ttr-material-button">
                         <span class="ttr-icon"><i class="ti-ruler-pencil"></i></span>
@@ -208,11 +198,9 @@
                         <li><a href="${pageContext.request.contextPath}/applicationmanagement?typeapplication=ot" class="ttr-material-button"><span class="ttr-label">Overtime Approval</span></a></li>
                     </ul>
                 </li>
-
+                <% } %>
                 <li class="ttr-seperate"></li>
             </ul>
         </nav>
-    </div>
-</div>
     </div>
 </div>

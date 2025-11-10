@@ -2,6 +2,7 @@ package controller;
 
 import api.EmailUtil;
 import dal.InterviewDAO;
+import dal.RolePermissionDAO;
 import jakarta.mail.MessagingException;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.*;
@@ -12,6 +13,7 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import model.Employee;
 import model.Interview;
 
 public class EditInterviewServlet extends HttpServlet {
@@ -19,6 +21,18 @@ public class EditInterviewServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        HttpSession session = request.getSession();
+        RolePermissionDAO rperDAO = new RolePermissionDAO();
+        Employee user =(Employee) session.getAttribute("user");
+         if (user == null) {
+            response.sendRedirect("login");
+            return;
+        }
+        if (!rperDAO.hasPermission(user.getRole().getRoleId(), 2)) {
+            session.setAttribute("logMessage", "You do not have permission to access this page.");
+            response.sendRedirect("dashboard");
+            return;
+        }
 
         String idStr = request.getParameter("id");
         if (idStr == null) {
@@ -56,10 +70,10 @@ public class EditInterviewServlet extends HttpServlet {
             LocalDate selectedDate = LocalDate.parse(dateStr);
             LocalTime selectedTime = LocalTime.parse(timeStr);
 
-            LocalDate minDate = LocalDate.now().plusDays(3);
+            LocalDate minDate = LocalDate.now().plusDays(2);
             if (selectedDate.isBefore(minDate)) {
                 setError(request, response, id,
-                        "Interview date must be at least 3 days from today.");
+                        "You can only edit the schedule when it has more than 2 days left.");
                 return;
             }
 

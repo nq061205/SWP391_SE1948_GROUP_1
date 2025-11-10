@@ -135,25 +135,34 @@ public class DeptDAO extends DBContext {
         return departments;
     }
 
-    public List<Department> getDepartmentsByFilter(String depId, String searchKey, int page, int pageSize) {
+    public List<Department> getDepartmentsByFilter(String depId, String searchKey, int page, int pageSize,
+            String sortBy, String order) {
         List<Department> departments = new ArrayList<>();
 
-        StringBuilder sql = new StringBuilder(
-                "SELECT dep_id, dep_name, description FROM department WHERE 1=1"
-        );
+        StringBuilder sql = new StringBuilder("SELECT dep_id, dep_name, description FROM department WHERE 1=1");
+
         if (depId != null && !depId.trim().isEmpty()) {
             sql.append(" AND dep_id = ?");
         }
         if (searchKey != null && !searchKey.trim().isEmpty()) {
             sql.append(" AND (dep_id LIKE ? OR dep_name LIKE ?)");
         }
+        String sortColumn = "dep_name";
+        if ("dep_id".equalsIgnoreCase(sortBy)) {
+            sortColumn = "dep_id";
+        }
 
-        sql.append(" ORDER BY dep_name LIMIT ? OFFSET ?");
+        String sortOrder = "ASC";
+        if ("DESC".equalsIgnoreCase(order)) {
+            sortOrder = "DESC";
+        }
+
+        sql.append(" ORDER BY ").append(sortColumn).append(" ").append(sortOrder)
+                .append(" LIMIT ? OFFSET ?");
 
         try (Connection conn = DBContext.getConnection(); PreparedStatement stm = conn.prepareStatement(sql.toString())) {
 
             int index = 1;
-
             if (depId != null && !depId.trim().isEmpty()) {
                 stm.setString(index++, depId.trim());
             }
@@ -182,6 +191,26 @@ public class DeptDAO extends DBContext {
         }
 
         return departments;
+    }
+
+    public String generateDeptId() {
+        String sql = "SELECT MAX(dep_id) FROM Department";
+        try (Connection conn = DBContext.getConnection(); PreparedStatement ps = conn.prepareStatement(sql); ResultSet rs = ps.executeQuery();) {
+
+            if (rs.next()) {
+                String maxDep = rs.getString(1);
+                if (maxDep == null) {
+                    return "D001";
+                }
+                String numberPart = maxDep.substring(1);
+                int number = Integer.parseInt(numberPart);
+                number++;
+                return String.format("D%03d", number);
+            }
+        } catch (Exception ex) {
+            Logger.getLogger(DeptDAO.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return "D001";
     }
 
     public int countDepartmentsByFilter(String depId, String searchKey) {
@@ -221,12 +250,30 @@ public class DeptDAO extends DBContext {
         return count;
     }
 
+    public int countAllDepartments() {
+        int count = 0;
+
+        String sql = "SELECT COUNT(*) FROM department";
+
+        try (Connection conn = DBContext.getConnection(); PreparedStatement stm = conn.prepareStatement(sql); ResultSet rs = stm.executeQuery()) {
+
+            if (rs.next()) {
+                count = rs.getInt(1);
+            }
+
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+
+        return count;
+    }
+
     public List<String> getDepartmentsHavingManager() {
         List<String> depIds = new ArrayList<>();
         String sql = "SELECT DISTINCT e.dep_id\n"
                 + "        FROM employee e\n"
                 + "        JOIN role r ON e.role_id = r.role_id\n"
-                + "        WHERE r.role_name Like '%Manager%'";
+                + "        WHERE r.role_name Like '%Dept Manager%'";
 
         try (Connection conn = DBContext.getConnection(); PreparedStatement ps = conn.prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
             while (rs.next()) {
@@ -285,6 +332,6 @@ public class DeptDAO extends DBContext {
 
     public static void main(String[] args) {
         DeptDAO dao = new DeptDAO();
-        System.out.println(dao.countDepartmentsByFilter("", ""));
+        System.out.println(dao.getDepartmentsHavingManager());
     }
 }
