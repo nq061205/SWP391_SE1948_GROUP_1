@@ -59,6 +59,8 @@ public class DepartmentListServlet extends HttpServlet {
         }
         String searchKey = request.getParameter("searchkey");
         String deptId = request.getParameter("deptId");
+        String sortBy = request.getParameter("sortBy");
+        String order = request.getParameter("order");
         int page = 1;
         int pageSize = 5;
         String pageParam = request.getParameter("page");
@@ -69,7 +71,7 @@ public class DepartmentListServlet extends HttpServlet {
         int totalResults = deptDAO.countDepartmentsByFilter(deptId, searchKey);
         int totalPages = (int) Math.ceil((double) totalResults / pageSize);
         List<Department> deptList;
-        deptList = deptDAO.getDepartmentsByFilter(deptId, searchKey, page, pageSize);
+        deptList = deptDAO.getDepartmentsByFilter(deptId, searchKey, page, pageSize, sortBy, order);
         List<Department> deptNameList = deptDAO.getAllDepartment();
         String type = request.getParameter("type");
         String depId = request.getParameter("depId");
@@ -80,6 +82,9 @@ public class DepartmentListServlet extends HttpServlet {
         }
         request.setAttribute("totalPages", totalPages);
         request.setAttribute("searchkey", searchKey);
+        request.setAttribute("sortBy", sortBy);
+        request.setAttribute("order", order);
+        request.setAttribute("deptId", depId);
         request.setAttribute("deptNameList", deptNameList);
         request.setAttribute("page", page);
         ses.setAttribute("deptList", deptList);
@@ -91,11 +96,12 @@ public class DepartmentListServlet extends HttpServlet {
             throws ServletException, IOException {
         HttpSession ses = request.getSession();
         String action = request.getParameter("action");
-        String addDepId = request.getParameter("deptID");
         String addDepName = request.getParameter("deptName");
         String addDescription = request.getParameter("description");
         String searchKey = request.getParameter("searchkey");
         String deptId = request.getParameter("deptId");
+        String sortBy = request.getParameter("sortBy");
+        String order = request.getParameter("order");
         int page = 1;
         int pageSize = 5;
         String pageParam = request.getParameter("page");
@@ -107,23 +113,21 @@ public class DepartmentListServlet extends HttpServlet {
         int totalResults = depDAO.countDepartmentsByFilter(deptId, searchKey);
         int totalPages = (int) Math.ceil((double) totalResults / pageSize);
         if ("add".equalsIgnoreCase(action)) {
-            if (depDAO.existsById(addDepId.trim().toUpperCase())) {
-                request.setAttribute("errorMessage", "Department ID already exists!");
-            } else {
-                Department dept = new Department();
-                dept.setDepId(addDepId.trim().toUpperCase());
-                dept.setDepName(addDepName != null ? addDepName.trim() : "");
-                dept.setDescription(addDescription != null ? addDescription.trim() : "");
-                depDAO.createDepartment(dept);
-                response.sendRedirect("departmentlist");
-                return;
-            }
+            Department dept = new Department();
+            dept.setDepId(depDAO.generateDeptId());
+            dept.setDepName(addDepName != null ? addDepName.trim() : "");
+            dept.setDescription(addDescription != null ? addDescription.trim() : "");
+            depDAO.createDepartment(dept);
+            response.sendRedirect("departmentlist");
+            return;
         }
 
-        List<Department> departmentList = depDAO.getDepartmentsByFilter(deptId, searchKey, page, pageSize);
+        List<Department> departmentList = depDAO.getDepartmentsByFilter(deptId, searchKey, page, pageSize, deptId, deptId);
         request.setAttribute("deptNameList", deptNameList);
         request.setAttribute("totalPages", totalPages);
         request.setAttribute("searchkey", searchKey);
+          request.setAttribute("sortBy", sortBy);
+            request.setAttribute("order", order);
         request.setAttribute("page", page);
         ses.setAttribute("deptList", departmentList);
 

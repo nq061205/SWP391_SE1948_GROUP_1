@@ -11,17 +11,14 @@ import dal.RolePermissionDAO;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
-import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import model.Department;
 import model.Employee;
 import model.Role;
@@ -139,7 +136,13 @@ public class UpdateAccountServlet extends HttpServlet {
 
         }
         Employee editEmp = dao.getEmployeeByEmpCode(empCode);
-        if (editEmp != null && "save".equalsIgnoreCase(button)) {
+        boolean hasErr = false;
+        if (email.length() >100) {
+            request.setAttribute("EmailErr", "Email have the max length is 100");
+            hasErr=true;
+            
+        }
+        if (editEmp != null && "save".equalsIgnoreCase(button) && !hasErr) {
             editEmp.setEmail(email);
             Department dept = dDAO.getDepartmentByDepartmentId(deptID);
             editEmp.setDept(dept);

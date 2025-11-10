@@ -166,7 +166,7 @@
                             </select>
 
                             <!-- BUTTONS -->
-                            <div class="d-flex align-items-center gap-2">
+                            <div class="d-flex align-items-center gap-2" style="display:flex;gap:10px">
                                 <button type="submit" class="btn btn-primary">
                                     <i class="fa fa-filter"></i> Apply
                                 </button>

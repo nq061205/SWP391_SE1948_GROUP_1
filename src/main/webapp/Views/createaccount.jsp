@@ -176,13 +176,13 @@
                                             <c:forEach items="${passedList}" var="pl" varStatus="loop">
                                                 <tr>
                                                     <td>${loop.index+1}</td>
-                                                    <td>${pl.candidate.name}</td>
-                                                    <td>${pl.candidate.email}</td>
-                                                    <td>${pl.candidate.phone}</td>
-                                                    <td>${pl.candidate.appliedAt}</td>
-                                                    <td>${pl.interviewedBy.fullname}</td>
-                                                    <td>${pl.date}</td>
-                                                    <td>${pl.time}</td>
+                                                    <td style="overflow-wrap: break-word;">${pl.candidate.name}</td>
+                                                    <td style="overflow-wrap: break-word;">${pl.candidate.email}</td>
+                                                    <td style="overflow-wrap: break-word;">${pl.candidate.phone}</td>
+                                                    <td style="overflow-wrap: break-word;">${pl.candidate.appliedAt}</td>
+                                                    <td style="overflow-wrap: break-word;">${pl.interviewedBy.fullname}</td>
+                                                    <td style="overflow-wrap: break-word;">${pl.date}</td>
+                                                    <td style="overflow-wrap: break-word;">${pl.time}</td>
                                                     <td>
                                                         <button type="button"
                                                                 style="padding: 0.5rem 0"
@@ -335,7 +335,7 @@
                         document.getElementById('modalName').value = name || '';
                         document.getElementById('modalEmail').value = email || '';
                         document.getElementById('modalPhone').value = phone || '';
-                        document.querySelector('select[name="roleId"]').value = 4;
+                        document.querySelector('select[name="roleId"]').value = 3;
                     });
                 });
             });
@@ -350,22 +350,38 @@
             document.getElementById("modalDepId").addEventListener("change", function () {
                 const selectedDep = this.value;
                 const roleSelect = document.getElementById("modalRoleId");
-                const isManagerDep = managerDepIds.includes(selectedDep);
+
+                const isDeptHasManager = managerDepIds.includes(selectedDep);
 
                 for (let opt of roleSelect.options) {
                     const roleName = opt.text.toLowerCase();
-                    if (roleName.includes("manager")) {
-                        opt.disabled = isManagerDep;
-                        opt.text = opt.text.replace(" (Already Assigned)", "");
-                        if (isManagerDep && !opt.text.includes("Already Assigned")) {
-                            opt.text += " (Already Assigned)";
+                    if (roleName.includes("hr manager")) {
+                        if (selectedDep !== "D002") {
+                            opt.disabled = true;
+                            opt.text = "HR Manager (Only for HR)";
+                        } else {
+                            opt.disabled = false;
+                            opt.text = "HR Manager";
                         }
-                    } else {
+                    }
+                    else if (roleName.includes("manager")) {
+                        if (selectedDep === "D002") {
+                            opt.disabled = true;
+                            opt.text = "Dept Manager (Not available in HR)";
+                        } else {
+                            if (isDeptHasManager) {
+                                opt.disabled = true;
+                                opt.text = "Dept Manager (Already Assigned)";
+                            } else {
+                                opt.disabled = false;
+                                opt.text = "Dept Manager";
+                            }
+                        }
+                    }
+                    else {
                         opt.disabled = false;
-                        opt.text = opt.text.replace(" (Already Assigned)", "");
                     }
                 }
-
                 if (roleSelect.options[roleSelect.selectedIndex]?.disabled) {
                     roleSelect.selectedIndex = 0;
                 }
