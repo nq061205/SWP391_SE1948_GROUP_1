@@ -704,7 +704,8 @@ public class EmployeeDAO extends DBContext {
         }
         return false;
     }
-     public boolean hasHRManager(String depId) {
+
+    public boolean hasHRManager(String depId) {
         String sql = "SELECT COUNT(*) FROM employee WHERE dep_id = ? AND position_title LIKE '%HR Manager%'";
         try (Connection conn = DBContext.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setString(1, depId);
@@ -795,6 +796,20 @@ public class EmployeeDAO extends DBContext {
         try (Connection conn = getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
 
             ps.setString(1, email);
+            try (ResultSet rs = ps.executeQuery()) {
+                return rs.next();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    public boolean existsByRoleName(String roleName) {
+        String sql = "SELECT 1 FROM Employee e JOIN Role r ON e.role_id = r.role_id WHERE r.role_name = ?";
+        try (Connection conn = getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            ps.setString(1, roleName);
             try (ResultSet rs = ps.executeQuery()) {
                 return rs.next();
             }
@@ -931,13 +946,13 @@ public class EmployeeDAO extends DBContext {
         switch (requesterRole) {
             case "Employee":
                 approverRole = "Dept Manager";
-                filterByDept = true; 
+                filterByDept = true;
                 break;
             case "Dept Manager":
                 approverRole = "HR Manager";
                 break;
             case "HR":
-                approverRole = "HR Manager"; 
+                approverRole = "HR Manager";
                 break;
             case "HR Manager":
                 return null;
@@ -1021,8 +1036,7 @@ public class EmployeeDAO extends DBContext {
 
     public static void main(String[] args) {
         EmployeeDAO dao = new EmployeeDAO();
-        List<Employee> emps = dao.getAllEmployees();
-        System.out.println(emps.size());
+        System.out.println(dao.existsByRoleName("Admin"));
     }
 
 }
