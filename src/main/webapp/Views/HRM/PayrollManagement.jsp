@@ -488,7 +488,34 @@
                                         </div>
                                     </c:otherwise>
                                 </c:choose>
-
+                                <!-- Lock Payroll Section - Đặt dưới cùng -->
+                                <div class="row mt-4">
+                                    <div class="col-12">
+                                        <div class="card border-danger">
+                                            <div class="card-body bg-light">
+                                                <div class="row align-items-center">
+                                                    <div class="col-md-8">
+                                                        <h5 class="mb-2">
+                                                            <i class="fa fa-lock text-danger"></i> 
+                                                            Lock Payroll for <strong class="text-primary">${selectedMonth}/${selectedYear}</strong>
+                                                        </h5>
+                                                        <p class="mb-0 text-muted">
+                                                            <small>
+                                                                <i class="fa fa-exclamation-triangle text-warning"></i> 
+                                                                After locking, no changes can be made to this month's payroll. This action is irreversible.
+                                                            </small>
+                                                        </p>
+                                                    </div>
+                                                    <div class="col-md-4 text-right">
+                                                        <button type="button" class="btn btn-danger btn-lg" onclick="lockPayroll()">
+                                                            <i class="fa fa-lock"></i> Lock Payroll
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -505,72 +532,72 @@
     <script src="${pageContext.request.contextPath}/assets2/js/admin.js"></script>
 
     <script>
-                                                                                    var isProcessing = false;
+                            var isProcessing = false;
 
-                                                                                    $(document).ready(function () {
-                                                                                        setTimeout(function () {
-                                                                                            $('.alert').fadeOut('slow');
-                                                                                        }, 5000);
-                                                                                    });
+                            $(document).ready(function () {
+                                setTimeout(function () {
+                                    $('.alert').fadeOut('slow');
+                                }, 5000);
+                            });
 
-                                                                                    function changePageSize(newPageSize) {
-                                                                                        if (isProcessing) {
-                                                                                            alert('Please wait until processing is complete');
-                                                                                            return;
-                                                                                        }
-                                                                                        const form = document.getElementById('filterForm');
-                                                                                        if (!form) {
-                                                                                            alert('Error: Form not found');
-                                                                                            return;
-                                                                                        }
-                                                                                        const pageInput = form.querySelector('input[name="page"]');
-                                                                                        if (pageInput) {
-                                                                                            pageInput.value = 1;
-                                                                                        }
-                                                                                        form.submit();
-                                                                                    }
+                            function changePageSize(newPageSize) {
+                                if (isProcessing) {
+                                    alert('Please wait until processing is complete');
+                                    return;
+                                }
+                                const form = document.getElementById('filterForm');
+                                if (!form) {
+                                    alert('Error: Form not found');
+                                    return;
+                                }
+                                const pageInput = form.querySelector('input[name="page"]');
+                                if (pageInput) {
+                                    pageInput.value = 1;
+                                }
+                                form.submit();
+                            }
 
-                                                                                    function resetPageBeforeSubmit() {
-                                                                                        const form = document.getElementById('filterForm');
-                                                                                        if (form) {
-                                                                                            form.querySelector('input[name="page"]').value = 1;
-                                                                                        }
-                                                                                    }
+                            function resetPageBeforeSubmit() {
+                                const form = document.getElementById('filterForm');
+                                if (form) {
+                                    form.querySelector('input[name="page"]').value = 1;
+                                }
+                            }
 
-                                                                                    function applyFilter() {
-                                                                                        const form = document.getElementById('filterForm');
-                                                                                        if (!form)
-                                                                                            return;
-                                                                                        form.querySelector('input[name="page"]').value = 1;
-                                                                                        form.submit();
-                                                                                    }
+                            function applyFilter() {
+                                const form = document.getElementById('filterForm');
+                                if (!form)
+                                    return;
+                                form.querySelector('input[name="page"]').value = 1;
+                                form.submit();
+                            }
 
-                                                                                    function calculatePayroll() {
-                                                                                        if (confirm('Calculate payroll for all employees in this month?')) {
-                                                                                            const form = document.getElementById('filterForm');
-                                                                                            const actionInput = document.createElement('input');
-                                                                                            actionInput.type = 'hidden';
-                                                                                            actionInput.name = 'action';
-                                                                                            actionInput.value = 'calculate';
-                                                                                            form.appendChild(actionInput);
-                                                                                            form.submit();
-                                                                                        }
-                                                                                    }
+                            function calculatePayroll() {
+                                if (confirm('Calculate payroll for all employees in this month?')) {
+                                    const form = document.getElementById('filterForm');
+                                    const actionInput = document.createElement('input');
+                                    actionInput.type = 'hidden';
+                                    actionInput.name = 'action';
+                                    actionInput.value = 'calculate';
+                                    form.appendChild(actionInput);
+                                    form.submit();
+                                }
+                            }
 
-                                                                                    function exportPayroll(format) {
-                                                                                        var form = $('#filterForm');
-                                                                                        if (!form.length) {
-                                                                                            alert('Form not found!');
-                                                                                            return;
-                                                                                        }
-                                                                                        var params = form.serialize();
-                                                                                        var url;
-                                                                                        if (format === 'excel') {
-                                                                                            url = 'export-salary-excel?' + params;
-                                                                                        } else if (format === 'pdf') {
-                                                                                            url = 'export-salary-pdf?' + params;
-                                                                                        }
-                                                                                        window.location.href = url;
-                                                                                    }
+                            function exportPayroll(format) {
+                                var form = $('#filterForm');
+                                if (!form.length) {
+                                    alert('Form not found!');
+                                    return;
+                                }
+                                var params = form.serialize();
+                                var url;
+                                if (format === 'excel') {
+                                    url = 'export-salary-excel?' + params;
+                                } else if (format === 'pdf') {
+                                    url = 'export-salary-pdf?' + params;
+                                }
+                                window.location.href = url;
+                            }
     </script>
 </html>
