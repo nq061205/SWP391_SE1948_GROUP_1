@@ -105,16 +105,16 @@
                                                 <label class="col-sm-3 col-form-label">Email:</label>
                                                 <div class="col-sm-9">
                                                     <input name="email" class="form-control" name="email" type="email" value="${sessionScope.emp.email}" required>
-                                                    <c:if test="${not empty EmailErr}">
-                                                    <p style="color: red">${EmailErr}</p>
+                                                    <c:if test="${not empty EmailErr and param.email ne sessionScope.emp.email}">
+                                                        <p style="color: red">${EmailErr}</p>
                                                     </c:if>
                                                 </div>
                                             </div>
                                             <div class="form-group row mt-2">
                                                 <label class="col-sm-3 col-form-label">Department:</label>
                                                 <div class="col-sm-9">
-                                                    <select name="deptId" class="form-control">
-                                                        <c:forEach var="dept" items="${departments}">
+                                                    <select id="modalDepId" name="deptId" class="form-control" onchange="updateRoleOptions(this.value)">
+                                                        <c:forEach var="dept" items="${sessionScope.departments}">
                                                             <option value="${dept.depId}" 
                                                                     <c:if test="${dept.depId == sessionScope.emp.dept.depId}">selected</c:if>>
                                                                 ${dept.depName}
@@ -123,12 +123,13 @@
                                                     </select>
                                                 </div>
                                             </div>
+
                                             <div class="form-group row mt-2">
                                                 <label class="col-sm-3 col-form-label">Role:</label>
                                                 <div class="col-sm-9">
-                                                    <select name="roleId" class="form-control">
-                                                        <c:forEach var="role" items="${roles}">
-                                                            <option value="${role.roleId}" 
+                                                    <select id="modalRoleId" name="roleId" class="form-control">
+                                                        <c:forEach var="role" items="${sessionScope.roles}">
+                                                            <option value="${role.roleId}"  
                                                                     <c:if test="${role.roleId == sessionScope.emp.role.roleId}">selected</c:if>>
                                                                 ${role.roleName}
                                                             </option>
@@ -165,11 +166,57 @@
                 </div>
             </div>
         </main>
+        <script>
+            const managerDepIds = [
+            <c:forEach var="id" items="${sessionScope.managerDepIds}" varStatus="loop">
+            "${id}"<c:if test="${!loop.last}">,</c:if>
+            </c:forEach>
+            ];
+
+            function updateRoleOptions(selectedDep) {
+                const roleSelect = document.getElementById("modalRoleId");
+                const isDeptHasManager = managerDepIds.includes(selectedDep);
+
+                for (let opt of roleSelect.options) {
+                    const roleName = opt.text.toLowerCase();
+                    opt.text = roleName.includes("hr manager") ? "HR Manager" : roleName.includes("manager") ? "Dept Manager" : opt.text;
+                    opt.disabled = false; // reset
+
+                    if (roleName.includes("hr manager")) {
+                        if (selectedDep !== "D002") {
+                            opt.disabled = true;
+                            opt.text = "HR Manager (Only for HR)";
+                        }
+                    } else if (roleName.includes("manager")) {
+                        if (selectedDep === "D002") {
+                            opt.disabled = true;
+                            opt.text = "Dept Manager (Not available in HR)";
+                        } else if (isDeptHasManager) {
+                            opt.disabled = true;
+                            opt.text = "Dept Manager (Already Assigned)";
+                        }
+                    }
+                }
+
+                if (roleSelect.options[roleSelect.selectedIndex]?.disabled) {
+                    roleSelect.selectedIndex = 0;
+                }
+            }
+
+            document.getElementById("modalDepId").addEventListener("change", function () {
+                updateRoleOptions(this.value);
+            });
+            document.addEventListener("DOMContentLoaded", function () {
+                const depSelect = document.getElementById("modalDepId");
+                if (depSelect.value) {
+                    updateRoleOptions(depSelect.value);
+                }
+            });
+        </script>
         <!-- SCRIPT ZONE -->
         <script src="${pageContext.request.contextPath}/assets2/js/jquery.min.js"></script>
-        <script src="${pageContext.request.contextPath}/assets2/vendors/bootstrap/js/popper.min.js"></script>
-        <script src="${pageContext.request.contextPath}/assets2/vendors/bootstrap/js/bootstrap.min.js"></script>
-        <script src="${pageContext.request.contextPath}/assets2/vendors/bootstrap-select/bootstrap-select.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<!--                    <script src="${pageContext.request.contextPath}/assets2/vendors/bootstrap-select/bootstrap-select.min.js"></script>-->
         <script src="${pageContext.request.contextPath}/assets2/vendors/bootstrap-touchspin/jquery.bootstrap-touchspin.js"></script>
         <script src="${pageContext.request.contextPath}/assets2/vendors/magnific-popup/magnific-popup.js"></script>
         <script src="${pageContext.request.contextPath}/assets2/vendors/counter/waypoints-min.js"></script>

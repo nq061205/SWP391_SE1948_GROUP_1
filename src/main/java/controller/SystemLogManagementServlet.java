@@ -7,6 +7,7 @@ package controller;
 import dal.EmployeeDAO;
 import dal.LeaveRequestDAO;
 import dal.OTRequestDAO;
+import dal.RolePermissionDAO;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
@@ -33,6 +34,12 @@ public class SystemLogManagementServlet extends HttpServlet {
         Employee user = (Employee) session.getAttribute("user");
         if (user == null) {
             response.sendRedirect(request.getContextPath() + "/login");
+            return;
+        }
+        RolePermissionDAO rperDAO = new RolePermissionDAO();
+        if (!rperDAO.hasPermission(user.getRole().getRoleId(), 9)) {
+            session.setAttribute("logMessage", "You do not have permission to access this page.");
+            response.sendRedirect("dashboard");
             return;
         }
         LeaveRequestDAO leaveDAO = new LeaveRequestDAO();
