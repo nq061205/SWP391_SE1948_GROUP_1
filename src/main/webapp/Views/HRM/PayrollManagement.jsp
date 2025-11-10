@@ -1,9 +1,3 @@
-<%-- 
-    Document   : monthly-salary-report
-    Created on : Nov 4, 2025
-    Author     : admin
---%>
-
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
@@ -26,7 +20,7 @@
         <link rel="shortcut icon" type="image/x-icon" href="${pageContext.request.contextPath}/assets2/images/favicon.png" />
 
         <!-- PAGE TITLE HERE ============================================= -->
-        <title>Human Tech - Monthly Salary Report</title>
+        <title>Human Tech - Monthly Payroll Report</title>
 
         <!-- MOBILE SPECIFIC ============================================= -->
         <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -41,34 +35,73 @@
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
 
         <style>
+            .bg-success-light {
+                background-color: #d4edda !important;
+            }
+            .align-middle {
+                vertical-align: middle !important;
+            }
             .salary-report-table {
                 font-size: 0.9rem;
             }
-            .salary-col {
-                width: 120px;
+            .salary-report-table th {
+                font-weight: 600;
+                white-space: nowrap;
             }
-            .summary-col {
-                width: 100px;
-                font-weight: bold;
+            .salary-report-table td {
+                vertical-align: middle;
             }
-            .status-badge {
-                padding: 4px 8px;
-                border-radius: 3px;
-                font-size: 0.85rem;
+            /* Sticky columns */
+            .sticky-table th:nth-child(1),
+            .sticky-table td:nth-child(1) {
+                position: sticky;
+                left: 0;
+                z-index: 5;
+                box-shadow: 2px 0 5px rgba(0,0,0,0.1);
             }
-            .badge-positive {
-                background-color: #d4edda;
-                color: #155724;
+
+            .sticky-table thead th:nth-child(1) {
+                z-index: 10;
+                background-color: #343a40 !important; /* Đen */
             }
-            .badge-negative {
-                background-color: #f8d7da;
-                color: #721c24;
+
+            .sticky-table tbody td:nth-child(1) {
+                background-color: #fff;
             }
-            .badge-neutral {
-                background-color: #e2e3e5;
-                color: #383d41;
+
+            .sticky-table th:nth-child(2),
+            .sticky-table td:nth-child(2) {
+                position: sticky;
+                left: 100px;
+                z-index: 5;
+                box-shadow: 2px 0 5px rgba(0,0,0,0.1);
+            }
+
+            .sticky-table thead th:nth-child(2) {
+                z-index: 10;
+                background-color: #343a40 !important; /* Đen */
+            }
+
+            .sticky-table tbody td:nth-child(2) {
+                background-color: #fff;
+            }
+
+            /* Tất cả header đều đen */
+            .sticky-table thead th {
+                position: sticky;
+                top: 0;
+                z-index: 8;
+                background-color: #343a40 !important; /* Đen */
+                color: #fff !important; /* Chữ trắng */
+            }
+
+            /* Total row */
+            .sticky-table .table-active td:nth-child(1),
+            .sticky-table .table-active td:nth-child(2) {
+                background-color: #e9ecef !important;
             }
         </style>
+
     </head>
 
     <body class="ttr-opened-sidebar ttr-pinned-sidebar">
@@ -78,11 +111,11 @@
             <div class="container-fluid">
                 <!-- Breadcrumb -->
                 <div class="db-breadcrumb">
-                    <h4 class="breadcrumb-title">Monthly Salary Report</h4>
+                    <h4 class="breadcrumb-title">Monthly Payroll Report</h4>
                     <ul class="db-breadcrumb-list">
                         <li><a href="${pageContext.request.contextPath}/Views/HR/hrDashboard.jsp"><i class="fa fa-home"></i>Home</a></li>
                         <li>Payroll Management</li>
-                        <li>Monthly Salary Report</li>
+                        <li>Monthly Payroll Report</li>
                     </ul>
                 </div>
 
@@ -106,17 +139,17 @@
                     <div class="col-lg-12 m-b30">
                         <div class="widget-box">
                             <div class="wc-title">
-                                <h4><i class="fa fa-money"></i> Monthly Salary Report</h4>
+                                <h4><i class="fa fa-money"></i> Monthly Payroll Report</h4>
                                 <div class="float-right">
                                     <div class="btn-group">
                                         <button type="button" class="btn btn-success btn-sm dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                             <i class="fa fa-download"></i> Export
                                         </button>
                                         <div class="dropdown-menu dropdown-menu-right">
-                                            <a class="dropdown-item" href="#" onclick="exportSalary('excel')">
+                                            <a class="dropdown-item" href="#" onclick="exportPayroll('excel')">
                                                 <i class="fa fa-file-excel-o text-success"></i> Export to Excel
                                             </a>
-                                            <a class="dropdown-item" href="#" onclick="exportSalary('pdf')">
+                                            <a class="dropdown-item" href="#" onclick="exportPayroll('pdf')">
                                                 <i class="fa fa-file-pdf-o text-danger"></i> Export to PDF
                                             </a>
                                         </div>
@@ -125,7 +158,8 @@
                             </div>
                             <div class="widget-inner">
                                 <!-- Filters -->
-                                <form method="get" action="monthly-salary" id="filterForm" class="mb-4">
+                                <form method="get" action="monthly-payroll" id="filterForm" class="mb-4">
+
                                     <div class="row">
                                         <!-- Month -->
                                         <div class="col-md-2">
@@ -160,8 +194,20 @@
                                             </div>
                                         </div>
 
-                                        <!-- Department -->
+                                        <!-- Calculate Button -->
                                         <div class="col-md-2">
+                                            <div class="form-group">
+                                                <label>&nbsp;</label>
+                                                <button type="button" class="btn btn-primary btn-block" onclick="calculatePayroll()">
+                                                    <i class="fa fa-calculator"></i> Calculate Payroll
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="row">
+                                        <!-- Department -->
+                                        <div class="col-md-3">
                                             <div class="form-group">
                                                 <label for="departmentFilter">Department</label>
                                                 <select name="department" id="departmentFilter" class="form-control" onchange="applyFilter()">
@@ -172,16 +218,15 @@
                                                 </select>
                                             </div>
                                         </div>
-                                        <div class="col-md-2"></div>
 
                                         <!-- Search -->
-                                        <div class="col-md-4">
+                                        <div class="col-md-5">
                                             <div class="form-group">
                                                 <label for="searchInput">Search</label>
                                                 <div class="input-group">
-                                                    <input type="text" name="search" id="searchInput" 
-                                                           value="${search}" class="form-control" 
-                                                           placeholder="Code, Name or Position...">
+                                                    <input type="text" name="search" id="searchInput"
+                                                           value="${search}" class="form-control"
+                                                           placeholder="Code or Name...">
                                                     <div class="input-group-append">
                                                         <button type="submit" onclick="resetPageBeforeSubmit()" class="btn btn-outline-secondary">
                                                             <i class="fas fa-search"></i>
@@ -192,7 +237,6 @@
                                         </div>
                                     </div>
 
-                                    <!-- Second Row -->
                                     <div class="row">
                                         <div class="col-md-2">
                                             <div class="form-group">
@@ -204,15 +248,17 @@
                                                 </select>
                                             </div>
                                         </div>
+
                                         <div class="col-md-10 text-right">
                                             <label>&nbsp;</label>
                                             <div>
-                                                <a href="monthly-salary" class="btn btn-secondary">
+                                                <a href="monthly-payroll" class="btn btn-secondary">
                                                     <i class="fa fa-refresh"></i> Reset
                                                 </a>
                                             </div>
                                         </div>
                                     </div>
+
                                     <input type="hidden" name="page" value="${currentPage}">
                                 </form>
 
@@ -229,130 +275,139 @@
                                         <small class="text-muted">
                                             <strong>${selectedMonth}/${selectedYear}</strong>
                                             <c:if test="${not empty selectedDepartment}"> | ${selectedDepartment}</c:if>
-                                        </small>
+                                            </small>
+                                        </div>
                                     </div>
-                                </div>
 
-                                <!-- Salary Table -->
+                                    <!-- Payroll Table -->
                                 <c:choose>
-                                    <c:when test="${not empty salaryList}">
+                                    <c:when test="${not empty payrollList}">
+                                        <!-- Payroll Table -->
                                         <div class="table-responsive">
-                                            <table class="table table-bordered table-sm table-hover salary-report-table">
+                                            <table class="table table-sm table-bordered table-hover text-nowrap sticky-table">
                                                 <thead class="thead-dark">
                                                     <tr>
-                                                        <th class="employee-col">Emp Code</th>
-                                                        <th>Name</th>
-                                                        <th>Position</th>
-                                                        <th class="dept-col">Department</th>
-                                                        <th class="salary-col text-right">Regular Salary</th>
-                                                        <th class="salary-col text-right">OT Earning</th>
-                                                        <th class="salary-col text-right">Allowance</th>
-                                                        <th class="salary-col text-right">Insurance</th>
-                                                        <th class="salary-col text-right">SI</th>
-                                                        <th class="salary-col text-right">HI</th>
-                                                        <th class="salary-col text-right">UI</th>
-                                                        <th class="salary-col text-right">Taxable Income</th>
-                                                        <th class="salary-col text-right">Tax</th>
-                                                        <th class="summary-col text-right">Net Salary</th>
+                                                        <th rowspan="2" class="text-center align-middle">Emp Code</th>
+                                                        <th rowspan="2" class="text-center align-middle">Name</th>
+                                                        <th rowspan="2" class="text-center align-middle">Position</th>
+                                                        <th rowspan="2" class="text-center align-middle">Department</th>
+                                                        <th rowspan="2" class="text-center align-middle">Work Day</th>
+                                                        <th rowspan="2" class="text-center align-middle">OT Hours</th>
+                                                        <th rowspan="2" class="text-center align-middle">Regular Salary</th>
+                                                        <th rowspan="2" class="text-center align-middle">OT Earning</th>
+                                                        <th rowspan="2" class="text-center align-middle">Allowance</th>
+                                                        <th rowspan="2" class="text-center align-middle">Insurance Base</th>
+                                                        <th colspan="3" class="text-center">Insurance</th>
+                                                        <th rowspan="2" class="text-center align-middle">Taxable Income</th>
+                                                        <th rowspan="2" class="text-center align-middle">Tax</th>
+                                                        <th rowspan="2" class="text-center align-middle bg-success text-white">Net Salary</th>
+                                                        <th rowspan="2" class="text-center align-middle">Action</th>
+                                                    </tr>
+                                                    <tr>
+                                                        <th class="text-center">SI</th>
+                                                        <th class="text-center">HI</th>
+                                                        <th class="text-center">UI</th>
                                                     </tr>
                                                 </thead>
                                                 <tbody>
-                                                    <c:forEach var="salary" items="${salaryList}">
-                                                        <tr>
-                                                            <td class="employee-col bg-light">
-                                                                <strong class="text-primary">${salary.employee.empCode}</strong>
-                                                            </td>
-                                                            <td class="bg-light">
-                                                                <small>${salary.employee.fullname}</small>
-                                                            </td>
-                                                            <td class="bg-light">
-                                                                <small>${salary.employee.position}</small>
-                                                            </td>
-                                                            <td class="dept-col bg-light">
-                                                                <small class="text-muted">
-                                                                    <c:if test="${not empty salary.employee.dept}">
-                                                                        ${salary.employee.dept.depName}
-                                                                    </c:if>
-                                                                </small>
-                                                            </td>
-                                                            <td class="text-right">
-                                                                <fmt:formatNumber value="${salary.regularSalary}" type="currency" currencySymbol="₫" pattern="###,###"/>
-                                                            </td>
-                                                            <td class="text-right">
-                                                                <fmt:formatNumber value="${salary.otEarning}" type="currency" currencySymbol="₫" pattern="###,###"/>
-                                                            </td>
-                                                            <td class="text-right">
-                                                                <fmt:formatNumber value="${salary.allowance}" type="currency" currencySymbol="₫" pattern="###,###"/>
-                                                            </td>
-                                                            <td class="text-right">
-                                                                <fmt:formatNumber value="${salary.insuranceBase}" type="currency" currencySymbol="₫" pattern="###,###"/>
-                                                            </td>
-                                                            <td class="text-right">
-                                                                <span class="status-badge badge-neutral">
-                                                                    <fmt:formatNumber value="${salary.socialInsurance}" type="currency" currencySymbol="₫" pattern="###,###"/>
-                                                                </span>
-                                                            </td>
-                                                            <td class="text-right">
-                                                                <span class="status-badge badge-neutral">
-                                                                    <fmt:formatNumber value="${salary.healthInsurance}" type="currency" currencySymbol="₫" pattern="###,###"/>
-                                                                </span>
-                                                            </td>
-                                                            <td class="text-right">
-                                                                <span class="status-badge badge-neutral">
-                                                                    <fmt:formatNumber value="${salary.unemploymentInsurance}" type="currency" currencySymbol="₫" pattern="###,###"/>
-                                                                </span>
-                                                            </td>
-                                                            <td class="text-right">
-                                                                <fmt:formatNumber value="${salary.taxableIncome}" type="currency" currencySymbol="₫" pattern="###,###"/>
-                                                            </td>
-                                                            <td class="text-right">
-                                                                <span class="status-badge badge-negative">
-                                                                    <fmt:formatNumber value="${salary.tax}" type="currency" currencySymbol="₫" pattern="###,###"/>
-                                                                </span>
-                                                            </td>
-                                                            <td class="summary-col text-right">
-                                                                <span class="status-badge badge-positive">
-                                                                    <fmt:formatNumber value="${salary.netSalary}" type="currency" currencySymbol="₫" pattern="###,###"/>
-                                                                </span>
-                                                            </td>
-                                                        </tr>
-                                                    </c:forEach>
+                                                    <c:choose>
+                                                        <c:when test="${not empty employees}">
+                                                            <c:forEach items="${employees}" var="emp" varStatus="status">
+                                                                <c:set var="payroll" value="${payrollMap[emp.empId]}" />
+                                                                <c:choose>
+                                                                    <c:when test="${payroll != null}">
+                                                                        <c:set var="allowance" value="${payroll.insuranceBase - payroll.regularSalary}" />
+                                                                        <c:set var="netSalary" value="${payroll.regularSalary + payroll.otEarning + allowance - payroll.si - payroll.hi - payroll.ui - payroll.tax}" />
+
+                                                                        <tr>
+                                                                            <td class="text-center font-weight-bold">${emp.empCode}</td>
+                                                                            <td>${emp.fullname}</td>
+                                                                            <td class="text-center"><small>${emp.positionTitle}</small></td>
+                                                                            <td class="text-center"><small>${emp.dept.depName}</small></td>
+                                                                            <td class="text-center">
+                                                                                <span class="badge badge-info">${payroll.totalWorkDay}</span>
+                                                                            </td>
+                                                                            <td class="text-center">
+                                                                                <c:choose>
+                                                                                    <c:when test="${payroll.totalOTHours > 0}">
+                                                                                        <span class="badge badge-warning">${payroll.totalOTHours}</span>
+                                                                                    </c:when>
+                                                                                    <c:otherwise>
+                                                                                        <span class="text-muted">-</span>
+                                                                                    </c:otherwise>
+                                                                                </c:choose>
+                                                                            </td>
+                                                                            <td class="text-right"><small><fmt:formatNumber value="${payroll.regularSalary}" pattern="#,###" /></small></td>
+                                                                            <td class="text-right"><small><fmt:formatNumber value="${payroll.otEarning}" pattern="#,###" /></small></td>
+                                                                            <td class="text-right"><small><fmt:formatNumber value="${allowance}" pattern="#,###" /></small></td>
+                                                                            <td class="text-right"><small><fmt:formatNumber value="${payroll.insuranceBase}" pattern="#,###" /></small></td>
+                                                                            <td class="text-right"><small><fmt:formatNumber value="${payroll.si}" pattern="#,###" /></small></td>
+                                                                            <td class="text-right"><small><fmt:formatNumber value="${payroll.hi}" pattern="#,###" /></small></td>
+                                                                            <td class="text-right"><small><fmt:formatNumber value="${payroll.ui}" pattern="#,###" /></small></td>
+                                                                            <td class="text-right"><small><fmt:formatNumber value="${payroll.taxIncome}" pattern="#,###" /></small></td>
+                                                                            <td class="text-right"><small><fmt:formatNumber value="${payroll.tax}" pattern="#,###" /></small></td>
+                                                                            <td class="text-right bg-success text-white font-weight-bold">
+                                                                                <small><fmt:formatNumber value="${netSalary}" pattern="#,###" /></small>
+                                                                            </td>
+                                                                            <td class="text-center">
+                                                                                <button class="btn btn-sm btn-primary" onclick="recalculatePayroll(${emp.empId}, ${selectedMonth}, ${selectedYear})">
+                                                                                    <i class="fa fa-sync-alt"></i>
+                                                                                </button>
+                                                                            </td>
+                                                                        </tr>
+                                                                    </c:when>
+                                                                    <c:otherwise>
+                                                                        <tr>
+                                                                            <td class="text-center font-weight-bold">${emp.empCode}</td>
+                                                                            <td>${emp.fullname}</td>
+                                                                            <td class="text-center"><small>${emp.positionTitle}</small></td>
+                                                                            <td class="text-center"><small>${emp.dept.depName}</small></td>
+                                                                            <td colspan="12" class="text-center text-muted">
+                                                                                <em><small>No payroll data</small></em>
+                                                                            </td>
+                                                                            <td class="text-center">
+                                                                                <button class="btn btn-sm btn-warning" onclick="recalculatePayroll(${emp.empId}, ${selectedMonth}, ${selectedYear})">
+                                                                                    <i class="fa fa-calculator"></i>
+                                                                                </button>
+                                                                            </td>
+                                                                        </tr>
+                                                                    </c:otherwise>
+                                                                </c:choose>
+                                                            </c:forEach>
+
+                                                            <!-- Total Row -->
+                                                            <tr class="table-active font-weight-bold">
+                                                                <td class="text-right">TOTAL:</td>
+                                                                <td></td>
+                                                                <td class="text-center">-</td>
+                                                                <td class="text-center">-</td>
+                                                                <td class="text-center">-</td>
+                                                                <td class="text-center">-</td>
+                                                                <td class="text-right"><fmt:formatNumber value="${sumRegularSalary}" pattern="#,###" /></td>
+                                                                <td class="text-right"><fmt:formatNumber value="${sumOTEarning}" pattern="#,###" /></td>
+                                                                <td class="text-right"><fmt:formatNumber value="${sumAllowance}" pattern="#,###" /></td>
+                                                                <td class="text-right"><fmt:formatNumber value="${sumRegularSalary + sumAllowance}" pattern="#,###" /></td>
+                                                                <td class="text-right"><fmt:formatNumber value="${sumSI}" pattern="#,###" /></td>
+                                                                <td class="text-right"><fmt:formatNumber value="${sumHI}" pattern="#,###" /></td>
+                                                                <td class="text-right"><fmt:formatNumber value="${sumUI}" pattern="#,###" /></td>
+                                                                <td class="text-right"><fmt:formatNumber value="${sumTaxableIncome}" pattern="#,###" /></td>
+                                                                <td class="text-right"><fmt:formatNumber value="${sumTax}" pattern="#,###" /></td>
+                                                                <td class="text-right bg-success text-white">
+                                                                    <fmt:formatNumber value="${sumNetSalary}" pattern="#,###" />
+                                                                </td>
+                                                                <td></td>
+                                                            </tr>
+                                                        </c:when>
+                                                        <c:otherwise>
+                                                            <tr>
+                                                                <td colspan="17" class="text-center text-muted py-4">
+                                                                    <i class="fa fa-inbox fa-2x mb-2 d-block"></i>
+                                                                    <p class="mb-0">No employees found</p>
+                                                                </td>
+                                                            </tr>
+                                                        </c:otherwise>
+                                                    </c:choose>
                                                 </tbody>
-                                                <tfoot class="thead-dark">
-                                                    <tr>
-                                                        <th colspan="4" class="text-right">TOTAL</th>
-                                                        <th class="text-right">
-                                                            <fmt:formatNumber value="${totalRegularSalary}" type="currency" currencySymbol="₫" pattern="###,###"/>
-                                                        </th>
-                                                        <th class="text-right">
-                                                            <fmt:formatNumber value="${totalOTEarning}" type="currency" currencySymbol="₫" pattern="###,###"/>
-                                                        </th>
-                                                        <th class="text-right">
-                                                            <fmt:formatNumber value="${totalAllowance}" type="currency" currencySymbol="₫" pattern="###,###"/>
-                                                        </th>
-                                                        <th class="text-right">
-                                                            <fmt:formatNumber value="${totalInsuranceBase}" type="currency" currencySymbol="₫" pattern="###,###"/>
-                                                        </th>
-                                                        <th class="text-right">
-                                                            <fmt:formatNumber value="${totalSI}" type="currency" currencySymbol="₫" pattern="###,###"/>
-                                                        </th>
-                                                        <th class="text-right">
-                                                            <fmt:formatNumber value="${totalHI}" type="currency" currencySymbol="₫" pattern="###,###"/>
-                                                        </th>
-                                                        <th class="text-right">
-                                                            <fmt:formatNumber value="${totalUI}" type="currency" currencySymbol="₫" pattern="###,###"/>
-                                                        </th>
-                                                        <th class="text-right">
-                                                            <fmt:formatNumber value="${totalTaxableIncome}" type="currency" currencySymbol="₫" pattern="###,###"/>
-                                                        </th>
-                                                        <th class="text-right">
-                                                            <fmt:formatNumber value="${totalTax}" type="currency" currencySymbol="₫" pattern="###,###"/>
-                                                        </th>
-                                                        <th class="text-right">
-                                                            <fmt:formatNumber value="${totalNetSalary}" type="currency" currencySymbol="₫" pattern="###,###"/>
-                                                        </th>
-                                                    </tr>
-                                                </tfoot>
                                             </table>
                                         </div>
 
@@ -386,7 +441,7 @@
 
                                                             <c:if test="${currentPage > 4}">
                                                                 <li class="page-item disabled"><span class="page-link">...</span></li>
-                                                            </c:if>
+                                                                </c:if>
 
                                                             <!-- Middle -->
                                                             <c:forEach begin="${currentPage - 2 > 2 ? currentPage - 2 : 2}" 
@@ -401,7 +456,7 @@
 
                                                             <c:if test="${currentPage < totalPages - 3}">
                                                                 <li class="page-item disabled"><span class="page-link">...</span></li>
-                                                            </c:if>
+                                                                </c:if>
 
                                                             <!-- Last -->
                                                             <li class="page-item ${totalPages == currentPage ? 'active' : ''}">
@@ -427,7 +482,7 @@
                                             <i class="fa fa-calendar-times-o fa-4x text-muted mb-3"></i>
                                             <h5 class="text-muted">No Salary Records Found</h5>
                                             <p class="text-muted">No records match your filter criteria.</p>
-                                            <a href="monthly-salary?month=${selectedMonth}&year=${selectedYear}" class="btn btn-primary">
+                                            <a href="monthly-payroll?month=${selectedMonth}&year=${selectedYear}" class="btn btn-primary">
                                                 <i class="fa fa-refresh"></i> Reset Filters
                                             </a>
                                         </div>
@@ -450,60 +505,72 @@
     <script src="${pageContext.request.contextPath}/assets2/js/admin.js"></script>
 
     <script>
-        var isProcessing = false;
+                                                                                    var isProcessing = false;
 
-        $(document).ready(function () {
-            setTimeout(function () {
-                $('.alert').fadeOut('slow');
-            }, 5000);
-        });
+                                                                                    $(document).ready(function () {
+                                                                                        setTimeout(function () {
+                                                                                            $('.alert').fadeOut('slow');
+                                                                                        }, 5000);
+                                                                                    });
 
-        function changePageSize(newPageSize) {
-            if (isProcessing) {
-                alert('Please wait until processing is complete');
-                return;
-            }
-            const form = document.getElementById('filterForm');
-            if (!form) {
-                alert('Error: Form not found');
-                return;
-            }
-            const pageInput = form.querySelector('input[name="page"]');
-            if (pageInput) {
-                pageInput.value = 1;
-            }
-            form.submit();
-        }
+                                                                                    function changePageSize(newPageSize) {
+                                                                                        if (isProcessing) {
+                                                                                            alert('Please wait until processing is complete');
+                                                                                            return;
+                                                                                        }
+                                                                                        const form = document.getElementById('filterForm');
+                                                                                        if (!form) {
+                                                                                            alert('Error: Form not found');
+                                                                                            return;
+                                                                                        }
+                                                                                        const pageInput = form.querySelector('input[name="page"]');
+                                                                                        if (pageInput) {
+                                                                                            pageInput.value = 1;
+                                                                                        }
+                                                                                        form.submit();
+                                                                                    }
 
-        function resetPageBeforeSubmit() {
-            const form = document.getElementById('filterForm');
-            if (form) {
-                form.querySelector('input[name="page"]').value = 1;
-            }
-        }
+                                                                                    function resetPageBeforeSubmit() {
+                                                                                        const form = document.getElementById('filterForm');
+                                                                                        if (form) {
+                                                                                            form.querySelector('input[name="page"]').value = 1;
+                                                                                        }
+                                                                                    }
 
-        function applyFilter() {
-            const form = document.getElementById('filterForm');
-            if (!form)
-                return;
-            form.querySelector('input[name="page"]').value = 1;
-            form.submit();
-        }
+                                                                                    function applyFilter() {
+                                                                                        const form = document.getElementById('filterForm');
+                                                                                        if (!form)
+                                                                                            return;
+                                                                                        form.querySelector('input[name="page"]').value = 1;
+                                                                                        form.submit();
+                                                                                    }
 
-        function exportSalary(format) {
-            var form = $('#filterForm');
-            if (!form.length) {
-                alert('Form not found!');
-                return;
-            }
-            var params = form.serialize();
-            var url;
-            if (format === 'excel') {
-                url = 'export-salary-excel?' + params;
-            } else if (format === 'pdf') {
-                url = 'export-salary-pdf?' + params;
-            }
-            window.location.href = url;
-        }
+                                                                                    function calculatePayroll() {
+                                                                                        if (confirm('Calculate payroll for all employees in this month?')) {
+                                                                                            const form = document.getElementById('filterForm');
+                                                                                            const actionInput = document.createElement('input');
+                                                                                            actionInput.type = 'hidden';
+                                                                                            actionInput.name = 'action';
+                                                                                            actionInput.value = 'calculate';
+                                                                                            form.appendChild(actionInput);
+                                                                                            form.submit();
+                                                                                        }
+                                                                                    }
+
+                                                                                    function exportPayroll(format) {
+                                                                                        var form = $('#filterForm');
+                                                                                        if (!form.length) {
+                                                                                            alert('Form not found!');
+                                                                                            return;
+                                                                                        }
+                                                                                        var params = form.serialize();
+                                                                                        var url;
+                                                                                        if (format === 'excel') {
+                                                                                            url = 'export-salary-excel?' + params;
+                                                                                        } else if (format === 'pdf') {
+                                                                                            url = 'export-salary-pdf?' + params;
+                                                                                        }
+                                                                                        window.location.href = url;
+                                                                                    }
     </script>
 </html>

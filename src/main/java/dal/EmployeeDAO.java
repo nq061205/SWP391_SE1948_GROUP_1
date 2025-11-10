@@ -1007,7 +1007,8 @@ public class EmployeeDAO extends DBContext {
 
     public static void main(String[] args) {
         EmployeeDAO dao = new EmployeeDAO();
-        dao.updateDecreasePaidLeaveDaysByEmployeeId(18, 2);
+        List<Employee> emps = dao.getAllEmployees();
+        System.out.println(emps.size());
     }
 
 }

@@ -126,6 +126,94 @@ public class PayrollDAO {
         }
         return result;
     }
+    
+     public boolean insertPayroll(Payroll payroll) {
+        String sql = "INSERT INTO payroll (emp_id, total_work_day, total_ot_hours, regular_salary, "
+                + "ot_earning, insurance_base, SI, HI, UI, tax_income, tax, month, year, is_paid) "
+                + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        
+        try (Connection conn = DBContext.getConnection(); 
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            
+            ps.setInt(1, payroll.getEmployee().getEmpId());
+            ps.setDouble(2, payroll.getTotalWorkDay());
+            ps.setDouble(3, payroll.getTotalOTHours());
+            ps.setDouble(4, payroll.getRegularSalary());
+            ps.setDouble(5, payroll.getOtEarning());
+            ps.setDouble(6, payroll.getInsuranceBase());
+            ps.setDouble(7, payroll.getSi());
+            ps.setDouble(8, payroll.getHi());
+            ps.setDouble(9, payroll.getUi());
+            ps.setDouble(10, payroll.getTaxIncome());
+            ps.setDouble(11, payroll.getTax());
+            ps.setInt(12, payroll.getMonth());
+            ps.setInt(13, payroll.getYear());
+            ps.setBoolean(14, payroll.isPaid());
+            
+            return ps.executeUpdate() > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+    
+    public boolean updatePayroll(Payroll payroll) {
+        String sql = "UPDATE payroll SET total_work_day = ?, total_ot_hours = ?, "
+                + "regular_salary = ?, ot_earning = ?, insurance_base = ?, SI = ?, HI = ?, UI = ?, "
+                + "tax_income = ?, tax = ?, is_paid = ?, updated_at = CURRENT_TIMESTAMP "
+                + "WHERE payroll_id = ?";
+        
+        try (Connection conn = DBContext.getConnection(); 
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            
+            ps.setDouble(1, payroll.getTotalWorkDay());
+            ps.setDouble(2, payroll.getTotalOTHours());
+            ps.setDouble(3, payroll.getRegularSalary());
+            ps.setDouble(4, payroll.getOtEarning());
+            ps.setDouble(5, payroll.getInsuranceBase());
+            ps.setDouble(6, payroll.getSi());
+            ps.setDouble(7, payroll.getHi());
+            ps.setDouble(8, payroll.getUi());
+            ps.setDouble(9, payroll.getTaxIncome());
+            ps.setDouble(10, payroll.getTax());
+            ps.setBoolean(11, payroll.isPaid());
+            ps.setInt(12, payroll.getPayrollId());
+            
+            return ps.executeUpdate() > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    public boolean saveOrUpdatePayroll(Payroll payroll) {
+        Payroll existing = getPayrollDeatailByTime(
+            payroll.getEmployee().getEmpId(), 
+            payroll.getMonth(), 
+            payroll.getYear()
+        );
+        
+        if (existing != null) {
+            payroll.setPayrollId(existing.getPayrollId());
+            return updatePayroll(payroll);
+        } else {
+            return insertPayroll(payroll);
+        }
+    }
+    
+    public boolean markAsPaid(int payrollId) {
+        String sql = "UPDATE payroll SET is_paid = 1, updated_at = CURRENT_TIMESTAMP WHERE payroll_id = ?";
+        
+        try (Connection conn = DBContext.getConnection(); 
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            
+            ps.setInt(1, payrollId);
+            return ps.executeUpdate() > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
 
     public static void main(String[] args) {
         PayrollDAO dao = new PayrollDAO();
