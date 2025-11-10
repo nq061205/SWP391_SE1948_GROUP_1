@@ -986,7 +986,14 @@ public class EmployeeDAO extends DBContext {
     }
 
     public Employee getManagerByDepartment(String depId) {
-        String sql = BASE_SELECT_SQL + " WHERE e.dep_id = ? AND r.role_name like '%Manager%'";
+        String sql;
+
+        if ("D002".equalsIgnoreCase(depId)) {
+            sql = BASE_SELECT_SQL + " WHERE e.dep_id = ? AND r.role_name = 'HR Manager'";
+        } else {
+            sql = BASE_SELECT_SQL + " WHERE e.dep_id = ? AND r.role_name = 'Dept Manager'";
+        }
+
         try (Connection conn = DBContext.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
 
             ps.setString(1, depId);
@@ -996,9 +1003,11 @@ public class EmployeeDAO extends DBContext {
                     return mapResultSetToEmployee(rs);
                 }
             }
+
         } catch (Exception ex) {
             Logger.getLogger(EmployeeDAO.class.getName()).log(Level.SEVERE, null, ex);
         }
+
         return null;
     }
 
@@ -1036,7 +1045,7 @@ public class EmployeeDAO extends DBContext {
 
     public static void main(String[] args) {
         EmployeeDAO dao = new EmployeeDAO();
-        System.out.println(dao.existsByRoleName("Admin"));
+        System.out.println(dao.getManagerByDepartment("D002"));
     }
 
 }
