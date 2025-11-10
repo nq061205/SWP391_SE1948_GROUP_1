@@ -113,6 +113,18 @@
                 border-color: #007bff;
                 color: white;
             }
+            .btn-success:hover {
+                background-color: #28a745 !important;
+                border-color: #28a745 !important;
+                transform: translateY(-1px);
+                box-shadow: 0 2px 4px rgba(40, 167, 69, 0.3);
+            }
+            .btn-danger:hover {
+                background-color: #dc3545 !important;
+                border-color: #dc3545 !important;
+                transform: translateY(-1px);
+                box-shadow: 0 2px 4px rgba(220, 53, 69, 0.3);
+            }
         </style>
     </head>
     <body class="ttr-opened-sidebar ttr-pinned-sidebar">
@@ -156,8 +168,8 @@
                             <div class="widget-inner">
 
                                 <div class="row mb-3">
-                                    <div class="col-md-4">
-                                        <form action="${pageContext.request.contextPath}/postreview" method="get" class="form-inline">
+                                    <div class="col-12 mb-2">
+                                        <form action="${pageContext.request.contextPath}/postreview" method="get" class="d-flex flex-wrap align-items-center" style="gap: 10px;" id="postReviewFilterForm">
                                             <input type="hidden" name="pageSize" value="${pageSize}">
                                             <c:if test="${not empty statusFilter}">
                                                 <input type="hidden" name="status" value="${statusFilter}">
@@ -171,87 +183,65 @@
                                             <c:if test="${not empty toDate}">
                                                 <input type="hidden" name="toDate" value="${toDate}">
                                             </c:if>
-                                            <div class="form-group mr-2">
-                                                <label for="search" class="mr-2">Search:</label>
+                                            
+                                            <!-- Search -->
+                                            <div class="d-flex align-items-center" style="flex: 1 1 auto; min-width: 200px;">
+                                                <label for="search" class="mr-2 mb-0" style="white-space: nowrap;">Search:</label>
                                                 <input type="text" class="form-control" id="search" name="search"
-                                                       value="${searchKeyword}" placeholder="Search by title, department...">
+                                                       value="${searchKeyword}" placeholder="Title, dept..." style="flex: 1;">
                                             </div>
-                                            <button type="submit" class="btn btn-primary">
-                                                <i class="fa fa-search"></i> Search
-                                            </button>
-                                            <c:if test="${not empty searchKeyword}">
-                                                <a href="${searchClearUrl}" class="btn btn-secondary ml-2">
-                                                    <i class="fa fa-times"></i> Clear
-                                                </a>
-                                            </c:if>
-                                        </form>
-                                    </div>
-                                    <div class="col-md-4 text-center">
-                                        <form action="${pageContext.request.contextPath}/postreview" method="get" class="form-inline justify-content-center">
-                                            <c:if test="${not empty searchKeyword}">
-                                                <input type="hidden" name="search" value="${searchKeyword}">
-                                            </c:if>
-                                            <c:if test="${not empty statusFilter}">
-                                                <input type="hidden" name="status" value="${statusFilter}">
-                                            </c:if>
-                                            <c:if test="${not empty depIdFilter}">
-                                                <input type="hidden" name="depId" value="${depIdFilter}">
-                                            </c:if>
-                                            <input type="hidden" name="pageSize" value="${pageSize}">
-                                            <div class="form-group mr-2">
-                                                <label for="fromDate" class="mr-2" style="white-space: nowrap;">From:</label>
+                                            
+                                            <!-- Date Range -->
+                                            <div class="d-flex align-items-center" style="white-space: nowrap;">
+                                                <label for="fromDate" class="mr-2 mb-0">From:</label>
                                                 <input type="date" class="form-control" id="fromDate" name="fromDate"
-                                                       value="${fromDate}" style="width: 150px;">
+                                                       value="${fromDate}" style="width: 140px;">
                                             </div>
-                                            <div class="form-group mr-2">
-                                                <label for="toDate" class="mr-2" style="white-space: nowrap;">To:</label>
+                                            <div class="d-flex align-items-center" style="white-space: nowrap;">
+                                                <label for="toDate" class="mr-2 mb-0">To:</label>
                                                 <input type="date" class="form-control" id="toDate" name="toDate"
-                                                       value="${toDate}" style="width: 150px;">
+                                                       value="${toDate}" style="width: 140px;">
                                             </div>
-                                            <button type="submit" class="btn btn-info">
-                                                <i class="fa fa-filter"></i> Filter
+                                            
+                                            <!-- Department -->
+                                            <div class="d-flex align-items-center" style="white-space: nowrap;">
+                                                <label for="depIdFilter" class="mr-2 mb-0">Dept:</label>
+                                                <select class="form-control" id="depIdFilter" name="depId" style="width: 110px;">
+                                                    <option value="">All</option>
+                                                    <c:forEach items="${departments}" var="dept">
+                                                        <option value="${dept.depId}" ${depIdFilter == dept.depId ? 'selected' : ''}>${dept.depName}</option>
+                                                    </c:forEach>
+                                                </select>
+                                            </div>
+                                            
+                                            <!-- Status -->
+                                            <div class="d-flex align-items-center" style="white-space: nowrap;">
+                                                <label for="statusFilter" class="mr-2 mb-0">Status:</label>
+                                                <select class="form-control" id="statusFilter" name="status" style="width: 100px;">
+                                                    <option value="" ${empty statusFilter ? 'selected' : ''}>All</option>
+                                                    <option value="Waiting" ${statusFilter == 'Waiting' ? 'selected' : ''}>Waiting</option>
+                                                    <option value="Rejected" ${statusFilter == 'Rejected' ? 'selected' : ''}>Rejected</option>
+                                                </select>
+                                            </div>
+                                            
+                                            <!-- Page Size -->
+                                            <div class="d-flex align-items-center" style="white-space: nowrap;">
+                                                <select class="form-control" id="pageSizeSelect" name="pageSize" style="width: 60px;">
+                                                    <option value="5" ${pageSize == 5 ? 'selected' : ''}>5</option>
+                                                    <option value="10" ${pageSize == 10 ? 'selected' : ''}>10</option>
+                                                    <option value="25" ${pageSize == 25 ? 'selected' : ''}>25</option>
+                                                    <option value="50" ${pageSize == 50 ? 'selected' : ''}>50</option>
+                                                </select>
+                                                <span class="ml-1 mb-0">per page</span>
+                                            </div>
+                                            
+                                            <!-- Buttons -->
+                                            <button type="submit" class="btn btn-primary" style="white-space: nowrap;">
+                                                <i class="fa fa-filter"></i> Apply
                                             </button>
-                                            <c:if test="${not empty fromDate || not empty toDate}">
-                                                <a href="${dateClearUrl}" class="btn btn-secondary ml-2">
-                                                    <i class="fa fa-times"></i> Clear
-                                                </a>
-                                            </c:if>
-                                        </form>
-                                    </div>
-                                    <div class="col-md-4 text-right">
-                                        <form action="${pageContext.request.contextPath}/postreview" method="get" class="form-inline float-right" style="display: flex !important; align-items: center; flex-wrap: nowrap;">
-                                            <c:if test="${not empty searchKeyword}">
-                                                <input type="hidden" name="search" value="${searchKeyword}">
-                                            </c:if>
-                                            <c:if test="${not empty fromDate}">
-                                                <input type="hidden" name="fromDate" value="${fromDate}">
-                                            </c:if>
-                                            <c:if test="${not empty toDate}">
-                                                <input type="hidden" name="toDate" value="${toDate}">
-                                            </c:if>
-                                            <label for="depIdFilter" class="mr-2" style="white-space: nowrap;">Department:</label>
-                                            <select class="form-control mr-2" id="depIdFilter" name="depId" style="width: 120px; height: 38px; flex-shrink: 0;">
-                                                <option value="">All</option>
-                                                <c:forEach items="${departments}" var="dept">
-                                                    <option value="${dept.depId}" ${depIdFilter == dept.depId ? 'selected' : ''}>${dept.depName}</option>
-                                                </c:forEach>
-                                            </select>
-                                            <label for="statusFilter" class="mr-2" style="white-space: nowrap;">Status:</label>
-                                            <select class="form-control mr-2" id="statusFilter" name="status" style="width: 100px; height: 38px; flex-shrink: 0;">
-                                                <option value="" ${empty statusFilter ? 'selected' : ''}>All</option>
-                                                <option value="Waiting" ${statusFilter == 'Waiting' ? 'selected' : ''}>Waiting</option>
-                                                <option value="Rejected" ${statusFilter == 'Rejected' ? 'selected' : ''}>Rejected</option>
-                                            </select>
-                                            <select class="form-control" id="pageSizeSelect" name="pageSize" style="width: 60px; height: 38px; margin-right: 8px; flex-shrink: 0;">
-                                                <option value="5" ${pageSize == 5 ? 'selected' : ''}>5</option>
-                                                <option value="10" ${pageSize == 10 ? 'selected' : ''}>10</option>
-                                                <option value="25" ${pageSize == 25 ? 'selected' : ''}>25</option>
-                                                <option value="50" ${pageSize == 50 ? 'selected' : ''}>50</option>
-                                            </select>
-                                            <button type="submit" class="btn btn-primary" style="height: 38px; padding: 0.375rem 0.75rem; margin-right: 8px; flex-shrink: 0; white-space: nowrap;">
-                                                <i class="fa fa-check"></i> Apply
+                                            <button type="button" class="btn btn-secondary" id="clearPostReviewFilter" style="white-space: nowrap;">
+                                                <i class="fa fa-times"></i> Clear
                                             </button>
-                                            <span style="white-space: nowrap; height: 38px; display: flex; align-items: center; flex-shrink: 0;">per page</span>
                                         </form>
                                     </div>
                                 </div>
@@ -333,9 +323,13 @@
                                                 </c:when>
                                                 <c:otherwise>
                                                     <tr>
-                                                        <td colspan="4" class="text-center">
-                                                            <div class="alert alert-info" role="alert" style="margin: 20px 0;">
-                                                                <i class="fa fa-info-circle"></i> No posts found matching your criteria
+                                                        <td colspan="4" class="text-center p-0">
+                                                            <div class="text-center py-5">
+                                                                <div class="mb-3">
+                                                                    <i class="fa fa-inbox fa-3x text-muted"></i>
+                                                                </div>
+                                                                <h5 class="text-muted">No Posts Found</h5>
+                                                                <p class="text-muted">There are currently no posts matching your criteria.</p>
                                                             </div>
                                                         </td>
                                                     </tr>
@@ -402,6 +396,21 @@
     <script src="${pageContext.request.contextPath}/assets2/vendors/scroll/scrollbar.min.js"></script>
     <script src="${pageContext.request.contextPath}/assets2/js/functions.js"></script>
     <script src="${pageContext.request.contextPath}/assets2/vendors/chart/chart.min.js"></script>
-    <script src="${pageContext.request.contextPath}/assets2/js/admin.js"></script>
-    <script src="${pageContext.request.contextPath}/assets2/vendors/switcher/switcher.js"></script>
+        <script src="${pageContext.request.contextPath}/assets2/js/admin.js"></script>
+        <script src="${pageContext.request.contextPath}/assets2/vendors/switcher/switcher.js"></script>
+        <script>
+            $(document).ready(function() {
+                // Clear filter for PostReview
+                $('#clearPostReviewFilter').click(function(e) {
+                    e.preventDefault();
+                    $('#search').val('');
+                    $('#fromDate').val('');
+                    $('#toDate').val('');
+                    $('#depIdFilter').val('');
+                    $('#statusFilter').val('');
+                    $('#pageSizeSelect').val('10');
+                    $('#postReviewFilterForm').submit();
+                });
+            });
+        </script>
 </html>
