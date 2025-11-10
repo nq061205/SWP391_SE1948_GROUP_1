@@ -78,7 +78,6 @@
                 <div class="db-breadcrumb">
                     <h4 class="breadcrumb-title">Department Listing</h4>
                     <ul class="db-breadcrumb-list">
-                        <li><a href="${pageContext.request.contextPath}/Views/Admin/adminDashboard.jsp"><i class="fa fa-home"></i>Home</a></li>
                         <li><a href="${pageContext.request.contextPath}/departmentlist">Department list</a></li>
                     </ul>
                 </div>

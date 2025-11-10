@@ -159,9 +159,8 @@
                 <div class="db-breadcrumb mb-3">
                     <h4 class="breadcrumb-title">Employee Detail</h4>
                     <ul class="db-breadcrumb-list">
-                        <li><a href="${pageContext.request.contextPath}/Views/HR/hrDashboard.jsp"><i class="fa fa-home"></i> Home</a></li>
                         <li><a href="${pageContext.request.contextPath}/employeelist">Employee list</a></li>
-                        <li>Detail</li>
+                        <li>Employee Detail</li>
                     </ul>
                 </div>
                 <ul class="nav nav-tabs mb-4" id="employeeTabs" role="tablist">
