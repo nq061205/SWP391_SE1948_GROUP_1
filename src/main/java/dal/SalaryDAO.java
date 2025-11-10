@@ -14,7 +14,7 @@ import model.*;
  * @author Nguyen Dinh Quy HE190184
  */
 public class SalaryDAO {
-
+    
     private static final String SALARY_SELECT_SQL
             = "SELECT s.salary_id, s.emp_id, s.base_salary, s.allowance, \n"
             + "	   s.start_date, s.end_date, s.created_at, s.is_active,\n"
@@ -26,17 +26,17 @@ public class SalaryDAO {
             + "       JOIN employee e ON s.emp_id = e.emp_id \n"
             + "       LEFT JOIN department d ON e.dep_id = d.dep_id \n"
             + "	   LEFT JOIN role r ON e.role_id = r.role_id ";
-
+    
     private Salary mapResultSetToPayroll(ResultSet rs) throws SQLException {
         Department dept = new Department();
         dept.setDepId(rs.getString("dep_id"));
         dept.setDepName(rs.getString("dep_name"));
         dept.setDescription(rs.getString("dep_description"));
-
+        
         Role role = new Role();
         role.setRoleId(rs.getInt("role_id"));
         role.setRoleName(rs.getString("role_name"));
-
+        
         Employee emp = new Employee();
         emp.setEmpId(rs.getInt("emp_id"));
         emp.setEmpCode(rs.getString("emp_code"));
@@ -52,7 +52,7 @@ public class SalaryDAO {
         emp.setStatus(rs.getBoolean("status"));
         emp.setDept(dept);
         emp.setRole(role);
-
+        
         Salary p = new Salary();
         p.setSalaryId(rs.getInt("salary_id"));
         p.setEmployee(emp);
@@ -62,10 +62,10 @@ public class SalaryDAO {
         p.setEndDate(rs.getDate("end_date"));
         p.setCreatedAt(rs.getTimestamp("created_at"));
         p.setActive(rs.getBoolean("is_active"));
-
+        
         return p;
     }
-
+    
     public Salary getSalaryDeatailByPayrollId(int salary_id) {
         String sql = SALARY_SELECT_SQL + " WHERE s.salary_id = ?";
         try (Connection conn = DBContext.getConnection(); PreparedStatement stm = conn.prepareStatement(sql)) {
@@ -80,21 +80,21 @@ public class SalaryDAO {
         }
         return null;
     }
-
+    
     public Salary getSalaryDeatailByTime(int empId, int month, int year) {
         String sql = SALARY_SELECT_SQL
                 + " WHERE s.emp_id = ? "
                 + "   AND (? BETWEEN MONTH(s.start_date) AND IFNULL(MONTH(s.end_date), ?)) "
                 + "   AND (? BETWEEN YEAR(s.start_date) AND IFNULL(YEAR(s.end_date), ?))";
-
+        
         try (Connection conn = DBContext.getConnection(); PreparedStatement stm = conn.prepareStatement(sql)) {
-
+            
             stm.setInt(1, empId);
             stm.setInt(2, month);
             stm.setInt(3, month);
             stm.setInt(4, year);
             stm.setInt(5, year);
-
+            
             try (ResultSet rs = stm.executeQuery()) {
                 if (rs.next()) {
                     return mapResultSetToPayroll(rs);
@@ -105,10 +105,36 @@ public class SalaryDAO {
         }
         return null;
     }
-
+    
+    public Salary getActiveSalaryByEmpId(int empId) {
+        String sql = "SELECT * FROM salary WHERE emp_id = ? AND is_active = 1 ORDER BY created_at DESC LIMIT 1";
+        
+        try (Connection conn = DBContext.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
+            
+            ps.setInt(1, empId);
+            ResultSet rs = ps.executeQuery();
+            
+            if (rs.next()) {
+                EmployeeDAO empDAO = new EmployeeDAO();
+                Employee e = empDAO.getEmployeeByEmpId(rs.getInt("emp_id"));
+                Salary salary = new Salary();
+                salary.setSalaryId(rs.getInt("salary_id"));
+                salary.setBaseSalary(rs.getDouble("base_salary"));
+                salary.setAllowance(rs.getDouble("allowance"));
+                salary.setStartDate(rs.getDate("start_date"));
+                salary.setEndDate(rs.getDate("end_date"));
+                salary.setActive(rs.getBoolean("is_active"));
+                salary.setEmployee(e);
+                return salary;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+    
     public static void main(String[] args) {
         SalaryDAO dao = new SalaryDAO();
-        System.out.println(dao.getSalaryDeatailByTime(18, 10, 2025));
-        
+        System.out.println(dao.getActiveSalaryByEmpId(1));
     }
 }
