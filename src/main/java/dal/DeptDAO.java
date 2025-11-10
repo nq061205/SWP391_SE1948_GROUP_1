@@ -268,6 +268,20 @@ public class DeptDAO extends DBContext {
         return count;
     }
 
+    public boolean existsByDepName(String depName) {
+        String sql = "SELECT 1 FROM Department WHERE dep_name = ?";
+        try (Connection conn = getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            ps.setString(1, depName);
+            try (ResultSet rs = ps.executeQuery()) {
+                return rs.next();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false; 
+    }
+
     public List<String> getDepartmentsHavingManager() {
         List<String> depIds = new ArrayList<>();
         String sql = "SELECT DISTINCT e.dep_id\n"
@@ -277,7 +291,7 @@ public class DeptDAO extends DBContext {
 
         try (Connection conn = DBContext.getConnection(); PreparedStatement ps = conn.prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
             while (rs.next()) {
-                depIds.add(rs.getString("dep_id"));
+                depIds.add(rs.getString("dep_id").trim().toUpperCase());
             }
 
         } catch (SQLException ex) {
