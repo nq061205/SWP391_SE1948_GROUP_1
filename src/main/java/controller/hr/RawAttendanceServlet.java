@@ -7,6 +7,7 @@ package controller.hr;
 
 import dal.AttendanceRawDAO;
 import dal.DeptDAO;
+import dal.RolePermissionDAO;
 import helper.AttendanceService;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -15,6 +16,7 @@ import jakarta.servlet.annotation.MultipartConfig;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 import jakarta.servlet.http.Part;
 import java.io.InputStream;
 import java.time.LocalDate;
@@ -79,6 +81,18 @@ public class RawAttendanceServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        HttpSession session = request.getSession();
+        Employee user = (Employee) session.getAttribute("user");
+        if (user == null) {
+            response.sendRedirect(request.getContextPath() + "/login");
+            return;
+        }
+        RolePermissionDAO rperDAO = new RolePermissionDAO();
+        if (!rperDAO.hasPermission(user.getRole().getRoleId(),12)) {
+            session.setAttribute("logMessage", "You do not have permission to access this page.");
+            response.sendRedirect("dashboard");
+            return;
+        }
         loadAttendanceData(request, response);
     }
 
