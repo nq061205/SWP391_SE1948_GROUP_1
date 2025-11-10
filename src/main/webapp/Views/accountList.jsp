@@ -141,7 +141,7 @@
                         <i class="fa-solid fa-user-plus"></i> Add New Account
                     </a>
                 </div>
-                <div class="row align-items-stretch"> <!-- thêm align-items-stretch -->
+                <div class="row align-items-stretch">
                     <!-- SEARCH -->
                     <div class="col-md-4">
                         <form action="${pageContext.request.contextPath}/accountlist" method="get"

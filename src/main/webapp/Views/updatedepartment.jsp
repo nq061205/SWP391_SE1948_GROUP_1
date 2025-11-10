@@ -83,7 +83,7 @@
                                     <div class="form-group row mt-2">
                                         <label class="col-sm-3 col-form-label">DepartmentID:</label>
                                         <div class="col-sm-9">
-                                            <input class="form-control" type="text" name="depId" value="${sessionScope.dep.depId}" required>
+                                            <input class="form-control" type="text" name="depId" value="${sessionScope.dep.depId}" readonly>
                                         </div>
                                     </div>
 
