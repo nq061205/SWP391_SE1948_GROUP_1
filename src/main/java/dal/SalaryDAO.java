@@ -81,34 +81,41 @@ public class SalaryDAO {
         return null;
     }
 
-    public Salary getSalaryDeatailByTime(int empId, int month, int year) {
-        String sql = SALARY_SELECT_SQL
-                + " WHERE s.emp_id = ? "
-                + "   AND (? BETWEEN MONTH(s.start_date) AND IFNULL(MONTH(s.end_date), ?)) "
-                + "   AND (? BETWEEN YEAR(s.start_date) AND IFNULL(YEAR(s.end_date), ?))";
+    public Salary getSalaryDetailByTime(int empId, int month, int year) {
+    String sql = 
+        SALARY_SELECT_SQL +
+        "WHERE s.emp_id = ? " +
+        "  AND s.start_date <= STR_TO_DATE(CONCAT(?, '-', ?, '-01'), '%Y-%m-%d') " +
+        "  AND IFNULL(s.end_date, '9999-12-31') >= STR_TO_DATE(CONCAT(?, '-', ?, '-01'), '%Y-%m-%d')";
 
-        try (Connection conn = DBContext.getConnection(); PreparedStatement stm = conn.prepareStatement(sql)) {
+    try (Connection conn = DBContext.getConnection();
+         PreparedStatement stm = conn.prepareStatement(sql)) {
 
-            stm.setInt(1, empId);
-            stm.setInt(2, month);
-            stm.setInt(3, month);
-            stm.setInt(4, year);
-            stm.setInt(5, year);
+        stm.setInt(1, empId);
 
-            try (ResultSet rs = stm.executeQuery()) {
-                if (rs.next()) {
-                    return mapResultSetToPayroll(rs);
-                }
+        // target year + month
+        stm.setInt(2, year);
+        stm.setInt(3, month);
+
+        stm.setInt(4, year);
+        stm.setInt(5, month);
+
+        try (ResultSet rs = stm.executeQuery()) {
+            if (rs.next()) {
+                return mapResultSetToPayroll(rs); // bạn đã có hoặc mình viết cho bạn
             }
-        } catch (Exception ex) {
-            ex.printStackTrace();
         }
-        return null;
+
+    } catch (Exception e) {
+        e.printStackTrace();
     }
+
+    return null;
+}
 
     public static void main(String[] args) {
         SalaryDAO dao = new SalaryDAO();
-        System.out.println(dao.getSalaryDeatailByTime(18, 10, 2025));
+        System.out.println(dao.getSalaryDetailByTime(1, 10, 2025));
         
     }
 }

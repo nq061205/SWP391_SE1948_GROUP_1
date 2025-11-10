@@ -58,7 +58,7 @@ public class PayrollReportDetailServlet extends HttpServlet {
         PayrollDAO payrollDAO = new PayrollDAO();
         SalaryDAO salaryDAO = new SalaryDAO();
         Payroll payroll = payrollDAO.getPayrollDeatailByTime(user.getEmpId(), month, year);
-        Salary salary = salaryDAO.getSalaryDeatailByTime(user.getEmpId(), month, year);
+        Salary salary = salaryDAO.getSalaryDetailByTime(user.getEmpId(), month, year);
         request.setAttribute("payroll", payroll);
         request.setAttribute("salary", salary);
         request.getRequestDispatcher("Views/payrollreportdetail.jsp").forward(request, response);
