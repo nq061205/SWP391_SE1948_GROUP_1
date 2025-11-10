@@ -1,3 +1,44 @@
+
+SET FOREIGN_KEY_CHECKS = 0;
+
+TRUNCATE TABLE Employee;
+TRUNCATE TABLE Role;
+TRUNCATE TABLE Permission;
+TRUNCATE TABLE Role_Permission;
+TRUNCATE TABLE RecruitmentPost;
+TRUNCATE TABLE Candidate;
+TRUNCATE TABLE Interview;
+TRUNCATE TABLE Payroll;
+TRUNCATE TABLE Salary;
+TRUNCATE TABLE Attendance_Raw;
+TRUNCATE TABLE Daily_Attendance;
+TRUNCATE TABLE OT_Request;
+TRUNCATE TABLE Leave_Request;
+TRUNCATE TABLE Contract;
+TRUNCATE TABLE Holiday;
+TRUNCATE TABLE Dependant;
+
+SET FOREIGN_KEY_CHECKS = 1;
+
+ALTER TABLE Role AUTO_INCREMENT = 1;
+ALTER TABLE Permission AUTO_INCREMENT = 1;
+ALTER TABLE Employee AUTO_INCREMENT = 1;
+ALTER TABLE RecruitmentPost AUTO_INCREMENT = 1;
+ALTER TABLE Candidate AUTO_INCREMENT = 1;
+ALTER TABLE Interview AUTO_INCREMENT = 1;
+ALTER TABLE Payroll AUTO_INCREMENT = 1;
+ALTER TABLE Salary AUTO_INCREMENT = 1;
+ALTER TABLE Attendance_Raw AUTO_INCREMENT = 1;
+ALTER TABLE Daily_Attendance AUTO_INCREMENT = 1;
+ALTER TABLE OT_Request AUTO_INCREMENT = 1;
+ALTER TABLE Leave_Request AUTO_INCREMENT = 1;
+ALTER TABLE Contract AUTO_INCREMENT = 1;
+ALTER TABLE Holiday AUTO_INCREMENT = 1;
+ALTER TABLE Dependant AUTO_INCREMENT = 1;
+
+-- Sample data insertion (nếu cần thêm departments mẫu, bỏ comment và điền values)
+-- INSERT INTO Department (dep_id, dep_name, description) VALUES ('DEP01', 'IT Department', 'Information Technology');
+
 CREATE TABLE Role (
     role_id INT AUTO_INCREMENT PRIMARY KEY,
     role_name VARCHAR(100) NOT NULL
@@ -33,7 +74,8 @@ CREATE TABLE Employee (
     phone VARCHAR(20),
     position_title VARCHAR(100),
     image VARCHAR(255),
-    paid_leave_days int DEFAULT 0,   -- Số ngày nghỉ có lương
+    paid_leave_days int DEFAULT 1,   -- Số ngày nghỉ có lương
+    start_date DATE,                  -- Ngày bắt đầu làm việc (cần cho event tính paid leave)
     dep_id VARCHAR(5),
     role_id INT,
     status BOOLEAN DEFAULT TRUE,
@@ -49,9 +91,9 @@ CREATE TABLE RecruitmentPost (
     created_by INT NOT NULL,
     approved_by INT,
     dep_id VARCHAR(5),
-    approved_at TIMESTAMP DEFAULT NULL,
-    created_at TIMESTAMP DEFAULT NULL,
-    updated_at TIMESTAMP DEFAULT NULL,
+    approved_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     FOREIGN KEY (created_by) REFERENCES Employee(emp_id) ON DELETE CASCADE,
     FOREIGN KEY (approved_by) REFERENCES Employee(emp_id) ON DELETE SET NULL,
     FOREIGN KEY (dep_id) REFERENCES Department(dep_id) ON DELETE SET NULL
@@ -134,7 +176,7 @@ CREATE TABLE Daily_Attendance (
     check_in_time TIME,
     check_out_time TIME,
     ot_hours DECIMAL(5,2) DEFAULT 0.00,
-    status ENUM('Present','Absent','Holiday','Leave') DEFAULT 'Absent',
+    status ENUM('full-day','half-day','absent','leave', 'holiday','weekend','ot') DEFAULT 'absent',
     is_locked BOOLEAN DEFAULT FALSE,
     note text,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
