@@ -126,15 +126,15 @@ public class PayrollDAO {
         }
         return result;
     }
-    
-     public boolean insertPayroll(Payroll payroll) {
+
+    public boolean insertPayroll(Payroll payroll) {
         String sql = "INSERT INTO payroll (emp_id, total_work_day, total_ot_hours, regular_salary, "
                 + "ot_earning, insurance_base, SI, HI, UI, tax_income, tax, month, year, is_paid) "
                 + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
-        
-        try (Connection conn = DBContext.getConnection(); 
-             PreparedStatement ps = conn.prepareStatement(sql)) {
-            
+
+        try (Connection conn = DBContext.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            System.out.println("Executing INSERT query...");
             ps.setInt(1, payroll.getEmployee().getEmpId());
             ps.setDouble(2, payroll.getTotalWorkDay());
             ps.setDouble(3, payroll.getTotalOTHours());
@@ -149,23 +149,26 @@ public class PayrollDAO {
             ps.setInt(12, payroll.getMonth());
             ps.setInt(13, payroll.getYear());
             ps.setBoolean(14, payroll.isPaid());
-            
-            return ps.executeUpdate() > 0;
+
+            int rowsAffected = ps.executeUpdate();
+            System.out.println("INSERT executed - Rows affected: " + rowsAffected);
+            return rowsAffected > 0;
+
         } catch (SQLException e) {
+            System.err.println("? SQL Exception in insertPayroll: " + e.getMessage());
             e.printStackTrace();
         }
         return false;
     }
-    
+
     public boolean updatePayroll(Payroll payroll) {
         String sql = "UPDATE payroll SET total_work_day = ?, total_ot_hours = ?, "
                 + "regular_salary = ?, ot_earning = ?, insurance_base = ?, SI = ?, HI = ?, UI = ?, "
                 + "tax_income = ?, tax = ?, is_paid = ?, updated_at = CURRENT_TIMESTAMP "
                 + "WHERE payroll_id = ?";
-        
-        try (Connection conn = DBContext.getConnection(); 
-             PreparedStatement ps = conn.prepareStatement(sql)) {
-            
+
+        try (Connection conn = DBContext.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
+
             ps.setDouble(1, payroll.getTotalWorkDay());
             ps.setDouble(2, payroll.getTotalOTHours());
             ps.setDouble(3, payroll.getRegularSalary());
@@ -178,7 +181,7 @@ public class PayrollDAO {
             ps.setDouble(10, payroll.getTax());
             ps.setBoolean(11, payroll.isPaid());
             ps.setInt(12, payroll.getPayrollId());
-            
+
             return ps.executeUpdate() > 0;
         } catch (SQLException e) {
             e.printStackTrace();
@@ -187,32 +190,103 @@ public class PayrollDAO {
     }
 
     public boolean saveOrUpdatePayroll(Payroll payroll) {
+        System.out.println("=== saveOrUpdatePayroll for empId: " + payroll.getEmployee().getEmpId()
+                + ", month: " + payroll.getMonth() + ", year: " + payroll.getYear());
+
         Payroll existing = getPayrollDeatailByTime(
-            payroll.getEmployee().getEmpId(), 
-            payroll.getMonth(), 
-            payroll.getYear()
+                payroll.getEmployee().getEmpId(),
+                payroll.getMonth(),
+                payroll.getYear()
         );
-        
+
         if (existing != null) {
+            System.out.println("Found existing payroll with ID: " + existing.getPayrollId() + " - Will UPDATE");
             payroll.setPayrollId(existing.getPayrollId());
-            return updatePayroll(payroll);
+            boolean result = updatePayroll(payroll);
+            System.out.println("Update result: " + result);
+            return result;
         } else {
-            return insertPayroll(payroll);
+            System.out.println("No existing payroll found - Will INSERT");
+            boolean result = insertPayroll(payroll);
+            System.out.println("Insert result: " + result);
+            return result;
         }
     }
-    
+
     public boolean markAsPaid(int payrollId) {
         String sql = "UPDATE payroll SET is_paid = 1, updated_at = CURRENT_TIMESTAMP WHERE payroll_id = ?";
-        
-        try (Connection conn = DBContext.getConnection(); 
-             PreparedStatement ps = conn.prepareStatement(sql)) {
-            
+
+        try (Connection conn = DBContext.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
+
             ps.setInt(1, payrollId);
             return ps.executeUpdate() > 0;
         } catch (SQLException e) {
             e.printStackTrace();
         }
         return false;
+    }
+
+    public boolean lockPayrollMonth(int month, int year) {
+        String sql = "UPDATE payroll SET is_paid = 1 WHERE month = ? AND year = ? AND is_paid = 0";
+
+        try (Connection conn = DBContext.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            ps.setInt(1, month);
+            ps.setInt(2, year);
+
+            int rowsAffected = ps.executeUpdate();
+            System.out.println("? Locked " + rowsAffected + " payroll records for " + month + "/" + year);
+            return rowsAffected > 0;
+
+        } catch (SQLException e) {
+            System.err.println("? Error locking payroll: " + e.getMessage());
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    public boolean isPayrollLocked(int month, int year) {
+        String sql = "SELECT COUNT(*) as total, SUM(CASE WHEN is_paid = 1 THEN 1 ELSE 0 END) as locked "
+                + "FROM payroll WHERE month = ? AND year = ?";
+
+        try (Connection conn = DBContext.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            ps.setInt(1, month);
+            ps.setInt(2, year);
+
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                int total = rs.getInt("total");
+                int locked = rs.getInt("locked");
+
+                if (total == 0) {
+                    return false;
+                }
+                return locked == total;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    public int countPayrollRecords(int month, int year) {
+        String sql = "SELECT COUNT(*) FROM payroll WHERE month = ? AND year = ?";
+
+        try (Connection conn = DBContext.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            ps.setInt(1, month);
+            ps.setInt(2, year);
+
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                return rs.getInt(1);
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return 0;
     }
 
     public static void main(String[] args) {

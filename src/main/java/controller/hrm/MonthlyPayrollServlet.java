@@ -4,6 +4,7 @@
  */
 package controller.hrm;
 
+import dal.DailyAttendanceDAO;
 import dal.EmployeeDAO;
 import dal.DeptDAO;
 import dal.PayrollDAO;
@@ -91,21 +92,106 @@ public class MonthlyPayrollServlet extends HttpServlet {
         int endYear = now.getYear();
 
         PayrollService payrollService = new PayrollService();
+        DailyAttendanceDAO attendanceDAO = new DailyAttendanceDAO();
+
         if ("calculate".equals(action)) {
             try {
-                EmployeeDAO employeeDAO = new EmployeeDAO();
-                List<Employee> allEmployees = employeeDAO.getAllEmployees();
-                List<Integer> empIds = allEmployees.stream()
-                        .map(emp -> emp.getEmpId()) 
-                        .collect(Collectors.toList());
+                PayrollDAO payrollDAO = new PayrollDAO();
+                boolean payrollLocked = payrollDAO.isPayrollLocked(selectedMonth, selectedYear);
+                if (payrollLocked) {
+                    request.setAttribute("errorMessage",
+                            "<strong>Cannot calculate!</strong><br>Payroll for " + selectedMonth + "/" + selectedYear
+                            + " is <strong>LOCKED</strong> and cannot be modified.");
+                } else {
+                    boolean attendanceLocked = attendanceDAO.isAttendanceLocked(selectedMonth, selectedYear);
+                    if (!attendanceLocked) {
+                        request.setAttribute("errorMessage",
+                                "Cannot calculate payroll: Not all daily attendance records are locked for "
+                                + selectedMonth + "/" + selectedYear + ".<br>Please lock all records in Attendance page.");
+                    } else {
+                        EmployeeDAO employeeDAO = new EmployeeDAO();
+                        List<Employee> allEmployees = employeeDAO.getAllEmployees();
+                        List<Integer> empIds = allEmployees.stream().map(emp -> emp.getEmpId()).collect(Collectors.toList());
+                        payrollService.calculatePayrollForMonth(selectedMonth, selectedYear, empIds);
+                        request.setAttribute("successMessage",
+                                "Payroll calculated successfully for " + empIds.size() + " employees!");
+                    }
+                }
+            } catch (Exception e) {
+                request.setAttribute("errorMessage", "Error calculating payroll: " + e.getMessage());
+                e.printStackTrace();
+            }
+        }
 
-                payrollService.calculatePayrollForMonth(selectedMonth, selectedYear, empIds);
+        if ("recalculate".equals(action)) {
+            try {
+                String empIdParam = request.getParameter("empId");
 
-                request.setAttribute("successMessage",
-                        "Payroll calculated successfully for " + empIds.size() + " employees!");
+                if (empIdParam == null || empIdParam.isEmpty()) {
+                    request.setAttribute("errorMessage", "Employee ID is required");
+                } else {
+                    int empId = Integer.parseInt(empIdParam);
+                    PayrollDAO payrollDAO = new PayrollDAO();
+
+                    boolean payrollLocked = payrollDAO.isPayrollLocked(selectedMonth, selectedYear);
+                    if (payrollLocked) {
+                        request.setAttribute("errorMessage",
+                                "Cannot recalculate: Payroll for " + selectedMonth + "/" + selectedYear + " is LOCKED!");
+                    } else {
+                        boolean attendanceLocked = attendanceDAO.isAttendanceLocked(selectedMonth, selectedYear);
+                        if (!attendanceLocked) {
+                            request.setAttribute("errorMessage",
+                                    "Cannot recalculate: Attendance not locked for " + selectedMonth + "/" + selectedYear);
+                        } else {
+                            Payroll result = payrollService.calculateAndSavePayroll(empId, selectedMonth, selectedYear);
+
+                            if (result != null) {
+                                request.setAttribute("successMessage",
+                                        "Payroll recalculated successfully for Employee ID: " + empId);
+                            } else {
+                                request.setAttribute("errorMessage",
+                                        "Failed to recalculate payroll for Employee ID: " + empId);
+                            }
+                        }
+                    }
+                }
+            } catch (Exception e) {
+                request.setAttribute("errorMessage", "❌ Error: " + e.getMessage());
+                e.printStackTrace();
+            }
+        }
+
+        if ("lock".equals(action)) {
+            try {
+                PayrollDAO payrollDAO = new PayrollDAO();
+                int recordCount = payrollDAO.countPayrollRecords(selectedMonth, selectedYear);
+                if (recordCount == 0) {
+                    request.setAttribute("errorMessage",
+                            "Cannot lock payroll: No payroll records found for "
+                            + selectedMonth + "/" + selectedYear + ".<br>Please calculate payroll first.");
+                } else {
+                    boolean alreadyLocked = payrollDAO.isPayrollLocked(selectedMonth, selectedYear);
+                    if (alreadyLocked) {
+                        request.setAttribute("warningMessage",
+                                "Payroll for " + selectedMonth + "/" + selectedYear + " is already LOCKED!");
+                    } else {
+                        boolean success = payrollDAO.lockPayrollMonth(selectedMonth, selectedYear);
+
+                        if (success) {
+                            request.setAttribute("successMessage",
+                                    "<strong>SUCCESS!</strong> Payroll for " + selectedMonth + "/" + selectedYear
+                                    + " has been <strong>LOCKED</strong>!<br>"
+                                    + "📊 " + recordCount + " records are now locked.<br>"
+                                    + "⚠️ This action is <strong>IRREVERSIBLE</strong>. Payroll data can no longer be modified.");
+                        } else {
+                            request.setAttribute("errorMessage",
+                                    "Failed to lock payroll for " + selectedMonth + "/" + selectedYear);
+                        }
+                    }
+                }
             } catch (Exception e) {
                 request.setAttribute("errorMessage",
-                        "Error calculating payroll: " + e.getMessage());
+                        "Error locking payroll: " + e.getMessage());
                 e.printStackTrace();
             }
         }
@@ -139,9 +225,7 @@ public class MonthlyPayrollServlet extends HttpServlet {
         int offset = (page - 1) * pageSize;
 
         List<Employee> employees = employeeDAO.getEmployees(offset, pageSize, search, department);
-        List<Integer> empIds = employees.stream()
-                .map(Employee::getEmpId)
-                .collect(Collectors.toList());
+        List<Integer> empIds = employees.stream().map(Employee::getEmpId).collect(Collectors.toList());
 
         PayrollDAO payrollDAO = new PayrollDAO();
         List<Payroll> payrollList = payrollDAO.getPayrollByEmpIds(empIds, selectedMonth, selectedYear);
@@ -151,47 +235,36 @@ public class MonthlyPayrollServlet extends HttpServlet {
             payrollMap.put(p.getEmployee().getEmpId(), p);
         }
 
-        double sumRegularSalary = 0;
-        double sumOTEarning = 0;
-        double sumAllowance = 0;
-        double sumGrossSalary = 0;
-        double sumSI = 0;
-        double sumHI = 0;
-        double sumUI = 0;
-        double sumTotalInsurance = 0;
-        double sumTaxableIncome = 0;
-        double sumTax = 0;
-        double sumNetSalary = 0;
-
+        double sumRegularSalary = 0, sumOTEarning = 0, sumAllowance = 0;
+        double sumGrossSalary = 0, sumSI = 0, sumHI = 0, sumUI = 0;
+        double sumTotalInsurance = 0, sumTaxableIncome = 0, sumTax = 0, sumNetSalary = 0;
         for (Payroll p : payrollList) {
             sumRegularSalary += p.getRegularSalary();
             sumOTEarning += p.getOtEarning();
-
             double allowance = p.getInsuranceBase() - p.getRegularSalary();
             sumAllowance += allowance;
-
             double grossSalary = p.getRegularSalary() + p.getOtEarning() + allowance;
             sumGrossSalary += grossSalary;
-
             sumSI += p.getSi();
             sumHI += p.getHi();
             sumUI += p.getUi();
             double totalInsurance = p.getSi() + p.getHi() + p.getUi();
             sumTotalInsurance += totalInsurance;
-
             sumTaxableIncome += p.getTaxIncome();
             sumTax += p.getTax();
-
             double netSalary = grossSalary - totalInsurance - p.getTax();
             sumNetSalary += netSalary;
         }
+        System.out.println("payrollList: " + payrollList);
 
         int standardWorkDays = payrollService.getStandardWorkDays(selectedMonth, selectedYear);
+        boolean isPayrollLocked = payrollDAO.isPayrollLocked(selectedMonth, selectedYear);
 
         request.setAttribute("departments", departments);
         request.setAttribute("employees", employees);
         request.setAttribute("payrollMap", payrollMap);
         request.setAttribute("payrollList", payrollList);
+        request.setAttribute("isPayrollLocked", isPayrollLocked);
 
         request.setAttribute("sumRegularSalary", sumRegularSalary);
         request.setAttribute("sumOTEarning", sumOTEarning);
@@ -204,19 +277,16 @@ public class MonthlyPayrollServlet extends HttpServlet {
         request.setAttribute("sumTaxableIncome", sumTaxableIncome);
         request.setAttribute("sumTax", sumTax);
         request.setAttribute("sumNetSalary", sumNetSalary);
-
         request.setAttribute("currentPage", page);
         request.setAttribute("pageSize", pageSize);
         request.setAttribute("totalRecords", totalRecords);
         request.setAttribute("totalPages", totalPages);
-
         request.setAttribute("startYear", startYear);
         request.setAttribute("endYear", endYear);
         request.setAttribute("selectedMonth", selectedMonth);
         request.setAttribute("selectedYear", selectedYear);
         request.setAttribute("search", search != null ? search : "");
         request.setAttribute("selectedDepartment", department != null ? department : "");
-
         request.setAttribute("standardWorkDays", standardWorkDays);
 
         request.getRequestDispatcher("Views/HRM/payrollManagement.jsp").forward(request, response);
