@@ -174,7 +174,7 @@
                     <p class="text-muted">There are currently no leave request in the system.</p>
                 </div>
             </c:if>
-            <c:url var="baseUrl" value="/application">
+            <c:url var="baseUrl" value="/applicationmanagement?typeapplication=leave">
                 <c:param name="typeapplication" value="LEAVE"/>
                 <c:if test="${not empty param.search}">
                     <c:param name="search" value="${param.search}"/>
