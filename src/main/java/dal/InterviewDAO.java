@@ -47,7 +47,8 @@ public class InterviewDAO {
 
     public List<Interview> getInterviewsCreatedBy(int empId) {
         List<Interview> list = new ArrayList<>();
-        String sql = "SELECT i.interview_id, i.date, i.time, "
+
+        String sql = "SELECT i.interview_id, i.`date`, i.`time`, i.result, "
                 + "c.name AS candidate_name, c.email, "
                 + "p.title AS post_title, "
                 + "e.fullname AS interviewer_name "
@@ -56,9 +57,11 @@ public class InterviewDAO {
                 + "JOIN RecruitmentPost p ON c.post_id = p.post_id "
                 + "JOIN Employee e ON i.interviewed_by = e.emp_id "
                 + "WHERE i.created_by = ? "
-                + "ORDER BY i.date DESC, i.time DESC";
-
+                + "AND i.result = 'Pending' "
+                + ""
+                + "ORDER BY i.`date` DESC, i.`time` DESC";
         try (Connection conn = DBContext.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
+
             ps.setInt(1, empId);
             ResultSet rs = ps.executeQuery();
 
@@ -67,6 +70,7 @@ public class InterviewDAO {
                 iv.setInterviewId(rs.getInt("interview_id"));
                 iv.setDate(rs.getDate("date"));
                 iv.setTime(rs.getTime("time"));
+                iv.setResult(rs.getString("result"));
 
                 Candidate c = new Candidate();
                 c.setName(rs.getString("candidate_name"));
@@ -386,6 +390,9 @@ public class InterviewDAO {
 
     public static void main(String[] args) {
         InterviewDAO d = new InterviewDAO();
-        // Mã test code trong 'main' đã được dọn dẹp
+        List<Interview> l = d.getInterviewsCreatedBy(15);
+        for (Interview interview : l) {
+            System.out.println(interview);
+        }
     }
 }

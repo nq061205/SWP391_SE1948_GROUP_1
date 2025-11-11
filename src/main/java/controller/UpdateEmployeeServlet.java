@@ -15,7 +15,10 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import java.sql.Date;
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import model.Employee;
 
 /**
@@ -65,7 +68,7 @@ public class UpdateEmployeeServlet extends HttpServlet {
         HttpSession ses = request.getSession();
         RolePermissionDAO rperDAO = new RolePermissionDAO();
         Employee user = (Employee) ses.getAttribute("user");
-        if(user == null){
+        if (user == null) {
             response.sendRedirect("login");
             return;
         }
@@ -77,16 +80,51 @@ public class UpdateEmployeeServlet extends HttpServlet {
         String empCode = request.getParameter("empCode");
         EmployeeDAO empDAO = new EmployeeDAO();
         Employee emp = empDAO.getEmployeeByEmpCode(empCode);
-        boolean hasManager = empDAO.hasManager(emp.getDept().getDepId());
+        boolean hasDeptManager = empDAO.hasDeptManager(emp.getDept().getDepId());
 
-        if ("Manager".equalsIgnoreCase(emp.getPositionTitle())) {
-            hasManager = false;
+        boolean hasHRManager = empDAO.hasHRManager(emp.getDept().getDepId());
+        List<String> posList = empDAO.getAllPosition();
+        List<Map<String, String>> posOptions = new ArrayList<>();
+        for (String pos : posList) {
+            Map<String, String> option = new HashMap<>();
+            option.put("value", pos);
+            if (pos.equals(emp.getPositionTitle())) {
+                option.put("selected", "true");
+            } else {
+                option.put("selected", "false");
+            }
+
+            boolean isDisabled = false;
+            boolean notAllowed = false;
+
+            if (emp.getDept().getDepName().equals("HR") && pos.equals("Dept Manager")) {
+                isDisabled = true;
+                notAllowed = true;
+            } else if (emp.getDept().getDepName().equals("HR") && pos.equals("HR Manager") && hasHRManager) {
+                isDisabled = true;
+                notAllowed = false;
+            } else if (!emp.getDept().getDepName().equals("HR") && pos.equals("HR Manager")) {
+                isDisabled = true;
+                notAllowed = true;
+            } else if (!emp.getDept().getDepName().equals("HR") && pos.equals("Dept Manager") && hasDeptManager) {
+                isDisabled = true;
+                notAllowed = false;
+            }
+
+            option.put("disabled", String.valueOf(isDisabled));
+            if (notAllowed) {
+                option.put("label", "(Not Allowed)");
+            } else if (isDisabled) {
+                option.put("label", "(Already Assigned)");
+            } else {
+                option.put("label", "");
+            }
+
+            posOptions.add(option);
         }
 
-        List<String> posList = empDAO.getAllPosition();
-
         request.setAttribute("posList", posList);
-        request.setAttribute("hasManager", hasManager);
+        request.setAttribute("posOptions", posOptions);
         ses.setAttribute("emp", emp);
         request.getRequestDispatcher("Views/updateemployee.jsp").forward(request, response);
     }
@@ -131,6 +169,14 @@ public class UpdateEmployeeServlet extends HttpServlet {
         String positionTitle = request.getParameter("positionTitle");
         String button = request.getParameter("button");
         Employee emp = empDAO.getEmployeeByEmpCode(empCode);
+        if (email.length() > 100) {
+            request.setAttribute("EmailErr", "Email have the max length is 100!");
+            validate = true;
+        }
+        if (empDAO.existsByEmail(email) && !email.equals(emp.getEmail())) {
+            request.setAttribute("EmailErr", "Email have been existed!");
+            validate = true;
+        }
         if ("save".equalsIgnoreCase(button) && validate == false) {
             emp.setEmail(email);
             emp.setDob(dob);

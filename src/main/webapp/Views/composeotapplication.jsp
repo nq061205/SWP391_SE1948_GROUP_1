@@ -54,12 +54,13 @@
 
         <main class="ttr-wrapper">
             <div class="container-fluid">
-                <div class="db-breadcrumb">
-                    <h4 class="breadcrumb-title">Compose Application</h4>
-                    <ul class="db-breadcrumb-list">
-                        <li><a href="#"><i class="fa fa-home"></i>Compose Application</a></li>
-                    </ul>
-                </div>
+                <div class="db-breadcrumb mb-3">
+                        <h4 class="breadcrumb-title">Overtime Request Application List</h4>
+                        <ul class="db-breadcrumb-list">
+                            <li><a href="${pageContext.request.contextPath}/application?typeapplication=ot">Overtime Request Application List</a></li>
+                            <li><a href="${pageContext.request.contextPath}/compose?type=OT">Create Overtime Application</a></li>
+                        </ul>
+                    </div>
                 <div class="row">
                     <div class="col-lg-8 offset-lg-2">
                         <div class="widget-box p-4 shadow-sm bg-white rounded">

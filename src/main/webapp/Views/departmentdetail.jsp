@@ -67,11 +67,10 @@
                 <div class="db-breadcrumb">
                     <h4 class="breadcrumb-title">Department information</h4>
                     <ul class="db-breadcrumb-list">
-                        <li><a href="#"><i class="fa fa-home"></i>Home</a></li>
+                        <li><a href="${pageContext.request.contextPath}/departmentlist">Department list</a></li>
                         <li>Department Detail</li>
                     </ul>
                 </div>
-                <a href="${pageContext.request.contextPath}/departmentlist" class="btn btn-secondary">← Back to list</a>
                 <h4>Department Name: ${dept.depName}</h4>
                 <p><strong>Total employees:</strong> ${employeeCount}</p>
 
@@ -85,6 +84,7 @@
                 </p>
 
                 <h5>Employee list in this department:</h5>
+                <br>
                 <div class="row align-items-stretch">
 
                     <div class="col-md-4">
@@ -93,9 +93,6 @@
                             <input type="hidden" name="page" value="${page}">
                             <input type="hidden" name="deptId" value="${deptId}">
                             <div class="input-group w-100">
-                                <span class="input-group-text bg-white border-end-0">
-                                    <i class="fa fa-search text-muted"></i>
-                                </span>
                                 <input type="text" name="searchkey" class="form-control border-start-0"
                                        placeholder="Search by name or email"
                                        value="${searchkey}">
@@ -107,7 +104,7 @@
                     </div>
 
 
-                    <div class="col-md-8 custom-col">
+                    <div class="col-md-8 custom-col" >
                         <form action="${pageContext.request.contextPath}/departmentdetail" method="get"
                               class="d-flex align-items-center justify-content-between flex-nowrap gap-3 h-100">
                             <input type="hidden" name="page" value="${page}">
@@ -126,7 +123,7 @@
                                     <option value="${pl}" ${not empty positionTitle && positionTitle[0] == pl ? 'selected' : ''}>${pl}</option>
                                 </c:forEach>
                             </select>
-                            <div class="d-flex align-items-center gap-2">
+                            <div class="d-flex align-items-center gap-2" style="display: flex;gap: 10px">
                                 <button type="submit" class="btn btn-primary">
                                     <i class="fa fa-filter"></i> Apply
                                 </button>
@@ -137,6 +134,7 @@
                         </form>
                     </div>
                 </div>
+                <br>
                 <c:if test="${not empty searchkey}">
                     <p>Found <strong>${totalSearchResults}</strong> employee with search key is <strong>${searchkey}</strong></p>  
                 </c:if>
@@ -176,6 +174,7 @@
                         </tbody>
                     </table>
                 </div>
+                <a href="${pageContext.request.contextPath}/departmentlist" class="btn btn-secondary">← Back to list</a>
                 <c:url var="baseUrlWithSort" value="departmentdetail">
                     <c:if test="${not empty deptId}">
                         <c:param name="deptId" value="${deptId}" />

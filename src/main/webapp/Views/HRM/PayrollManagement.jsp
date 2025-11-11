@@ -5,40 +5,128 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <!-- META ============================================= -->
         <meta charset="utf-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta name="keywords" content="" />
         <meta name="author" content="" />
         <meta name="robots" content="" />
+
+        <!-- DESCRIPTION -->
         <meta name="description" content="Human Tech" />
+
+        <!-- OG -->
         <meta property="og:title" content="Human Tech" />
-        <meta property="og:description" content="Human Tech" />
+        <meta property="og:description" content="Profile" />
+        <meta property="og:image" content="" />
         <meta name="format-detection" content="telephone=no">
 
         <!-- FAVICONS ICON ============================================= -->
+        <link rel="icon" href="${pageContext.request.contextPath}/assets2/images/favicon.ico" type="image/x-icon" />
         <link rel="shortcut icon" type="image/x-icon" href="${pageContext.request.contextPath}/assets2/images/favicon.png" />
 
         <!-- PAGE TITLE HERE ============================================= -->
-        <title>Human Tech - Monthly Payroll Report</title>
+        <title>My Profile</title>
 
         <!-- MOBILE SPECIFIC ============================================= -->
         <meta name="viewport" content="width=device-width, initial-scale=1">
 
+        <!--[if lt IE 9]>
+        <script src="${pageContext.request.contextPath}/assets2/js/html5shiv.min.js"></script>
+        <script src="${pageContext.request.contextPath}/assets2/js/respond.min.js"></script>
+        <![endif]-->
+
         <!-- All PLUGINS CSS ============================================= -->
         <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/assets2/css/assets.css">
+        <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/assets2/vendors/calendar/fullcalendar.css">
+
+        <!-- TYPOGRAPHY ============================================= -->
         <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/assets2/css/typography.css">
+
+        <!-- SHORTCODES ============================================= -->
         <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/assets2/css/shortcodes/shortcodes.css">
+
+        <!-- STYLESHEETS ============================================= -->
         <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/assets2/css/style.css">
         <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/assets2/css/payroll-management-style.css">
         <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/assets2/css/dashboard.css">
         <link class="skin" rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/assets2/css/color/color-1.css">
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+        <<<<<<< HEAD
+        =======
+        <style>
+            .bg-success-light {
+                background-color: #d4edda !important;
+            }
+            .align-middle {
+                vertical-align: middle !important;
+            }
+            .salary-report-table {
+                font-size: 0.9rem;
+            }
+            .salary-report-table th {
+                font-weight: 600;
+                white-space: nowrap;
+            }
+            .salary-report-table td {
+                vertical-align: middle;
+            }
+            /* Sticky columns */
+            .sticky-table th:nth-child(1),
+            .sticky-table td:nth-child(1) {
+                position: sticky;
+                left: 0;
+                z-index: 5;
+                box-shadow: 2px 0 5px rgba(0,0,0,0.1);
+            }
+
+            .sticky-table thead th:nth-child(1) {
+                z-index: 10;
+                background-color: #343a40 !important; /* Đen */
+            }
+
+            .sticky-table tbody td:nth-child(1) {
+                background-color: #fff;
+            }
+
+            .sticky-table th:nth-child(2),
+            .sticky-table td:nth-child(2) {
+                position: sticky;
+                left: 100px;
+                z-index: 5;
+                box-shadow: 2px 0 5px rgba(0,0,0,0.1);
+            }
+
+            .sticky-table thead th:nth-child(2) {
+                z-index: 10;
+                background-color: #343a40 !important; /* Đen */
+            }
+
+            .sticky-table tbody td:nth-child(2) {
+                background-color: #fff;
+            }
+
+            /* Tất cả header đều đen */
+            .sticky-table thead th {
+                position: sticky;
+                top: 0;
+                z-index: 8;
+                background-color: #343a40 !important; /* Đen */
+                color: #fff !important; /* Chữ trắng */
+            }
+
+            /* Total row */
+            .sticky-table .table-active td:nth-child(1),
+            .sticky-table .table-active td:nth-child(2) {
+                background-color: #e9ecef !important;
+            }
+        </style>
+
+        >>>>>>> aa6d9bace69408ff6703f36ab3fba07df816e713
     </head>
 
     <body class="ttr-opened-sidebar ttr-pinned-sidebar">
         <%@ include file="../CommonItems/Header/dashboardHeader.jsp" %>
-        <%@ include file="../CommonItems/Navbar/hrNavbar.jsp" %>
+        <%@ include file="../CommonItems/Navbar/empNavbar.jsp" %>
         <main class="ttr-wrapper">
             <div class="container-fluid">
                 <!-- Breadcrumb -->
@@ -169,7 +257,7 @@
                                                            placeholder="Code or Name...">
                                                     <div class="input-group-append">
                                                         <button type="submit" onclick="resetPageBeforeSubmit()" class="btn btn-outline-secondary">
-                                                            <i class="fas fa-search"></i>
+                                                            <i class="fa fa-search"></i>
                                                         </button>
                                                     </div>
                                                 </div>

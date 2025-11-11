@@ -123,10 +123,26 @@
                 transform: translateY(-2px);
             }
             .search-section {
-                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                background: url('${pageContext.request.contextPath}/assets1/images/banner/banner1.jpg') no-repeat center center;
+                background-size: cover;
+                position: relative;
                 padding: 150px 0 60px 0;
                 margin-bottom: 50px;
                 margin-top: 0;
+            }
+            .search-section::before {
+                content: '';
+                position: absolute;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                background: rgba(0, 0, 0, 0.4);
+                z-index: 1;
+            }
+            .search-section .container {
+                position: relative;
+                z-index: 2;
             }
             .search-box {
                 background: #fff;
@@ -294,49 +310,26 @@
                             <div class="row">
                                 <div class="col-xl-3 col-lg-4 col-md-4 col-sm-12 m-b30">
                                     <div class="sidebar-filter">
-                                        <h5 class="filter-title">Specialisms</h5>
+                                        <h5 class="filter-title">Departments</h5>
 
-                                        <div class="filter-item">
-                                            <span>All Departments</span>
-                                            <span class="filter-count">${totalPosts}</span>
-                                        </div>
+                                        <a href="${pageContext.request.contextPath}/jobsite" 
+                                           class="filter-item" style="text-decoration: none; color: inherit; display: block; cursor: pointer;">
+                                            <span style="${empty param.depId ? 'font-weight: bold; color: #f7b205;' : ''}">All Departments</span>
+                                            <span class="filter-count">${allUploadedCount}</span>
+                                        </a>
 
-                                        <%--<c:set var="departmentMap" value="${{}}" />--%>
-                                        <c:forEach items="${posts}" var="post">
-                                            <c:if test="${post.department != null}">
-                                                <c:set var="deptId" value="${post.department.depId}" />
-                                                <c:set var="deptName" value="${post.department.depName}" />
-
-                                                <c:set var="found" value="false" />
-                                                <c:forEach items="${departmentMap}" var="entry">
-                                                    <c:if test="${entry.key == deptId}">
-                                                        <c:set var="found" value="true" />
-                                                    </c:if>
-                                                </c:forEach>
-                                            </c:if>
-                                        </c:forEach>
-
-                                        <c:set var="processedDepts" value="" />
-                                        <c:forEach items="${posts}" var="post">
-                                            <c:if test="${post.department != null}">
-                                                <c:set var="deptId" value="${post.department.depId}" />
-                                                <c:if test="${!processedDepts.contains(deptId)}">
-                                                    <c:set var="deptCount" value="0" />
-                                                    <c:forEach items="${posts}" var="p">
-                                                        <c:if test="${p.department != null && p.department.depId == deptId}">
-                                                            <c:set var="deptCount" value="${deptCount + 1}" />
-                                                        </c:if>
-                                                    </c:forEach>
-
-                                                    <div class="filter-item">
-                                                        <span>${post.department.depName}</span>
-                                                        <span class="filter-count">${deptCount}</span>
-                                                    </div>
-
-                                                    <c:set var="processedDepts" value="${processedDepts}${deptId}," />
+                                        <c:if test="${not empty departments}">
+                                            <c:forEach items="${departments}" var="dept">
+                                                <c:set var="count" value="${deptCountMap[dept.depId]}" />
+                                                <c:if test="${count != null && count > 0}">
+                                                    <a href="${pageContext.request.contextPath}/jobsite?depId=${dept.depId}<c:if test="${not empty param.keyword}">&keyword=${param.keyword}</c:if><c:if test="${not empty param.fromDate}">&fromDate=${param.fromDate}</c:if><c:if test="${not empty param.toDate}">&toDate=${param.toDate}</c:if><c:if test="${not empty param.sort}">&sort=${param.sort}</c:if>" 
+                                                       class="filter-item" style="text-decoration: none; color: inherit; display: block; cursor: pointer;">
+                                                        <span style="${param.depId == dept.depId ? 'font-weight: bold; color: #f7b205;' : ''}">${dept.depName}</span>
+                                                        <span class="filter-count">${count}</span>
+                                                    </a>
                                                 </c:if>
-                                            </c:if>
-                                        </c:forEach>
+                                            </c:forEach>
+                                        </c:if>
                                     </div>
                                 </div>
 

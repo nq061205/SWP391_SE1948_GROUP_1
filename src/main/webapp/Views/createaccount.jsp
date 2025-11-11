@@ -107,8 +107,8 @@
                 <div class="db-breadcrumb">
                     <h4 class="breadcrumb-title">Account information</h4>
                     <ul class="db-breadcrumb-list">
-                        <li><a href="#"><i class="fa fa-home"></i>Home</a></li>
-                        <li>Passed Candidate Profile List</li>
+                        <li><a href="${pageContext.request.contextPath}/accountlist">Accountlist</a></li>
+                        <li><a href="${pageContext.request.contextPath}/createaccount">Passed Candidate Profile List</a></li>
                     </ul>
                 </div>
 
@@ -176,13 +176,13 @@
                                             <c:forEach items="${passedList}" var="pl" varStatus="loop">
                                                 <tr>
                                                     <td>${loop.index+1}</td>
-                                                    <td>${pl.candidate.name}</td>
-                                                    <td>${pl.candidate.email}</td>
-                                                    <td>${pl.candidate.phone}</td>
-                                                    <td>${pl.candidate.appliedAt}</td>
-                                                    <td>${pl.interviewedBy.fullname}</td>
-                                                    <td>${pl.date}</td>
-                                                    <td>${pl.time}</td>
+                                                    <td style="overflow-wrap: break-word;">${pl.candidate.name}</td>
+                                                    <td style="overflow-wrap: break-word;">${pl.candidate.email}</td>
+                                                    <td style="overflow-wrap: break-word;">${pl.candidate.phone}</td>
+                                                    <td style="overflow-wrap: break-word;">${pl.candidate.appliedAt}</td>
+                                                    <td style="overflow-wrap: break-word;">${pl.interviewedBy.fullname}</td>
+                                                    <td style="overflow-wrap: break-word;">${pl.date}</td>
+                                                    <td style="overflow-wrap: break-word;">${pl.time}</td>
                                                     <td>
                                                         <button type="button"
                                                                 style="padding: 0.5rem 0"
@@ -273,15 +273,15 @@
 
                                     <div class="modal-body">
                                         <label class="form-label">Candidate Name</label>
-                                        <input type="text" name="canName" class="form-control" id="modalName" required>
+                                        <input type="text" name="canName" value="${canName}" class="form-control" id="modalName" required>
 
                                         <label class="form-label mt-2">Email:</label>
-                                        <input type="email" name="email" class="form-control"  id="modalEmail" required>
-
+                                        <input type="email" value="${email}" name="email" class="form-control"  id="modalEmail" required>
+                                        <c:if test="${not empty EmailErr and param.email ne sessionScope.emp.email}">
+                                            <p style="color: red">${EmailErr}</p>
+                                        </c:if>
                                         <label class="form-label mt-2">Phone:</label>
-                                        <input type="text" name="phone" class="form-control" id="modalPhone" required>
-                                        <c:set var="selectedDepId" value="${param.depId}" />
-                                        <c:set var="managerDepIds" value="${sessionScope.managerDepIds}" />
+                                        <input type="text" name="phone" value="${phone}" class="form-control" id="modalPhone" required>
                                         <label class="form-label mt-2">Department:</label>
                                         <br>
                                         <select id="modalDepId" name="deptId"
@@ -293,19 +293,12 @@
                                                 </option>
                                             </c:forEach>
                                         </select>
-                                        <c:set var="isManagerDep" value="${fn:contains(managerDepIds, selectedDepId)}" />
                                         <br>
                                         <label class="form-label mt-2">Role:</label>
                                         <br>
-                                        <select id="modalRoleId" name="roleId" class="custom-select"
-                                                style="min-width:150px;">
+                                        <select id="modalRoleId" name="roleId" class="custom-select" style="min-width:150px;">
                                             <c:forEach var="rl" items="${sessionScope.roleList}">
-                                                <option value="${rl.roleId}"<c:if test="${isManagerDep and fn:contains(rl.roleName, 'Manager')}">disabled</c:if>>
-                                                    ${rl.roleName}
-                                                    <c:if test="${isManagerDep and fn:contains(rl.roleName, 'Manager')}">
-                                                        (Already Assigned)
-                                                    </c:if>
-                                                </option>
+                                                <option value="${rl.roleId}" <c:if test="${rl.roleName eq 'Admin' && requestScope.hasAdmin}">disabled</c:if>>${rl.roleName}</option>
                                             </c:forEach>
                                         </select>
                                     </div>
@@ -323,6 +316,20 @@
         </main>
         <script>
             document.addEventListener("DOMContentLoaded", function () {
+                const addModalEl = document.getElementById('addModal');
+                const addModal = new bootstrap.Modal(addModalEl); // chỉ tạo 1 lần
+
+                const depSelect = document.getElementById('modalDepId');
+
+            <% if (request.getAttribute("EmailErr") != null) { %>
+                addModal.show();
+                document.getElementById('modalName').value = '<c:out value="${canName}" />';
+                document.getElementById('modalEmail').value = '<c:out value="${email}" />';
+                document.getElementById('modalPhone').value = '<c:out value="${phone}" />';
+                depSelect.value = '<c:out value="${param.deptId}" />';
+                updateRoleOptions(depSelect.value);
+            <% } %>
+
                 const openBtns = document.querySelectorAll('.open-modal-btn');
                 openBtns.forEach(btn => {
                     btn.addEventListener('click', function () {
@@ -335,9 +342,16 @@
                         document.getElementById('modalName').value = name || '';
                         document.getElementById('modalEmail').value = email || '';
                         document.getElementById('modalPhone').value = phone || '';
-                        document.querySelector('select[name="roleId"]').value = 4;
+                        document.querySelector('select[name="roleId"]').value = 3;
+
+                        updateRoleOptions(depId);
+                        addModal.show(); // dùng instance duy nhất
                     });
                 });
+
+                if (depSelect.value) {
+                    updateRoleOptions(depSelect.value);
+                }
             });
         </script>
         <script>
@@ -347,36 +361,46 @@
             </c:forEach>
             ];
 
-            document.getElementById("modalDepId").addEventListener("change", function () {
-                const selectedDep = this.value;
+            function updateRoleOptions(selectedDep) {
                 const roleSelect = document.getElementById("modalRoleId");
-                const isManagerDep = managerDepIds.includes(selectedDep);
+                const isDeptHasManager = managerDepIds.includes(selectedDep);
+                const hasAdmin = <c:out value="${requestScope.hasAdmin}" />;
 
                 for (let opt of roleSelect.options) {
                     const roleName = opt.text.toLowerCase();
-                    if (roleName.includes("manager")) {
-                        opt.disabled = isManagerDep;
-                        opt.text = opt.text.replace(" (Already Assigned)", "");
-                        if (isManagerDep && !opt.text.includes("Already Assigned")) {
-                            opt.text += " (Already Assigned)";
+                    opt.text = roleName.includes("hr manager") ? "HR Manager" : roleName.includes("manager") ? "Dept Manager" : opt.text;
+                    opt.disabled = false;
+
+                    if (roleName.includes("admin") && hasAdmin) {
+                        opt.disabled = true;
+                        opt.text = "Admin (Already Exists)";
+                    }
+
+                    if (roleName.includes("hr manager")) {
+                        if (selectedDep !== "D002") {
+                            opt.disabled = true;
+                            opt.text = "HR Manager (Only for HR)";
                         }
-                    } else {
-                        opt.disabled = false;
-                        opt.text = opt.text.replace(" (Already Assigned)", "");
+                    } else if (roleName.includes("manager")) {
+                        if (selectedDep === "D002") {
+                            opt.disabled = true;
+                            opt.text = "Dept Manager (Not available in HR)";
+                        } else if (isDeptHasManager) {
+                            opt.disabled = true;
+                            opt.text = "Dept Manager (Already Assigned)";
+                        }
                     }
                 }
 
                 if (roleSelect.options[roleSelect.selectedIndex]?.disabled) {
                     roleSelect.selectedIndex = 0;
                 }
+            }
+
+            document.getElementById("modalDepId").addEventListener("change", function () {
+                updateRoleOptions(this.value);
             });
         </script>
-        <script>
-            $.fn.selectpicker = function () {
-                return this;
-            };
-        </script>
-
         <!-- SCRIPT ZONE -->
         <script src="${pageContext.request.contextPath}/assets2/js/jquery.min.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>

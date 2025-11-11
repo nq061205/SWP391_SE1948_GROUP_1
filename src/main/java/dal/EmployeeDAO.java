@@ -690,8 +690,23 @@ public class EmployeeDAO extends DBContext {
         return empList;
     }
 
-    public boolean hasManager(String depId) {
-        String sql = "SELECT COUNT(*) FROM employee WHERE dep_id = ? AND position_title LIKE '%Manager%'";
+    public boolean hasDeptManager(String depId) {
+        String sql = "SELECT COUNT(*) FROM employee WHERE dep_id = ? AND position_title LIKE '%Dept Manager%'";
+        try (Connection conn = DBContext.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, depId);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt(1) > 0;
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    public boolean hasHRManager(String depId) {
+        String sql = "SELECT COUNT(*) FROM employee WHERE dep_id = ? AND position_title LIKE '%HR Manager%'";
         try (Connection conn = DBContext.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setString(1, depId);
             try (ResultSet rs = ps.executeQuery()) {
@@ -738,18 +753,18 @@ public class EmployeeDAO extends DBContext {
         }
         return "E001";
     }
-
-    public String generatePassword() {
-        String chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-        StringBuilder sb = new StringBuilder();
-        Random random = new Random();
-
-        for (int i = 0; i < 6; i++) {
-            int index = random.nextInt(chars.length());
-            sb.append(chars.charAt(index));
-        }
-        return sb.toString();
-    }
+//
+//    public String generatePassword() {
+//        String chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+//        StringBuilder sb = new StringBuilder();
+//        Random random = new Random();
+//
+//        for (int i = 0; i < 6; i++) {
+//            int index = random.nextInt(chars.length());
+//            sb.append(chars.charAt(index));
+//        }
+//        return sb.toString();
+//    }
 
     public void createEmployee(Employee emp) {
         String sql = "INSERT INTO Employee(emp_code, fullname, password, email, phone, gender, dep_id, role_id, status) "
@@ -781,6 +796,20 @@ public class EmployeeDAO extends DBContext {
         try (Connection conn = getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
 
             ps.setString(1, email);
+            try (ResultSet rs = ps.executeQuery()) {
+                return rs.next();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    public boolean existsByRoleName(String roleName) {
+        String sql = "SELECT 1 FROM Employee e JOIN Role r ON e.role_id = r.role_id WHERE r.role_name = ?";
+        try (Connection conn = getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            ps.setString(1, roleName);
             try (ResultSet rs = ps.executeQuery()) {
                 return rs.next();
             }
@@ -917,13 +946,13 @@ public class EmployeeDAO extends DBContext {
         switch (requesterRole) {
             case "Employee":
                 approverRole = "Dept Manager";
-                filterByDept = true; 
+                filterByDept = true;
                 break;
             case "Dept Manager":
-                approverRole = "HR";
+                approverRole = "HR Manager";
                 break;
             case "HR":
-                approverRole = "HR Manager"; 
+                approverRole = "HR Manager";
                 break;
             case "HR Manager":
                 return null;
@@ -957,7 +986,14 @@ public class EmployeeDAO extends DBContext {
     }
 
     public Employee getManagerByDepartment(String depId) {
-        String sql = BASE_SELECT_SQL + " WHERE e.dep_id = ? AND r.role_name like '%Manager%'";
+        String sql;
+
+        if ("D002".equalsIgnoreCase(depId)) {
+            sql = BASE_SELECT_SQL + " WHERE e.dep_id = ? AND r.role_name = 'HR Manager'";
+        } else {
+            sql = BASE_SELECT_SQL + " WHERE e.dep_id = ? AND r.role_name = 'Dept Manager'";
+        }
+
         try (Connection conn = DBContext.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
 
             ps.setString(1, depId);
@@ -967,9 +1003,11 @@ public class EmployeeDAO extends DBContext {
                     return mapResultSetToEmployee(rs);
                 }
             }
+
         } catch (Exception ex) {
             Logger.getLogger(EmployeeDAO.class.getName()).log(Level.SEVERE, null, ex);
         }
+
         return null;
     }
 
@@ -1007,8 +1045,7 @@ public class EmployeeDAO extends DBContext {
 
     public static void main(String[] args) {
         EmployeeDAO dao = new EmployeeDAO();
-        List<Employee> emps = dao.getAllEmployees();
-        System.out.println(emps.size());
+        System.out.println(dao.getManagerByDepartment("D002"));
     }
 
 }

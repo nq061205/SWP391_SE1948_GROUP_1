@@ -17,14 +17,7 @@
 
 <div class="ttr-sidebar">
     <div class="ttr-sidebar-wrapper content-scroll">
-        <div class="ttr-sidebar-logo">
-            <a href="${pageContext.request.contextPath}/dashboard">
-                <img alt="" src="${pageContext.request.contextPath}/assets1/images/logo-white.png" width="100" height="50">
-            </a>
-            <div class="ttr-sidebar-toggle-button">
-                <i class="ti-arrow-left"></i>
-            </div>
-        </div>
+       
         <%-- (ĐÃ LOẠI BỎ CÁC THẺ BỊ LẶP ttr-sidebar và ttr-sidebar-wrapper) --%>
         <nav class="ttr-sidebar-navi">
             <ul>
@@ -146,6 +139,9 @@
                 </li>
                 <% } %>
 
+
+                <% if (rpDAO.hasPermission(roleId, 12)) { %>
+
                 <li>
                     <a href="${pageContext.request.contextPath}/raw-attendance" class="ttr-material-button">
                         <span class="ttr-icon"><i class="ti-timer"></i></span>
@@ -158,6 +154,7 @@
                         <span class="ttr-label">Daily Attendance</span>
                     </a>
                 </li>
+                <% } %>
 
                 <li>
                     <a href="${pageContext.request.contextPath}/payrollreportdetail" class="ttr-material-button">
@@ -165,7 +162,7 @@
                         <span class="ttr-label">Payroll Report</span>
                     </a>
                 </li>
-
+                
                 <li>
                     <a href="${pageContext.request.contextPath}/attendance" class="ttr-material-button">
                         <span class="ttr-icon"><i class="ti-check-box"></i></span>
@@ -181,6 +178,7 @@
                     </a>
                 </li>
                 <% } %>
+                
                 <% if (rpDAO.hasPermission(roleId, 8)) { %>
                 <li>
                     <a href="${pageContext.request.contextPath}/Views/listapplication.jsp" class="ttr-material-button">
@@ -193,6 +191,12 @@
                         <li><a href="${pageContext.request.contextPath}/applicationmanagement?typeapplication=ot" class="ttr-material-button"><span class="ttr-label">Overtime Approval</span></a></li>
                     </ul>
                 </li>
+                <% } %>
+                <% if (rpDAO.hasPermission(roleId, 13)) { %>
+                 <a href="${pageContext.request.contextPath}/monthly-payroll" class="ttr-material-button">
+                        <span class="ttr-icon"><i class="ti-server"></i></span>
+                        <span class="ttr-label">Payroll Management</span>
+                    </a>
                 <% } %>
                 <li class="ttr-seperate"></li>
             </ul>

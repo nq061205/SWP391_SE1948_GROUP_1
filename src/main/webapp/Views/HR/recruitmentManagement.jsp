@@ -28,6 +28,36 @@
 
         <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/assets2/vendors/summernote/summernote.css">
         <link href="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote-lite.min.css" rel="stylesheet">
+        <style>
+            .badge-purple {
+                background-color: #6f42c1;
+                color: #fff;
+            }
+            .btn-success.send-btn:hover {
+                background-color: #28a745 !important;
+                border-color: #28a745 !important;
+                transform: translateY(-1px);
+                box-shadow: 0 2px 4px rgba(40, 167, 69, 0.3);
+            }
+            .btn-secondary.delete-btn:hover {
+                background-color: #6c757d !important;
+                border-color: #6c757d !important;
+                transform: translateY(-1px);
+                box-shadow: 0 2px 4px rgba(108, 117, 125, 0.3);
+            }
+            .btn-warning:hover {
+                background-color: #ffc107 !important;
+                border-color: #ffc107 !important;
+                transform: translateY(-1px);
+                box-shadow: 0 2px 4px rgba(255, 193, 7, 0.3);
+            }
+            .btn-info:hover {
+                background-color: #17a2b8 !important;
+                border-color: #17a2b8 !important;
+                transform: translateY(-1px);
+                box-shadow: 0 2px 4px rgba(23, 162, 184, 0.3);
+            }
+        </style>
     </head>
 
     <body class="ttr-opened-sidebar ttr-pinned-sidebar">
@@ -186,8 +216,8 @@
                             </div>
                             <div class="widget-inner">
                                 <div class="row mb-3">
-                                    <div class="col-md-4">
-                                        <form action="${pageContext.request.contextPath}/hrrecruitment" method="get" class="form-inline">
+                                    <div class="col-12 mb-2">
+                                        <form action="${pageContext.request.contextPath}/hrrecruitment" method="get" class="d-flex flex-wrap align-items-center" style="gap: 10px;" id="notifFilterForm">
                                                     <input type="hidden" name="action" value="list">
                                                     <input type="hidden" name="notifPageSize" value="${notifPageSize}">
                                                     <c:if test="${not empty searchKeyword}">
@@ -208,105 +238,66 @@
                                                     <c:if test="${not empty notifToDate}">
                                                         <input type="hidden" name="notifToDate" value="${notifToDate}">
                                                     </c:if>
-                                                    <div class="form-group mr-2">
-                                                        <label for="notifSearch" class="mr-2">Search:</label>
+                                                    
+                                                    <!-- Search -->
+                                                    <div class="d-flex align-items-center" style="flex: 1 1 auto; min-width: 200px;">
+                                                        <label for="notifSearch" class="mr-2 mb-0" style="white-space: nowrap;">Search:</label>
                                                         <input type="text" class="form-control" id="notifSearch" name="notifSearch"
-                                                               value="${notifSearchKeyword}" placeholder="Search by title, department...">
+                                                               value="${notifSearchKeyword}" placeholder="Title, dept..." style="flex: 1;">
                                                     </div>
-                                                    <button type="submit" class="btn btn-primary">
-                                                        <i class="fa fa-search"></i> Search
-                                                    </button>
-                                                    <c:if test="${not empty notifSearchKeyword}">
-                                                        <a href="${notifSearchClearUrl}" class="btn btn-secondary ml-2">
-                                                            <i class="fa fa-times"></i> Clear
-                                                        </a>
-                                                    </c:if>
-                                                </form>
-                                            </div>
-                                            <div class="col-md-4 text-center">
-                                                <form action="${pageContext.request.contextPath}/hrrecruitment" method="get" class="form-inline justify-content-center">
-                                                    <input type="hidden" name="action" value="list">
-                                                    <c:if test="${not empty notifSearchKeyword}">
-                                                        <input type="hidden" name="notifSearch" value="${notifSearchKeyword}">
-                                                    </c:if>
-                                                    <c:if test="${not empty searchKeyword}">
-                                                        <input type="hidden" name="search" value="${searchKeyword}">
-                                                    </c:if>
-                                                    <c:if test="${not empty pageSize}">
-                                                        <input type="hidden" name="pageSize" value="${pageSize}">
-                                                    </c:if>
-                                                    <c:if test="${not empty currentPage}">
-                                                        <input type="hidden" name="page" value="${currentPage}">
-                                                    </c:if>
-                                                    <c:if test="${not empty notifStatusFilter}">
-                                                        <input type="hidden" name="notifStatus" value="${notifStatusFilter}">
-                                                    </c:if>
-                                                    <input type="hidden" name="notifPageSize" value="${notifPageSize}">
-                                                    <div class="form-group mr-2">
-                                                        <label for="notifFromDate" class="mr-2" style="white-space: nowrap;">From:</label>
+                                                    
+                                                    <!-- Date Range -->
+                                                    <div class="d-flex align-items-center" style="white-space: nowrap;">
+                                                        <label for="notifFromDate" class="mr-2 mb-0">From:</label>
                                                         <input type="date" class="form-control" id="notifFromDate" name="notifFromDate"
-                                                               value="${notifFromDate}" style="width: 150px;">
+                                                               value="${notifFromDate}" style="width: 140px;">
                                                     </div>
-                                                    <div class="form-group mr-2">
-                                                        <label for="notifToDate" class="mr-2" style="white-space: nowrap;">To:</label>
+                                                    <div class="d-flex align-items-center" style="white-space: nowrap;">
+                                                        <label for="notifToDate" class="mr-2 mb-0">To:</label>
                                                         <input type="date" class="form-control" id="notifToDate" name="notifToDate"
-                                                               value="${notifToDate}" style="width: 150px;">
+                                                               value="${notifToDate}" style="width: 140px;">
                                                     </div>
-                                                    <button type="submit" class="btn btn-info">
-                                                        <i class="fa fa-filter"></i> Filter
+                                                    
+                                                    <!-- Department -->
+                                                    <div class="d-flex align-items-center" style="white-space: nowrap;">
+                                                        <label for="notifDepIdFilter" class="mr-2 mb-0">Dept:</label>
+                                                        <select class="form-control" id="notifDepIdFilter" name="notifDepId" style="width: 110px;">
+                                                            <option value="">All</option>
+                                                            <c:forEach items="${departments}" var="dept">
+                                                                <option value="${dept.depId}" ${notifDepIdFilter == dept.depId ? 'selected' : ''}>${dept.depName}</option>
+                                                            </c:forEach>
+                                                        </select>
+                                                    </div>
+                                                    
+                                                    <!-- Status -->
+                                                    <div class="d-flex align-items-center" style="white-space: nowrap;">
+                                                        <label for="notifStatusFilter" class="mr-2 mb-0">Status:</label>
+                                                        <select class="form-control" id="notifStatusFilter" name="notifStatus" style="width: 100px;">
+                                                            <option value="" ${empty notifStatusFilter ? 'selected' : ''}>All</option>
+                                                            <option value="New" ${notifStatusFilter == 'New' ? 'selected' : ''}>New</option>
+                                                            <option value="Waiting" ${notifStatusFilter == 'Waiting' ? 'selected' : ''}>Waiting</option>
+                                                            <option value="Rejected" ${notifStatusFilter == 'Rejected' ? 'selected' : ''}>Rejected</option>
+                                                        </select>
+                                                    </div>
+                                                    
+                                                    <!-- Page Size -->
+                                                    <div class="d-flex align-items-center" style="white-space: nowrap;">
+                                                        <select class="form-control" id="notifPageSizeSelect" name="notifPageSize" style="width: 60px;">
+                                                            <option value="5" ${notifPageSize == 5 ? 'selected' : ''}>5</option>
+                                                            <option value="10" ${notifPageSize == 10 ? 'selected' : ''}>10</option>
+                                                            <option value="25" ${notifPageSize == 25 ? 'selected' : ''}>25</option>
+                                                            <option value="50" ${notifPageSize == 50 ? 'selected' : ''}>50</option>
+                                                        </select>
+                                                        <span class="ml-1 mb-0">per page</span>
+                                                    </div>
+                                                    
+                                                    <!-- Buttons -->
+                                                    <button type="submit" class="btn btn-primary" style="white-space: nowrap;">
+                                                        <i class="fa fa-filter"></i> Apply
                                                     </button>
-                                                    <c:if test="${not empty notifFromDate || not empty notifToDate}">
-                                                        <a href="${notifDateClearUrl}" class="btn btn-secondary ml-2">
-                                                            <i class="fa fa-times"></i> Clear
-                                                        </a>
-                                                    </c:if>
-                                                </form>
-                                            </div>
-                                            <div class="col-md-4 text-right">
-                                                <form action="${pageContext.request.contextPath}/hrrecruitment" method="get" class="form-inline float-right" style="display: flex !important; align-items: center; flex-wrap: nowrap;">
-                                                    <input type="hidden" name="action" value="list">
-                                                    <c:if test="${not empty notifSearchKeyword}">
-                                                        <input type="hidden" name="notifSearch" value="${notifSearchKeyword}">
-                                                    </c:if>
-                                                    <c:if test="${not empty searchKeyword}">
-                                                        <input type="hidden" name="search" value="${searchKeyword}">
-                                                    </c:if>
-                                                    <c:if test="${not empty pageSize}">
-                                                        <input type="hidden" name="pageSize" value="${pageSize}">
-                                                    </c:if>
-                                                    <c:if test="${not empty currentPage}">
-                                                        <input type="hidden" name="page" value="${currentPage}">
-                                                    </c:if>
-                                                    <c:if test="${not empty notifFromDate}">
-                                                        <input type="hidden" name="notifFromDate" value="${notifFromDate}">
-                                                    </c:if>
-                                                    <c:if test="${not empty notifToDate}">
-                                                        <input type="hidden" name="notifToDate" value="${notifToDate}">
-                                                    </c:if>
-                                                    <label for="notifDepIdFilter" class="mr-2" style="white-space: nowrap;">Department:</label>
-                                                    <select class="form-control mr-2" id="notifDepIdFilter" name="notifDepId" style="width: 120px; height: 38px; flex-shrink: 0;">
-                                                        <option value="">All</option>
-                                                        <c:forEach items="${departments}" var="dept">
-                                                            <option value="${dept.depId}" ${notifDepIdFilter == dept.depId ? 'selected' : ''}>${dept.depName}</option>
-                                                        </c:forEach>
-                                                    </select>
-                                                    <label for="notifStatusFilter" class="mr-2" style="white-space: nowrap;">Status:</label>
-                                                    <select class="form-control mr-2" id="notifStatusFilter" name="notifStatus" style="width: 100px; height: 38px; flex-shrink: 0;">
-                                                        <option value="" ${empty notifStatusFilter ? 'selected' : ''}>All</option>
-                                                        <option value="New" ${notifStatusFilter == 'New' ? 'selected' : ''}>New</option>
-                                                        <option value="Waiting" ${notifStatusFilter == 'Waiting' ? 'selected' : ''}>Waiting</option>
-                                                        <option value="Rejected" ${notifStatusFilter == 'Rejected' ? 'selected' : ''}>Rejected</option>
-                                                    </select>
-                                                    <select class="form-control" id="notifPageSizeSelect" name="notifPageSize" style="width: 60px; height: 38px; margin-right: 8px; flex-shrink: 0;">
-                                                        <option value="5" ${notifPageSize == 5 ? 'selected' : ''}>5</option>
-                                                        <option value="10" ${notifPageSize == 10 ? 'selected' : ''}>10</option>
-                                                        <option value="25" ${notifPageSize == 25 ? 'selected' : ''}>25</option>
-                                                        <option value="50" ${notifPageSize == 50 ? 'selected' : ''}>50</option>
-                                                    </select>
-                                                    <button type="submit" class="btn btn-primary" style="height: 38px; padding: 0.375rem 0.75rem; margin-right: 8px; flex-shrink: 0; white-space: nowrap;">
-                                                        <i class="fa fa-check"></i> Apply
+                                                    <button type="button" class="btn btn-secondary" id="clearNotifFilter" style="white-space: nowrap;">
+                                                        <i class="fa fa-times"></i> Clear
                                                     </button>
-                                                    <span style="white-space: nowrap; height: 38px; display: flex; align-items: center; flex-shrink: 0;">per page</span>
                                                 </form>
                                             </div>
                                         </div>
@@ -352,7 +343,7 @@
                                                                         </c:choose>
                                                                     </td>
                                                                     <td class="text-center">
-                                                                        <div style="display: flex; justify-content: center; align-items: center; gap: 5px; flex-wrap: wrap;">
+                                                                        <div style="display: flex; justify-content: center; align-items: center; gap: 5px;">
                                                                             <c:choose>
                                                                                 <c:when test="${post.status == 'New'}">
                                                                                     <a href="${pageContext.request.contextPath}/hrrecruitment?action=edit&postId=${post.postId}"
@@ -363,10 +354,19 @@
                                                                                     <form action="${pageContext.request.contextPath}/hrrecruitment" method="post" style="display:inline; margin: 0;">
                                                                                         <input type="hidden" name="action" value="send">
                                                                                         <input type="hidden" name="postId" value="${post.postId}">
-                                                                                        <button type="submit" class="btn btn-sm btn-success" title="Send for approval"
+                                                                                        <button type="submit" class="btn btn-sm btn-success send-btn" title="Send for approval"
                                                                                                 style="min-width: 80px;"
                                                                                                 onclick="return confirm('Are you sure you want to send this post for approval?');">
                                                                                             <i class="fa fa-paper-plane"></i> Send
+                                                                                        </button>
+                                                                                    </form>
+                                                                                    <form action="${pageContext.request.contextPath}/hrrecruitment" method="post" style="display:inline; margin: 0;">
+                                                                                        <input type="hidden" name="action" value="delete">
+                                                                                        <input type="hidden" name="postId" value="${post.postId}">
+                                                                                        <button type="submit" class="btn btn-sm btn-secondary delete-btn" title="Delete post"
+                                                                                                style="min-width: 80px;"
+                                                                                                onclick="return confirm('Are you sure you want to delete this post?');">
+                                                                                            <i class="fa fa-trash"></i> Delete
                                                                                         </button>
                                                                                     </form>
                                                                                 </c:when>
@@ -383,6 +383,15 @@
                                                                                        style="min-width: 80px;">
                                                                                         <i class="fa fa-edit"></i> Update
                                                                                     </a>
+                                                                                    <form action="${pageContext.request.contextPath}/hrrecruitment" method="post" style="display:inline; margin: 0;">
+                                                                                        <input type="hidden" name="action" value="delete">
+                                                                                        <input type="hidden" name="postId" value="${post.postId}">
+                                                                                        <button type="submit" class="btn btn-sm btn-secondary delete-btn" title="Delete post"
+                                                                                                style="min-width: 80px;"
+                                                                                                onclick="return confirm('Are you sure you want to delete this post?');">
+                                                                                            <i class="fa fa-trash"></i> Delete
+                                                                                        </button>
+                                                                                    </form>
                                                                                 </c:when>
                                                                             </c:choose>
                                                                         </div>
@@ -476,8 +485,8 @@
                             </div>
                             <div class="widget-inner">
                                 <div class="row mb-3">
-                                    <div class="col-md-4">
-                                        <form action="${pageContext.request.contextPath}/hrrecruitment" method="get" class="form-inline">
+                                    <div class="col-12 mb-2">
+                                        <form action="${pageContext.request.contextPath}/hrrecruitment" method="get" class="d-flex flex-wrap align-items-center" style="gap: 10px;" id="approvedFilterForm">
                                                     <input type="hidden" name="action" value="list">
                                                     <input type="hidden" name="pageSize" value="${pageSize}">
                                                     <c:if test="${not empty notifSearchKeyword}">
@@ -495,96 +504,56 @@
                                                     <c:if test="${not empty toDate}">
                                                         <input type="hidden" name="toDate" value="${toDate}">
                                                     </c:if>
-                                                    <div class="form-group mr-2">
-                                                        <label for="searchInput" class="mr-2">Search:</label>
+                                                    
+                                                    <!-- Search -->
+                                                    <div class="d-flex align-items-center" style="flex: 1 1 auto; min-width: 200px;">
+                                                        <label for="searchInput" class="mr-2 mb-0" style="white-space: nowrap;">Search:</label>
                                                         <input type="text" class="form-control" id="searchInput" name="search"
-                                                               value="${searchKeyword}" placeholder="Search by title or department...">
+                                                               value="${searchKeyword}" placeholder="Title, dept..." style="flex: 1;">
                                                     </div>
-                                                    <button type="submit" class="btn btn-primary">
-                                                        <i class="fa fa-search"></i> Search
-                                                    </button>
-                                                    <c:if test="${not empty searchKeyword}">
-                                                        <a href="${approvedSearchClearUrl}" class="btn btn-secondary ml-2">
-                                                            <i class="fa fa-times"></i> Clear
-                                                        </a>
-                                                    </c:if>
-                                                </form>
-                                            </div>
-                                            <div class="col-md-4 text-center">
-                                                <form action="${pageContext.request.contextPath}/hrrecruitment" method="get" class="form-inline justify-content-center">
-                                                    <input type="hidden" name="action" value="list">
-                                                    <c:if test="${not empty searchKeyword}">
-                                                        <input type="hidden" name="search" value="${searchKeyword}">
-                                                    </c:if>
-                                                    <c:if test="${not empty notifSearchKeyword}">
-                                                        <input type="hidden" name="notifSearch" value="${notifSearchKeyword}">
-                                                    </c:if>
-                                                    <c:if test="${not empty notifPageSize}">
-                                                        <input type="hidden" name="notifPageSize" value="${notifPageSize}">
-                                                    </c:if>
-                                                    <c:if test="${not empty notifCurrentPage}">
-                                                        <input type="hidden" name="notifPage" value="${notifCurrentPage}">
-                                                    </c:if>
-                                                    <input type="hidden" name="pageSize" value="${pageSize}">
-                                                    <div class="form-group mr-2">
-                                                        <label for="fromDate" class="mr-2" style="white-space: nowrap;">From:</label>
+                                                    
+                                                    <!-- Date Range -->
+                                                    <div class="d-flex align-items-center" style="white-space: nowrap;">
+                                                        <label for="fromDate" class="mr-2 mb-0">From:</label>
                                                         <input type="date" class="form-control" id="fromDate" name="fromDate"
-                                                               value="${fromDate}" style="width: 150px;">
+                                                               value="${fromDate}" style="width: 140px;">
                                                     </div>
-                                                    <div class="form-group mr-2">
-                                                        <label for="toDate" class="mr-2" style="white-space: nowrap;">To:</label>
+                                                    <div class="d-flex align-items-center" style="white-space: nowrap;">
+                                                        <label for="toDate" class="mr-2 mb-0">To:</label>
                                                         <input type="date" class="form-control" id="toDate" name="toDate"
-                                                               value="${toDate}" style="width: 150px;">
+                                                               value="${toDate}" style="width: 140px;">
                                                     </div>
-                                                    <button type="submit" class="btn btn-info">
-                                                        <i class="fa fa-filter"></i> Filter
+                                                    
+                                                    <!-- Department -->
+                                                    <div class="d-flex align-items-center" style="white-space: nowrap;">
+                                                        <label for="depIdFilter" class="mr-2 mb-0">Dept:</label>
+                                                        <select class="form-control" id="depIdFilter" name="depId" style="width: 110px;">
+                                                            <option value="">All</option>
+                                                            <c:forEach items="${departments}" var="dept">
+                                                                <option value="${dept.depId}" ${depIdFilter == dept.depId ? 'selected' : ''}>${dept.depName}</option>
+                                                            </c:forEach>
+                                                        </select>
+                                                    </div>
+                                                    
+                                                    <!-- Page Size -->
+                                                    <div class="d-flex align-items-center" style="white-space: nowrap;">
+                                                        <select class="form-control" id="pageSizeSelect" name="pageSize" style="width: 60px;">
+                                                            <option value="5" ${pageSize == 5 ? 'selected' : ''}>5</option>
+                                                            <option value="10" ${pageSize == 10 ? 'selected' : ''}>10</option>
+                                                            <option value="25" ${pageSize == 25 ? 'selected' : ''}>25</option>
+                                                            <option value="50" ${pageSize == 50 ? 'selected' : ''}>50</option>
+                                                            <option value="100" ${pageSize == 100 ? 'selected' : ''}>100</option>
+                                                        </select>
+                                                        <span class="ml-1 mb-0">per page</span>
+                                                    </div>
+                                                    
+                                                    <!-- Buttons -->
+                                                    <button type="submit" class="btn btn-primary" style="white-space: nowrap;">
+                                                        <i class="fa fa-filter"></i> Apply
                                                     </button>
-                                                    <c:if test="${not empty fromDate || not empty toDate}">
-                                                        <a href="${approvedDateClearUrl}" class="btn btn-secondary ml-2">
-                                                            <i class="fa fa-times"></i> Clear
-                                                        </a>
-                                                    </c:if>
-                                                </form>
-                                            </div>
-                                            <div class="col-md-4 text-right">
-                                                <form action="${pageContext.request.contextPath}/hrrecruitment" method="get" class="form-inline float-right" style="display: flex !important; align-items: center; flex-wrap: nowrap;">
-                                                    <input type="hidden" name="action" value="list">
-                                                    <c:if test="${not empty searchKeyword}">
-                                                        <input type="hidden" name="search" value="${searchKeyword}">
-                                                    </c:if>
-                                                    <c:if test="${not empty notifSearchKeyword}">
-                                                        <input type="hidden" name="notifSearch" value="${notifSearchKeyword}">
-                                                    </c:if>
-                                                    <c:if test="${not empty notifPageSize}">
-                                                        <input type="hidden" name="notifPageSize" value="${notifPageSize}">
-                                                    </c:if>
-                                                    <c:if test="${not empty notifCurrentPage}">
-                                                        <input type="hidden" name="notifPage" value="${notifCurrentPage}">
-                                                    </c:if>
-                                                    <c:if test="${not empty fromDate}">
-                                                        <input type="hidden" name="fromDate" value="${fromDate}">
-                                                    </c:if>
-                                                    <c:if test="${not empty toDate}">
-                                                        <input type="hidden" name="toDate" value="${toDate}">
-                                                    </c:if>
-                                                    <label for="depIdFilter" class="mr-2" style="white-space: nowrap;">Department:</label>
-                                                    <select class="form-control mr-2" id="depIdFilter" name="depId" style="width: 120px; height: 38px; flex-shrink: 0;">
-                                                        <option value="">All</option>
-                                                        <c:forEach items="${departments}" var="dept">
-                                                            <option value="${dept.depId}" ${depIdFilter == dept.depId ? 'selected' : ''}>${dept.depName}</option>
-                                                        </c:forEach>
-                                                    </select>
-                                                    <select class="form-control" id="pageSizeSelect" name="pageSize" style="width: 60px; height: 38px; margin-right: 8px; flex-shrink: 0;">
-                                                        <option value="5" ${pageSize == 5 ? 'selected' : ''}>5</option>
-                                                        <option value="10" ${pageSize == 10 ? 'selected' : ''}>10</option>
-                                                        <option value="25" ${pageSize == 25 ? 'selected' : ''}>25</option>
-                                                        <option value="50" ${pageSize == 50 ? 'selected' : ''}>50</option>
-                                                        <option value="100" ${pageSize == 100 ? 'selected' : ''}>100</option>
-                                                    </select>
-                                                    <button type="submit" class="btn btn-primary" style="height: 38px; padding: 0.375rem 0.75rem; margin-right: 8px; flex-shrink: 0; white-space: nowrap;">
-                                                        <i class="fa fa-check"></i> Show
+                                                    <button type="button" class="btn btn-secondary" id="clearApprovedFilter" style="white-space: nowrap;">
+                                                        <i class="fa fa-times"></i> Clear
                                                     </button>
-                                                    <span style="white-space: nowrap; height: 38px; display: flex; align-items: center; flex-shrink: 0;">per page</span>
                                                 </form>
                                             </div>
                                         </div>
@@ -754,11 +723,11 @@
 
         <script type="text/javascript">
 
+
             window.addEventListener('load', function() {
                 console.log('Page fully loaded');
                 console.log('jQuery:', typeof $);
                 console.log('Summernote:', typeof $.fn.summernote);
-
 
                 var config = {
                     height: 300,
@@ -769,17 +738,15 @@
                         ['color', ['color']],
                         ['para', ['ul', 'ol', 'paragraph']],
                         ['table', ['table']],
-                        ['insert', ['link']],
+                        ['insert', ['link', 'picture']], // Thêm nút chèn ảnh
                         ['view', ['fullscreen', 'codeview']]
                     ]
                 };
-
 
                 if ($('#content').length) {
                     console.log('Init #content');
                     $('#content').summernote(config);
                 }
-
 
                 if ($('#editContent').length) {
                     console.log('Init #editContent');
@@ -813,6 +780,29 @@
                             return false;
                         }
                     }
+                });
+
+                // Clear filter for Notification section
+                $('#clearNotifFilter').click(function(e) {
+                    e.preventDefault();
+                    $('#notifSearch').val('');
+                    $('#notifFromDate').val('');
+                    $('#notifToDate').val('');
+                    $('#notifDepIdFilter').val('');
+                    $('#notifStatusFilter').val('');
+                    $('#notifPageSizeSelect').val('10');
+                    $('#notifFilterForm').submit();
+                });
+
+                // Clear filter for Approved Posts section
+                $('#clearApprovedFilter').click(function(e) {
+                    e.preventDefault();
+                    $('#searchInput').val('');
+                    $('#fromDate').val('');
+                    $('#toDate').val('');
+                    $('#depIdFilter').val('');
+                    $('#pageSizeSelect').val('10');
+                    $('#approvedFilterForm').submit();
                 });
             });
         </script>

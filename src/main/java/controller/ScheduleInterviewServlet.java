@@ -43,7 +43,7 @@ public class ScheduleInterviewServlet extends HttpServlet {
             response.sendRedirect("dashboard");
             return;
         }
-        List<RecruitmentPost> posts = rpDAO.getApprovedPosts();
+        List<RecruitmentPost> posts = rpDAO.getUploadedPosts();
         request.setAttribute("postList", posts);
         request.getRequestDispatcher("Views/scheduleInterview.jsp").forward(request, response);
     }
@@ -56,7 +56,7 @@ public class ScheduleInterviewServlet extends HttpServlet {
         CandidateDAO cDAO = new CandidateDAO();
         EmployeeDAO eDAO = new EmployeeDAO();
         InterviewDAO iDAO = new InterviewDAO();
-
+        RolePermissionDAO rperDAO = new RolePermissionDAO();
         String postIdStr = request.getParameter("postId");
         String action = request.getParameter("action");
         String[] selectedIds = request.getParameterValues("candidateIds");
@@ -69,7 +69,12 @@ public class ScheduleInterviewServlet extends HttpServlet {
             response.sendRedirect("login");
             return;
         }
-        List<RecruitmentPost> posts = rpDAO.getApprovedPosts();
+        if (!rperDAO.hasPermission(user.getRole().getRoleId(), 5)) {
+            session.setAttribute("logMessage", "You do not have permission to access this page.");
+            response.sendRedirect("dashboard");
+            return;
+        }
+        List<RecruitmentPost> posts = rpDAO.getUploadedPosts();
         request.setAttribute("postList", posts);
         if (action == null) {
             if (postIdStr != null && !postIdStr.equals("all") && !postIdStr.isEmpty()) {
@@ -82,7 +87,7 @@ public class ScheduleInterviewServlet extends HttpServlet {
                     String deptId = rpDAO.getPostById(postId).getDepartment().getDepId();
                     List<Employee> interviewerList = getEmployeeByDept(eDAO.getAllEmployees(), deptId);
 
-                    request.setAttribute("candidateList", candidateList);
+                    request.setAttribute("candidatesList", candidateList);
                     request.setAttribute("employeeInterview", interviewerList);
                     request.setAttribute("selectedPostId", postId);
 
@@ -155,7 +160,7 @@ public class ScheduleInterviewServlet extends HttpServlet {
             String deptId = rpDAO.getPostById(postId).getDepartment().getDepId();
             List<Employee> interviewerList = getEmployeeByDept(eDAO.getAllEmployees(), deptId);
 
-            request.setAttribute("candidateList", candidateList);
+            request.setAttribute("candidatesList", candidateList);
             request.setAttribute("employeeInterview", interviewerList);
             request.setAttribute("selectedPostId", postId);
         }

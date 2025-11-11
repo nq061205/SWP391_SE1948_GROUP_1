@@ -11,17 +11,14 @@ import dal.RolePermissionDAO;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
-import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import model.Department;
 import model.Employee;
 import model.Role;
@@ -73,7 +70,7 @@ public class UpdateAccountServlet extends HttpServlet {
         HttpSession ses = request.getSession();
         RolePermissionDAO rperDAO = new RolePermissionDAO();
         Employee user = (Employee) ses.getAttribute("user");
-        if(user == null){
+        if (user == null) {
             response.sendRedirect("login");
             return;
         }
@@ -84,6 +81,7 @@ public class UpdateAccountServlet extends HttpServlet {
         }
         String empCode = request.getParameter("empCode");
         EmployeeDAO empDAO = new EmployeeDAO();
+        DeptDAO depDAO = new DeptDAO();
         RoleDAO rDAO = new RoleDAO();
         DeptDAO dDAO = new DeptDAO();
         String deptID = request.getParameter("deptId");
@@ -101,11 +99,13 @@ public class UpdateAccountServlet extends HttpServlet {
         }
 
         List<Role> uniqueRoles = new ArrayList<>(uniqueRolesMap.values());
+        List<String> managerDepIds = depDAO.getDepartmentsHavingManager();
 
         Role role = rDAO.getRoleByRoleId(roleID);
         Employee emp = empDAO.getEmployeeByEmpCode(empCode);
-        request.setAttribute("departments", departments);
-        request.setAttribute("roles", uniqueRoles);
+        ses.setAttribute("departments", departments);
+        ses.setAttribute("roles", uniqueRoles);
+        ses.setAttribute("managerDepIds", managerDepIds);
         ses.setAttribute("emp", emp);
         ses.setAttribute("dept", dept);
         ses.setAttribute("role", role);
@@ -139,7 +139,17 @@ public class UpdateAccountServlet extends HttpServlet {
 
         }
         Employee editEmp = dao.getEmployeeByEmpCode(empCode);
-        if (editEmp != null && "save".equalsIgnoreCase(button)) {
+        boolean hasErr = false;
+        if (email.length() > 100) {
+            request.setAttribute("EmailErr", "Email have the max length is 100");
+            hasErr = true;
+
+        }
+        if (!email.equals(editEmp.getEmail()) && dao.getEmployeeByEmail(email) != null) {
+            request.setAttribute("EmailErr", "Email has been existed");
+            hasErr = true;
+        }
+        if ("save".equalsIgnoreCase(button) && !hasErr) {
             editEmp.setEmail(email);
             Department dept = dDAO.getDepartmentByDepartmentId(deptID);
             editEmp.setDept(dept);
