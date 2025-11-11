@@ -16,6 +16,8 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import java.sql.Date;
+import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
 import model.Employee;
 import model.LeaveRequest;
 import model.OTRequest;
@@ -74,65 +76,68 @@ public class SystemLogDetailServlet extends HttpServlet {
         }
 
         if ("Updated".equalsIgnoreCase(action)) {
+
             String startStr = request.getParameter("startdate");
             String endStr = request.getParameter("enddate");
 
-            Date startDate = null;
-            Date endDate = null;
-
-            if (startStr != null && !startStr.isEmpty()) {
-                startDate = Date.valueOf(startStr);
-            }
-            if (endStr != null && !endStr.isEmpty()) {
-                endDate = Date.valueOf(endStr);
-            }
-
-            if (startDate == null || endDate == null) {
+            if (startStr == null || endStr == null || startStr.isEmpty() || endStr.isEmpty()) {
                 request.setAttribute("messageDate", "Start date and end date cannot be empty!");
                 request.getRequestDispatcher("Views/systemlogdetail.jsp").forward(request, response);
                 return;
             }
-            if (startDate.after(endDate)) {
+
+            LocalDate s = LocalDate.parse(startStr); 
+            LocalDate e = LocalDate.parse(endStr);
+
+            if (s.isAfter(e)) {
                 request.setAttribute("messageDate", "Start date must be before end date!");
                 request.getRequestDispatcher("Views/systemlogdetail.jsp").forward(request, response);
                 return;
             }
 
+            double newDays = ChronoUnit.DAYS.between(s, e) + 1;
+
             double oldDays = leave.getDayRequested();
-            long diff = endDate.getTime() - startDate.getTime();
-            double newDays = (double) diff / (1000 * 60 * 60 * 24) + 1;
+
+            double available = empDAO.getEmployeeByEmpId(leave.getEmployee().getEmpId()).getPaidLeaveDays();
 
             if ("Annual Leave".equalsIgnoreCase(leave.getLeaveType())) {
-                double available = leave.getEmployee().getPaidLeaveDays();
 
                 if (newDays > oldDays) {
                     double need = newDays - oldDays;
+
                     if (available < need) {
                         request.setAttribute("messageDate", "Exceeding the number of available leave days!");
                         request.getRequestDispatcher("Views/systemlogdetail.jsp").forward(request, response);
                         return;
                     }
+
                     empDAO.updateDecreasePaidLeaveDaysByEmployeeId(
                             leave.getEmployee().getEmpId(), need
                     );
 
                 } else if (newDays < oldDays) {
+
                     double refund = oldDays - newDays;
+
                     empDAO.updateIncreasePaidLeaveDaysByEmployeeId(
                             leave.getEmployee().getEmpId(), refund
                     );
                 }
             }
 
-            leaveDAO.updateLeaveRequest(id,
+            leaveDAO.updateLeaveRequest(
+                    id,
                     leave.getLeaveType(),
                     leave.getReason(),
-                    startDate,
-                    endDate,
-                    note);
+                    Date.valueOf(s),
+                    Date.valueOf(e),
+                    note
+            );
 
             response.sendRedirect(request.getContextPath() + "/systemlog");
         }
+
     }
 
 }
