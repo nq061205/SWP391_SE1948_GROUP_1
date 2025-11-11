@@ -28,6 +28,36 @@
 
         <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/assets2/vendors/summernote/summernote.css">
         <link href="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote-lite.min.css" rel="stylesheet">
+        <style>
+            .badge-purple {
+                background-color: #6f42c1;
+                color: #fff;
+            }
+            .btn-success.send-btn:hover {
+                background-color: #28a745 !important;
+                border-color: #28a745 !important;
+                transform: translateY(-1px);
+                box-shadow: 0 2px 4px rgba(40, 167, 69, 0.3);
+            }
+            .btn-secondary.delete-btn:hover {
+                background-color: #6c757d !important;
+                border-color: #6c757d !important;
+                transform: translateY(-1px);
+                box-shadow: 0 2px 4px rgba(108, 117, 125, 0.3);
+            }
+            .btn-warning:hover {
+                background-color: #ffc107 !important;
+                border-color: #ffc107 !important;
+                transform: translateY(-1px);
+                box-shadow: 0 2px 4px rgba(255, 193, 7, 0.3);
+            }
+            .btn-info:hover {
+                background-color: #17a2b8 !important;
+                border-color: #17a2b8 !important;
+                transform: translateY(-1px);
+                box-shadow: 0 2px 4px rgba(23, 162, 184, 0.3);
+            }
+        </style>
     </head>
 
     <body class="ttr-opened-sidebar ttr-pinned-sidebar">
@@ -313,7 +343,7 @@
                                                                         </c:choose>
                                                                     </td>
                                                                     <td class="text-center">
-                                                                        <div style="display: flex; justify-content: center; align-items: center; gap: 5px; flex-wrap: wrap;">
+                                                                        <div style="display: flex; justify-content: center; align-items: center; gap: 5px;">
                                                                             <c:choose>
                                                                                 <c:when test="${post.status == 'New'}">
                                                                                     <a href="${pageContext.request.contextPath}/hrrecruitment?action=edit&postId=${post.postId}"
@@ -324,10 +354,19 @@
                                                                                     <form action="${pageContext.request.contextPath}/hrrecruitment" method="post" style="display:inline; margin: 0;">
                                                                                         <input type="hidden" name="action" value="send">
                                                                                         <input type="hidden" name="postId" value="${post.postId}">
-                                                                                        <button type="submit" class="btn btn-sm btn-success" title="Send for approval"
+                                                                                        <button type="submit" class="btn btn-sm btn-success send-btn" title="Send for approval"
                                                                                                 style="min-width: 80px;"
                                                                                                 onclick="return confirm('Are you sure you want to send this post for approval?');">
                                                                                             <i class="fa fa-paper-plane"></i> Send
+                                                                                        </button>
+                                                                                    </form>
+                                                                                    <form action="${pageContext.request.contextPath}/hrrecruitment" method="post" style="display:inline; margin: 0;">
+                                                                                        <input type="hidden" name="action" value="delete">
+                                                                                        <input type="hidden" name="postId" value="${post.postId}">
+                                                                                        <button type="submit" class="btn btn-sm btn-secondary delete-btn" title="Delete post"
+                                                                                                style="min-width: 80px;"
+                                                                                                onclick="return confirm('Are you sure you want to delete this post?');">
+                                                                                            <i class="fa fa-trash"></i> Delete
                                                                                         </button>
                                                                                     </form>
                                                                                 </c:when>
@@ -344,6 +383,15 @@
                                                                                        style="min-width: 80px;">
                                                                                         <i class="fa fa-edit"></i> Update
                                                                                     </a>
+                                                                                    <form action="${pageContext.request.contextPath}/hrrecruitment" method="post" style="display:inline; margin: 0;">
+                                                                                        <input type="hidden" name="action" value="delete">
+                                                                                        <input type="hidden" name="postId" value="${post.postId}">
+                                                                                        <button type="submit" class="btn btn-sm btn-secondary delete-btn" title="Delete post"
+                                                                                                style="min-width: 80px;"
+                                                                                                onclick="return confirm('Are you sure you want to delete this post?');">
+                                                                                            <i class="fa fa-trash"></i> Delete
+                                                                                        </button>
+                                                                                    </form>
                                                                                 </c:when>
                                                                             </c:choose>
                                                                         </div>

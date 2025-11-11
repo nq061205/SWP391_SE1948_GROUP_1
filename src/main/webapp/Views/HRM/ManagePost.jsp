@@ -62,7 +62,7 @@
                 color: #fff;
             }
             .badge-uploaded {
-                background-color: #007bff;
+                background-color: #6f42c1;
                 color: #fff;
             }
             .badge-deleted {
