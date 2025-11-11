@@ -189,6 +189,9 @@ public class HRRecruitmentServlet extends HttpServlet {
             case "send":
                 sendPost(request, response);
                 break;
+            case "delete":
+                deletePost(request, response);
+                break;
             default:
                 showApprovedPostsList(request, response);
                 break;
@@ -707,6 +710,57 @@ public class HRRecruitmentServlet extends HttpServlet {
             System.err.println("Error in sendPost: " + e.getMessage());
             e.printStackTrace();
             request.getSession().setAttribute("errorMessage", "Unable to send post. Please try again.");
+            response.sendRedirect(request.getContextPath() + "/hrrecruitment");
+        }
+    }
+
+    private void deletePost(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        try {
+            String postIdStr = request.getParameter("postId");
+
+            if (postIdStr == null || postIdStr.trim().isEmpty()) {
+                request.getSession().setAttribute("errorMessage", "Post ID is required.");
+                response.sendRedirect(request.getContextPath() + "/hrrecruitment");
+                return;
+            }
+
+            int postId = Integer.parseInt(postIdStr.trim());
+            
+            // Get post to verify status
+            RecruitmentPost post = recruitmentPostDAO.getPostById(postId);
+            
+            if (post == null) {
+                request.getSession().setAttribute("errorMessage", "Post not found.");
+                response.sendRedirect(request.getContextPath() + "/hrrecruitment");
+                return;
+            }
+            
+            // Only allow deletion of posts with status 'New' or 'Rejected'
+            if (!"New".equals(post.getStatus()) && !"Rejected".equals(post.getStatus())) {
+                request.getSession().setAttribute("errorMessage", "Only posts with status 'New' or 'Rejected' can be deleted.");
+                response.sendRedirect(request.getContextPath() + "/hrrecruitment");
+                return;
+            }
+            
+            boolean success = recruitmentPostDAO.deletePost(postId);
+
+            if (success) {
+                request.getSession().setAttribute("successMessage", "Post deleted successfully!");
+            } else {
+                request.getSession().setAttribute("errorMessage", "Failed to delete post. Please try again.");
+            }
+
+            response.sendRedirect(request.getContextPath() + "/hrrecruitment");
+
+        } catch (NumberFormatException e) {
+            System.err.println("Invalid post ID format: " + e.getMessage());
+            request.getSession().setAttribute("errorMessage", "Invalid post ID format.");
+            response.sendRedirect(request.getContextPath() + "/hrrecruitment");
+        } catch (Exception e) {
+            System.err.println("Error in deletePost: " + e.getMessage());
+            e.printStackTrace();
+            request.getSession().setAttribute("errorMessage", "Unable to delete post. Please try again.");
             response.sendRedirect(request.getContextPath() + "/hrrecruitment");
         }
     }
