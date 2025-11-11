@@ -407,9 +407,6 @@ public class DailyAttendanceDAO extends DBContext {
         return false;
     }
 
-    /**
-     * Unlock a single attendance record
-     */
     public boolean unlockAttendance(int empId, String date) {
         String sql = "UPDATE daily_attendance SET is_locked = FALSE "
                 + "WHERE emp_id = ? AND date = ?";
@@ -430,7 +427,7 @@ public class DailyAttendanceDAO extends DBContext {
     public boolean updateAndLockAttendance(int empId, String date, String status,
             double workDay, double otHours, String note) {
         String sql = "UPDATE daily_attendance "
-                + "SET status = ?, work_day = ?, ot_hours = ?, note = ?, is_locked = TRUE "
+                + "SET status = ?, work_day = ?, ot_hours = ?, note = ?, is_locked = 1 "
                 + "WHERE emp_id = ? AND date = ?";
 
         try (Connection conn = DBContext.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
@@ -442,9 +439,26 @@ public class DailyAttendanceDAO extends DBContext {
             ps.setInt(5, empId);
             ps.setString(6, date);
 
-            return ps.executeUpdate() > 0;
+            int rows = ps.executeUpdate();
+            return rows > 0;
 
         } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    public boolean relockAttendance(int empId, String date) {
+        String sql = "UPDATE daily_attendance SET is_locked = 1 WHERE emp_id = ? AND date = ?";
+
+        try (Connection conn = DBContext.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, empId);
+            ps.setString(2, date);
+
+            int rows = ps.executeUpdate();
+            return rows > 0;
+
+        } catch (SQLException e) {
             e.printStackTrace();
             return false;
         }
