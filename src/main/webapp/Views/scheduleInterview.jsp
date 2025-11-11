@@ -105,31 +105,37 @@
                                 <!-- Candidate Multi-Select -->
                                 <div class="form-group mb-3">
                                     <label><i class="fa fa-user"></i> Candidates:</label>
-                                    <div class="border rounded p-2" style="max-height: 220px; overflow-y: auto;">
-                                        <c:forEach items="${candidatesList}" var="c">
-                                            <div class="form-check">
-                                                <input type="checkbox" class="form-check-input candidate-checkbox"
-                                                       id="${c.candidateId}" name="candidateIds" value="${c.candidateId}">
-                                                <label for="${c.candidateId}" class="form-check-label">
-                                                    ${c.name} (${c.email})
-                                                </label>
-                                            </div>
-                                        </c:forEach>
-                                    </div>
-                                    <small id="selectedCandidates" class="text-muted mt-1 d-block">
-                                        No candidates selected
-                                    </small>
-                                </div>  
-                                <div class="form-group mb-3">
-                                    <label><i class="fa fa-user"></i> Interview Employee</label>
-                                    <select name="interviewer" class="form-control" required>
-                                        <option value="">-- Select Interviewer --</option>
-                                        <c:forEach items="${employeeInterview}" var="c">
-                                            <option value="${c.empId}">${c.fullname}</option>
-                                        </c:forEach>
-                                    </select>
 
+                                    <c:choose>
+                                        <%-- Nếu có danh sách ứng viên --%>
+                                        <c:when test="${not empty candidatesList}">
+                                            <div class="border rounded p-3 bg-light" style="max-height: 230px; overflow-y: auto;">
+                                                <c:forEach items="${candidatesList}" var="c">
+                                                    <div class="form-check mb-1">
+                                                        <input type="checkbox" class="form-check-input candidate-checkbox"
+                                                               id="${c.candidateId}" name="candidateIds" value="${c.candidateId}">
+                                                        <label for="${c.candidateId}" class="form-check-label">
+                                                            ${c.name} <small class="text-muted">(${c.email})</small>
+                                                        </label>
+                                                    </div>
+                                                </c:forEach>
+                                            </div>
+                                            <small id="selectedCandidates" class="text-muted mt-2 d-block">
+                                                No candidates selected
+                                            </small>
+                                        </c:when>
+
+                                        <c:otherwise>
+                                            <div class="d-flex flex-column align-items-center justify-content-center text-center p-4 mt-2 mb-3 border rounded bg-light-subtle">
+                                                <i class="fa fa-user-slash fa-2x text-secondary mb-2"></i>
+                                                <h6 class="fw-semibold text-secondary mb-1">No candidates available</h6>
+                                                <p class="text-muted mb-0" style="font-size: 14px;">
+                                                </p>
+                                            </div>
+                                        </c:otherwise>
+                                    </c:choose>
                                 </div>
+
 
 
                                 <!-- Date -->

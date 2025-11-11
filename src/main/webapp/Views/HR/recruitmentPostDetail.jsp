@@ -30,6 +30,13 @@
         <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/assets2/css/style.css">
         <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/assets2/css/dashboard.css">
         <link class="skin" rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/assets2/css/color/color-1.css">
+        
+        <style>
+            .badge-purple {
+                background-color: #6f42c1;
+                color: #fff;
+            }
+        </style>
     </head>
 
     <body class="ttr-opened-sidebar ttr-pinned-sidebar">
@@ -75,9 +82,43 @@
                                             <div class="col-lg-8">
                                                 <h2 class="text-primary mb-2">${post.title}</h2>
                                                 <div class="d-flex flex-wrap">
-                                                    <span class="badge badge-success mr-2 mb-2">
-                                                        <i class="fa fa-check-circle"></i> ${post.status}
-                                                    </span>
+                                                    <c:choose>
+                                                        <c:when test="${post.status == 'New'}">
+                                                            <span class="badge badge-info mr-2 mb-2">
+                                                                <i class="fa fa-file"></i> ${post.status}
+                                                            </span>
+                                                        </c:when>
+                                                        <c:when test="${post.status == 'Waiting'}">
+                                                            <span class="badge badge-warning mr-2 mb-2">
+                                                                <i class="fa fa-clock"></i> ${post.status}
+                                                            </span>
+                                                        </c:when>
+                                                        <c:when test="${post.status == 'Rejected'}">
+                                                            <span class="badge badge-danger mr-2 mb-2">
+                                                                <i class="fa fa-times-circle"></i> ${post.status}
+                                                            </span>
+                                                        </c:when>
+                                                        <c:when test="${post.status == 'Approved'}">
+                                                            <span class="badge badge-success mr-2 mb-2">
+                                                                <i class="fa fa-check-circle"></i> ${post.status}
+                                                            </span>
+                                                        </c:when>
+                                                        <c:when test="${post.status == 'Uploaded'}">
+                                                            <span class="badge badge-purple mr-2 mb-2">
+                                                                <i class="fa fa-upload"></i> ${post.status}
+                                                            </span>
+                                                        </c:when>
+                                                        <c:when test="${post.status == 'Deleted'}">
+                                                            <span class="badge badge-secondary mr-2 mb-2">
+                                                                <i class="fa fa-trash"></i> ${post.status}
+                                                            </span>
+                                                        </c:when>
+                                                        <c:otherwise>
+                                                            <span class="badge badge-secondary mr-2 mb-2">
+                                                                <i class="fa fa-question-circle"></i> ${post.status}
+                                                            </span>
+                                                        </c:otherwise>
+                                                    </c:choose>
                                                     <span class="badge badge-info mr-2 mb-2">
                                                         <i class="fa fa-hashtag"></i> ID: ${post.postId}
                                                     </span>
@@ -120,7 +161,29 @@
                                                         <div class="row">
                                                             <div class="col-sm-5"><strong>Status:</strong></div>
                                                             <div class="col-sm-7">
-                                                                <span class="badge badge-success">${post.status}</span>
+                                                                <c:choose>
+                                                                    <c:when test="${post.status == 'New'}">
+                                                                        <span class="badge badge-info">${post.status}</span>
+                                                                    </c:when>
+                                                                    <c:when test="${post.status == 'Waiting'}">
+                                                                        <span class="badge badge-warning">${post.status}</span>
+                                                                    </c:when>
+                                                                    <c:when test="${post.status == 'Rejected'}">
+                                                                        <span class="badge badge-danger">${post.status}</span>
+                                                                    </c:when>
+                                                                    <c:when test="${post.status == 'Approved'}">
+                                                                        <span class="badge badge-success">${post.status}</span>
+                                                                    </c:when>
+                                                                    <c:when test="${post.status == 'Uploaded'}">
+                                                                        <span class="badge badge-purple">${post.status}</span>
+                                                                    </c:when>
+                                                                    <c:when test="${post.status == 'Deleted'}">
+                                                                        <span class="badge badge-secondary">${post.status}</span>
+                                                                    </c:when>
+                                                                    <c:otherwise>
+                                                                        <span class="badge badge-secondary">${post.status}</span>
+                                                                    </c:otherwise>
+                                                                </c:choose>
                                                             </div>
                                                         </div>
                                                         <hr>

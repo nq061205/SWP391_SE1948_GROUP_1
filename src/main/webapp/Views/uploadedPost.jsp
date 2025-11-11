@@ -45,9 +45,25 @@
                 flex: 1;
             }
             .detail-header-section {
-                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                background: url('${pageContext.request.contextPath}/assets1/images/banner/banner1.jpg') no-repeat center center;
+                background-size: cover;
+                position: relative;
                 padding: 150px 0 60px 0;
                 margin-bottom: 0;
+            }
+            .detail-header-section::before {
+                content: '';
+                position: absolute;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                background: rgba(0, 0, 0, 0.4);
+                z-index: 1;
+            }
+            .detail-header-section .container {
+                position: relative;
+                z-index: 2;
             }
             .detail-header-title {
                 color: #fff;
@@ -149,9 +165,59 @@
                 line-height: 1.8;
                 color: #555;
                 font-size: 15px;
+                word-wrap: break-word;
+                overflow-wrap: break-word;
             }
             .job-description-section p {
                 margin-bottom: 15px;
+            }
+            .job-description-section img {
+                max-width: 100%;
+                height: auto;
+                display: block;
+                margin: 20px auto;
+                border-radius: 8px;
+                box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            }
+            .job-description-section h1,
+            .job-description-section h2,
+            .job-description-section h3,
+            .job-description-section h4,
+            .job-description-section h5,
+            .job-description-section h6 {
+                color: #333;
+                margin-top: 25px;
+                margin-bottom: 15px;
+                font-weight: 600;
+            }
+            .job-description-section ul,
+            .job-description-section ol {
+                margin-bottom: 20px;
+                padding-left: 30px;
+            }
+            .job-description-section li {
+                margin-bottom: 8px;
+            }
+            .job-description-section table {
+                width: 100%;
+                border-collapse: collapse;
+                margin: 20px 0;
+            }
+            .job-description-section table td,
+            .job-description-section table th {
+                border: 1px solid #ddd;
+                padding: 10px;
+            }
+            .job-description-section table th {
+                background-color: #f8f9fa;
+                font-weight: 600;
+            }
+            .job-description-section a {
+                color: #667eea;
+                text-decoration: underline;
+            }
+            .job-description-section a:hover {
+                color: #764ba2;
             }
             .button-group {
                 margin-top: 40px;

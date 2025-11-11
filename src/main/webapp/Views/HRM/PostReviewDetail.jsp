@@ -88,8 +88,13 @@
                                                             </span>
                                                         </c:when>
                                                         <c:when test="${post.status == 'Uploaded'}">
-                                                            <span class="badge badge-primary mr-2 mb-2">
+                                                            <span class="badge badge-purple mr-2 mb-2">
                                                                 <i class="fa fa-upload"></i> ${post.status}
+                                                            </span>
+                                                        </c:when>
+                                                        <c:when test="${post.status == 'Deleted'}">
+                                                            <span class="badge badge-secondary mr-2 mb-2">
+                                                                <i class="fa fa-trash"></i> ${post.status}
                                                             </span>
                                                         </c:when>
                                                     </c:choose>
@@ -102,14 +107,6 @@
                                                         </span>
                                                     </c:if>
                                                 </div>
-                                            </div>
-                                            <div class="col-lg-4 text-right">
-                                                <c:if test="${hasCreatedAt}">
-                                                    <div class="text-muted">
-                                                        <small>Created on</small><br>
-                                                        <fmt:formatDate value="${post.createdAt}" pattern="MMM dd, yyyy 'at' HH:mm" />
-                                                    </div>
-                                                </c:if>
                                             </div>
                                         </div>
 
@@ -149,7 +146,7 @@
                                                                         <span class="badge badge-success">${post.status}</span>
                                                                     </c:when>
                                                                     <c:when test="${post.status == 'Uploaded'}">
-                                                                        <span class="badge badge-primary">${post.status}</span>
+                                                                        <span class="badge badge-purple">${post.status}</span>
                                                                     </c:when>
                                                                     <c:otherwise>
                                                                         <span class="badge badge-secondary">${post.status}</span>
@@ -342,6 +339,22 @@
         <script src="${pageContext.request.contextPath}/assets2/js/admin.js"></script>
 
         <style>
+            .badge-purple {
+                background-color: #6f42c1;
+                color: #fff;
+            }
+            .btn-success:hover {
+                background-color: #28a745 !important;
+                border-color: #28a745 !important;
+                transform: translateY(-1px);
+                box-shadow: 0 2px 4px rgba(40, 167, 69, 0.3);
+            }
+            .btn-danger:hover {
+                background-color: #dc3545 !important;
+                border-color: #dc3545 !important;
+                transform: translateY(-1px);
+                box-shadow: 0 2px 4px rgba(220, 53, 69, 0.3);
+            }
             .content-display {
                 line-height: 1.8;
                 font-size: 14px;

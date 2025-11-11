@@ -1,0 +1,83 @@
+
+.bg-success-light {
+    background-color: #d4edda !important;
+}
+.align-middle {
+    vertical-align: middle !important;
+}
+.salary-report-table {
+    font-size: 0.9rem;
+}
+.salary-report-table th {
+    font-weight: 600;
+    white-space: nowrap;
+}
+.salary-report-table td {
+    vertical-align: middle;
+}
+/* Sticky columns */
+.sticky-table th:nth-child(1),
+.sticky-table td:nth-child(1) {
+    position: sticky;
+    left: 0;
+    z-index: 5;
+    box-shadow: 2px 0 5px rgba(0,0,0,0.1);
+}
+
+.sticky-table thead th:nth-child(1) {
+    z-index: 10;
+    background-color: #343a40 !important; /* Đen */
+}
+
+.sticky-table tbody td:nth-child(1) {
+    background-color: #fff;
+}
+
+.sticky-table th:nth-child(2),
+.sticky-table td:nth-child(2) {
+    position: sticky;
+    left: 100px;
+    z-index: 5;
+    box-shadow: 2px 0 5px rgba(0,0,0,0.1);
+}
+
+.sticky-table thead th:nth-child(2) {
+    z-index: 10;
+    background-color: #343a40 !important; /* Đen */
+}
+
+.sticky-table tbody td:nth-child(2) {
+    background-color: #fff;
+}
+
+/* Tất cả header đều đen */
+.sticky-table thead th {
+    position: sticky;
+    top: 0;
+    z-index: 8;
+    background-color: #343a40 !important; /* Đen */
+    color: #fff !important; /* Chữ trắng */
+}
+
+/* Total row */
+.sticky-table .table-active td:nth-child(1),
+.sticky-table .table-active td:nth-child(2) {
+    background-color: #e9ecef !important;
+}
+
+/* Badge locked */
+.badge-danger {
+    padding: 0.5rem 1rem;
+    font-size: 0.9rem;
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0%, 100% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0.7;
+    }
+}
+
