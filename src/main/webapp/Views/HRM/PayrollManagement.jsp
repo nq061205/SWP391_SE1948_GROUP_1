@@ -47,9 +47,12 @@
 
         <!-- STYLESHEETS ============================================= -->
         <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/assets2/css/style.css">
+        <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/assets2/css/payroll-management-style.css">
         <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/assets2/css/dashboard.css">
         <link class="skin" rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/assets2/css/color/color-1.css">
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+        <<<<<<< HEAD
+        =======
         <style>
             .bg-success-light {
                 background-color: #d4edda !important;
@@ -118,6 +121,7 @@
             }
         </style>
 
+        >>>>>>> aa6d9bace69408ff6703f36ab3fba07df816e713
     </head>
 
     <body class="ttr-opened-sidebar ttr-pinned-sidebar">
@@ -127,14 +131,19 @@
             <div class="container-fluid">
                 <!-- Breadcrumb -->
                 <div class="db-breadcrumb">
-                    <h4 class="breadcrumb-title">Monthly Payroll Report</h4>
+                    <h4 class="breadcrumb-title">
+                        <i class="fa fa-money"></i> Monthly Payroll Report
+                    </h4>
+
                     <ul class="db-breadcrumb-list">
                         <li><a href="${pageContext.request.contextPath}/Views/HR/hrDashboard.jsp"><i class="fa fa-home"></i>Home</a></li>
                         <li>Payroll Management</li>
                         <li>Monthly Payroll Report</li>
                     </ul>
                 </div>
-
+                <c:if test="${isPayrollLocked}">
+                    <span class="badge badge-danger ml-2">🔒 LOCKED</span>
+                </c:if>
                 <!-- Alert Messages -->
                 <c:if test="${not empty successMessage}">
                     <div class="alert alert-success alert-dismissible fade show">
@@ -155,7 +164,6 @@
                     <div class="col-lg-12 m-b30">
                         <div class="widget-box">
                             <div class="wc-title">
-                                <h4><i class="fa fa-money"></i> Monthly Payroll Report</h4>
                                 <div class="float-right">
                                     <div class="btn-group">
                                         <button type="button" class="btn btn-success btn-sm dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -214,9 +222,13 @@
                                         <div class="col-md-2">
                                             <div class="form-group">
                                                 <label>&nbsp;</label>
-                                                <button type="button" class="btn btn-primary btn-block" onclick="calculatePayroll()">
+                                                <button type="button" 
+                                                        class="btn btn-primary btn-block" 
+                                                        onclick="calculatePayroll()"
+                                                        ${isPayrollLocked ? 'disabled title="Payroll is locked"' : ''}>
                                                     <i class="fa fa-calculator"></i> Calculate Payroll
                                                 </button>
+
                                             </div>
                                         </div>
                                     </div>
@@ -366,9 +378,12 @@
                                                                                 <small><fmt:formatNumber value="${netSalary}" pattern="#,###" /></small>
                                                                             </td>
                                                                             <td class="text-center">
-                                                                                <button class="btn btn-sm btn-primary" onclick="recalculatePayroll(${emp.empId}, ${selectedMonth}, ${selectedYear})">
+                                                                                <button class="btn btn-sm btn-primary" 
+                                                                                        onclick="recalculatePayroll(${emp.empId}, ${selectedMonth}, ${selectedYear})"
+                                                                                        ${isPayrollLocked ? 'disabled title="Payroll is locked"' : ''}>
                                                                                     <i class="fa fa-sync-alt"></i>
                                                                                 </button>
+
                                                                             </td>
                                                                         </tr>
                                                                     </c:when>
@@ -382,9 +397,12 @@
                                                                                 <em><small>No payroll data</small></em>
                                                                             </td>
                                                                             <td class="text-center">
-                                                                                <button class="btn btn-sm btn-warning" onclick="recalculatePayroll(${emp.empId}, ${selectedMonth}, ${selectedYear})">
+                                                                                <button class="btn btn-sm btn-warning" 
+                                                                                        onclick="recalculatePayroll(${emp.empId}, ${selectedMonth}, ${selectedYear})"
+                                                                                        ${isPayrollLocked ? 'disabled title="Payroll is locked"' : ''}>
                                                                                     <i class="fa fa-calculator"></i>
                                                                                 </button>
+
                                                                             </td>
                                                                         </tr>
                                                                     </c:otherwise>
@@ -504,127 +522,188 @@
                                         </div>
                                     </c:otherwise>
                                 </c:choose>
-                                <!-- Lock Payroll Section - Đặt dưới cùng -->
+                                <!-- Lock Payroll Section -->
                                 <div class="row mt-4">
                                     <div class="col-12">
-                                        <div class="card border-danger">
-                                            <div class="card-body bg-light">
-                                                <div class="row align-items-center">
-                                                    <div class="col-md-8">
-                                                        <h5 class="mb-2">
-                                                            <i class="fa fa-lock text-danger"></i> 
-                                                            Lock Payroll for <strong class="text-primary">${selectedMonth}/${selectedYear}</strong>
-                                                        </h5>
-                                                        <p class="mb-0 text-muted">
-                                                            <small>
-                                                                <i class="fa fa-exclamation-triangle text-warning"></i> 
-                                                                After locking, no changes can be made to this month's payroll. This action is irreversible.
-                                                            </small>
-                                                        </p>
-                                                    </div>
-                                                    <div class="col-md-4 text-right">
-                                                        <button type="button" class="btn btn-danger btn-lg" onclick="lockPayroll()">
-                                                            <i class="fa fa-lock"></i> Lock Payroll
-                                                        </button>
+                                        <c:choose>
+                                            <c:when test="${isPayrollLocked}">
+                                                <!-- Payroll đã LOCKED -->
+                                                <div class="card border-success">
+                                                    <div class="card-body bg-light">
+                                                        <div class="row align-items-center">
+                                                            <div class="col-md-8">
+                                                                <h5 class="mb-2 text-success">
+                                                                    <i class="fa fa-check-circle"></i> 
+                                                                    Payroll for <strong>${selectedMonth}/${selectedYear}</strong> is LOCKED
+                                                                </h5>
+                                                                <p class="mb-0 text-muted">
+                                                                    <small>
+                                                                        <i class="fa fa-info-circle"></i> 
+                                                                        This payroll has been locked and cannot be modified.
+                                                                    </small>
+                                                                </p>
+                                                            </div>
+                                                            <div class="col-md-4 text-right">
+                                                                <button type="button" class="btn btn-success btn-lg" disabled>
+                                                                    <i class="fa fa-lock"></i> Locked ✓
+                                                                </button>
+                                                            </div>
+                                                        </div>
                                                     </div>
                                                 </div>
-                                            </div>
-                                        </div>
+                                            </c:when>
+                                            <c:otherwise>
+                                                <div class="card border-danger">
+                                                    <div class="card-body bg-light">
+                                                        <div class="row align-items-center">
+                                                            <div class="col-md-8">
+                                                                <h5 class="mb-2">
+                                                                    <i class="fa fa-lock text-danger"></i> 
+                                                                    Lock Payroll for <strong class="text-primary">${selectedMonth}/${selectedYear}</strong>
+                                                                </h5>
+                                                                <p class="mb-0 text-muted">
+                                                                    <small>
+                                                                        <i class="fa fa-exclamation-triangle text-warning"></i> 
+                                                                        <strong>Warning:</strong> After locking, no changes can be made to this month's payroll. This action is <strong>IRREVERSIBLE</strong>.
+                                                                    </small>
+                                                                </p>
+                                                            </div>
+                                                            <div class="col-md-4 text-right">
+                                                                <button type="button" class="btn btn-danger btn-lg" onclick="lockPayroll()">
+                                                                    <i class="fa fa-lock"></i> Lock Payroll
+                                                                </button>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </c:otherwise>
+                                        </c:choose>
                                     </div>
                                 </div>
+
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
         </main>
+
+        <script src="${pageContext.request.contextPath}/assets2/js/jquery.min.js"></script>
+        <script src="${pageContext.request.contextPath}/assets2/vendors/bootstrap/js/popper.min.js"></script>
+        <script src="${pageContext.request.contextPath}/assets2/vendors/bootstrap/js/bootstrap.min.js"></script>
+        <script src="${pageContext.request.contextPath}/assets2/vendors/bootstrap-select/bootstrap-select.min.js"></script>
+        <script src="${pageContext.request.contextPath}/assets2/js/functions.js"></script>
+        <script src="${pageContext.request.contextPath}/assets2/js/admin.js"></script>
+
+        <script>
+                                                                    var isProcessing = false;
+
+                                                                    $(document).ready(function () {
+                                                                        setTimeout(function () {
+                                                                            $('.alert').fadeOut('slow');
+                                                                        }, 5000);
+                                                                    });
+
+                                                                    function changePageSize(newPageSize) {
+                                                                        if (isProcessing) {
+                                                                            alert('Please wait until processing is complete');
+                                                                            return;
+                                                                        }
+                                                                        const form = document.getElementById('filterForm');
+                                                                        if (!form) {
+                                                                            alert('Error: Form not found');
+                                                                            return;
+                                                                        }
+                                                                        const pageInput = form.querySelector('input[name="page"]');
+                                                                        if (pageInput) {
+                                                                            pageInput.value = 1;
+                                                                        }
+                                                                        form.submit();
+                                                                    }
+
+                                                                    function resetPageBeforeSubmit() {
+                                                                        const form = document.getElementById('filterForm');
+                                                                        if (form) {
+                                                                            form.querySelector('input[name="page"]').value = 1;
+                                                                        }
+                                                                    }
+
+                                                                    function applyFilter() {
+                                                                        const form = document.getElementById('filterForm');
+                                                                        if (!form)
+                                                                            return;
+                                                                        form.querySelector('input[name="page"]').value = 1;
+                                                                        form.submit();
+                                                                    }
+
+                                                                    function calculatePayroll() {
+                                                                        if (isProcessing) {
+                                                                            alert('⏳ Processing... Please wait!');
+                                                                            return;
+                                                                        }
+
+                                                                        var month = $('#selectedMonth').val();
+                                                                        var year = $('#selectedYear').val();
+
+                                                                        if (confirm('💰 Calculate payroll for ' + month + '/' + year + '?\n\n' +
+                                                                                'This will recalculate payroll for all employees.\n\n' +
+                                                                                '⚠️ Note: All daily attendance records must be locked before calculation.\n\n' +
+                                                                                'Proceed?')) {
+                                                                            isProcessing = true;
+                                                                            window.location.href = 'monthly-payroll?action=calculate&month=' + month + '&year=' + year;
+                                                                        }
+                                                                    }
+
+                                                                    function recalculatePayroll(empId, month, year) {
+                                                                        if (isProcessing) {
+                                                                            alert('⏳ Processing... Please wait!');
+                                                                            return;
+                                                                        }
+
+                                                                        if (confirm('🔄 Recalculate payroll for this employee?\n\n' +
+                                                                                'Month: ' + month + '/' + year + '\n' +
+                                                                                'Employee ID: ' + empId + '\n\n' +
+                                                                                'This will update their payroll data based on current attendance records.\n\n' +
+                                                                                'Proceed?')) {
+                                                                            isProcessing = true;
+                                                                            window.location.href = 'monthly-payroll?action=recalculate&empId=' + empId +
+                                                                                    '&month=' + month + '&year=' + year;
+                                                                        }
+                                                                    }
+
+                                                                    function exportPayroll(format) {
+                                                                        var form = $('#filterForm');
+                                                                        if (!form.length) {
+                                                                            alert('Form not found!');
+                                                                            return;
+                                                                        }
+                                                                        var params = form.serialize();
+                                                                        var url;
+                                                                        if (format === 'excel') {
+                                                                            url = 'export-salary-excel?' + params;
+                                                                        } else if (format === 'pdf') {
+                                                                            url = 'export-salary-pdf?' + params;
+                                                                        }
+                                                                        window.location.href = url;
+                                                                    }
+
+                                                                    function lockPayroll() {
+                                                                        if (isProcessing) {
+                                                                            alert('⏳ Processing... Please wait!');
+                                                                            return;
+                                                                        }
+
+                                                                        var month = $('#selectedMonth').val();
+                                                                        var year = $('#selectedYear').val();
+
+                                                                        if (confirm('🔒 Are you sure you want to LOCK payroll for ' + month + '/' + year + '?\n\n' +
+                                                                                '⚠️ WARNING: This action is IRREVERSIBLE!\n\n' +
+                                                                                'After locking, no changes can be made to this month\'s payroll.\n\n' +
+                                                                                'Proceed?')) {
+                                                                            isProcessing = true;
+                                                                            window.location.href = 'monthly-payroll?action=lock&month=' + month + '&year=' + year;
+                                                                        }
+                                                                    }
+        </script>
     </body>
-
-    <script src="${pageContext.request.contextPath}/assets2/js/jquery.min.js"></script>
-    <script src="${pageContext.request.contextPath}/assets2/vendors/bootstrap/js/popper.min.js"></script>
-    <script src="${pageContext.request.contextPath}/assets2/vendors/bootstrap/js/bootstrap.min.js"></script>
-    <script src="${pageContext.request.contextPath}/assets2/vendors/bootstrap-select/bootstrap-select.min.js"></script>
-    <script src="${pageContext.request.contextPath}/assets2/vendors/bootstrap-touchspin/jquery.bootstrap-touchspin.js"></script>
-    <script src="${pageContext.request.contextPath}/assets2/vendors/magnific-popup/magnific-popup.js"></script>
-    <script src="${pageContext.request.contextPath}/assets2/vendors/counter/waypoints-min.js"></script>
-    <script src="${pageContext.request.contextPath}/assets2/vendors/counter/counterup.min.js"></script>
-    <script src="${pageContext.request.contextPath}/assets2/vendors/imagesloaded/imagesloaded.js"></script>
-    <script src="${pageContext.request.contextPath}/assets2/vendors/masonry/masonry.js"></script>
-    <script src="${pageContext.request.contextPath}/assets2/vendors/masonry/filter.js"></script>
-    <script src="${pageContext.request.contextPath}/assets2/vendors/owl-carousel/owl.carousel.js"></script>
-    <script src="${pageContext.request.contextPath}/assets2/vendors/scroll/scrollbar.min.js"></script>
-    <script src="${pageContext.request.contextPath}/assets2/js/functions.js"></script>
-    <script src="${pageContext.request.contextPath}/assets2/vendors/chart/chart.min.js"></script>
-    <script src="${pageContext.request.contextPath}/assets2/js/admin.js"></script>
-    <script src="${pageContext.request.contextPath}/assets2/vendors/switcher/switcher.js"></script>
-
-    <script>
-                                                            var isProcessing = false;
-
-                                                            $(document).ready(function () {
-                                                                setTimeout(function () {
-                                                                    $('.alert').fadeOut('slow');
-                                                                }, 5000);
-                                                            });
-
-                                                            function changePageSize(newPageSize) {
-                                                                if (isProcessing) {
-                                                                    alert('Please wait until processing is complete');
-                                                                    return;
-                                                                }
-                                                                const form = document.getElementById('filterForm');
-                                                                if (!form) {
-                                                                    alert('Error: Form not found');
-                                                                    return;
-                                                                }
-                                                                const pageInput = form.querySelector('input[name="page"]');
-                                                                if (pageInput) {
-                                                                    pageInput.value = 1;
-                                                                }
-                                                                form.submit();
-                                                            }
-
-                                                            function resetPageBeforeSubmit() {
-                                                                const form = document.getElementById('filterForm');
-                                                                if (form) {
-                                                                    form.querySelector('input[name="page"]').value = 1;
-                                                                }
-                                                            }
-
-                                                            function applyFilter() {
-                                                                const form = document.getElementById('filterForm');
-                                                                if (!form)
-                                                                    return;
-                                                                form.querySelector('input[name="page"]').value = 1;
-                                                                form.submit();
-                                                            }
-
-                                                            function calculatePayroll() {
-                                                                if (confirm('Calculate payroll for all employees in this month?')) {
-                                                                    const form = document.getElementById('filterForm');
-                                                                    const actionInput = document.createElement('input');
-                                                                    actionInput.type = 'hidden';
-                                                                    actionInput.name = 'action';
-                                                                    actionInput.value = 'calculate';
-                                                                    form.appendChild(actionInput);
-                                                                    form.submit();
-                                                                }
-                                                            }
-
-                                                            function exportPayroll(format) {
-                                                                var form = $('#filterForm');
-                                                                if (!form.length) {
-                                                                    alert('Form not found!');
-                                                                    return;
-                                                                }
-                                                                var params = form.serialize();
-                                                                var url;
-                                                                if (format === 'excel') {
-                                                                    url = 'export-salary-excel?' + params;
-                                                                } else if (format === 'pdf') {
-                                                                    url = 'export-salary-pdf?' + params;
-                                                                }
-                                                                window.location.href = url;
-                                                            }
-    </script>
 </html>

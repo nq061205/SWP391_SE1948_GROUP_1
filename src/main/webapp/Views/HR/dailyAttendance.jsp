@@ -267,7 +267,9 @@
                                             <c:if test="${not empty selectedDepartment}"> | ${selectedDepartment}</c:if>
                                             </small>
                                         </div>
-                                    </div>
+                                    </div>                                       
+                                    <!-- Lock Attendance Section --
+
                                     <!-- Monthly Attendance Calendar -->
                                 <c:choose>
                                     <c:when test="${not empty employees}">
@@ -332,6 +334,7 @@
                                                                     data-check-in="${attendance.checkInTime}"
                                                                     data-check-out="${attendance.checkOutTime}"
                                                                     data-note="${attendance.note}"
+                                                                    data-is-locked="${attendance != null ? attendance.isLocked() : false}"
                                                                     title="${isHoliday ? dayHoliday.name : (isWeekend ? '' : (attendance != null ? 'Click to view details' : ''))}">
                                                                     <c:choose>
                                                                         <c:when test="${isHoliday}">
@@ -372,6 +375,79 @@
                                                     </c:forEach>
                                                 </tbody>
                                             </table>
+                                        </div>
+                                        <div class="row mt-4">
+                                            <div class="col-12">
+                                                <c:choose>
+                                                    <c:when test="${isAttendanceLocked}">
+                                                        <div class="card border-success shadow-sm">
+                                                            <div class="card-body bg-light">
+                                                                <div class="row align-items-center">
+                                                                    <div class="col-md-1 text-center">
+                                                                        <i class="fa fa-check-circle text-success" style="font-size: 3rem;"></i>
+                                                                    </div>
+                                                                    <div class="col-md-8">
+                                                                        <h5 class="mb-2 text-success">
+                                                                            <i class="fa fa-lock"></i> 
+                                                                            <strong>Attendance Locked for ${selectedMonth}/${selectedYear}</strong>
+                                                                        </h5>
+                                                                        <p class="mb-1">
+                                                                            All attendance records have been locked and finalized.
+                                                                        </p>
+                                                                        <small class="text-muted">
+                                                                            <i class="fa fa-info-circle"></i> 
+                                                                            Click on individual records to unlock and edit if needed.
+                                                                        </small>
+                                                                    </div>
+                                                                    <div class="col-md-3 text-center">
+                                                                        <button type="button" class="btn btn-success btn-lg btn-block" disabled>
+                                                                            <i class="fa fa-lock"></i> 
+                                                                            <strong>LOCKED</strong> ✓
+                                                                        </button>
+                                                                        <small class="text-muted d-block mt-2">
+                                                                            <i class="fa fa-shield"></i> Protected
+                                                                        </small>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </c:when>
+                                                    <c:otherwise>
+                                                        <div class="card border-danger shadow-sm">
+                                                            <div class="card-body">
+                                                                <div class="row align-items-center">
+                                                                    <div class="col-md-1 text-center">
+                                                                        <i class="fa fa-lock text-danger" style="font-size: 3rem;"></i>
+                                                                    </div>
+                                                                    <div class="col-md-7">
+                                                                        <h5 class="mb-2 text-danger">
+                                                                            <i class="fa fa-exclamation-triangle"></i> 
+                                                                            <strong>Lock Attendance for ${selectedMonth}/${selectedYear}</strong>
+                                                                        </h5>
+                                                                        <p class="mb-1">
+                                                                            Lock all attendance records for this month to finalize and prevent further modifications.
+                                                                        </p>
+                                                                        <small class="text-muted">
+                                                                            <i class="fa fa-info-circle"></i> 
+                                                                            After locking, you can still unlock individual records to edit them.
+                                                                        </small>
+                                                                    </div>
+                                                                    <div class="col-md-4 text-center">
+                                                                        <button type="button" class="btn btn-danger btn-lg btn-block shadow" onclick="lockAttendance()">
+                                                                            <i class="fa fa-lock"></i> 
+                                                                            <strong>LOCK ATTENDANCE</strong>
+                                                                        </button>
+                                                                        <small class="text-danger d-block mt-2">
+                                                                            <i class="fa fa-exclamation-circle"></i> 
+                                                                            Lock all records at once
+                                                                        </small>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </c:otherwise>
+                                                </c:choose>
+                                            </div>
                                         </div>
 
                                         <!-- PAGINATION -->                
@@ -468,6 +544,7 @@
                     <div class="modal-header bg-primary text-white">
                         <h5 class="modal-title" id="attendanceDetailTitle">
                             <i class="fa fa-calendar"></i> Attendance Details
+                            <span id="modalLockBadge" class="badge ml-2" style="display:none;"></span>
                         </h5>
                         <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
@@ -528,7 +605,7 @@
 
                                 <div class="form-group mb-3">
                                     <label class="font-weight-bold text-muted">Status</label>
-                                    <select id="modalStatusSelect" class="form-control border-primary">
+                                    <select id="modalStatusSelect" class="form-control border-primary" disabled>
                                         <option value="Present">Present</option>
                                         <option value="Absent">Absent</option>
                                         <option value="Leave">Leave</option>
@@ -539,13 +616,15 @@
                                     <div class="col-md-6">
                                         <div class="form-group mb-3">
                                             <label class="font-weight-bold text-muted">Work day</label>
-                                            <input type="number" id="modalWorkDay" class="form-control border-primary" step="0.5" min="0" max="1" placeholder="0 to 1">
+                                            <input type="number" id="modalWorkDay" class="form-control border-primary" 
+                                                   step="0.5" min="0" max="1" placeholder="0 to 1" readonly>
                                         </div>
                                     </div>
                                     <div class="col-md-6">
                                         <div class="form-group mb-3">
                                             <label class="font-weight-bold text-muted">OT hours</label>
-                                            <input type="number" id="modalOTHours" class="form-control border-primary" step="0.5" min="0" placeholder="e.g., 1, 1.5">
+                                            <input type="number" id="modalOTHours" class="form-control border-primary" 
+                                                   step="0.5" min="0" placeholder="e.g., 1, 1.5" readonly>
                                         </div>
                                     </div>
                                 </div>
@@ -574,7 +653,8 @@
 
                                 <div id="noteContainer" class="form-group mb-3">
                                     <label class="font-weight-bold text-muted">Note</label>
-                                    <textarea id="modalNote" class="form-control border-primary" rows="3" placeholder="Add notes..."></textarea>
+                                    <textarea id="modalNote" class="form-control border-primary" rows="3" 
+                                              placeholder="Add notes..." readonly></textarea>
                                 </div>
 
                             </div>
@@ -583,16 +663,29 @@
 
                     <!-- Footer Modal -->
                     <div class="modal-footer bg-light">
-                        <button type="button" class="btn btn-primary" id="modalSaveBtn">
-                            <i class="fa fa-save"></i> Save
+                        <!-- Button Unlock - Hiện khi record bị LOCKED -->
+                        <button type="button" class="btn btn-warning" id="modalUnlockBtn" style="display:none;">
+                            <i class="fa fa-unlock"></i> Unlock to Edit
                         </button>
-                        <button type="button" class="btn btn-warning" id="modalUpdateBtn">
+
+                        <!-- Button Update - Hiện khi record CHƯA LOCKED -->
+                        <button type="button" class="btn btn-warning" id="modalUpdateBtn" style="display:none;">
                             <i class="fa fa-pencil"></i> Update
+                        </button>
+
+                        <!-- Button Save - Hiện khi đang edit -->
+                        <button type="button" class="btn btn-primary" id="modalSaveBtn" style="display:none;">
+                            <i class="fa fa-save"></i> Save & Lock
+                        </button>
+
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">
+                            <i class="fa fa-times"></i> Close
                         </button>
                     </div>
                 </div>
             </div>
         </div>
+
     </body>
 
     <script src="${pageContext.request.contextPath}/assets2/js/jquery.min.js"></script>
@@ -614,191 +707,339 @@
     <script src="${pageContext.request.contextPath}/assets2/vendors/calendar/moment.min.js"></script>
     <script src="${pageContext.request.contextPath}/assets2/vendors/calendar/fullcalendar.js"></script>
     <script src="${pageContext.request.contextPath}/assets2/vendors/switcher/switcher.js"></script>
+
     <script>
-                                                    $(document).ready(function () {
-                                                        $(document).on('click', 'td.day-cell.status-Present, td.day-cell.status-Absent, td.day-cell.status-Leave', function () {
-                                                            var cell = $(this);
+                                                                            var isProcessing = false;
 
-                                                            var empId = cell.data('emp-id');
-                                                            var empCode = cell.data('emp-code');
-                                                            var empFullname = cell.data('emp-name');
-                                                            var empGender = (String(cell.data('emp-gender')) === 'true') ? 'Male' : 'Female';
-                                                            var empPosition = cell.data('emp-position');
-                                                            var empDepartment = cell.data('emp-department');
-                                                            var day = cell.data('day');
-                                                            var status = cell.attr('data-status');
-                                                            var workDay = cell.data('work-day') || 0;
-                                                            var otHours = cell.data('ot-hours') || 0;
-                                                            var checkIn = cell.data('check-in') || '';
-                                                            var checkOut = cell.data('check-out') || '';
-                                                            var note = cell.data('note') || '';
+                                                                            $(document).ready(function () {
+                                                                                setTimeout(function () {
+                                                                                    $('.alert').fadeOut('slow');
+                                                                                }, 5000);
+                                                                            });
 
-                                                            var selectedMonth = $('#selectedMonth').val() || '${selectedMonth}';
-                                                            var selectedYear = $('#selectedYear').val() || '${selectedYear}';
-                                                            var dayStr = (day < 10 ? '0' + day : day);
-                                                            var monthStr = (selectedMonth < 10 ? '0' + selectedMonth : selectedMonth);
-                                                            var formattedDate_ddMMyyyy = dayStr + '/' + monthStr + '/' + selectedYear;
-                                                            var formattedDate_yyyyMMdd = selectedYear + '-' + monthStr + '-' + dayStr;
+                                                                            function toggleLegend() {
+                                                                                var panel = $('#legendPanel');
+                                                                                if (panel.length === 0) {
+                                                                                    alert('Legend panel not found!');
+                                                                                    return;
+                                                                                }
+                                                                                panel.slideToggle(300);
+                                                                            }
 
-                                                            $('#modalEmpId').val(empId);
-                                                            $('#modalEmpCode').val(empCode);
-                                                            $('#modalFullname').val(empFullname);
-                                                            $('#modalGender').val(empGender);
-                                                            $('#modalPosition').val(empPosition);
-                                                            $('#modalDepartment').val(empDepartment);
-                                                            $('#modalDate').val(formattedDate_ddMMyyyy);
-                                                            $('#modalStatusSelect').selectpicker('val', status);
-                                                            $('#modalWorkDay').val(workDay);
-                                                            $('#modalOTHours').val(otHours);
-                                                            $('#modalCheckInTime').val(checkIn);
-                                                            $('#modalCheckOutTime').val(checkOut);
-                                                            $('#modalNote').val(note);
+                                                                            function changePageSize(newPageSize) {
+                                                                                if (isProcessing) {
+                                                                                    alert('Please wait until processing is complete');
+                                                                                    return;
+                                                                                }
+                                                                                const form = document.getElementById('filterForm');
+                                                                                if (!form) {
+                                                                                    alert('Error: Form not found');
+                                                                                    return;
+                                                                                }
+                                                                                const pageInput = form.querySelector('input[name="page"]');
+                                                                                if (pageInput) {
+                                                                                    pageInput.value = 1;
+                                                                                }
+                                                                                form.submit();
+                                                                            }
 
-                                                            $('#rawAttendanceLink').attr('href', 'raw-attendance?search=' + empCode + '&date=' + formattedDate_yyyyMMdd);
+                                                                            function resetPageBeforeSubmit() {
+                                                                                const form = document.getElementById('filterForm');
+                                                                                if (form) {
+                                                                                    form.querySelector('input[name="page"]').value = 1;
+                                                                                }
+                                                                            }
 
-                                                            if (note.trim() === '') {
-                                                                $('#noteContainer').hide();
-                                                            } else {
-                                                                $('#noteContainer').show();
-                                                            }
+                                                                            function applyFilter() {
+                                                                                const form = document.getElementById('filterForm');
+                                                                                if (!form)
+                                                                                    return;
+                                                                                form.querySelector('input[name="page"]').value = 1;
+                                                                                form.submit();
+                                                                            }
 
-                                                            $('#attendanceDetailModal input, #attendanceDetailModal textarea')
-                                                                    .prop('readonly', true)
-                                                                    .prop('disabled', true);
-                                                            $('#modalStatusSelect').prop('disabled', true).selectpicker('refresh');
-
-                                                            $('#modalUpdateBtn').show();
-                                                            $('#modalSaveBtn').hide();
-
-                                                            $('#attendanceDetailModal').modal('show');
-                                                        });
-
-                                                        // UPDATE BUTTON 
-                                                        $('#modalUpdateBtn').on('click', function () {
-                                                            // Enable các field để có thể edit
-                                                            $('#modalWorkDay, #modalOTHours, #modalNote')
-                                                                    .prop('readonly', false)
-                                                                    .prop('disabled', false);
-                                                            $('#modalStatusSelect').prop('disabled', false).selectpicker('refresh');
-
-                                                            $('#noteContainer').show();
-
-                                                            $('#modalUpdateBtn').hide();
-                                                            $('#modalSaveBtn').show();
-                                                        });
-
-                                                        // SAVE BUTTON
-                                                        $('#modalSaveBtn').on('click', function () {
-                                                            var workDay = parseFloat($('#modalWorkDay').val());
-                                                            var otHours = parseFloat($('#modalOTHours').val());
-                                                            var note = $('#modalNote').val().trim();
-
-                                                            if (![0, 0.5, 1].includes(workDay)) {
-                                                                alert('Workday only accepts value 0, 0.5 or 1!');
-                                                                $('#modalWorkDay').focus();
-                                                                return;
-                                                            }
-                                                            if (isNaN(otHours) || otHours < 0 || otHours > 4) {
-                                                                alert('OT hours must be in the range 0 - 4!');
-                                                                $('#modalOTHours').focus();
-                                                                return;
-                                                            }
-                                                            if (note === '') {
-                                                                alert('Please add note before Save!');
-                                                                $('#modalNote').focus();
-                                                                return;
-                                                            }
-
-                                                            var data = {
-                                                                empId: $('#modalEmpId').val(),
-                                                                date: $('#modalDate').val(),
-                                                                status: $('#modalStatusSelect').val(),
-                                                                workDay: workDay,
-                                                                otHours: otHours,
-                                                                note: note
-                                                            };
-
-                                                            $.ajax({
-                                                                url: 'update-daily-attendance',
-                                                                type: 'POST',
-                                                                data: data,
-                                                                dataType: 'json',
-                                                                success: function (response) {
-                                                                    alert(response.message || 'Updated successfully!');
-                                                                    $('#attendanceDetailModal').modal('hide');
-                                                                    location.reload(); 
-                                                                },
-                                                                error: function (xhr) {
-                                                                    alert('Error updating attendance!');
-                                                                }
-                                                            });
-                                                        });
-                                                    });
+                                                                            function exportAttendance(format) {
+                                                                                var form = $('#filterForm');
+                                                                                if (!form.length) {
+                                                                                    alert('Form not found!');
+                                                                                    return;
+                                                                                }
+                                                                                var params = form.serialize();
+                                                                                var url;
+                                                                                if (format === 'excel') {
+                                                                                    url = 'export-attendance-excel?' + params;
+                                                                                } else if (format === 'pdf') {
+                                                                                    url = 'export-attendance-pdf?' + params;
+                                                                                }
+                                                                                window.location.href = url;
+                                                                            }
     </script>
     <script>
         var isProcessing = false;
 
-        $(document).ready(function () {
-            setTimeout(function () {
-                $('.alert').fadeOut('slow');
-            }, 5000);
-        });
-
-        function toggleLegend() {
-            var panel = $('#legendPanel');
-            if (panel.length === 0) {
-                alert('Legend panel not found!');
-                return;
-            }
-            panel.slideToggle(300);
-        }
-
-        function changePageSize(newPageSize) {
+        function lockAttendance() {
             if (isProcessing) {
-                alert('Please wait until processing is complete');
+                alert('⏳ Processing... Please wait!');
                 return;
             }
-            const form = document.getElementById('filterForm');
-            if (!form) {
-                alert('Error: Form not found');
-                return;
-            }
-            const pageInput = form.querySelector('input[name="page"]');
-            if (pageInput) {
-                pageInput.value = 1;
-            }
-            form.submit();
-        }
 
-        function resetPageBeforeSubmit() {
-            const form = document.getElementById('filterForm');
-            if (form) {
-                form.querySelector('input[name="page"]').value = 1;
+            var month = $('#selectedMonth').val();
+            var year = $('#selectedYear').val();
+
+            if (confirm('🔒 Are you sure you want to LOCK all attendance for ' + month + '/' + year + '?\n\n' +
+                    '⚠️ WARNING: This action will lock ALL attendance records!\n\n' +
+                    'After locking:\n' +
+                    '• All daily attendance records will be finalized\n' +
+                    '• You can still unlock individual records by clicking on them\n' +
+                    '• After editing, records will be locked again automatically\n\n' +
+                    'Proceed?')) {
+                isProcessing = true;
+                window.location.href = 'daily-attendance?action=lock&month=' + month + '&year=' + year;
             }
         }
 
-        function applyFilter() {
-            const form = document.getElementById('filterForm');
-            if (!form)
-                return;
-            form.querySelector('input[name="page"]').value = 1;
-            form.submit();
-        }
+        $(document).ready(function () {
+            var currentAttendance = {};
+            var wasLockedOriginally = false;
+            var hasBeenUnlocked = false;
 
-        function exportAttendance(format) {
-            var form = $('#filterForm');
-            if (!form.length) {
-                alert('Form not found!');
-                return;
-            }
-            var params = form.serialize();
-            var url;
-            if (format === 'excel') {
-                url = 'export-attendance-excel?' + params;
-            } else if (format === 'pdf') {
-                url = 'export-attendance-pdf?' + params;
-            }
-            window.location.href = url;
-        }
+            // ========== XỬ LÝ KHI ĐÓNG MODAL ==========
+            $('#attendanceDetailModal').on('hidden.bs.modal', function () {
+                if (hasBeenUnlocked && wasLockedOriginally) {
+                    console.log('⚠️ Modal closed without saving. Re-locking attendance...');
+
+                    $.ajax({
+                        url: 'update-daily-attendance',
+                        type: 'POST',
+                        data: {
+                            action: 'relock',
+                            empId: currentAttendance.empId,
+                            date: currentAttendance.date
+                        },
+                        dataType: 'json',
+                        success: function (response) {
+                            if (response.status === 'success') {
+                                console.log('✅ Attendance re-locked successfully');
+                            }
+                        },
+                        error: function () {
+                            console.error('❌ Failed to re-lock attendance');
+                        }
+                    });
+                }
+
+                hasBeenUnlocked = false;
+                wasLockedOriginally = false;
+                currentAttendance = {};
+            });
+
+            $(document).on('click', 'td.day-cell[data-status]:not(.status-Holiday):not(.weekend-cell)', function () {
+                var cell = $(this);
+
+                var empId = cell.data('emp-id');
+                var empCode = cell.data('emp-code');
+                var empFullname = cell.data('emp-name');
+                var empGender = (String(cell.data('emp-gender')) === 'true') ? 'Male' : 'Female';
+                var empPosition = cell.data('emp-position');
+                var empDepartment = cell.data('emp-department');
+                var day = cell.data('day');
+                var status = cell.attr('data-status');
+                var workDay = cell.data('work-day') || 0;
+                var otHours = cell.data('ot-hours') || 0;
+                var checkIn = cell.data('check-in') || '';
+                var checkOut = cell.data('check-out') || '';
+
+                var note = String(cell.data('note') || '');
+                var isLocked = cell.data('is-locked') || false;
+
+                if (!empId || !status) {
+                    console.log('⚠️ Invalid cell data');
+                    return;
+                }
+
+                var selectedMonth = $('#selectedMonth').val() || '${selectedMonth}';
+                var selectedYear = $('#selectedYear').val() || '${selectedYear}';
+                var dayStr = (day < 10 ? '0' + day : day);
+                var monthStr = (selectedMonth < 10 ? '0' + selectedMonth : selectedMonth);
+                var formattedDate_ddMMyyyy = dayStr + '/' + monthStr + '/' + selectedYear;
+                var formattedDate_yyyyMMdd = selectedYear + '-' + monthStr + '-' + dayStr;
+
+                currentAttendance = {
+                    empId: empId,
+                    date: formattedDate_ddMMyyyy,
+                    isLocked: isLocked
+                };
+
+                wasLockedOriginally = isLocked;
+                hasBeenUnlocked = false;
+
+                $('#modalEmpId').val(empId);
+                $('#modalEmpCode').val(empCode);
+                $('#modalFullname').val(empFullname);
+                $('#modalGender').val(empGender);
+                $('#modalPosition').val(empPosition);
+                $('#modalDepartment').val(empDepartment);
+                $('#modalDate').val(formattedDate_ddMMyyyy);
+                $('#modalStatusSelect').val(status);
+                $('#modalWorkDay').val(workDay);
+                $('#modalOTHours').val(otHours);
+                $('#modalCheckInTime').val(checkIn);
+                $('#modalCheckOutTime').val(checkOut);
+                $('#modalNote').val(note);
+
+                $('#rawAttendanceLink').attr('href', 'raw-attendance?search=' + empCode + '&date=' + formattedDate_yyyyMMdd);
+
+                if (note.trim() === '') {
+                    $('#noteContainer').hide();
+                } else {
+                    $('#noteContainer').show();
+                }
+
+                // Disable form fields
+                $('#modalWorkDay, #modalOTHours, #modalNote')
+                        .prop('readonly', true)
+                        .prop('disabled', true);
+                $('#modalStatusSelect').prop('disabled', true).selectpicker('refresh');
+
+                if (isLocked) {
+                    $('#modalLockBadge').removeClass('badge-success').addClass('badge-danger')
+                            .text('🔒 Locked').show();
+                    $('#modalUnlockBtn').show();
+                    $('#modalUpdateBtn').hide();
+                    $('#modalSaveBtn').hide();
+                } else {
+                    $('#modalLockBadge').removeClass('badge-danger').addClass('badge-success')
+                            .text('🔓 Unlocked').show();
+                    $('#modalUnlockBtn').hide();
+                    $('#modalUpdateBtn').show();
+                    $('#modalSaveBtn').hide();
+                }
+
+                $('#attendanceDetailModal').modal('show');
+            });
+
+            // ========== UNLOCK BUTTON ==========
+            $('#modalUnlockBtn').on('click', function () {
+                if (confirm('🔓 Unlock this attendance record?\n\nYou will be able to edit the data.')) {
+                    $.ajax({
+                        url: 'update-daily-attendance',
+                        type: 'POST',
+                        data: {
+                            action: 'unlock',
+                            empId: currentAttendance.empId,
+                            date: currentAttendance.date
+                        },
+                        dataType: 'json',
+                        success: function (response) {
+                            if (response.status === 'success') {
+                                alert('✅ ' + response.message);
+
+                                currentAttendance.isLocked = false;
+                                hasBeenUnlocked = true;
+
+                                $('#modalLockBadge').removeClass('badge-danger').addClass('badge-success')
+                                        .text('🔓 Unlocked');
+
+                                $('#modalWorkDay, #modalOTHours, #modalNote')
+                                        .prop('readonly', false)
+                                        .prop('disabled', false);
+                                $('#modalStatusSelect').prop('disabled', false).selectpicker('refresh');
+                                $('#noteContainer').show();
+
+                                $('#modalUnlockBtn').hide();
+                                $('#modalUpdateBtn').hide();
+                                $('#modalSaveBtn').show();
+                            } else {
+                                alert('❌ ' + response.message);
+                            }
+                        },
+                        error: function () {
+                            alert('❌ Error unlocking attendance!');
+                        }
+                    });
+                }
+            });
+
+            // ========== UPDATE BUTTON ==========
+            $('#modalUpdateBtn').on('click', function () {
+                $('#modalWorkDay, #modalOTHours, #modalNote')
+                        .prop('readonly', false)
+                        .prop('disabled', false);
+                $('#modalStatusSelect').prop('disabled', false).selectpicker('refresh');
+                $('#noteContainer').show();
+
+                $('#modalUpdateBtn').hide();
+                $('#modalSaveBtn').show();
+            });
+
+            // ========== SAVE BUTTON ==========
+            $('#modalSaveBtn').on('click', function () {
+                var workDay = parseFloat($('#modalWorkDay').val());
+                var otHours = parseFloat($('#modalOTHours').val());
+                var note = $('#modalNote').val().trim();
+
+                // Validation
+                if (![0, 0.5, 1].includes(workDay)) {
+                    alert('Workday only accepts value 0, 0.5 or 1!');
+                    $('#modalWorkDay').focus();
+                    return;
+                }
+                if (isNaN(otHours) || otHours < 0 || otHours > 4) {
+                    alert('OT hours must be in the range 0 - 4!');
+                    $('#modalOTHours').focus();
+                    return;
+                }
+                if (note === '') {
+                    alert('Please add note before Save!');
+                    $('#modalNote').focus();
+                    return;
+                }
+
+                if (!confirm('💾 Save changes?\n\nAttendance will be automatically locked after saving.')) {
+                    return;
+                }
+
+                var data = {
+                    action: 'update',
+                    empId: $('#modalEmpId').val(),
+                    date: $('#modalDate').val(),
+                    status: $('#modalStatusSelect').val(),
+                    workDay: workDay,
+                    otHours: otHours,
+                    note: note
+                };
+
+                $.ajax({
+                    url: 'update-daily-attendance',
+                    type: 'POST',
+                    data: data,
+                    dataType: 'json',
+                    success: function (response) {
+                        console.log('Save response:', response);
+
+                        if (response.status === 'success') {
+                            hasBeenUnlocked = false;
+                            wasLockedOriginally = false;
+
+                            alert('✅ ' + (response.message || 'Updated and locked successfully!'));
+
+                            $('#attendanceDetailModal').off('hidden.bs.modal');
+                            $('#attendanceDetailModal').modal('hide');
+
+                            setTimeout(function () {
+                                location.reload();
+                            }, 300);
+                        } else {
+                            alert('❌ ' + (response.message || 'Update failed!'));
+                        }
+                    },
+                    error: function (xhr, status, error) {
+                        console.error('AJAX error:', status, error);
+                        console.error('Response:', xhr.responseText);
+                        alert('❌ Error updating attendance!');
+                    }
+                });
+            });
+        });
     </script>
 </html>
