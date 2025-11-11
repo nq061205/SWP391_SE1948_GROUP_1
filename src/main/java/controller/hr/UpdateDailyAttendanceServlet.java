@@ -81,6 +81,8 @@ public class UpdateDailyAttendanceServlet extends HttpServlet {
 
         try {
             DailyAttendanceDAO dao = new DailyAttendanceDAO();
+
+            // ============ XỬ LÝ UNLOCK ============
             if ("unlock".equals(action)) {
                 int empId = Integer.parseInt(request.getParameter("empId"));
                 String dateStr = request.getParameter("date");
@@ -96,8 +98,8 @@ public class UpdateDailyAttendanceServlet extends HttpServlet {
                     json.put("status", "fail");
                     json.put("message", "Failed to unlock attendance!");
                 }
-            } else if ("relock".equals(action)) {
-
+            } // ============ XỬ LÝ RE-LOCK ============
+            else if ("relock".equals(action)) {
                 int empId = Integer.parseInt(request.getParameter("empId"));
                 String dateStr = request.getParameter("date");
                 LocalDate date = LocalDate.parse(dateStr, DateTimeFormatter.ofPattern("dd/MM/yyyy"));
@@ -112,7 +114,8 @@ public class UpdateDailyAttendanceServlet extends HttpServlet {
                     json.put("status", "fail");
                     json.put("message", "Failed to re-lock attendance!");
                 }
-            } else if ("update".equals(action)) {
+            } // ============ XỬ LÝ UPDATE AND LOCK ============
+            else if ("update".equals(action)) {
                 int empId = Integer.parseInt(request.getParameter("empId"));
                 String dateStr = request.getParameter("date");
                 LocalDate date = LocalDate.parse(dateStr, DateTimeFormatter.ofPattern("dd/MM/yyyy"));
@@ -127,6 +130,25 @@ public class UpdateDailyAttendanceServlet extends HttpServlet {
                 if (success) {
                     json.put("status", "success");
                     json.put("message", "Attendance updated and locked successfully!");
+                } else {
+                    json.put("status", "fail");
+                    json.put("message", "Update failed!");
+                }
+            } else if ("update-no-lock".equals(action)) {
+                int empId = Integer.parseInt(request.getParameter("empId"));
+                String dateStr = request.getParameter("date");
+                LocalDate date = LocalDate.parse(dateStr, DateTimeFormatter.ofPattern("dd/MM/yyyy"));
+                String formattedDate = date.toString();
+                String status = request.getParameter("status");
+                String note = request.getParameter("note");
+                double workDay = Double.parseDouble(request.getParameter("workDay"));
+                double otHours = Double.parseDouble(request.getParameter("otHours"));
+
+                boolean success = dao.updateAttendanceNoLock(empId, formattedDate, status, workDay, otHours, note);
+
+                if (success) {
+                    json.put("status", "success");
+                    json.put("message", "Attendance updated successfully!");
                 } else {
                     json.put("status", "fail");
                     json.put("message", "Update failed!");
