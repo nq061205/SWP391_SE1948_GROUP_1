@@ -37,8 +37,15 @@ public class ApplyJobServlet extends HttpServlet {
         EmployeeDAO eDAO = new EmployeeDAO();
         String name = request.getParameter("name").trim();
         String email = request.getParameter("email").trim();
-        if(EmailUtil.isValidEmail(email) == false){
+        String REGEX = "^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$";
+        if (!email.matches(REGEX)) {
+            request.setAttribute("errorMessage", "Invalid format of email");
+            request.getRequestDispatcher("Views/applyjob.jsp").forward(request, response);
+            return;
+        }
+        if (EmailUtil.isValidEmail(email) == false) {
             request.setAttribute("errorMessage", "Email does not exist");
+            request.getRequestDispatcher("Views/applyjob.jsp").forward(request, response);
             return;
         }
         String phone = request.getParameter("phone").trim();
@@ -96,7 +103,7 @@ public class ApplyJobServlet extends HttpServlet {
             candidate.setPhone(phone);
             candidate.setPost(rDAO.getPostById(post));
 
-            if (cDAO.insertCandidate(candidate) && (eDAO.getEmployeeByEmail(candidate.getEmail()) == null || eDAO.getEmployeeByEmail(candidate.getEmail()).isStatus() == false )) {
+            if (cDAO.insertCandidate(candidate) && (eDAO.getEmployeeByEmail(candidate.getEmail()) == null || eDAO.getEmployeeByEmail(candidate.getEmail()).isStatus() == false)) {
                 request.setAttribute("successMessage", "Your application has been submitted successfully!");
             } else {
                 request.setAttribute("errorMessage", "Apply failed, Email has been approve in system. Please try again.");

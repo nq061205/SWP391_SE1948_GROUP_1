@@ -12,6 +12,7 @@ import jakarta.servlet.http.*;
 import java.io.IOException;
 import java.sql.Date;
 import java.sql.Time;
+import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.*;
@@ -109,7 +110,12 @@ public class ScheduleInterviewServlet extends HttpServlet {
             } else {
                 LocalDate date = LocalDate.parse(dateStr);
                 LocalTime time = LocalTime.parse(timeStr);
-
+                DayOfWeek weekDay = date.getDayOfWeek();
+                if (weekDay.getValue() == 7 || weekDay.getValue() == 6) {
+                    request.setAttribute("errorMessage", "Please select from monday to friday");
+                    request.getRequestDispatcher("Views/scheduleInterview.jsp").forward(request, response);
+                    return;
+                }
                 if (date.isBefore(LocalDate.now())
                         || (date.equals(LocalDate.now()) && time.isBefore(LocalTime.now()))) {
                     request.setAttribute("errorMessage", "Please select a valid future date and time.");
