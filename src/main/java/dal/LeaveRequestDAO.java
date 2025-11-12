@@ -268,20 +268,19 @@ public class LeaveRequestDAO extends DBContext {
     }
 
     public int countLeaveBySystemlogFiltered(
-            int approver_id, String search, String type,
+            String search, String type,
             Date startDate, Date endDate) {
 
         StringBuilder sql = new StringBuilder(
                 "SELECT COUNT(*) "
                 + "FROM hrm.leave_request lr "
                 + "LEFT JOIN Employee e ON lr.emp_id = e.emp_id "
-                + "WHERE lr.approved_by = ? "
-                + "AND lr.system_log IS NOT NULL "
-                + "AND lr.status = 'pending'"
+                + "WHERE "
+                + " lr.system_log IS NOT NULL "
+                + "AND lr.status = 'approved'"
         );
 
         List<Object> params = new ArrayList<>();
-        params.add(approver_id);
 
         if (type != null && !type.trim().isEmpty()) {
             sql.append(" AND lr.leave_type = ?");
@@ -451,21 +450,15 @@ public class LeaveRequestDAO extends DBContext {
     }
 
     public List<LeaveRequest> findLeaveBySystemLogFilteredPaged(
-            int empId, String search, String status, String type,
+           String search, String type,
             Date startDate, Date endDate,
             int offset, int size) {
 
         StringBuilder sql = new StringBuilder(
-                LEAVE_SELECT_SQL + " WHERE lr.approved_by = ? AND lr.system_log IS NOT NULL and lr.status Not Like 'Invalid'"
+                LEAVE_SELECT_SQL + " WHERE lr.system_log IS NOT NULL and lr.status Not Like 'Invalid' and lr.status = 'Approved'"
         );
 
         List<Object> params = new ArrayList<>();
-        params.add(empId);
-
-        if (status != null && !status.trim().isEmpty()) {
-            sql.append(" AND lr.status = ?");
-            params.add(status.trim());
-        }
 
         if (type != null && !type.trim().isEmpty()) {
             sql.append(" AND lr.leave_type = ?");
@@ -578,7 +571,7 @@ public class LeaveRequestDAO extends DBContext {
         LeaveRequestDAO dao = new LeaveRequestDAO();
 //        dao.updateLeaveStatus(3, "Pending", "ahihu");
 //        dao.updateLeaveRequest(1, "Annual Leave", "aaa", Date.valueOf("2025-12-12"), Date.valueOf("2025-12-12"), null);
-        System.out.println(dao.getLeaveRequestByLeaveId(1));
+        System.out.println(dao.countLeaveBySystemlogFiltered(null, null, null, null));
     }
 
 }
