@@ -32,15 +32,24 @@ public class DeleteApplicationServlet extends HttpServlet {
         OTRequestDAO otRequestDAO = new OTRequestDAO();
         LeaveRequestDAO leaveRequestDAO = new LeaveRequestDAO();
         int id = Integer.parseInt(request.getParameter("id"));
+
         String type = request.getParameter("type");
         HttpSession session = request.getSession();
         session.setAttribute("flashMessage", "Deleted Successfully!");
         switch (type) {
             case "OT":
+                if (otRequestDAO.getOTRequestByOTId(id) == null) {
+                    response.sendRedirect("Views/error-404.jsp");
+                    return;
+                }
                 otRequestDAO.deleteOTRequest(id);
                 response.sendRedirect("application?typeapplication=ot");
                 break;
             case "LEAVE":
+                if (leaveRequestDAO.getLeaveRequestByLeaveId(id) == null) {
+                    response.sendRedirect("Views/error-404.jsp");
+                    return;
+                }
                 leaveRequestDAO.deleteLeaveRequest(id);
                 response.sendRedirect("application?typeapplication=leave");
                 break;

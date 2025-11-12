@@ -165,7 +165,7 @@
                 background-color: #17a2b8;
             }
             .holiday {
-                background-color: #7f8c8d;
+                background-color: #ffb903;
             }
             .weekend {
                 background-color: #2c3e50;
