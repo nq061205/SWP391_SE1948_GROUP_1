@@ -154,8 +154,8 @@
                     <div class="mb-3">
                         <i class="fa fa-inbox fa-3x text-muted"></i>
                     </div>
-                    <h5 class="text-muted">No Leave Request Found</h5>
-                    <p class="text-muted">There are currently no leave request in the system.</p>
+                    <h5 class="text-muted">No System Log Request Found</h5>
+                    <p class="text-muted">There are currently no system log in the system.</p>
                 </div>
             </c:if>
             <c:url var="baseUrl" value="/systemlog">
