@@ -65,10 +65,10 @@ public class SystemLogManagementServlet extends HttpServlet {
         int empId = user.getEmpId();
 
         List<LeaveRequest> applications = leaveDAO.findLeaveBySystemLogFilteredPaged(
-                empId, search, status, type, startDate, endDate, offset, size
+                search,type, startDate, endDate, offset, size
         );
 
-        int total = leaveDAO.countLeaveByApprorverFiltered(empId, search, type, startDate, endDate);
+        int total = leaveDAO.countLeaveBySystemlogFiltered( search, type, startDate, endDate);
         int totalPages = (int) Math.ceil(total / (double) size);
 
         request.setAttribute("listapplication", applications);

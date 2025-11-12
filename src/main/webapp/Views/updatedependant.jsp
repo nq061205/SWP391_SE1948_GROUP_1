@@ -103,10 +103,12 @@
                                         <label class="col-sm-3 col-form-label">Date of birth:</label>
                                         <div class="col-sm-9">
                                             <input class="form-control" name="dob" type="date" value="${sessionScope.dependant.dob}">
+                                            <c:if test="${not empty DobErr}">
                                             <p>${DobErr}</p>
+                                            </c:if>
                                         </div>
-                                        
                                     </div>
+                                        
                                     <div class="form-group row">
                                         <label class="col-sm-3 col-form-label">Gender:</label>
                                         <div class="col-sm-9">

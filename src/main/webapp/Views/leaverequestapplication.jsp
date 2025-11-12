@@ -189,9 +189,6 @@
             </c:if>
             <c:url var="baseUrl" value="/application">
                 <c:param name="typeapplication" value="LEAVE"/>
-                <c:if test="${not empty param.search}">
-                    <c:param name="search" value="${param.search}"/>
-                </c:if>
                 <c:if test="${not empty param.status}">
                     <c:param name="status" value="${param.status}"/>
                 </c:if>
