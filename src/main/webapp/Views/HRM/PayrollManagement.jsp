@@ -5,54 +5,35 @@
 <!DOCTYPE html>
 <html>
     <head>
+        <!-- META ============================================= -->
         <meta charset="utf-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta name="keywords" content="" />
         <meta name="author" content="" />
         <meta name="robots" content="" />
-
-        <!-- DESCRIPTION -->
         <meta name="description" content="Human Tech" />
-
-        <!-- OG -->
         <meta property="og:title" content="Human Tech" />
-        <meta property="og:description" content="Profile" />
-        <meta property="og:image" content="" />
+        <meta property="og:description" content="Human Tech" />
         <meta name="format-detection" content="telephone=no">
 
         <!-- FAVICONS ICON ============================================= -->
-        <link rel="icon" href="${pageContext.request.contextPath}/assets2/images/favicon.ico" type="image/x-icon" />
         <link rel="shortcut icon" type="image/x-icon" href="${pageContext.request.contextPath}/assets2/images/favicon.png" />
 
         <!-- PAGE TITLE HERE ============================================= -->
-        <title>My Profile</title>
+        <title>Human Tech - Monthly Payroll Report</title>
 
         <!-- MOBILE SPECIFIC ============================================= -->
         <meta name="viewport" content="width=device-width, initial-scale=1">
 
-        <!--[if lt IE 9]>
-        <script src="${pageContext.request.contextPath}/assets2/js/html5shiv.min.js"></script>
-        <script src="${pageContext.request.contextPath}/assets2/js/respond.min.js"></script>
-        <![endif]-->
-
         <!-- All PLUGINS CSS ============================================= -->
         <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/assets2/css/assets.css">
-        <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/assets2/vendors/calendar/fullcalendar.css">
-
-        <!-- TYPOGRAPHY ============================================= -->
         <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/assets2/css/typography.css">
-
-        <!-- SHORTCODES ============================================= -->
         <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/assets2/css/shortcodes/shortcodes.css">
-
-        <!-- STYLESHEETS ============================================= -->
         <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/assets2/css/style.css">
-        <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/assets2/css/payroll-management-style.css">
         <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/assets2/css/dashboard.css">
         <link class="skin" rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/assets2/css/color/color-1.css">
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
-        <<<<<<< HEAD
-        =======
+
         <style>
             .bg-success-light {
                 background-color: #d4edda !important;
@@ -119,14 +100,30 @@
             .sticky-table .table-active td:nth-child(2) {
                 background-color: #e9ecef !important;
             }
+
+            /* Badge locked */
+            .badge-danger {
+                padding: 0.5rem 1rem;
+                font-size: 0.9rem;
+                animation: pulse 2s infinite;
+            }
+
+            @keyframes pulse {
+                0%, 100% {
+                    opacity: 1;
+                }
+                50% {
+                    opacity: 0.7;
+                }
+            }
+
         </style>
 
-        >>>>>>> aa6d9bace69408ff6703f36ab3fba07df816e713
     </head>
 
     <body class="ttr-opened-sidebar ttr-pinned-sidebar">
         <%@ include file="../CommonItems/Header/dashboardHeader.jsp" %>
-        <%@ include file="../CommonItems/Navbar/empNavbar.jsp" %>
+        <%@ include file="../CommonItems/Navbar/hrNavbar.jsp" %>
         <main class="ttr-wrapper">
             <div class="container-fluid">
                 <!-- Breadcrumb -->
@@ -257,7 +254,7 @@
                                                            placeholder="Code or Name...">
                                                     <div class="input-group-append">
                                                         <button type="submit" onclick="resetPageBeforeSubmit()" class="btn btn-outline-secondary">
-                                                            <i class="fa fa-search"></i>
+                                                            <i class="fas fa-search"></i>
                                                         </button>
                                                     </div>
                                                 </div>
@@ -522,7 +519,8 @@
                                         </div>
                                     </c:otherwise>
                                 </c:choose>
-                                <!-- Lock Payroll Section -->
+                                <!-- Lock Payroll Section - Đặt dưới cùng -->
+                                <!-- Lock Payroll Section - Đặt dưới cùng -->
                                 <div class="row mt-4">
                                     <div class="col-12">
                                         <c:choose>
@@ -553,6 +551,7 @@
                                                 </div>
                                             </c:when>
                                             <c:otherwise>
+                                                <!-- Payroll chưa LOCKED -->
                                                 <div class="card border-danger">
                                                     <div class="card-body bg-light">
                                                         <div class="row align-items-center">
@@ -596,357 +595,118 @@
         <script src="${pageContext.request.contextPath}/assets2/js/admin.js"></script>
 
         <script>
-                                                                          var isProcessing = false;
+                                                                    var isProcessing = false;
 
-                                                                          $(document).ready(function () {
-                                                                              setTimeout(function () {
-                                                                                  $('.alert').fadeOut('slow');
-                                                                              }, 5000);
-                                                                          });
+                                                                    $(document).ready(function () {
+                                                                        setTimeout(function () {
+                                                                            $('.alert').fadeOut('slow');
+                                                                        }, 5000);
+                                                                    });
 
-                                                                          function toggleLegend() {
-                                                                              var panel = $('#legendPanel');
-                                                                              if (panel.length === 0) {
-                                                                                  alert('Legend panel not found!');
-                                                                                  return;
-                                                                              }
-                                                                              panel.slideToggle(300);
-                                                                          }
+                                                                    function changePageSize(newPageSize) {
+                                                                        if (isProcessing) {
+                                                                            alert('Please wait until processing is complete');
+                                                                            return;
+                                                                        }
+                                                                        const form = document.getElementById('filterForm');
+                                                                        if (!form) {
+                                                                            alert('Error: Form not found');
+                                                                            return;
+                                                                        }
+                                                                        const pageInput = form.querySelector('input[name="page"]');
+                                                                        if (pageInput) {
+                                                                            pageInput.value = 1;
+                                                                        }
+                                                                        form.submit();
+                                                                    }
 
-                                                                          function changePageSize(newPageSize) {
-                                                                              if (isProcessing) {
-                                                                                  alert('Please wait until processing is complete');
-                                                                                  return;
-                                                                              }
-                                                                              const form = document.getElementById('filterForm');
-                                                                              if (!form) {
-                                                                                  alert('Error: Form not found');
-                                                                                  return;
-                                                                              }
-                                                                              const pageInput = form.querySelector('input[name="page"]');
-                                                                              if (pageInput) {
-                                                                                  pageInput.value = 1;
-                                                                              }
-                                                                              form.submit();
-                                                                          }
+                                                                    function resetPageBeforeSubmit() {
+                                                                        const form = document.getElementById('filterForm');
+                                                                        if (form) {
+                                                                            form.querySelector('input[name="page"]').value = 1;
+                                                                        }
+                                                                    }
 
-                                                                          function resetPageBeforeSubmit() {
-                                                                              const form = document.getElementById('filterForm');
-                                                                              if (form) {
-                                                                                  form.querySelector('input[name="page"]').value = 1;
-                                                                              }
-                                                                          }
+                                                                    function applyFilter() {
+                                                                        const form = document.getElementById('filterForm');
+                                                                        if (!form)
+                                                                            return;
+                                                                        form.querySelector('input[name="page"]').value = 1;
+                                                                        form.submit();
+                                                                    }
 
-                                                                          function applyFilter() {
-                                                                              const form = document.getElementById('filterForm');
-                                                                              if (!form)
-                                                                                  return;
-                                                                              form.querySelector('input[name="page"]').value = 1;
-                                                                              form.submit();
-                                                                          }
+                                                                    function calculatePayroll() {
+                                                                        if (isProcessing) {
+                                                                            alert('⏳ Processing... Please wait!');
+                                                                            return;
+                                                                        }
 
-                                                                          function exportAttendance(format) {
-                                                                              var form = $('#filterForm');
-                                                                              if (!form.length) {
-                                                                                  alert('Form not found!');
-                                                                                  return;
-                                                                              }
-                                                                              var params = form.serialize();
-                                                                              var url;
-                                                                              if (format === 'excel') {
-                                                                                  url = 'export-attendance-excel?' + params;
-                                                                              } else if (format === 'pdf') {
-                                                                                  url = 'export-attendance-pdf?' + params;
-                                                                              }
-                                                                              window.location.href = url;
-                                                                          }
+                                                                        var month = $('#selectedMonth').val();
+                                                                        var year = $('#selectedYear').val();
+
+                                                                        if (confirm('💰 Calculate payroll for ' + month + '/' + year + '?\n\n' +
+                                                                                'This will recalculate payroll for all employees.\n\n' +
+                                                                                '⚠️ Note: All daily attendance records must be locked before calculation.\n\n' +
+                                                                                'Proceed?')) {
+                                                                            isProcessing = true;
+                                                                            window.location.href = 'monthly-payroll?action=calculate&month=' + month + '&year=' + year;
+                                                                        }
+                                                                    }
+
+                                                                    function recalculatePayroll(empId, month, year) {
+                                                                        if (isProcessing) {
+                                                                            alert('⏳ Processing... Please wait!');
+                                                                            return;
+                                                                        }
+
+                                                                        if (confirm('🔄 Recalculate payroll for this employee?\n\n' +
+                                                                                'Month: ' + month + '/' + year + '\n' +
+                                                                                'Employee ID: ' + empId + '\n\n' +
+                                                                                'This will update their payroll data based on current attendance records.\n\n' +
+                                                                                'Proceed?')) {
+                                                                            isProcessing = true;
+                                                                            window.location.href = 'monthly-payroll?action=recalculate&empId=' + empId +
+                                                                                    '&month=' + month + '&year=' + year;
+                                                                        }
+                                                                    }
+
+                                                                    function exportPayroll(format) {
+                                                                        var form = $('#filterForm');
+                                                                        if (!form.length) {
+                                                                            alert('Form not found!');
+                                                                            return;
+                                                                        }
+                                                                        var params = form.serialize();
+                                                                        var url;
+                                                                        if (format === 'excel') {
+                                                                            url = 'export-salary-excel?' + params;
+                                                                        } else if (format === 'pdf') {
+                                                                            url = 'export-salary-pdf?' + params;
+                                                                        }
+                                                                        window.location.href = url;
+                                                                    }
+
+                                                                    function lockPayroll() {
+                                                                        if (isProcessing) {
+                                                                            alert('⏳ Processing... Please wait!');
+                                                                            return;
+                                                                        }
+
+                                                                        var month = $('#selectedMonth').val();
+                                                                        var year = $('#selectedYear').val();
+
+                                                                        if (confirm('🔒 Are you sure you want to LOCK payroll for ' + month + '/' + year + '?\n\n' +
+                                                                                '⚠️ WARNING: This action is IRREVERSIBLE!\n\n' +
+                                                                                'After locking, no changes can be made to this month\'s payroll.\n\n' +
+                                                                                'Proceed?')) {
+                                                                            isProcessing = true;
+                                                                            window.location.href = 'monthly-payroll?action=lock&month=' + month + '&year=' + year;
+                                                                        }
+                                                                    }
         </script>
-        <script>
-            var isProcessing = false;
-            var isMonthLocked = ${isAttendanceLocked};
 
-            function lockAttendance() {
-                if (isProcessing) {
-                    alert('⏳ Processing... Please wait!');
-                    return;
-                }
 
-                var month = $('#selectedMonth').val();
-                var year = $('#selectedYear').val();
 
-                if (confirm('🔒 Are you sure you want to LOCK all attendance for ' + month + '/' + year + '?\n\n' +
-                        '⚠️ WARNING: This action will lock ALL attendance records!\n\n' +
-                        'After locking:\n' +
-                        '• All daily attendance records will be finalized\n' +
-                        '• You can still unlock individual records by clicking on them\n' +
-                        '• After editing, records will be locked again automatically\n\n' +
-                        'Proceed?')) {
-                    isProcessing = true;
-                    window.location.href = 'daily-attendance?action=lock&month=' + month + '&year=' + year;
-                }
-            }
+    </body>
 
-            $(document).ready(function () {
-                var currentAttendance = {};
-                var wasLockedOriginally = false;
-                var hasBeenUnlocked = false;
-
-                // ========== XỬ LÝ KHI ĐÓNG MODAL ==========
-                $('#attendanceDetailModal').on('hidden.bs.modal', function () {
-                    // ✅ CHỈ re-lock nếu THÁNG ĐÃ LOCKED và user đã unlock record
-                    if (isMonthLocked && hasBeenUnlocked && wasLockedOriginally) {
-                        console.log('⚠️ Modal closed without saving. Re-locking attendance...');
-
-                        $.ajax({
-                            url: 'update-daily-attendance',
-                            type: 'POST',
-                            data: {
-                                action: 'relock',
-                                empId: currentAttendance.empId,
-                                date: currentAttendance.date
-                            },
-                            dataType: 'json',
-                            success: function (response) {
-                                if (response.status === 'success') {
-                                    console.log('✅ Attendance re-locked successfully');
-                                }
-                            },
-                            error: function () {
-                                console.error('❌ Failed to re-lock attendance');
-                            }
-                        });
-                    }
-
-                    // Reset flags
-                    hasBeenUnlocked = false;
-                    wasLockedOriginally = false;
-                    currentAttendance = {};
-                });
-
-                // ========== CLICK VÀO CELL ==========
-                $(document).on('click', 'td.day-cell[data-status]:not(.status-Holiday):not(.weekend-cell)', function () {
-                    var cell = $(this);
-
-                    var empId = cell.data('emp-id');
-                    var empCode = cell.data('emp-code');
-                    var empFullname = cell.data('emp-name');
-                    var empGender = (String(cell.data('emp-gender')) === 'true') ? 'Male' : 'Female';
-                    var empPosition = cell.data('emp-position');
-                    var empDepartment = cell.data('emp-department');
-                    var day = cell.data('day');
-                    var status = cell.attr('data-status');
-                    var workDay = cell.data('work-day') || 0;
-                    var otHours = cell.data('ot-hours') || 0;
-                    var checkIn = cell.data('check-in') || '';
-                    var checkOut = cell.data('check-out') || '';
-                    var note = String(cell.data('note') || '');
-                    var isLocked = cell.data('is-locked') || false;
-
-                    if (!empId || !status) {
-                        console.log('⚠️ Invalid cell data');
-                        return;
-                    }
-
-                    var selectedMonth = $('#selectedMonth').val() || '${selectedMonth}';
-                    var selectedYear = $('#selectedYear').val() || '${selectedYear}';
-                    var dayStr = (day < 10 ? '0' + day : day);
-                    var monthStr = (selectedMonth < 10 ? '0' + selectedMonth : selectedMonth);
-                    var formattedDate_ddMMyyyy = dayStr + '/' + monthStr + '/' + selectedYear;
-                    var formattedDate_yyyyMMdd = selectedYear + '-' + monthStr + '-' + dayStr;
-
-                    currentAttendance = {
-                        empId: empId,
-                        date: formattedDate_ddMMyyyy,
-                        isLocked: isLocked
-                    };
-
-                    wasLockedOriginally = isLocked;
-                    hasBeenUnlocked = false;
-
-                    // Fill data
-                    $('#modalEmpId').val(empId);
-                    $('#modalEmpCode').val(empCode);
-                    $('#modalFullname').val(empFullname);
-                    $('#modalGender').val(empGender);
-                    $('#modalPosition').val(empPosition);
-                    $('#modalDepartment').val(empDepartment);
-                    $('#modalDate').val(formattedDate_ddMMyyyy);
-                    $('#modalStatusSelect').val(status);
-                    $('#modalWorkDay').val(workDay);
-                    $('#modalOTHours').val(otHours);
-                    $('#modalCheckInTime').val(checkIn);
-                    $('#modalCheckOutTime').val(checkOut);
-                    $('#modalNote').val(note);
-
-                    $('#rawAttendanceLink').attr('href', 'raw-attendance?search=' + empCode + '&date=' + formattedDate_yyyyMMdd);
-
-                    if (note.trim() === '') {
-                        $('#noteContainer').hide();
-                    } else {
-                        $('#noteContainer').show();
-                    }
-
-                    $('#modalWorkDay, #modalOTHours, #modalNote')
-                            .prop('readonly', true)
-                            .prop('disabled', true);
-                    $('#modalStatusSelect').prop('disabled', true).selectpicker('refresh');
-
-                    if (isMonthLocked) {
-                        // THÁNG ĐÃ LOCK
-                        if (isLocked) {
-                            // Record locked → Hiện button Unlock
-                            $('#modalLockBadge').removeClass('badge-success').addClass('badge-danger')
-                                    .text('🔒 Locked').show();
-                            $('#modalUnlockBtn').show();
-                            $('#modalUpdateBtn').hide();
-                            $('#modalSaveBtn').hide();
-                        } else {
-                            // Record unlocked (vừa unlock) → Hiện button Update
-                            $('#modalLockBadge').removeClass('badge-danger').addClass('badge-success')
-                                    .text('🔓 Unlocked').show();
-                            $('#modalUnlockBtn').hide();
-                            $('#modalUpdateBtn').show();
-                            $('#modalSaveBtn').hide();
-                        }
-                    } else {
-                        // THÁNG CHƯA LOCK → Chỉ hiện button Update
-                        $('#modalLockBadge').removeClass('badge-danger').addClass('badge-success')
-                                .text('🔓 Editable').show();
-                        $('#modalUnlockBtn').hide();
-                        $('#modalUpdateBtn').show();
-                        $('#modalSaveBtn').hide();
-                    }
-
-                    $('#attendanceDetailModal').modal('show');
-                });
-
-                // ========== UNLOCK BUTTON (chỉ hiện khi month đã lock) ==========
-                $('#modalUnlockBtn').on('click', function () {
-                    if (confirm('🔓 Unlock this attendance record?\n\nYou will be able to edit the data.')) {
-                        $.ajax({
-                            url: 'update-daily-attendance',
-                            type: 'POST',
-                            data: {
-                                action: 'unlock',
-                                empId: currentAttendance.empId,
-                                date: currentAttendance.date
-                            },
-                            dataType: 'json',
-                            success: function (response) {
-                                if (response.status === 'success') {
-                                    alert('✅ ' + response.message);
-
-                                    currentAttendance.isLocked = false;
-                                    hasBeenUnlocked = true;
-
-                                    $('#modalLockBadge').removeClass('badge-danger').addClass('badge-success')
-                                            .text('🔓 Unlocked');
-
-                                    $('#modalWorkDay, #modalOTHours, #modalNote')
-                                            .prop('readonly', false)
-                                            .prop('disabled', false);
-                                    $('#modalStatusSelect').prop('disabled', false).selectpicker('refresh');
-                                    $('#noteContainer').show();
-
-                                    $('#modalUnlockBtn').hide();
-                                    $('#modalUpdateBtn').hide();
-                                    $('#modalSaveBtn').show();
-                                } else {
-                                    alert('❌ ' + response.message);
-                                }
-                            },
-                            error: function () {
-                                alert('❌ Error unlocking attendance!');
-                            }
-                        });
-                    }
-                });
-
-                // ========== UPDATE BUTTON ==========
-                $('#modalUpdateBtn').on('click', function () {
-                    $('#modalWorkDay, #modalOTHours, #modalNote')
-                            .prop('readonly', false)
-                            .prop('disabled', false);
-                    $('#modalStatusSelect').prop('disabled', false).selectpicker('refresh');
-                    $('#noteContainer').show();
-
-                    $('#modalUpdateBtn').hide();
-                    $('#modalSaveBtn').show();
-                });
-
-                // ========== SAVE BUTTON ==========
-                $('#modalSaveBtn').on('click', function () {
-                    var workDay = parseFloat($('#modalWorkDay').val());
-                    var otHours = parseFloat($('#modalOTHours').val());
-                    var note = $('#modalNote').val().trim();
-
-                    if (![0, 0.5, 1].includes(workDay)) {
-                        alert('Workday only accepts value 0, 0.5 or 1!');
-                        $('#modalWorkDay').focus();
-                        return;
-                    }
-                    if (isNaN(otHours) || otHours < 0 || otHours > 4) {
-                        alert('OT hours must be in the range 0 - 4!');
-                        $('#modalOTHours').focus();
-                        return;
-                    }
-                    if (note === '') {
-                        alert('Please add note before Save!');
-                        $('#modalNote').focus();
-                        return;
-                    }
-
-                    // ✅ Confirm message thay đổi dựa vào isMonthLocked
-                    var confirmMsg = '💾 Save changes?';
-                    if (isMonthLocked) {
-                        confirmMsg += '\n\n⚠️ Attendance will be automatically LOCKED after saving.';
-                    }
-
-                    if (!confirm(confirmMsg)) {
-                        return;
-                    }
-
-                    var data = {
-                        action: isMonthLocked ? 'update' : 'update-no-lock', // ✅ Action khác nhau
-                        empId: $('#modalEmpId').val(),
-                        date: $('#modalDate').val(),
-                        status: $('#modalStatusSelect').val(),
-                        workDay: workDay,
-                        otHours: otHours,
-                        note: note
-                    };
-
-                    $.ajax({
-                        url: 'update-daily-attendance',
-                        type: 'POST',
-                        data: data,
-                        dataType: 'json',
-                        success: function (response) {
-                            console.log('Save response:', response);
-
-                            if (response.status === 'success') {
-                                hasBeenUnlocked = false;
-                                wasLockedOriginally = false;
-
-                                alert('✅ ' + (response.message || 'Updated successfully!'));
-
-                                $('#attendanceDetailModal').off('hidden.bs.modal');
-                                $('#attendanceDetailModal').modal('hide');
-
-                                setTimeout(function () {
-                                    location.reload();
-                                }, 300);
-                            } else {
-                                alert('❌ ' + (response.message || 'Update failed!'));
-                            }
-                        },
-                        error: function (xhr, status, error) {
-                            console.error('AJAX error:', status, error);
-                            console.error('Response:', xhr.responseText);
-                            alert('❌ Error updating attendance!');
-                        }
-                    });
-                });
-            });
-        </script>
 </html>
