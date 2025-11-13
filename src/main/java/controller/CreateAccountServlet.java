@@ -139,6 +139,7 @@ public class CreateAccountServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        HttpSession ses = request.getSession();
         InterviewDAO interDAO = new InterviewDAO();
         EmployeeDAO empDAO = new EmployeeDAO();
         DeptDAO depDAO = new DeptDAO();
@@ -174,11 +175,21 @@ public class CreateAccountServlet extends HttpServlet {
         }
         boolean hasErr = false;
         if (empDAO.existsByEmail(addEmail)) {
-            request.setAttribute("EmailErr", "Email has been existed");
+            request.setAttribute("EmailErr", "Email has been existed in the system!");
             request.setAttribute("canName", addCanName);
             request.setAttribute("email", addEmail);
             request.setAttribute("phone", addPhone);
             request.setAttribute("deptId", addDepartmentId);
+            request.setAttribute("roleId", addRoleId);
+            hasErr = true;
+        }
+        if (empDAO.existsByPhone(addPhone)) {
+            request.setAttribute("PhoneErr", "Phone has been existed in the system!");
+            request.setAttribute("canName", addCanName);
+            request.setAttribute("email", addEmail);
+            request.setAttribute("phone", addPhone);
+            request.setAttribute("deptId", addDepartmentId);
+            request.setAttribute("roleId", addRoleId);
             hasErr = true;
         }
 
@@ -200,7 +211,16 @@ public class CreateAccountServlet extends HttpServlet {
             empDAO.createEmployee(emp);
         }
         List<Interview> interList = interDAO.getFilteredInterviewsNotInEmployee("Pass", searchKey, startApplyDate, endApplyDate, startInterviewDate, endInterviewDate, page, pageSize);
+        List<Role> roleList =roleDAO.getAllRoles();
+        Map<String, Role> uniqueRolesMap = new LinkedHashMap<>();
+        for (Role r : roleList) {
+            uniqueRolesMap.putIfAbsent(r.getRoleName(), r);
+        }
+
+        List<Role> uniqueRoles = new ArrayList<>(uniqueRolesMap.values());
         request.setAttribute("passedList", interList);
+        ses.setAttribute("roleList", uniqueRoles);
+        ses.setAttribute("deptList", depDAO.getAllDepartment());
         request.setAttribute("page", page);
         request.setAttribute("totalPages", totalPages);
         request.getRequestDispatcher("Views/createaccount.jsp").forward(request, response);
