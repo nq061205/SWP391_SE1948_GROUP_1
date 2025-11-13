@@ -804,6 +804,20 @@ public class EmployeeDAO extends DBContext {
         }
         return false;
     }
+    public boolean existsByPhone(String phone) {
+        String sql = "SELECT 1 FROM Employee WHERE phone = ?";
+        try (Connection conn = getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            ps.setString(1, phone);
+            try (ResultSet rs = ps.executeQuery()) {
+                return rs.next();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+    
 
     public boolean existsByRoleName(String roleName) {
         String sql = "SELECT 1 FROM Employee e JOIN Role r ON e.role_id = r.role_id WHERE r.role_name = ?";
@@ -1045,7 +1059,7 @@ public class EmployeeDAO extends DBContext {
 
     public static void main(String[] args) {
         EmployeeDAO dao = new EmployeeDAO();
-        System.out.println(dao.getManagerByDepartment("D002"));
+       dao.updateDecreasePaidLeaveDaysByEmployeeId(3,2);
     }
 
 }

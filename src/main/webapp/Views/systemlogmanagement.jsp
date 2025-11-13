@@ -73,6 +73,9 @@
 
                     <input type="text" name="search" value="${param.search}"
                            class="form-control filter-h" placeholder="Search email or name...">
+                    <button type="submit" class="btn btn-primary filter-h">
+                        <i class="fa fa-search"></i> Search
+                    </button>
                     <select name="type" class="form-control filter-h" style="width:170px;" onchange="this.form.submit()">
                         <option value="">All Type</option>
                         <option value="Annual Leave" ${param.type == 'Annual Leave' ? 'selected' : ''}>Annual Leave</option>
@@ -151,11 +154,11 @@
                     <div class="mb-3">
                         <i class="fa fa-inbox fa-3x text-muted"></i>
                     </div>
-                    <h5 class="text-muted">No Leave Request Found</h5>
-                    <p class="text-muted">There are currently no leave request in the system.</p>
+                    <h5 class="text-muted">No System Log Request Found</h5>
+                    <p class="text-muted">There are currently no system log in the system.</p>
                 </div>
             </c:if>
-            <c:url var="baseUrl" value="/application">
+            <c:url var="baseUrl" value="/systemlog">
                 <c:param name="typeapplication" value="LEAVE"/>
                 <c:if test="${not empty param.search}">
                     <c:param name="search" value="${param.search}"/>

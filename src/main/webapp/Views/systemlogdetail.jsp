@@ -66,7 +66,7 @@
 
                             <input type="hidden" name="action" value="Updated">
                             <input type="hidden" name="id" value="${leave.leaveId}">
-
+<input type="hidden" name="note" value="">
                             <div class="form-group mb-3">
                                 <label for="to">Sender</label>
                                 <input type="text" class="form-control" value="${leave.employee.fullname}" disabled>

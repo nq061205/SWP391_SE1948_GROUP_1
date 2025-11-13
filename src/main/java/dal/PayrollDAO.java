@@ -77,7 +77,7 @@ public class PayrollDAO {
 
     public Payroll getPayrollDeatailByTime(int emp_id, int month, int year) {
         String sql = PAYROLL_SELECT_SQL + " WHERE p.emp_id = ?\n"
-                + "       and   p.month = ? AND p.year= ? and p.is_paid = 1\n";
+                + "       and   p.month = ? AND p.year= ?\n";
         try (Connection conn = DBContext.getConnection(); PreparedStatement stm = conn.prepareStatement(sql)) {
             stm.setInt(1, emp_id);
             stm.setInt(2, month);
