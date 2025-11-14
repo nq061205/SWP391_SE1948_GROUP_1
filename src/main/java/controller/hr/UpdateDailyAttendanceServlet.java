@@ -82,7 +82,6 @@ public class UpdateDailyAttendanceServlet extends HttpServlet {
         try {
             DailyAttendanceDAO dao = new DailyAttendanceDAO();
 
-            // ============ XỬ LÝ UNLOCK ============
             if ("unlock".equals(action)) {
                 int empId = Integer.parseInt(request.getParameter("empId"));
                 String dateStr = request.getParameter("date");
@@ -98,8 +97,7 @@ public class UpdateDailyAttendanceServlet extends HttpServlet {
                     json.put("status", "fail");
                     json.put("message", "Failed to unlock attendance!");
                 }
-            } // ============ XỬ LÝ RE-LOCK ============
-            else if ("relock".equals(action)) {
+            } else if ("relock".equals(action)) {
                 int empId = Integer.parseInt(request.getParameter("empId"));
                 String dateStr = request.getParameter("date");
                 LocalDate date = LocalDate.parse(dateStr, DateTimeFormatter.ofPattern("dd/MM/yyyy"));
@@ -114,8 +112,7 @@ public class UpdateDailyAttendanceServlet extends HttpServlet {
                     json.put("status", "fail");
                     json.put("message", "Failed to re-lock attendance!");
                 }
-            } // ============ XỬ LÝ UPDATE AND LOCK ============
-            else if ("update".equals(action)) {
+            } else if ("update".equals(action)) {
                 int empId = Integer.parseInt(request.getParameter("empId"));
                 String dateStr = request.getParameter("date");
                 LocalDate date = LocalDate.parse(dateStr, DateTimeFormatter.ofPattern("dd/MM/yyyy"));

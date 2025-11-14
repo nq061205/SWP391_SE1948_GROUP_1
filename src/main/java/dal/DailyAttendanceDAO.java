@@ -407,6 +407,9 @@ public class DailyAttendanceDAO extends DBContext {
         return false;
     }
 
+    /**
+     * Unlock a single attendance record
+     */
     public boolean unlockAttendance(int empId, String date) {
         String sql = "UPDATE daily_attendance SET is_locked = FALSE "
                 + "WHERE emp_id = ? AND date = ?";

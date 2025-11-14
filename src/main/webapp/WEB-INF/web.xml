@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <web-app version="6.0" xmlns="https://jakarta.ee/xml/ns/jakartaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="https://jakarta.ee/xml/ns/jakartaee https://jakarta.ee/xml/ns/jakartaee/web-app_6_0.xsd">
-
     <servlet>
         <servlet-name>HomePageServlet</servlet-name>
         <servlet-class>controller.HomePageServlet</servlet-class>
@@ -45,7 +44,6 @@
         <servlet-name>ManagePostServlet</servlet-name>
         <servlet-class>controller.hrm.ManagePostServlet</servlet-class>
     </servlet>
-
     <servlet>
         <servlet-name>DownloadRawTemplateServlet</servlet-name>
         <servlet-class>controller.hr.DownloadRawTemplateServlet</servlet-class>
@@ -218,8 +216,18 @@
         <servlet-name>MonthlyPayrollServlet</servlet-name>
         <servlet-class>controller.hrm.MonthlyPayrollServlet</servlet-class>
     </servlet>
-
-
+    <servlet>
+        <servlet-name>ExportPayrollExcelServlet</servlet-name>
+        <servlet-class>controller.hrm.ExportPayrollExcelServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>ExportPayrollPDFServlet</servlet-name>
+        <servlet-class>controller.hrm.ExportPayrollPDFServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>AdminDashboardServlet</servlet-name>
+        <servlet-class>controller.admin.AdminDashboardServlet</servlet-class>
+    </servlet>
     <servlet-mapping>
         <servlet-name>HomePageServlet</servlet-name>
         <url-pattern>/homepage</url-pattern>
@@ -280,7 +288,6 @@
         <servlet-name>ManagePostServlet</servlet-name>
         <url-pattern>/managepost</url-pattern>
     </servlet-mapping>
-
     <servlet-mapping>
         <servlet-name>DownloadRawTemplateServlet</servlet-name>
         <url-pattern>/download-template</url-pattern>
@@ -438,6 +445,18 @@
         <url-pattern>/monthly-payroll</url-pattern>
     </servlet-mapping>
     <!-- ===================== SESSION CONFIG & WELCOME FILE ===================== -->
+    <servlet-mapping>
+        <servlet-name>ExportPayrollExcelServlet</servlet-name>
+        <url-pattern>/export-salary-excel</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>ExportPayrollPDFServlet</servlet-name>
+        <url-pattern>/export-salary-pdf</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>AdminDashboardServlet</servlet-name>
+        <url-pattern>/admin-dashboard</url-pattern>
+    </servlet-mapping>
     <session-config>
         <session-timeout>30</session-timeout>
     </session-config>

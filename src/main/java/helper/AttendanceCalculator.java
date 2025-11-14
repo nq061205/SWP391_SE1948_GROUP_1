@@ -97,7 +97,17 @@ public class AttendanceCalculator {
         for (Map.Entry<String, LeaveRequest> entry : leaveMap.entrySet()) {
             //Have log, have leave request
             if (existingKeys.contains(entry.getKey())) {
-                continue;//should update in version 2
+                LeaveRequest leave = entry.getValue();
+                String[] parts = entry.getKey().split("_");
+                String dateStr = parts[1];
+
+                String message = "System detected that the employee was present at work on "
+                        + dateStr + " despite having an approved leave request.";
+
+                LeaveRequestDAO leaveDAO = new LeaveRequestDAO();
+                leaveDAO.updateSystemLog(leave.getLeaveId(), message);
+
+                continue;
             }
 
             //No log, have leave request

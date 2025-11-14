@@ -324,7 +324,7 @@
                                                 <c:if test="${count != null && count > 0}">
                                                     <a href="${pageContext.request.contextPath}/jobsite?depId=${dept.depId}<c:if test="${not empty param.keyword}">&keyword=${param.keyword}</c:if><c:if test="${not empty param.fromDate}">&fromDate=${param.fromDate}</c:if><c:if test="${not empty param.toDate}">&toDate=${param.toDate}</c:if><c:if test="${not empty param.sort}">&sort=${param.sort}</c:if>" 
                                                        class="filter-item" style="text-decoration: none; color: inherit; display: block; cursor: pointer;">
-                                                        <span style="${param.depId == dept.depId ? 'font-weight: bold; color: #f7b205;' : ''}">${dept.depName}</span>
+                                                                   <span style="${param.depId == dept.depId ? 'font-weight: bold; color: #f7b205;' : ''}">${dept.depName}</span>
                                                         <span class="filter-count">${count}</span>
                                                     </a>
                                                 </c:if>
@@ -466,7 +466,7 @@
                                                                     </a>
                                                                 </li>
                                                                 <li class="disabled"><span>...</span></li>
-                                                                <c:forEach begin="${totalPages - 4}" end="${totalPages}" var="i">
+                                                                    <c:forEach begin="${totalPages - 4}" end="${totalPages}" var="i">
                                                                     <li class="${i == currentPage ? 'active' : ''}">
                                                                         <c:choose>
                                                                             <c:when test="${i == currentPage}">
@@ -488,7 +488,7 @@
                                                                     </a>
                                                                 </li>
                                                                 <li class="disabled"><span>...</span></li>
-                                                                <c:forEach begin="${currentPage - 1}" end="${currentPage + 1}" var="i">
+                                                                    <c:forEach begin="${currentPage - 1}" end="${currentPage + 1}" var="i">
                                                                     <li class="${i == currentPage ? 'active' : ''}">
                                                                         <c:choose>
                                                                             <c:when test="${i == currentPage}">
@@ -537,7 +537,12 @@
 
             <%@ include file="CommonItems/Footer/homepageFooter.jsp" %>
         </div>
-
+            <c:if test="${not empty requestScope.successMessage}">
+            <script>
+                alert("${requestScope.successMessage}");
+            </script>
+        </c:if>
+        
         <script src="${pageContext.request.contextPath}/assets1/js/jquery.min.js"></script>
         <script src="${pageContext.request.contextPath}/assets1/vendors/bootstrap/js/popper.min.js"></script>
         <script src="${pageContext.request.contextPath}/assets1/vendors/bootstrap/js/bootstrap.min.js"></script>

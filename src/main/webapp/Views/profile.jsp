@@ -91,7 +91,7 @@
                                                 <label class="col-sm-3 col-form-label">Fullname</label>
                                                 <div class="col-sm-9">
                                                     <input name="fullname" class="form-control" type="text" value="${sessionScope.user.fullname}"
-                                                           <c:if test="${click != 'save'}"> readonly required </c:if>>
+                                                           <c:if test="${sessionScope.click != 'save'}"> readonly required </c:if>>
                                                     <c:if test="${fullnameErr!=null}">
                                                         <input style="color: red" type="text" class="form-control" value="${fullnameErr}">
                                                     </c:if>
