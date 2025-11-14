@@ -147,10 +147,10 @@
 
                                 <div class="modal-body">
                                     <label class="form-label mt-2">Department Name</label>
-                                    <input type="text" name="deptName" class="form-control" required>
+                                    <input type="text" name="deptName" class="form-control" required maxlength="30">
 
                                     <label class="form-label mt-2">Description</label>
-                                    <textarea name="description" class="form-control" required></textarea>
+                                    <textarea name="description" class="form-control" required maxlength="200"></textarea>
                                 </div>
 
                                 <div class="modal-footer">
