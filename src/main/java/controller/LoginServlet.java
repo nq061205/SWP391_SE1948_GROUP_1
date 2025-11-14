@@ -50,7 +50,7 @@ public class LoginServlet extends HttpServlet {
         EmployeeDAO ldao = new EmployeeDAO();
         GoogleAccount googleAcc = google.getUserInfo(google.getToken(code));
         Employee emp = ldao.getEmployeeByEmail(googleAcc.getEmail());
-        if (emp == null) {
+        if (emp == null || !emp.isStatus()) {
             request.setAttribute("errorMessage", "Account does not valid");
             request.getRequestDispatcher("Views/login.jsp").forward(request, response);
             return;
@@ -70,8 +70,14 @@ public class LoginServlet extends HttpServlet {
         EmployeeDAO lDao = new EmployeeDAO();
         HttpSession session = request.getSession();
         Employee e = lDao.getEmployeeByEmpCode(emp_code);
+        
         if (e == null) {
             request.setAttribute("errorMessage", "Employee Code or Password invalid");
+            request.getRequestDispatcher("Views/login.jsp").forward(request, response);
+            return;
+        }
+        if (!e.isStatus()) {
+            request.setAttribute("errorMessage", "Employee ís inactive");
             request.getRequestDispatcher("Views/login.jsp").forward(request, response);
             return;
         }

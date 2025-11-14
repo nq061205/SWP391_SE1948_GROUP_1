@@ -8,14 +8,12 @@ import dal.DailyAttendanceDAO;
 import dal.DeptDAO;
 import dal.EmployeeDAO;
 import dal.HolidayDAO;
-import dal.RolePermissionDAO;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import jakarta.servlet.http.HttpSession;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.YearMonth;
@@ -73,24 +71,40 @@ public class DailyAttendanceServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        String action = request.getParameter("action");
+
+        if ("lock".equals(action)) {
+            String monthParam = request.getParameter("month");
+            String yearParam = request.getParameter("year");
+
+            try {
+                int month = Integer.parseInt(monthParam);
+                int year = Integer.parseInt(yearParam);
+
+                DailyAttendanceDAO dailyDAO = new DailyAttendanceDAO();
+                boolean success = dailyDAO.lockAttendanceForMonth(month, year);
+
+                if (success) {
+                    request.setAttribute("successMessage",
+                            "All attendance records for " + month + "/" + year + " have been LOCKED successfully!");
+                } else {
+                    request.setAttribute("errorMessage",
+                            "Failed to lock attendance. No unlocked records found for " + month + "/" + year);
+                }
+
+            } catch (Exception e) {
+                request.setAttribute("errorMessage",
+                        "Error locking attendance: " + e.getMessage());
+                e.printStackTrace();
+            }
+        }
         String monthParam = request.getParameter("month");
         String yearParam = request.getParameter("year");
         String department = request.getParameter("department");
         String search = request.getParameter("search");
         String pageParam = request.getParameter("page");
         String pageSizeParam = request.getParameter("pageSize");
-        HttpSession session = request.getSession();
-        Employee user = (Employee) session.getAttribute("user");
-        if (user == null) {
-            response.sendRedirect(request.getContextPath() + "/login");
-            return;
-        }
-        RolePermissionDAO rperDAO = new RolePermissionDAO();
-        if (!rperDAO.hasPermission(user.getRole().getRoleId(),12)) {
-            session.setAttribute("logMessage", "You do not have permission to access this page.");
-            response.sendRedirect("dashboard");
-            return;
-        }
+
         DeptDAO deptDAO = new DeptDAO();
         List<Department> departments = deptDAO.getAllDepartment();
 
@@ -205,7 +219,8 @@ public class DailyAttendanceServlet extends HttpServlet {
         request.setAttribute("selectedYear", selectedYear);
         request.setAttribute("search", search != null ? search : "");
         request.setAttribute("selectedDepartment", department != null ? department : "");
-
+        boolean isAttendanceLocked = dailyDAO.isAttendanceLocked(selectedMonth, selectedYear);
+        request.setAttribute("isAttendanceLocked", isAttendanceLocked);
         request.getRequestDispatcher("Views/HR/dailyAttendance.jsp").forward(request, response);
     }
 

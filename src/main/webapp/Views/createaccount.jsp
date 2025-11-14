@@ -173,32 +173,44 @@
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            <c:forEach items="${passedList}" var="pl" varStatus="loop">
-                                                <tr>
-                                                    <td>${loop.index+1}</td>
-                                                    <td style="overflow-wrap: break-word;">${pl.candidate.name}</td>
-                                                    <td style="overflow-wrap: break-word;">${pl.candidate.email}</td>
-                                                    <td style="overflow-wrap: break-word;">${pl.candidate.phone}</td>
-                                                    <td style="overflow-wrap: break-word;">${pl.candidate.appliedAt}</td>
-                                                    <td style="overflow-wrap: break-word;">${pl.interviewedBy.fullname}</td>
-                                                    <td style="overflow-wrap: break-word;">${pl.date}</td>
-                                                    <td style="overflow-wrap: break-word;">${pl.time}</td>
-                                                    <td>
-                                                        <button type="button"
-                                                                style="padding: 0.5rem 0"
-                                                                class="btn btn-primary btn-sm open-modal-btn w-100"
-                                                                data-bs-toggle="modal"
-                                                                data-bs-target="#addModal"
-                                                                data-depId="${pl.candidate.post.department.depId}"
-                                                                data-name="${pl.candidate.name}"
-                                                                data-email="${pl.candidate.email}"
-                                                                data-phone="${pl.candidate.phone}">
-                                                            Create Profile
-                                                        </button>
-                                                    </td>
-                                                </tr>
+                                            <c:choose>
+                                                <c:when test="${not empty passedList}">
+                                                    <c:forEach items="${passedList}" var="pl" varStatus="loop">
+                                                        <tr>
+                                                            <td>${loop.index+1}</td>
+                                                            <td style="overflow-wrap: break-word;">${pl.candidate.name}</td>
+                                                            <td style="overflow-wrap: break-word;">${pl.candidate.email}</td>
+                                                            <td style="overflow-wrap: break-word;">${pl.candidate.phone}</td>
+                                                            <td style="overflow-wrap: break-word;">${pl.candidate.appliedAt}</td>
+                                                            <td style="overflow-wrap: break-word;">${pl.interviewedBy.fullname}</td>
+                                                            <td style="overflow-wrap: break-word;">${pl.date}</td>
+                                                            <td style="overflow-wrap: break-word;">${pl.time}</td>
+                                                            <td>
+                                                                <button type="button"
+                                                                        style="padding: 0.5rem 0"
+                                                                        class="btn btn-primary btn-sm open-modal-btn w-100"
+                                                                        data-bs-toggle="modal"
+                                                                        data-bs-target="#addModal"
+                                                                        data-depId="${pl.candidate.post.department.depId}"
+                                                                        data-name="${pl.candidate.name}"
+                                                                        data-email="${pl.candidate.email}"
+                                                                        data-phone="${pl.candidate.phone}">
+                                                                    Create Profile
+                                                                </button>
+                                                            </td>
+                                                        </tr>
 
-                                            </c:forEach>
+                                                    </c:forEach>
+                                                </c:when>
+                                                <c:otherwise>
+                                                    <tr>
+                                                        <td colspan="9" class="text-center text-muted py-4">
+                                                            <i class="fa fa-inbox fa-2x mb-2"></i>
+                                                            <p>No data for this page</p>
+                                                        </td>
+                                                    </tr>
+                                                </c:otherwise>
+                                            </c:choose>
                                         </tbody>
                                     </table>
                                 </form>
@@ -282,6 +294,9 @@
                                         </c:if>
                                         <label class="form-label mt-2">Phone:</label>
                                         <input type="text" name="phone" value="${phone}" class="form-control" id="modalPhone" required>
+                                        <c:if test="${not empty PhoneErr and param.phone ne sessionScope.emp.phone}">
+                                            <p style="color: red">${PhoneErr}</p>
+                                        </c:if>
                                         <label class="form-label mt-2">Department:</label>
                                         <br>
                                         <select id="modalDepId" name="deptId"
@@ -329,6 +344,14 @@
                 depSelect.value = '<c:out value="${param.deptId}" />';
                 updateRoleOptions(depSelect.value);
             <% } %>
+            <% if (request.getAttribute("PhoneErr") != null) { %>
+                addModal.show();
+                document.getElementById('modalName').value = '<c:out value="${canName}" />';
+                document.getElementById('modalEmail').value = '<c:out value="${email}" />';
+                document.getElementById('modalPhone').value = '<c:out value="${phone}" />';
+                depSelect.value = '<c:out value="${param.deptId}" />';
+                updateRoleOptions(depSelect.value);
+            <% } %>
 
                 const openBtns = document.querySelectorAll('.open-modal-btn');
                 openBtns.forEach(btn => {
@@ -345,7 +368,7 @@
                         document.querySelector('select[name="roleId"]').value = 3;
 
                         updateRoleOptions(depId);
-                        addModal.show(); // dùng instance duy nhất
+                        addModal.show();
                     });
                 });
 

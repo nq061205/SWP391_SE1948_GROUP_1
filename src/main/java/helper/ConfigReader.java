@@ -1,7 +1,7 @@
 package helper;
 
-import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.Properties;
 
 public class ConfigReader {
@@ -10,25 +10,64 @@ public class ConfigReader {
 
     static {
         try {
-            FileInputStream fis = new FileInputStream("config.properties");
-            config.load(fis);
-            fis.close();
+            InputStream is = ConfigReader.class.getClassLoader().getResourceAsStream("config.properties");
+
+            if (is != null) {
+                config.load(is);
+                is.close();
+                config.forEach((key, value)
+                        -> System.out.println("  " + key + " = " + value)
+                );
+
+            } else {
+                System.err.println("ERROR: config.properties not found in classpath!");
+            }
         } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 
-    // Hàm tiện để lấy giá trị theo key
     public static String get(String key) {
-        return config.getProperty(key);
+        String value = config.getProperty(key);
+        if (value == null) {
+            System.err.println("WARNING: Key '" + key + "' not found in config.properties");
+        }
+        return value;
     }
 
-    // Hàm tiện để lấy giá trị double (vì nhiều giá trị là số thực)
     public static double getDouble(String key) {
-        return Double.parseDouble(config.getProperty(key));
+        String value = config.getProperty(key);
+
+        if (value == null || value.trim().isEmpty()) {
+            System.err.println("ERROR: Key '" + key + "' not found or empty in config.properties");
+            throw new RuntimeException("Config key '" + key + "' not found");
+        }
+
+        try {
+            double result = Double.parseDouble(value.trim());
+            System.out.println("Reading config: " + key + " = " + result);
+            return result;
+        } catch (NumberFormatException e) {
+            System.err.println("ERROR: Cannot parse '" + value + "' as double for key '" + key + "'");
+            throw e;
+        }
     }
 
-    // Hàm tiện để lấy giá trị int
     public static int getInt(String key) {
-        return Integer.parseInt(config.getProperty(key));
+        String value = config.getProperty(key);
+
+        if (value == null || value.trim().isEmpty()) {
+            System.err.println("ERROR: Key '" + key + "' not found or empty in config.properties");
+            throw new RuntimeException("Config key '" + key + "' not found");
+        }
+
+        try {
+            int result = Integer.parseInt(value.trim());
+            System.out.println("Reading config: " + key + " = " + result);
+            return result;
+        } catch (NumberFormatException e) {
+            System.err.println("ERROR: Cannot parse '" + value + "' as int for key '" + key + "'");
+            throw e;
+        }
     }
 }

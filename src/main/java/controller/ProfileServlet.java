@@ -50,12 +50,12 @@ public class ProfileServlet extends HttpServlet {
         }
 
         EmployeeDAO employeeDAO = new EmployeeDAO();
-        String click = request.getParameter("click");
-        request.setAttribute("click", click);
+        String click = (String)session.getAttribute("click");
+        session.setAttribute("click", click);
 
         if (!"save".equals(click)) {
-            request.setAttribute("click", "save");
-            request.getRequestDispatcher("Views/profile.jsp").forward(request, response);
+            session.setAttribute("click", "save");
+            response.sendRedirect("profile");
             return;
         }
 
@@ -102,7 +102,7 @@ public class ProfileServlet extends HttpServlet {
         }
 
         if (hasError) {
-            request.setAttribute("click", "save");
+            session.setAttribute("click", "save");
             request.getRequestDispatcher("Views/profile.jsp").forward(request, response);
             return;
         }
@@ -125,7 +125,7 @@ public class ProfileServlet extends HttpServlet {
 
         Employee updatedUser = employeeDAO.getEmployeeByEmpId(user.getEmpId());
         session.setAttribute("user", updatedUser);
-        request.setAttribute("click", "");
+        session.setAttribute("click", "");
         request.getRequestDispatcher("Views/profile.jsp").forward(request, response);
     }
 

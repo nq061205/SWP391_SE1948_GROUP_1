@@ -17,7 +17,7 @@
 
 <div class="ttr-sidebar">
     <div class="ttr-sidebar-wrapper content-scroll">
-       
+
         <%-- (ĐÃ LOẠI BỎ CÁC THẺ BỊ LẶP ttr-sidebar và ttr-sidebar-wrapper) --%>
         <nav class="ttr-sidebar-navi">
             <ul>
@@ -35,6 +35,20 @@
                     </a>
                 </li>
 
+                <li>
+                    <a href="${pageContext.request.contextPath}/payrollreportdetail" class="ttr-material-button">
+                        <span class="ttr-icon"><i class="ti-money"></i></span>
+                        <span class="ttr-label">Payroll Report</span>
+                    </a>
+                </li>
+
+                <li>
+                    <a href="${pageContext.request.contextPath}/attendance" class="ttr-material-button">
+                        <span class="ttr-icon"><i class="ti-check-box"></i></span>
+                        <span class="ttr-label">Personal Attendance</span>
+                    </a>
+                </li>
+                
                 <% if (rpDAO.hasPermission(roleId, 7)) { %>
                 <li>
                     <a href="${pageContext.request.contextPath}/Views/listapplication.jsp" class="ttr-material-button">
@@ -156,19 +170,6 @@
                 </li>
                 <% } %>
 
-                <li>
-                    <a href="${pageContext.request.contextPath}/payrollreportdetail" class="ttr-material-button">
-                        <span class="ttr-icon"><i class="ti-money"></i></span>
-                        <span class="ttr-label">Payroll Report</span>
-                    </a>
-                </li>
-                
-                <li>
-                    <a href="${pageContext.request.contextPath}/attendance" class="ttr-material-button">
-                        <span class="ttr-icon"><i class="ti-check-box"></i></span>
-                        <span class="ttr-label">Personal Attendance</span>
-                    </a>
-                </li>
                 <% if (rpDAO.hasPermission(roleId, 9)) { %>
 
                 <li>
@@ -178,7 +179,7 @@
                     </a>
                 </li>
                 <% } %>
-                
+
                 <% if (rpDAO.hasPermission(roleId, 8)) { %>
                 <li>
                     <a href="${pageContext.request.contextPath}/Views/listapplication.jsp" class="ttr-material-button">
@@ -193,10 +194,10 @@
                 </li>
                 <% } %>
                 <% if (rpDAO.hasPermission(roleId, 13)) { %>
-                 <a href="${pageContext.request.contextPath}/monthly-payroll" class="ttr-material-button">
-                        <span class="ttr-icon"><i class="ti-server"></i></span>
-                        <span class="ttr-label">Payroll Management</span>
-                    </a>
+                <a href="${pageContext.request.contextPath}/monthly-payroll" class="ttr-material-button">
+                    <span class="ttr-icon"><i class="ti-server"></i></span>
+                    <span class="ttr-label">Payroll Management</span>
+                </a>
                 <% } %>
                 <li class="ttr-seperate"></li>
             </ul>

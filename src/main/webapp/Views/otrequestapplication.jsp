@@ -64,7 +64,7 @@
         <main class="ttr-wrapper">
             <div class="filter-row mb-3">
                  <div class="db-breadcrumb mb-3">
-                        <h4 class="breadcrumb-title">Overtime Request Application List</h4>
+                        <h4 class="breadcrumb-title">Application</h4>
                         <ul class="db-breadcrumb-list">
                             <li><a href="${pageContext.request.contextPath}/application?typeapplication=ot">Overtime Request Application List</a></li>
                         </ul>
@@ -173,7 +173,7 @@
                     </a>
                 </div>
             </c:if>
-            <c:url var="baseUrl" value="/application">
+            <c:url var="baseUrl" value="/applicationmanagement?typeapplication=ot">
                 <c:param name="typeapplication" value="OT"/>
                 <c:if test="${not empty param.search}">
                     <c:param name="search" value="${param.search}"/>

@@ -1,5 +1,7 @@
 <%@ page contentType="text/html" pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
+
 <!DOCTYPE html>
 <html lang="en">
     <head>
@@ -105,39 +107,47 @@
                                 <!-- Candidate Multi-Select -->
                                 <div class="form-group mb-3">
                                     <label><i class="fa fa-user"></i> Candidates:</label>
-                                    <div class="border rounded p-2" style="max-height: 220px; overflow-y: auto;">
-                                        <c:forEach items="${candidatesList}" var="c">
-                                            <div class="form-check">
-                                                <input type="checkbox" class="form-check-input candidate-checkbox"
-                                                       id="${c.candidateId}" name="candidateIds" value="${c.candidateId}">
-                                                <label for="${c.candidateId}" class="form-check-label">
-                                                    ${c.name} (${c.email})
-                                                </label>
-                                            </div>
-                                        </c:forEach>
-                                    </div>
-                                    <small id="selectedCandidates" class="text-muted mt-1 d-block">
-                                        No candidates selected
-                                    </small>
-                                </div>  
-                                <div class="form-group mb-3">
-                                    <label><i class="fa fa-user"></i> Interview Employee</label>
-                                    <select name="interviewer" class="form-control" required>
-                                        <option value="">-- Select Interviewer --</option>
-                                        <c:forEach items="${employeeInterview}" var="c">
-                                            <option value="${c.empId}">${c.fullname}</option>
-                                        </c:forEach>
-                                    </select>
 
+                                    <c:choose>
+                                        <%-- Nếu có danh sách ứng viên --%>
+                                        <c:when test="${not empty candidatesList}">
+                                            <div class="border rounded p-3 bg-light" style="max-height: 230px; overflow-y: auto;">
+                                                <c:forEach items="${candidatesList}" var="c">
+                                                    <div class="form-check mb-1">
+                                                        <input type="checkbox" class="form-check-input candidate-checkbox"
+                                                               id="${c.candidateId}" name="candidateIds" value="${c.candidateId}"
+                                                               <c:if test="${selectedCandidatesData != null and fn:contains(selectedCandidatesData, c.candidateId)}">checked</c:if>>
+
+                                                               <label for="${c.candidateId}" class="form-check-label">
+                                                            ${c.name} <small class="text-muted">(${c.email})</small>
+                                                        </label>
+                                                    </div>
+                                                </c:forEach>
+                                            </div>
+                                            <small id="selectedCandidates" class="text-muted mt-2 d-block">
+                                                No candidates selected
+                                            </small>
+                                        </c:when>
+
+                                        <c:otherwise>
+                                            <div class="d-flex flex-column align-items-center justify-content-center text-center p-4 mt-2 mb-3 border rounded bg-light-subtle">
+                                                <i class="fa fa-user-slash fa-2x text-secondary mb-2"></i>
+                                                <h6 class="fw-semibold text-secondary mb-1">No candidates available</h6>
+                                                <p class="text-muted mb-0" style="font-size: 14px;">
+                                                </p>
+                                            </div>
+                                        </c:otherwise>
+                                    </c:choose>
                                 </div>
 
+                                <div class="form-group mb-3"> <label><i class="fa fa-user"></i> Interview Employee</label> <select name="interviewer" class="form-control" required> <option value="">-- Select Interviewer --</option> <c:forEach items="${employeeInterview}" var="c"> <option value="${c.empId}">${c.fullname}</option> </c:forEach> </select> </div>
 
-                                <!-- Date -->
-                                <div class="form-group mb-3">
-                                    <label for="date"><i class="fa fa-calendar"></i> Date:</label>
-                                    <input type="date" id="date" name="date" class="form-control"
-                                           value="${interview.date}"
-                                           min="<%= java.time.LocalDate.now() %>" required>
+                                    <!-- Date -->
+                                    <div class="form-group mb-3">
+                                        <label for="date"><i class="fa fa-calendar"></i> Date:</label>
+                                        <input type="date" id="date" name="date" class="form-control"
+                                               value="${interview.date}"
+                                        min="<%= java.time.LocalDate.now() %>" required>
                                 </div>
 
                                 <!-- Time -->
@@ -203,27 +213,27 @@
         <script src="${pageContext.request.contextPath}/assets2/js/admin.js"></script>
 
         <script>
-                                                    function confirmDelete(id) {
-                                                        if (confirm("Do you want to delete this interview schedule?")) {
-                                                            document.getElementById("deleteId").value = id;
-                                                            document.getElementById("deleteForm").submit();
-                                                        }
+                                                function confirmDelete(id) {
+                                                    if (confirm("Do you want to delete this interview schedule?")) {
+                                                        document.getElementById("deleteId").value = id;
+                                                        document.getElementById("deleteForm").submit();
                                                     }
+                                                }
 
-                                                    $(document).ready(function () {
-                                                        $('.candidate-checkbox').on('change', function () {
-                                                            const selected = [];
-                                                            $('.candidate-checkbox:checked').each(function () {
-                                                                selected.push($(this).next('label').text().trim());
-                                                            });
-
-                                                            if (selected.length === 0) {
-                                                                $('#selectedCandidates').text('No candidates selected');
-                                                            } else {
-                                                                $('#selectedCandidates').text('Selected: ' + selected.join(', '));
-                                                            }
+                                                $(document).ready(function () {
+                                                    $('.candidate-checkbox').on('change', function () {
+                                                        const selected = [];
+                                                        $('.candidate-checkbox:checked').each(function () {
+                                                            selected.push($(this).next('label').text().trim());
                                                         });
+
+                                                        if (selected.length === 0) {
+                                                            $('#selectedCandidates').text('No candidates selected');
+                                                        } else {
+                                                            $('#selectedCandidates').text('Selected: ' + selected.join(', '));
+                                                        }
                                                     });
+                                                });
         </script>
     </body>
 </html>

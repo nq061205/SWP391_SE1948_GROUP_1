@@ -63,7 +63,7 @@
         <main class="ttr-wrapper">
             <div class="filter-row mb-3">
                  <div class="db-breadcrumb mb-3">
-                        <h4 class="breadcrumb-title">Leave Request Application List</h4>
+                        <h4 class="breadcrumb-title">Application</h4>
                         <ul class="db-breadcrumb-list">
                             <li><a href="${pageContext.request.contextPath}/application?typeapplication=leave"></i>Leave Request Application List</a></li>
                         </ul>
@@ -189,9 +189,6 @@
             </c:if>
             <c:url var="baseUrl" value="/application">
                 <c:param name="typeapplication" value="LEAVE"/>
-                <c:if test="${not empty param.search}">
-                    <c:param name="search" value="${param.search}"/>
-                </c:if>
                 <c:if test="${not empty param.status}">
                     <c:param name="status" value="${param.status}"/>
                 </c:if>

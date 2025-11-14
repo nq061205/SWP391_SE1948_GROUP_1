@@ -32,7 +32,8 @@ public class DailyAttendanceDAO extends DBContext {
     private DailyAttendance mapResultSetToDailyAttendance(ResultSet rs) throws SQLException {
         EmployeeDAO empDAO = new EmployeeDAO();
         Employee e = empDAO.getEmployeeByEmpId(rs.getInt("emp_id"));
-        return new DailyAttendance(
+
+        DailyAttendance attendance = new DailyAttendance(
                 e,
                 rs.getDate("date"),
                 rs.getDouble("work_day"),
@@ -42,6 +43,9 @@ public class DailyAttendanceDAO extends DBContext {
                 rs.getString("status"),
                 rs.getString("note")
         );
+        attendance.setLocked(rs.getBoolean("is_locked"));
+
+        return attendance;
     }
 
     public void upsertDailyAttendance(List<DailyAttendance> list) {
@@ -289,29 +293,28 @@ public class DailyAttendanceDAO extends DBContext {
             return false;
         }
     }
-    
+
     public Map<String, Double> getTotalWorkData(int empId, int month, int year) {
         String sql = "SELECT COALESCE(SUM(work_day), 0) as total_work_day, "
                 + "COALESCE(SUM(ot_hours), 0) as total_ot_hours "
                 + "FROM daily_attendance "
                 + "WHERE emp_id = ? AND MONTH(date) = ? AND YEAR(date) = ? ";
-        
+
         Map<String, Double> result = new HashMap<>();
         result.put("totalWorkDay", 0.0);
         result.put("totalOTHours", 0.0);
-        
-        try (Connection conn = DBContext.getConnection(); 
-             PreparedStatement ps = conn.prepareStatement(sql)) {
-            
+
+        try (Connection conn = DBContext.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
+
             ps.setInt(1, empId);
             ps.setInt(2, month);
             ps.setInt(3, year);
-            
+
             try (ResultSet rs = ps.executeQuery()) {
                 if (rs.next()) {
                     double totalWorkDay = rs.getDouble("total_work_day");
                     double totalOTHours = rs.getDouble("total_ot_hours");
-                    
+
                     result.put("totalWorkDay", totalWorkDay);
                     result.put("totalOTHours", totalOTHours);
                 }
@@ -321,20 +324,20 @@ public class DailyAttendanceDAO extends DBContext {
         }
         return result;
     }
-    
+
     public Map<Integer, Map<String, Double>> getTotalWorkDataByEmpIds(List<Integer> empIds, int month, int year) {
         Map<Integer, Map<String, Double>> result = new HashMap<>();
-        
+
         if (empIds == null || empIds.isEmpty()) {
             return result;
         }
-        
+
         StringBuilder sql = new StringBuilder("SELECT emp_id, COALESCE(SUM(work_day), 0) as total_work_day, "
                 + "COALESCE(SUM(ot_hours), 0) as total_ot_hours "
                 + "FROM daily_attendance "
                 + "WHERE MONTH(date) = ? AND YEAR(date) = ? "
                 + "AND emp_id IN (");
-        
+
         for (int i = 0; i < empIds.size(); i++) {
             sql.append("?");
             if (i < empIds.size() - 1) {
@@ -342,13 +345,12 @@ public class DailyAttendanceDAO extends DBContext {
             }
         }
         sql.append(") GROUP BY emp_id");
-        
-        try (Connection conn = DBContext.getConnection(); 
-             PreparedStatement ps = conn.prepareStatement(sql.toString())) {
-            
+
+        try (Connection conn = DBContext.getConnection(); PreparedStatement ps = conn.prepareStatement(sql.toString())) {
+
             ps.setInt(1, month);
             ps.setInt(2, year);
-            
+
             for (int i = 0; i < empIds.size(); i++) {
                 ps.setInt(3 + i, empIds.get(i));
             }
@@ -367,13 +369,134 @@ public class DailyAttendanceDAO extends DBContext {
         return result;
     }
 
+    public boolean lockAttendanceForMonth(int month, int year) {
+        String sql = "UPDATE daily_attendance "
+                + "SET is_locked = 1 "
+                + "WHERE MONTH(date) = ? AND YEAR(date) = ? "
+                + "AND is_locked = 0";
+
+        try (Connection conn = DBContext.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, month);
+            ps.setInt(2, year);
+            int rowsAffected = ps.executeUpdate();
+            return rowsAffected > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    public boolean isAttendanceLocked(int month, int year) {
+        String sql = "SELECT COUNT(*) FROM daily_attendance "
+                + "WHERE MONTH(date) = ? AND YEAR(date) = ? "
+                + "AND is_locked = 0";
+
+        try (Connection conn = DBContext.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, month);
+            ps.setInt(2, year);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    int unlockedCount = rs.getInt(1);
+                    return unlockedCount == 0;
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return false;
+    }
+
+    /**
+     * Unlock a single attendance record
+     */
+    public boolean unlockAttendance(int empId, String date) {
+        String sql = "UPDATE daily_attendance SET is_locked = FALSE "
+                + "WHERE emp_id = ? AND date = ?";
+
+        try (Connection conn = DBContext.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            ps.setInt(1, empId);
+            ps.setString(2, date);
+
+            return ps.executeUpdate() > 0;
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    public boolean updateAndLockAttendance(int empId, String date, String status,
+            double workDay, double otHours, String note) {
+        String sql = "UPDATE daily_attendance "
+                + "SET status = ?, work_day = ?, ot_hours = ?, note = ?, is_locked = 1 "
+                + "WHERE emp_id = ? AND date = ?";
+
+        try (Connection conn = DBContext.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            ps.setString(1, status);
+            ps.setDouble(2, workDay);
+            ps.setDouble(3, otHours);
+            ps.setString(4, note);
+            ps.setInt(5, empId);
+            ps.setString(6, date);
+
+            int rows = ps.executeUpdate();
+            return rows > 0;
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    public boolean relockAttendance(int empId, String date) {
+        String sql = "UPDATE daily_attendance SET is_locked = 1 WHERE emp_id = ? AND date = ?";
+
+        try (Connection conn = DBContext.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, empId);
+            ps.setString(2, date);
+
+            int rows = ps.executeUpdate();
+            return rows > 0;
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    public boolean updateAttendanceNoLock(int empId, String date, String status,
+            double workDay, double otHours, String note) {
+        String sql = "UPDATE daily_attendance "
+                + "SET status = ?, work_day = ?, ot_hours = ?, note = ? " // Không set is_locked
+                + "WHERE emp_id = ? AND date = ?";
+
+        try (Connection conn = DBContext.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            ps.setString(1, status);
+            ps.setDouble(2, workDay);
+            ps.setDouble(3, otHours);
+            ps.setString(4, note);
+            ps.setInt(5, empId);
+            ps.setString(6, date);
+
+            int rows = ps.executeUpdate();
+            return rows > 0;
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
     public static void main(String[] args) {
         DailyAttendanceDAO dailyDAO = new DailyAttendanceDAO();
         int empId = 1;
         int month = 10;
         int year = 2025;
         Map<String, Double> result = dailyDAO.getTotalWorkData(empId, month, year);
-
 
         System.out.println("Tổng ngày làm việc: " + result.get("totalWorkDay"));
         System.out.println("Tổng giờ tăng ca: " + result.get("totalOTHours"));

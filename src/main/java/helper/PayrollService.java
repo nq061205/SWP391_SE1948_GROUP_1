@@ -29,14 +29,16 @@ public class PayrollService {
         return workDays;
     }
     
-    public Payroll calculateAndSavePayroll(int empId, int month, int year) {
+   public Payroll calculateAndSavePayroll(int empId, int month, int year) {    
+    try {
         Map<String, Double> workData = dailyAttendanceDAO.getTotalWorkData(empId, month, year);
+        
         double totalWorkDay = workData.get("totalWorkDay");
         double totalOTHours = workData.get("totalOTHours");
         
         Salary salary = salaryDAO.getActiveSalaryByEmpId(empId);
         if (salary == null) {
-            throw new RuntimeException("Can not find salary for Employee who has ID = " + empId);
+            throw new RuntimeException("Cannot find salary for Employee who has ID = " + empId);
         }
         
         double baseSalary = salary.getBaseSalary();
@@ -54,6 +56,7 @@ public class PayrollService {
         double totalInsurance = si + hi + ui;
         
         int nod = dependantDAO.countDependantsByEmpId(empId);
+        
         double personalDeduction = ConfigReader.getDouble("PERSONAL_DEDUCTION");
         double dependentDeduction = ConfigReader.getDouble("DEPENDENT_DEDUCTION");
         double taxableIncome = regularSalary + (otEarning/1.5) + allowance 
@@ -87,8 +90,19 @@ public class PayrollService {
         payroll.setPaid(false);
         
         boolean saved = payrollDAO.saveOrUpdatePayroll(payroll);
-        return saved ? payroll : null;
+        
+        if (saved) {
+            return payroll;
+        } else {
+            return null;
+        }
+        
+    } catch (Exception e) {
+        e.printStackTrace();
+        throw e;
     }
+}
+
     
     public void calculatePayrollForMonth(int month, int year, List<Integer> empIds) {        
         for (Integer empId : empIds) {

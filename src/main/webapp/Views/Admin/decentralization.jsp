@@ -128,8 +128,12 @@
                             <button type="button" class="btn btn-primary btn-sm bulk-action-btn me-2" id="btnSelectAll">
                                 <i class="fa fa-check-square"></i> Select All
                             </button>
+
                             <button type="button" class="btn btn-warning btn-sm bulk-action-btn me-2" id="btnClearAll">
                                 <i class="fa fa-square"></i> Clear All
+                            </button>
+                            <button type="reset" class="btn btn-warning btn-sm bulk-action-btn me-2" id="btnClearAll">
+                                <i class="fa fa-repeat"></i> Reset
                             </button>
                             <button type="submit" class="btn btn-success btn-sm bulk-action-btn">
                                 <i class="fa fa-save"></i> Save Permissions

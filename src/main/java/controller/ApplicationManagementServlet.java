@@ -61,6 +61,10 @@ public class ApplicationManagementServlet extends HttpServlet {
             int id = Integer.parseInt(request.getParameter("leaveId"));
             String note = request.getParameter("note");
             LeaveRequestDAO leaveDAO = new LeaveRequestDAO();
+            if (leaveDAO.getLeaveRequestByLeaveId(id) == null) {
+                    response.sendRedirect("Views/error-404.jsp");
+                    return;
+                }
             LeaveRequest leaveRequest = leaveDAO.getLeaveRequestByLeaveId(id);
             if ("Annual Leave".equalsIgnoreCase(leaveRequest.getLeaveType()) && "Approved".equalsIgnoreCase(action)) {
                 EmployeeDAO empDAO = new EmployeeDAO();
@@ -72,6 +76,10 @@ public class ApplicationManagementServlet extends HttpServlet {
         } else if ("ot".equalsIgnoreCase(type)) {
             int id = Integer.parseInt(request.getParameter("otId"));
             OTRequestDAO otDAO = new OTRequestDAO();
+            if (otDAO.getOTRequestByOTId(id) == null) {
+                    response.sendRedirect("Views/error-404.jsp");
+                    return;
+                }
             otDAO.updateOTStatus(id, action);
             request.setAttribute("type", "ot");
             response.sendRedirect(request.getContextPath() + "/applicationmanagement?typeapplication=ot");

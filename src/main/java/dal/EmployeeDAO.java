@@ -767,8 +767,8 @@ public class EmployeeDAO extends DBContext {
 //    }
 
     public void createEmployee(Employee emp) {
-        String sql = "INSERT INTO Employee(emp_code, fullname, password, email, phone, gender, dep_id, role_id, status) "
-                + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO Employee(emp_code, fullname, password, email, phone, gender, dep_id, role_id, status,image) "
+                + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?,?)";
 
         try (Connection conn = DBContext.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
 
@@ -783,6 +783,7 @@ public class EmployeeDAO extends DBContext {
             ps.setString(7, emp.getDept().getDepId());
             ps.setInt(8, emp.getRole().getRoleId());
             ps.setBoolean(9, emp.isStatus());
+            ps.setString(10, emp.getImage() != null ? emp.getImage() : "images/avatar/ht_default.webp");
 
             ps.executeUpdate();
 
@@ -804,6 +805,20 @@ public class EmployeeDAO extends DBContext {
         }
         return false;
     }
+    public boolean existsByPhone(String phone) {
+        String sql = "SELECT 1 FROM Employee WHERE phone = ?";
+        try (Connection conn = getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            ps.setString(1, phone);
+            try (ResultSet rs = ps.executeQuery()) {
+                return rs.next();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+    
 
     public boolean existsByRoleName(String roleName) {
         String sql = "SELECT 1 FROM Employee e JOIN Role r ON e.role_id = r.role_id WHERE r.role_name = ?";
@@ -1045,7 +1060,21 @@ public class EmployeeDAO extends DBContext {
 
     public static void main(String[] args) {
         EmployeeDAO dao = new EmployeeDAO();
-        System.out.println(dao.getManagerByDepartment("D002"));
+        RoleDAO roleDAO = new RoleDAO();
+        Role role = roleDAO.getRoleByRoleId(3);
+        Employee emp = new Employee();
+        DeptDAO depDAO = new DeptDAO();
+        Department dept = depDAO.getDepartmentByDepartmentId("D001");
+        emp.setEmpCode("E043");
+        emp.setFullname("hehehe");
+        emp.setEmail("abc@gmail.com");
+        emp.setPhone("0111111111");
+        emp.setRole(role);
+        emp.setDept(dept);
+        emp.setPassword("123456");
+        emp.setGender(true);
+        emp.setStatus(true);
+       dao.createEmployee(emp);
     }
 
 }
