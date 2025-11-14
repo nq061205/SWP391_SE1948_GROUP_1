@@ -96,6 +96,11 @@ public class ScheduleInterviewServlet extends HttpServlet {
                     e.printStackTrace();
                 }
             }
+            request.setAttribute("selectedCandidatesData", selectedIds);
+            request.setAttribute("selectedInterviewer", interviewer);
+            request.setAttribute("selectedDate", dateStr);
+            request.setAttribute("selectedTime", timeStr);
+
             request.getRequestDispatcher("Views/scheduleInterview.jsp").forward(request, response);
             return;
         }
@@ -155,6 +160,11 @@ public class ScheduleInterviewServlet extends HttpServlet {
                 }
             }
         } catch (Exception ex) {
+            request.setAttribute("selectedCandidatesData", selectedIds);
+            request.setAttribute("selectedInterviewer", interviewer);
+            request.setAttribute("selectedDate", dateStr);
+            request.setAttribute("selectedTime", timeStr);
+
             request.setAttribute("errorMessage", "Error: " + ex.getMessage());
             ex.printStackTrace();
         }
@@ -174,7 +184,7 @@ public class ScheduleInterviewServlet extends HttpServlet {
         request.getRequestDispatcher("Views/scheduleInterview.jsp").forward(request, response);
     }
 
-        private List<Candidate> getAvailableCandidatesByPost(List<Candidate> all, int postId, List<Interview> interviewList) {
+    private List<Candidate> getAvailableCandidatesByPost(List<Candidate> all, int postId, List<Interview> interviewList) {
         List<Candidate> result = new ArrayList<>();
         Set<Integer> interviewedIds = new HashSet<>();
         for (Interview i : interviewList) {
