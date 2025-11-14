@@ -24,8 +24,8 @@ public class EditInterviewServlet extends HttpServlet {
             throws ServletException, IOException {
         HttpSession session = request.getSession();
         RolePermissionDAO rperDAO = new RolePermissionDAO();
-        Employee user =(Employee) session.getAttribute("user");
-         if (user == null) {
+        Employee user = (Employee) session.getAttribute("user");
+        if (user == null) {
             response.sendRedirect("login");
             return;
         }
@@ -77,7 +77,7 @@ public class EditInterviewServlet extends HttpServlet {
                         "You can only edit the schedule when it has more than 2 days left.");
                 return;
             }
-            if(weekday.getValue() == 6 || weekday.getValue() == 7){
+            if (weekday.getValue() == 6 || weekday.getValue() == 7) {
                 setError(request, response, id,
                         "Please choose from monday to friday.");
                 return;
@@ -101,22 +101,25 @@ public class EditInterviewServlet extends HttpServlet {
                 Interview iv = dao.getInterviewById(id);
                 if (iv != null && iv.getCandidate() != null) {
                     String to = iv.getCandidate().getEmail();
-                    String subject = "Interview Schedule Updated";
-                    String content = String.format(
-                            "Dear %s,\n\nYour interview schedule has been updated.\n\n" +
-                            "Position: %s\nNew Date: %s\nNew Time: %s\n\n" +
-                            "Please make sure to attend on time.\n\nBest regards,\nHR Department",
-                            iv.getCandidate().getName(),
-                            iv.getCandidate().getPost().getTitle(),
-                            selectedDate,
-                            selectedTime
-                    );
-
+                    String subject = "Updated Interview Schedule – " + iv.getCandidate().getPost().getTitle();
+                    String content
+                            = "Dear " + iv.getCandidate().getName() + ",\n\n"
+                            + "We would like to inform you that the interview schedule for your application "
+                            + "has been updated. Please refer to the details below:\n\n"
+                            + "• Position: " + iv.getCandidate().getPost().getTitle() + "\n"
+                            + "• Updated Date: " + selectedDate + "\n"
+                            + "• Updated Time: " + selectedTime + "\n\n"
+                            + "Kindly make sure to attend the interview on time. If you are unable to join at the scheduled time, "
+                            + "please reply to this email so we can assist you with rescheduling.\n\n"
+                            + "If you have any questions, feel free to reach out to our HR department.\n\n"
+                            + "Best regards,\n"
+                            + "HR Department\n"
+                            + "Human Tech";
                     try {
                         EmailUtil.sendEmail(to, subject, content);
                     } catch (MessagingException ex) {
                         Logger.getLogger(EditInterviewServlet.class.getName())
-                              .log(Level.SEVERE, "Failed to send email", ex);
+                                .log(Level.SEVERE, "Failed to send email", ex);
                     }
                 }
 
@@ -132,7 +135,7 @@ public class EditInterviewServlet extends HttpServlet {
     }
 
     private void setError(HttpServletRequest request, HttpServletResponse response,
-                          int interviewId, String message)
+            int interviewId, String message)
             throws ServletException, IOException {
         InterviewDAO dao = new InterviewDAO();
         Interview iv = dao.getInterviewById(interviewId);

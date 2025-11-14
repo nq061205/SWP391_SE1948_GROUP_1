@@ -19,6 +19,7 @@
         <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/assets2/css/typography.css">
         <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/assets2/css/shortcodes/shortcodes.css">
         <link class="skin" rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/assets2/css/color/color-1.css">
+
         <style>
             .nav-tabs .nav-link.active {
                 background-color: #007bff !important;
@@ -28,53 +29,51 @@
             .nav-tabs .nav-link:hover {
                 background-color: #e9f2ff;
             }
-        </style>
-        <style>
             .widget-box {
                 background: #fff;
                 border-radius: 10px;
-                padding: 30px 40px !important; /* thêm khoảng cách trong form */
+                padding: 30px 40px !important;
                 margin-bottom: 40px;
                 box-shadow: 0 2px 10px rgba(0,0,0,0.1);
             }
-
             form .form-group {
-                margin-bottom: 20px; /* tạo khoảng cách giữa các ô nhập */
+                margin-bottom: 20px;
             }
-
             label {
                 font-weight: 600;
                 margin-bottom: 6px;
                 display: block;
             }
-
             .form-control, .form-select {
                 border-radius: 8px;
                 padding: 10px;
             }
-
             .text-end {
                 margin-top: 25px;
             }
         </style>
-
     </head>
+
     <body class="ttr-opened-sidebar ttr-pinned-sidebar">
+
         <%@ include file="CommonItems/Header/dashboardHeader.jsp" %>
         <%@ include file="CommonItems/Navbar/empNavbar.jsp" %>
 
         <main class="ttr-wrapper">
             <div class="container-fluid">
+
                 <div class="db-breadcrumb">
                     <h4 class="breadcrumb-title">Schedule Interview</h4>
                     <ul class="db-breadcrumb-list">
-                        <li><i class="fa fa-home"></i>Interview</a></li>
+                        <li><i class="fa fa-home"></i> Interview</li>
                         <li>Schedule</li>
                     </ul>
                 </div>
+
                 <div class="d-flex justify-content-between align-items-center mb-3">
                     <h4 class="mb-0"><i class="fa fa-calendar-alt"></i> Schedule New Interview</h4>
-                    <a href="${pageContext.request.contextPath}/viewcreatedinterview" 
+
+                    <a href="${pageContext.request.contextPath}/viewcreatedinterview"
                        class="btn btn-outline-primary btn-sm">
                         <i class="fa fa-history"></i> View Created History
                     </a>
@@ -82,17 +81,18 @@
 
                 <div class="row">
                     <div class="col-lg-8 offset-lg-2">
+
                         <div class="widget-box">
-                            <form method="post"
-                                  action="scheduleinterview">
+
+                            <form method="post" action="scheduleinterview">
+
+                                <!-- Recruitment Post -->
                                 <div class="form-group mb-3">
-                                    <label for="post"><i class="fa fa-briefcase"></i> Recruitment Post:</label>
-                                    <select id="post" name="postId" class="form-control" onchange="this.form.submit()" required>
+                                    <label><i class="fa fa-briefcase"></i> Recruitment Post:</label>
+
+                                    <select name="postId" class="form-control" onchange="this.form.submit()">
                                         <option value="all"
-                                                ${selectedPostId != null ? 'disabled' : ''}
-                                                ${selectedPostId == null ? 'selected' : ''}>
-                                            Select recruitment post
-                                        </option>
+                                                ${selectedPostId == null ? 'selected' : ''}>Select recruitment post</option>
 
                                         <c:forEach var="p" items="${postList}">
                                             <option value="${p.postId}"
@@ -101,139 +101,131 @@
                                             </option>
                                         </c:forEach>
                                     </select>
-
                                 </div>
 
-                                <!-- Candidate Multi-Select -->
+                                <!-- Candidates -->
                                 <div class="form-group mb-3">
                                     <label><i class="fa fa-user"></i> Candidates:</label>
 
                                     <c:choose>
-                                        <%-- Nếu có danh sách ứng viên --%>
                                         <c:when test="${not empty candidatesList}">
-                                            <div class="border rounded p-3 bg-light" style="max-height: 230px; overflow-y: auto;">
-                                                <c:forEach items="${candidatesList}" var="c">
+
+                                            <div class="border rounded p-3 bg-light" style="max-height:230px; overflow-y:auto;">
+                                                <c:forEach var="c" items="${candidatesList}">
                                                     <div class="form-check mb-1">
+
                                                         <input type="checkbox" class="form-check-input candidate-checkbox"
-                                                               id="${c.candidateId}" name="candidateIds" value="${c.candidateId}"
-                                                               <c:if test="${selectedCandidatesData != null and fn:contains(selectedCandidatesData, c.candidateId)}">checked</c:if>>
+                                                               id="${c.candidateId}"
+                                                               name="candidateIds"
+                                                               value="${c.candidateId}"
+                                                               <c:if test="${selectedCandidatesData != null 
+                                                                             and fn:contains(selectedCandidatesData, c.candidateId)}">checked</c:if>
+                                                                     >
 
                                                                <label for="${c.candidateId}" class="form-check-label">
                                                             ${c.name} <small class="text-muted">(${c.email})</small>
                                                         </label>
+
                                                     </div>
                                                 </c:forEach>
                                             </div>
+
                                             <small id="selectedCandidates" class="text-muted mt-2 d-block">
                                                 No candidates selected
                                             </small>
+
                                         </c:when>
 
                                         <c:otherwise>
-                                            <div class="d-flex flex-column align-items-center justify-content-center text-center p-4 mt-2 mb-3 border rounded bg-light-subtle">
+                                            <div class="text-center p-4 border rounded bg-light-subtle">
                                                 <i class="fa fa-user-slash fa-2x text-secondary mb-2"></i>
                                                 <h6 class="fw-semibold text-secondary mb-1">No candidates available</h6>
-                                                <p class="text-muted mb-0" style="font-size: 14px;">
-                                                </p>
                                             </div>
                                         </c:otherwise>
                                     </c:choose>
                                 </div>
 
-                                <div class="form-group mb-3"> <label><i class="fa fa-user"></i> Interview Employee</label> <select name="interviewer" class="form-control" required> <option value="">-- Select Interviewer --</option> <c:forEach items="${employeeInterview}" var="c"> <option value="${c.empId}">${c.fullname}</option> </c:forEach> </select> </div>
+                                <!-- Interviewer -->
+                                <div class="form-group mb-3">
+                                    <label><i class="fa fa-user-tie"></i> Interview Employee</label>
 
-                                    <!-- Date -->
-                                    <div class="form-group mb-3">
-                                        <label for="date"><i class="fa fa-calendar"></i> Date:</label>
-                                        <input type="date" id="date" name="date" class="form-control"
-                                               value="${interview.date}"
-                                        min="<%= java.time.LocalDate.now() %>" required>
+                                    <select name="interviewer" class="form-control" required>
+                                        <option value="">-- Select Interviewer --</option>
+
+                                        <c:forEach var="e" items="${employeeInterview}">
+                                            <option value="${e.empId}"
+                                                    ${e.empId == selectedInterviewer ? 'selected' : ''}>
+                                                ${e.fullname}
+                                            </option>
+                                        </c:forEach>
+                                    </select>
+                                </div>
+
+                                <!-- Date -->
+                                <div class="form-group mb-3">
+                                    <label><i class="fa fa-calendar"></i> Date:</label>
+
+                                    <input type="date" name="date" class="form-control"
+                                           value="${selectedDate}"
+                                           min="<%= java.time.LocalDate.now() %>" required>
                                 </div>
 
                                 <!-- Time -->
                                 <div class="form-group mb-3">
-                                    <label for="time"><i class="fa fa-clock"></i> Time:</label>
-                                    <input type="time"
-                                           id="time"
-                                           name="time"
-                                           class="form-control"
-                                           value="${interview.time}"
-                                           min="07:30"
-                                           max="17:30"
-                                           required>
+                                    <label><i class="fa fa-clock"></i> Time:</label>
+
+                                    <input type="time" name="time" class="form-control"
+                                           value="${selectedTime}"
+                                           min="07:30" max="17:30" required>
                                 </div>
 
-                                <c:if test="${errorMessage != null}"><p style="color: red">${errorMessage}</p></c:if>
-                                <c:if test="${successMessage != null}"><p style="color: green">${successMessage}</p></c:if>
+                                <!-- Messages -->
+                                <c:if test="${errorMessage != null}">
+                                    <p style="color:red">${errorMessage}</p>
+                                </c:if>
 
+                                <c:if test="${successMessage != null}">
+                                    <p style="color:green">${successMessage}</p>
+                                </c:if>
 
-
-
-                                    <!-- Buttons -->
-                                    <div class="text-end">
-                                    <c:if test="${not empty isEdit}">
-                                        <button type="button" class="btn btn-danger btn-lg me-2"
-                                                onclick="confirmDelete(${id})">
-                                            <i class="fa fa-trash"></i> Delete
-                                        </button>
-                                        <button type="submit" class="btn btn-primary btn-lg"
-                                                onclick="return confirm('Confirm update?')">
-                                            <i class="fa fa-save"></i> Update
-                                        </button>
-                                    </c:if>
-
-                                    <c:if test="${empty isEdit}">
-                                        <button value="submit" name="action" type="submit" class="btn btn-success btn-lg">
-                                            <i class="fa fa-calendar-check"></i> Create Schedule
-                                        </button>
-                                    </c:if>
+                                <!-- Buttons -->
+                                <div class="text-end">
+                                    <button type="submit" name="action" value="submit"
+                                            class="btn btn-success btn-lg">
+                                        <i class="fa fa-calendar-check"></i> Create Schedule
+                                    </button>
                                 </div>
+
                             </form>
 
-                            <!-- Delete Form (hidden) -->
-                            <form id="deleteForm" action="${pageContext.request.contextPath}/deleteSchedule"
-                                  method="post" style="display:none;">
-                                <input type="hidden" name="id" id="deleteId"/>
-                            </form>
                         </div>
+
                     </div>
                 </div>
+
             </div>
         </main>
 
-        <!-- JS -->
         <script src="${pageContext.request.contextPath}/assets2/js/jquery.min.js"></script>
         <script src="${pageContext.request.contextPath}/assets2/vendors/bootstrap/js/bootstrap.bundle.min.js"></script>
-        <script src="${pageContext.request.contextPath}/assets2/js/functions.js"></script>
-        <script src="${pageContext.request.contextPath}/assets2/js/admin.js"></script>
-        <!-- JS libraries -->
-        <script src="${pageContext.request.contextPath}/assets2/js/jquery.min.js"></script>
-        <script src="${pageContext.request.contextPath}/assets2/vendors/bootstrap/js/bootstrap.bundle.min.js"></script>
-        <script src="${pageContext.request.contextPath}/assets2/vendors/bootstrap/js/popper.min.js"></script>
         <script src="${pageContext.request.contextPath}/assets2/js/admin.js"></script>
 
         <script>
-                                                function confirmDelete(id) {
-                                                    if (confirm("Do you want to delete this interview schedule?")) {
-                                                        document.getElementById("deleteId").value = id;
-                                                        document.getElementById("deleteForm").submit();
-                                                    }
-                                                }
-
-                                                $(document).ready(function () {
-                                                    $('.candidate-checkbox').on('change', function () {
-                                                        const selected = [];
-                                                        $('.candidate-checkbox:checked').each(function () {
-                                                            selected.push($(this).next('label').text().trim());
-                                                        });
-
-                                                        if (selected.length === 0) {
-                                                            $('#selectedCandidates').text('No candidates selected');
-                                                        } else {
-                                                            $('#selectedCandidates').text('Selected: ' + selected.join(', '));
-                                                        }
-                                                    });
+                                        $(document).ready(function () {
+                                            $('.candidate-checkbox').on('change', function () {
+                                                const selected = [];
+                                                $('.candidate-checkbox:checked').each(function () {
+                                                    selected.push($(this).next('label').text().trim());
                                                 });
+
+                                                if (selected.length === 0) {
+                                                    $('#selectedCandidates').text('No candidates selected');
+                                                } else {
+                                                    $('#selectedCandidates').text('Selected: ' + selected.join(', '));
+                                                }
+                                            });
+                                        });
         </script>
+
     </body>
 </html>
