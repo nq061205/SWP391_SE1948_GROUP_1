@@ -40,8 +40,7 @@
 					<h5>The Page you were looking for, couldn't be found.</h5>
 					<p>The page you are looking for might have been removed, had its name changed, or is temporarily unavailable.</p>
 					<div class="">
-						<a href="${pageContext.request.contextPath}/profile" class="btn m-r5">Preview</a>
-						<a href="${pageContext.request.contextPath}/profile" class="btn outline black">Back To Home</a>
+						<a href="${pageContext.request.contextPath}/dashboard" class="btn outline black">Back To Dashboard</a>
 					</div>
 				</div>
 			</div>

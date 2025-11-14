@@ -53,6 +53,10 @@ public class InterviewDetail extends HttpServlet {
 
             if (action != null) {
                 Interview nextInterview = getNextInterview(id, getAllInterviewOfEmp(iDAO.getAllInterviews(), user.getEmpId()));
+                if(!interview.getResult().equals("Pending")){
+                response.sendRedirect("Views/error-404.jsp");
+                return;
+            }
                 if (action.equals("approve")) {
                     iDAO.updateInterviewResult(id, "Pass");
                     EmailUtil.sendEmail(

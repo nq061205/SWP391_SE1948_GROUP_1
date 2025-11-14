@@ -52,8 +52,9 @@ public class CandidateActionServlet extends HttpServlet {
             int candidateid = Integer.parseInt(id);
             Candidate thisCandidate = cDAO.getCandidateById(candidateid);
             Candidate candidate = getNextCandidate(candidateid, cDAO.getAllCandidate("pending"));
-            if(!thisCandidate.getResult().equals("Pending")){
-                
+            if(thisCandidate.getResult() != null){
+                response.sendRedirect("Views/error-404.jsp");
+                return;
             }
             if ("approve".equals(action)) {
                 EmailUtil.sendEmail(thisCandidate.getEmail(), "CV result notification", "Congratuation " + thisCandidate.getName() + " has pass our cv stage, please go to interview tommorow");
