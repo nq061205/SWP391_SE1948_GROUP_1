@@ -1,4 +1,4 @@
-    package dal;
+package dal;
 
 import java.sql.*;
 import java.util.*;
@@ -167,15 +167,15 @@ public class CandidateDAO extends DBContext {
         }
         return result;
     }
-    
+
     public List<Candidate> getAllPassedCandidatesByDepartment(List<Integer> candidateIds, int postId) {
         List<Candidate> result = new ArrayList<>();
         for (int id : candidateIds) {
             Candidate c = getCandidateById(id);
-            if(c.getPost().getPostId() == postId){
+            if (c.getPost().getPostId() == postId) {
                 result.add(c);
             }
-            
+
         }
         return result;
     }
@@ -281,6 +281,36 @@ public class CandidateDAO extends DBContext {
             Logger.getLogger(CandidateDAO.class.getName()).log(Level.SEVERE, null, ex);
         }
         return false;
+    }
+
+    public Candidate getCandidateByEmail(String email) {
+        String sql = "SELECT * FROM candidate WHERE email = ?";
+
+        try (Connection conn = DBContext.getConnection(); PreparedStatement stm = conn.prepareStatement(sql)) {
+
+            stm.setString(1, email);
+
+            try (ResultSet rs = stm.executeQuery()) {
+                if (rs.next()) {
+                    Candidate candidate = new Candidate(
+                            rs.getInt("candidate_id"),
+                            rs.getString("name"),
+                            rs.getString("email"),
+                            rs.getString("phone"),
+                            rs.getString("cv"),
+                            rpDAO.getPostById(rs.getInt("post_id")),
+                            rs.getTimestamp("applied_at"),
+                            rs.getObject("result") == null ? null : rs.getBoolean("result")
+                    );
+                    return candidate;
+                }
+            }
+
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
+
+        return null;
     }
 
     public static void main(String[] args) {

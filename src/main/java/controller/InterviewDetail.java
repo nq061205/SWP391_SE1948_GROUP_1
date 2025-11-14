@@ -59,18 +59,36 @@ public class InterviewDetail extends HttpServlet {
             }
                 if (action.equals("approve")) {
                     iDAO.updateInterviewResult(id, "Pass");
-                    EmailUtil.sendEmail(
-                            interview.getCandidate().getEmail(),
-                            "Interview Result",
-                            "Congratulations! You have passed our interview."
-                    );
+                    String subject = "Interview Result – Human Tech Group";
+
+                    String content
+                            = "Dear " + interview.getCandidate().getName() + ",\n\n"
+                            + "We are pleased to inform you that you have successfully passed the interview for the position: "
+                            + interview.getCandidate().getPost().getTitle() + ".\n\n"
+                            + "Our recruitment team will contact you shortly regarding the next steps in the hiring process.\n\n"
+                            + "If you have any questions or need additional assistance, please feel free to reply to this email.\n\n"
+                            + "Congratulations, and welcome to the next stage!\n\n"
+                            + "Best regards,\n"
+                            + "Human Tech Recruitment Team\n"
+                            + "Human Tech Group";
+
+                    EmailUtil.sendEmail(interview.getCandidate().getEmail(), subject, content);
                 } else if (action.equals("reject")) {
                     iDAO.updateInterviewResult(id, "Fail");
-                    EmailUtil.sendEmail(
-                            interview.getCandidate().getEmail(),
-                            "Interview Result",
-                            "We’re sorry, you did not pass our interview this time."
-                    );
+                    String subject = "Interview Result – Human Tech Group";
+                    String content
+                            = "Dear " + interview.getCandidate().getName() + ",\n\n"
+                            + "Thank you for taking the time to participate in the interview for the position: "
+                            + interview.getCandidate().getPost().getTitle() + ".\n\n"
+                            + "After careful consideration, we regret to inform you that you were not selected to move forward in the hiring process.\n\n"
+                            + "We truly appreciate your interest in joining Human Tech Group. "
+                            + "Please feel free to apply again in future opportunities that match your qualifications.\n\n"
+                            + "We wish you the best of luck in your career journey.\n\n"
+                            + "Best regards,\n"
+                            + "Human Tech Recruitment Team\n"
+                            + "Human Tech Group";
+
+                    EmailUtil.sendEmail(interview.getCandidate().getEmail(), subject, content);
                 }
 
                 if (nextInterview != null) {

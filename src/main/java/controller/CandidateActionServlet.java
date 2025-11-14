@@ -52,15 +52,43 @@ public class CandidateActionServlet extends HttpServlet {
             int candidateid = Integer.parseInt(id);
             Candidate thisCandidate = cDAO.getCandidateById(candidateid);
             Candidate candidate = getNextCandidate(candidateid, cDAO.getAllCandidate("pending"));
-            if(thisCandidate.getResult() != null){
+            if (thisCandidate.getResult() != null) {
                 response.sendRedirect("Views/error-404.jsp");
                 return;
             }
             if ("approve".equals(action)) {
-                EmailUtil.sendEmail(thisCandidate.getEmail(), "CV result notification", "Congratuation " + thisCandidate.getName() + " has pass our cv stage, please go to interview tommorow");
+
+                String subject = "CV Screening Result – Human Tech Group";
+                String content
+                        = "Dear " + thisCandidate.getName() + ",\n\n"
+                        + "We are pleased to inform you that your CV has successfully passed our screening stage. "
+                        + "You have been shortlisted for the next round of the recruitment process.\n\n"
+                        + "Our HR team will soon contact you with details regarding the interview schedule. "
+                        + "Please keep an eye on your inbox for further updates.\n\n"
+                        + "Congratulations, and we look forward to meeting you in the upcoming round.\n\n"
+                        + "Best regards,\n"
+                        + "Human Tech Recruitment Team\n"
+                        + "Human Tech Group";
+
+                EmailUtil.sendEmail(thisCandidate.getEmail(), subject, content);
                 cDAO.updateResultCandidate(1, candidateid);
+
             } else {
-                EmailUtil.sendEmail(thisCandidate.getEmail(), "CV result notification", "You have not met the requirements of our Human Tech group, sorry " + thisCandidate.getName());
+
+                String subject = "CV Screening Result – Human Tech Group";
+                String content
+                        = "Dear " + thisCandidate.getName() + ",\n\n"
+                        + "Thank you for your interest in joining Human Tech Group. "
+                        + "After careful consideration, we regret to inform you that your profile does not match "
+                        + "the requirements for the current position.\n\n"
+                        + "We truly appreciate the time and effort you invested in your application. "
+                        + "Please feel free to apply again in future openings that better align with your qualifications.\n\n"
+                        + "We wish you all the best in your future career endeavors.\n\n"
+                        + "Best regards,\n"
+                        + "Human Tech Recruitment Team\n"
+                        + "Human Tech Group";
+
+                EmailUtil.sendEmail(thisCandidate.getEmail(), subject, content);
                 cDAO.updateResultCandidate(0, candidateid);
             }
             if (candidate == null) {
