@@ -109,6 +109,7 @@ public class UpdateAccountServlet extends HttpServlet {
         ses.setAttribute("emp", emp);
         ses.setAttribute("dept", dept);
         ses.setAttribute("role", role);
+        ses.setAttribute("hasAdmin", empDAO.hasAdminRole(emp.getEmpCode()));
         request.getRequestDispatcher("Views/updateAccount.jsp").forward(request, response);
     }
 
@@ -169,6 +170,7 @@ public class UpdateAccountServlet extends HttpServlet {
 
         request.setAttribute("departments", departments);
         request.setAttribute("roles", uniqueRoles);
+        ses.setAttribute("hasAdmin", dao.hasAdminRole(empCode));
         ses.setAttribute("emp", editEmp);
         request.getRequestDispatcher("Views/updateAccount.jsp").forward(request, response);
     }

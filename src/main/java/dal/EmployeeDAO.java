@@ -691,7 +691,7 @@ public class EmployeeDAO extends DBContext {
     }
 
     public boolean hasDeptManager(String depId) {
-        String sql = "SELECT COUNT(*) FROM employee WHERE dep_id = ? AND position_title LIKE '%Dept Manager%'";
+        String sql = "SELECT COUNT(*) FROM employee WHERE dep_id = ? AND position_title LIKE '%Department Manager%'";
         try (Connection conn = DBContext.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setString(1, depId);
             try (ResultSet rs = ps.executeQuery()) {
@@ -714,6 +714,35 @@ public class EmployeeDAO extends DBContext {
                     return rs.getInt(1) > 0;
                 }
             }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    public boolean hasAdminPosition() {
+        String sql = "SELECT COUNT(*) FROM employee WHERE position_title = 'System Administrator'";
+        try (Connection conn = DBContext.getConnection(); PreparedStatement ps = conn.prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
+
+            if (rs.next()) {
+                return rs.getInt(1) > 0;
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    public boolean hasAdminRole(String empCode) {
+        String sql = "SELECT COUNT(*) FROM employee WHERE role_id = 1 AND emp_code <> ?";
+        try (Connection conn = DBContext.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, empCode);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                return rs.getInt(1) > 0;
+            }
+
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -805,6 +834,7 @@ public class EmployeeDAO extends DBContext {
         }
         return false;
     }
+
     public boolean existsByPhone(String phone) {
         String sql = "SELECT 1 FROM Employee WHERE phone = ?";
         try (Connection conn = getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
@@ -818,7 +848,6 @@ public class EmployeeDAO extends DBContext {
         }
         return false;
     }
-    
 
     public boolean existsByRoleName(String roleName) {
         String sql = "SELECT 1 FROM Employee e JOIN Role r ON e.role_id = r.role_id WHERE r.role_name = ?";
@@ -1059,22 +1088,8 @@ public class EmployeeDAO extends DBContext {
     }
 
     public static void main(String[] args) {
-        EmployeeDAO dao = new EmployeeDAO();
-        RoleDAO roleDAO = new RoleDAO();
-        Role role = roleDAO.getRoleByRoleId(3);
-        Employee emp = new Employee();
-        DeptDAO depDAO = new DeptDAO();
-        Department dept = depDAO.getDepartmentByDepartmentId("D001");
-        emp.setEmpCode("E043");
-        emp.setFullname("hehehe");
-        emp.setEmail("abc@gmail.com");
-        emp.setPhone("0111111111");
-        emp.setRole(role);
-        emp.setDept(dept);
-        emp.setPassword("123456");
-        emp.setGender(true);
-        emp.setStatus(true);
-       dao.createEmployee(emp);
+        EmployeeDAO empDAO = new EmployeeDAO();
+        System.out.println(empDAO.hasAdminRole("E041"));
     }
 
 }

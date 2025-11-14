@@ -90,15 +90,13 @@
                                     <div class="form-group row mt-2">
                                         <label class="col-sm-3 col-form-label">Department Name:</label>
                                         <div class="col-sm-9">
-                                            <input class="form-control" type="text" name="depName" value="${sessionScope.dep.depName}" required >
-                                            <p style="color:red">${NameErr}</p>
+                                            <input class="form-control" type="text" name="depName" value="${sessionScope.dep.depName}" required maxlength="30" >
                                         </div>
                                     </div>
                                     <div class="form-group row mt-2">
                                         <label class="col-sm-3 col-form-label">Description:</label>
                                         <div class="col-sm-9">
-                                            <textarea class="form-control" name="description" rows="2" required>${sessionScope.dep.description}</textarea>
-                                            <p style="color: red">${descripErr}</p>
+                                            <textarea class="form-control" name="description" rows="2" required maxlength="200">${sessionScope.dep.description}</textarea>
                                         </div>
                                     </div>
 
