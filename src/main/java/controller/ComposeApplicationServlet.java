@@ -63,7 +63,7 @@ public class ComposeApplicationServlet extends HttpServlet {
         switch (appType) {
             case "LEAVE": {
                 String leaveType = request.getParameter("type_leave");
-                String content = request.getParameter("content");
+                String content = request.getParameter("content").trim();
                 String startStr = request.getParameter("startdate");
                 String endStr = request.getParameter("enddate");
                 try {
@@ -84,6 +84,11 @@ public class ComposeApplicationServlet extends HttpServlet {
                         return;
                     } else if (startDate.after(endDate)) {
                         request.setAttribute("messageDate", "Start date must before end date");
+                        request.getRequestDispatcher("Views/composeleaveapplication.jsp").forward(request, response);
+                        return;
+                    }
+                    if (content.length() > 200) {
+                        request.setAttribute("messageContent", "Length of content less than 200 character");
                         request.getRequestDispatcher("Views/composeleaveapplication.jsp").forward(request, response);
                         return;
                     }

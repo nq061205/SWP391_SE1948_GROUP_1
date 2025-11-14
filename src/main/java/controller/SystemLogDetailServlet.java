@@ -61,7 +61,10 @@ public class SystemLogDetailServlet extends HttpServlet {
         LeaveRequestDAO leaveDAO = new LeaveRequestDAO();
         LeaveRequest leave = leaveDAO.getLeaveRequestByLeaveId(id);
         EmployeeDAO empDAO = new EmployeeDAO();
-
+        if (leave.getSystemLog() == null) {
+            response.sendRedirect("Views/error-404.jsp");
+            return;
+        }
         request.setAttribute("leave", leave);
 
         if ("Invalid".equalsIgnoreCase(action)) {
@@ -86,7 +89,7 @@ public class SystemLogDetailServlet extends HttpServlet {
                 return;
             }
 
-            LocalDate s = LocalDate.parse(startStr); 
+            LocalDate s = LocalDate.parse(startStr);
             LocalDate e = LocalDate.parse(endStr);
 
             if (s.isAfter(e)) {
