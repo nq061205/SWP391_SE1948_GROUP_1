@@ -82,17 +82,22 @@ public class EditApplicationServlet extends HttpServlet {
                     int id = Integer.parseInt(request.getParameter("id"));
                     LeaveRequest leave = leaveDAO.getLeaveRequestByLeaveId(id);
                     String leaveType = request.getParameter("type_leave");
-                    String content = request.getParameter("content");
+                    String content = request.getParameter("content").trim();
                     Date startDate = Date.valueOf(request.getParameter("startdate"));
                     Date endDate = Date.valueOf(request.getParameter("enddate"));
                     Employee approver = empDAO.getEmployeeByEmail((String) request.getParameter("email"));
+                    request.setAttribute("isEdit", "true");
+                    request.setAttribute("type_leave", leaveType);
+                    request.setAttribute("startdate", startDate);
+                    request.setAttribute("enddate", endDate);
+                    request.setAttribute("content", content);
+                    request.setAttribute("receiver", approver);
                     if (endDate.before(startDate)) {
-                        request.setAttribute("type_leave", leaveType);
-                        request.setAttribute("startdate", startDate);
-                        request.setAttribute("enddate", endDate);
-                        request.setAttribute("content", content);
-                        request.setAttribute("receiver", approver);
                         request.setAttribute("messageDate", "End date must be after start date");
+                        request.getRequestDispatcher("Views/composeleaveapplication.jsp").forward(request, response);
+                        return;
+                    } else if (content.length() > 200) {
+                        request.setAttribute("messageContent", "Length of content less than 200 character");
                         request.getRequestDispatcher("Views/composeleaveapplication.jsp").forward(request, response);
                         return;
                     } else {

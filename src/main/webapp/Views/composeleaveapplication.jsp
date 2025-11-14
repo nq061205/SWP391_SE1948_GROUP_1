@@ -55,168 +55,170 @@
         <main class="ttr-wrapper">
             <div class="container-fluid">
                 <div class="filter-row mb-3">
-                 <div class="db-breadcrumb mb-3">
-                        <h4 class="breadcrumb-title">Leave Request Application List</h4>
+                    <div class="db-breadcrumb mb-3">
+                        <h4 class="breadcrumb-title">Application</h4>
                         <ul class="db-breadcrumb-list">
                             <li><a href="${pageContext.request.contextPath}/application?typeapplication=leave">Leave Request Application List</a></li>
                             <li><a href="${pageContext.request.contextPath}/compose?type=LEAVE">Create Leave Application</a></li>
                         </ul>
                     </div>
-                <div class="row">
-                    <div class="col-lg-8 offset-lg-2">
-                        <div class="widget-box p-4 shadow-sm bg-white rounded">
-                            <c:choose>
-                                <c:when test="${not empty isEdit}">
-                                    <form class="mail-compose" 
-                                          method="post" 
-                                          action="${pageContext.request.contextPath}/editapplication?type=LEAVE&id=${id}">
-                                    </c:when>
-                                    <c:otherwise>
+                    <div class="row">
+                        <div class="col-lg-8 offset-lg-2">
+                            <div class="widget-box p-4 shadow-sm bg-white rounded">
+                                <c:choose>
+                                    <c:when test="${not empty isEdit}">
                                         <form class="mail-compose" 
                                               method="post" 
-                                              action="${pageContext.request.contextPath}/compose">
-                                        </c:otherwise>
-                                    </c:choose>
-                                    <input type="hidden" name="type" value="LEAVE"/>
-                                    <div class="form-group mb-3">
-                                        <label>Receiver:</label>
-                                        <input type="text" name="email" class="form-control" value="${receiver.email}" readonly/>
-                                    </div>
-                                    <div class="form-group mb-3">
-                                        <label for="type">Leave Type:</label>
-                                        <select id="type" name="type_leave" class="form-control" required>
-                                            <option value="" selected>Select application type</option>
-                                            <option value="Annual Leave"
-                                                    <c:if test="${type_leave eq 'Annual Leave'}">
-                                                        selected
-                                                    </c:if>
-                                                    <c:if test="${user.paidLeaveDays<=0}">
-                                                        disabled
-                                                    </c:if>
-                                                    >Annual</option>
-                                            <option value="Sick Leave"
-                                                    <c:if test="${type_leave eq 'Sick Leave'}">
-                                                        selected 
-                                                    </c:if>
-                                                    >Sick</option>
-                                            <option value="Personal Reason"
-                                                    <c:if test="${type_leave eq 'Personal Reason'}">
-                                                        selected
-                                                    </c:if>
-                                                    >Personal Reason</option>
-                                            <option value="Maternity"
-                                                    <c:if test="${type_leave eq 'Maternity'}">
-                                                        selected
-                                                    </c:if>
-                                                    >Maternity</option>
-                                            <option value="Family Business leave"
-                                                    <c:if test="${type_leave eq 'Family Business leave'}">
-                                                        selected
-                                                    </c:if>
-                                                    >Family Business</option>
-                                            <option value="Other"
-                                                    <c:if test="${type_leave eq 'Other'}">
-                                                        selected
-                                                    </c:if>
-                                                    >Other</option>
-                                        </select>
-                                         <c:if  test="${not empty messageLeave}">
-                                        <input type="text" name="messageLeave" style="color: red" class="form-control"value="${messageLeave}" />
-                                    </c:if>
-                                    </div>
-
-                                    <div class="form-group mb-3">
-                                        <label for="startdate">From:</label>
-                                        <input 
-                                            type="date" 
-                                            name="startdate"
-                                            value="${startdate}" 
-                                            class="form-control" 
-                                            min="<%= java.time.LocalDate.now() %>"
-                                            required 
-                                            />
-                                    </div>
-
-                                    <div class="form-group mb-3">
-                                        <label for="enddate">To:</label>
-                                        <input
-                                            type="date"
-                                            name="enddate" 
-                                            value="${enddate}"
-                                            class="form-control"
-                                            min="<%= java.time.LocalDate.now() %>"
-                                            required/>
-                                    </div>
-                                    <c:if  test="${not empty messageDate}">
-                                        <input type="text" name="messageDate" style="color: red" class="form-control"value="${messageDate}" />
-                                    </c:if>
-                                    <div class="form-group mb-3">
-                                        <label for="content">Reason:</label>
-                                        <textarea id="content" name="content" class="form-control" rows="6" placeholder="Typing here..." required>${content}</textarea>
-                                    </div>
-
-                                    <div class="text-right">
-                                        <c:if test="${not empty isEdit}">
-                                            <button type="button" class="btn btn-warning btn-lg ms-2" style="background: red"
-                                                    onclick="confirmDelete(${id})">
-                                                Delete
-                                            </button>
-                                            <button type="submit" class="btn btn-primary btn-lg" onclick="return confirm('Confirm to update!!')">Update</button>
-                                            <c:if test="${not empty isSuccess}">
-                                                <script>
-                                                    alert("Update successfully!");
-                                                </script>
+                                              action="${pageContext.request.contextPath}/editapplication?type=LEAVE&id=${id}">
+                                        </c:when>
+                                        <c:otherwise>
+                                            <form class="mail-compose" 
+                                                  method="post" 
+                                                  action="${pageContext.request.contextPath}/compose">
+                                            </c:otherwise>
+                                        </c:choose>
+                                        <input type="hidden" name="type" value="LEAVE"/>
+                                        <div class="form-group mb-3">
+                                            <label>Receiver:</label>
+                                            <input type="text" name="email" class="form-control" value="${receiver.email}" readonly/>
+                                        </div>
+                                        <div class="form-group mb-3">
+                                            <label for="type">Leave Type:</label>
+                                            <select id="type" name="type_leave" class="form-control" required>
+                                                <option value="" selected>Select application type</option>
+                                                <option value="Annual Leave"
+                                                        <c:if test="${type_leave eq 'Annual Leave'}">
+                                                            selected
+                                                        </c:if>
+                                                        <c:if test="${user.paidLeaveDays<=0}">
+                                                            disabled
+                                                        </c:if>
+                                                        >Annual</option>
+                                                <option value="Sick Leave"
+                                                        <c:if test="${type_leave eq 'Sick Leave'}">
+                                                            selected 
+                                                        </c:if>
+                                                        >Sick</option>
+                                                <option value="Personal Reason"
+                                                        <c:if test="${type_leave eq 'Personal Reason'}">
+                                                            selected
+                                                        </c:if>
+                                                        >Personal Reason</option>
+                                                <option value="Maternity"
+                                                        <c:if test="${type_leave eq 'Maternity'}">
+                                                            selected
+                                                        </c:if>
+                                                        >Maternity</option>
+                                                <option value="Family Business leave"
+                                                        <c:if test="${type_leave eq 'Family Business leave'}">
+                                                            selected
+                                                        </c:if>
+                                                        >Family Business</option>
+                                                <option value="Other"
+                                                        <c:if test="${type_leave eq 'Other'}">
+                                                            selected
+                                                        </c:if>
+                                                        >Other</option>
+                                            </select>
+                                            <c:if  test="${not empty messageLeave}">
+                                                <input type="text" name="messageLeave" style="color: red" class="form-control"value="${messageLeave}" />
                                             </c:if>
-                                        </c:if> 
-                                        <c:if test="${empty isEdit}">
-                                            <button type="submit" class="btn btn-primary btn-lg">Send</button>
-                                        </c:if> 
-                                    </div>
-                                    <div class="text-left">
-                                        <p
-                                            style="color:
-                                            <c:choose>
-                                                <c:when test="${user.paidLeaveDays<=0}">
-                                                    red
-                                                </c:when>
-                                            </c:choose>"
-                                            >Paid leave days remains: ${user.paidLeaveDays}</p>
-                                    </div>
-                                </form>
+                                        </div>
+
+                                        <div class="form-group mb-3">
+                                            <label for="startdate">From:</label>
+                                            <input 
+                                                type="date" 
+                                                name="startdate"
+                                                value="${startdate}" 
+                                                class="form-control" 
+                                                min="<%= java.time.LocalDate.now() %>"
+                                                required 
+                                                />
+                                        </div>
+
+                                        <div class="form-group mb-3">
+                                            <label for="enddate">To:</label>
+                                            <input
+                                                type="date"
+                                                name="enddate" 
+                                                value="${enddate}"
+                                                class="form-control"
+                                                min="<%= java.time.LocalDate.now() %>"
+                                                required/>
+                                        </div>
+                                        <c:if  test="${not empty messageDate}">
+                                            <input type="text" name="messageDate" style="color: red" class="form-control"value="${messageDate}" />
+                                        </c:if>
+                                        <div class="form-group mb-3">
+                                            <label for="content">Reason:</label>
+                                            <textarea id="content" name="content" class="form-control" rows="6" placeholder="Typing here..." required>${content}</textarea>
+                                        </div>
+                                        <c:if  test="${not empty messageContent}">
+                                            <input type="text" name="messageDate" style="color: red" class="form-control"value="${messageContent}" />
+                                        </c:if>
+                                        <div class="text-right">
+                                            <c:if test="${not empty isEdit}">
+                                                <button type="button" class="btn btn-warning btn-lg ms-2" style="background: red"
+                                                        onclick="confirmDelete(${id})">
+                                                    Delete
+                                                </button>
+                                                <button type="submit" class="btn btn-primary btn-lg" onclick="return confirm('Confirm to update!!')">Update</button>
+                                                <c:if test="${not empty isSuccess}">
+                                                    <script>
+                                                        alert("Update successfully!");
+                                                    </script>
+                                                </c:if>
+                                            </c:if> 
+                                            <c:if test="${empty isEdit}">
+                                                <button type="submit" class="btn btn-primary btn-lg">Send</button>
+                                            </c:if> 
+                                        </div>
+                                        <div class="text-left">
+                                            <p
+                                                style="color:
+                                                <c:choose>
+                                                    <c:when test="${user.paidLeaveDays<=0}">
+                                                        red
+                                                    </c:when>
+                                                </c:choose>"
+                                                >Paid leave days remains: ${user.paidLeaveDays}</p>
+                                        </div>
+                                    </form>
+                            </div>
                         </div>
                     </div>
-                </div>
-                <form id="deleteForm" action="${pageContext.request.contextPath}/deleteapplication" method="post" style="display:none;">
-                    <input type="hidden" name="type" value="LEAVE"/>
-                    <input type="hidden" name="id" id="deleteId"/>
-                </form>
-        </main>
-        <script src="${pageContext.request.contextPath}/assets2/js/jquery.min.js"></script>
-        <script src="${pageContext.request.contextPath}/assets2/vendors/bootstrap/js/popper.min.js"></script>
-        <script src="${pageContext.request.contextPath}/assets2/vendors/bootstrap/js/bootstrap.min.js"></script>
-        <script src="${pageContext.request.contextPath}/assets2/vendors/bootstrap-select/bootstrap-select.min.js"></script>
-        <script src="${pageContext.request.contextPath}/assets2/vendors/bootstrap-touchspin/jquery.bootstrap-touchspin.js"></script>
-        <script src="${pageContext.request.contextPath}/assets2/vendors/magnific-popup/magnific-popup.js"></script>
-        <script src="${pageContext.request.contextPath}/assets2/vendors/counter/waypoints-min.js"></script>
-        <script src="${pageContext.request.contextPath}/assets2/vendors/counter/counterup.min.js"></script>
-        <script src="${pageContext.request.contextPath}/assets2/vendors/imagesloaded/imagesloaded.js"></script>
-        <script src="${pageContext.request.contextPath}/assets2/vendors/masonry/masonry.js"></script>
-        <script src="${pageContext.request.contextPath}/assets2/vendors/masonry/filter.js"></script>
-        <script src="${pageContext.request.contextPath}/assets2/vendors/owl-carousel/owl.carousel.js"></script>
-        <script src='${pageContext.request.contextPath}/assets2/vendors/scroll/scrollbar.min.js'></script>
-        <script src="${pageContext.request.contextPath}/assets2/js/functions.js"></script>
-        <script src="${pageContext.request.contextPath}/assets2/vendors/chart/chart.min.js"></script>
-        <script src="${pageContext.request.contextPath}/assets2/js/admin.js"></script>
-        <script src="${pageContext.request.contextPath}/assets2/vendors/summernote/summernote.js"></script>
-        <script src="${pageContext.request.contextPath}/assets2/vendors/file-upload/imageuploadify.min.js"></script>
-        <script src='${pageContext.request.contextPath}/assets2/vendors/switcher/switcher.js'></script>
-        <script>
-                                            function confirmDelete(id) {
-                                                if (confirm("Do you confirm delete this application?")) {
-                                                    document.getElementById("deleteId").value = id;
-                                                    document.getElementById("deleteForm").submit();
-                                                }
-                                            }
-        </script>
-    </body>
-</html>
+                    <form id="deleteForm" action="${pageContext.request.contextPath}/deleteapplication" method="post" style="display:none;">
+                        <input type="hidden" name="type" value="LEAVE"/>
+                        <input type="hidden" name="id" id="deleteId"/>
+                    </form>
+                    </main>
+                    <script src="${pageContext.request.contextPath}/assets2/js/jquery.min.js"></script>
+                    <script src="${pageContext.request.contextPath}/assets2/vendors/bootstrap/js/popper.min.js"></script>
+                    <script src="${pageContext.request.contextPath}/assets2/vendors/bootstrap/js/bootstrap.min.js"></script>
+                    <script src="${pageContext.request.contextPath}/assets2/vendors/bootstrap-select/bootstrap-select.min.js"></script>
+                    <script src="${pageContext.request.contextPath}/assets2/vendors/bootstrap-touchspin/jquery.bootstrap-touchspin.js"></script>
+                    <script src="${pageContext.request.contextPath}/assets2/vendors/magnific-popup/magnific-popup.js"></script>
+                    <script src="${pageContext.request.contextPath}/assets2/vendors/counter/waypoints-min.js"></script>
+                    <script src="${pageContext.request.contextPath}/assets2/vendors/counter/counterup.min.js"></script>
+                    <script src="${pageContext.request.contextPath}/assets2/vendors/imagesloaded/imagesloaded.js"></script>
+                    <script src="${pageContext.request.contextPath}/assets2/vendors/masonry/masonry.js"></script>
+                    <script src="${pageContext.request.contextPath}/assets2/vendors/masonry/filter.js"></script>
+                    <script src="${pageContext.request.contextPath}/assets2/vendors/owl-carousel/owl.carousel.js"></script>
+                    <script src='${pageContext.request.contextPath}/assets2/vendors/scroll/scrollbar.min.js'></script>
+                    <script src="${pageContext.request.contextPath}/assets2/js/functions.js"></script>
+                    <script src="${pageContext.request.contextPath}/assets2/vendors/chart/chart.min.js"></script>
+                    <script src="${pageContext.request.contextPath}/assets2/js/admin.js"></script>
+                    <script src="${pageContext.request.contextPath}/assets2/vendors/summernote/summernote.js"></script>
+                    <script src="${pageContext.request.contextPath}/assets2/vendors/file-upload/imageuploadify.min.js"></script>
+                    <script src='${pageContext.request.contextPath}/assets2/vendors/switcher/switcher.js'></script>
+                    <script>
+                                                                function confirmDelete(id) {
+                                                                    if (confirm("Do you confirm delete this application?")) {
+                                                                        document.getElementById("deleteId").value = id;
+                                                                        document.getElementById("deleteForm").submit();
+                                                                    }
+                                                                }
+                    </script>
+                    </body>
+                    </html>
