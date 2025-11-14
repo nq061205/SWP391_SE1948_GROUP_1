@@ -337,9 +337,10 @@
                             </c:forEach>
 
                             <c:if test="${not empty message}">
-                                <tr>
-                                    <td colspan="10" style="text-align:center; color:red; font-weight:bold;">
-                                        No results found!
+                               <tr>
+                                    <td colspan="10" class="text-center text-muted py-4">
+                                        <i class="fa fa-inbox fa-2x mb-2"></i>
+                                        <p>No data for this page</p>
                                     </td>
                                 </tr>
                             </c:if>
