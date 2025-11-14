@@ -83,6 +83,7 @@ public class UpdateEmployeeServlet extends HttpServlet {
         boolean hasDeptManager = empDAO.hasDeptManager(emp.getDept().getDepId());
 
         boolean hasHRManager = empDAO.hasHRManager(emp.getDept().getDepId());
+        boolean hasAdmin = empDAO.hasAdminPosition();
         List<String> posList = empDAO.getAllPosition();
         List<Map<String, String>> posOptions = new ArrayList<>();
         for (String pos : posList) {
@@ -97,7 +98,7 @@ public class UpdateEmployeeServlet extends HttpServlet {
             boolean isDisabled = false;
             boolean notAllowed = false;
 
-            if (emp.getDept().getDepName().equals("HR") && pos.equals("Dept Manager")) {
+            if (emp.getDept().getDepName().equals("HR") && pos.equals("Department Manager")) {
                 isDisabled = true;
                 notAllowed = true;
             } else if (emp.getDept().getDepName().equals("HR") && pos.equals("HR Manager") && hasHRManager) {
@@ -109,6 +110,16 @@ public class UpdateEmployeeServlet extends HttpServlet {
             } else if (!emp.getDept().getDepName().equals("HR") && pos.equals("Dept Manager") && hasDeptManager) {
                 isDisabled = true;
                 notAllowed = false;
+            }
+
+            if (pos.equals("System Administrator")) {
+
+                if (!pos.equals(emp.getPositionTitle())) {
+                    if (hasAdmin) {
+                        isDisabled = true;
+                        notAllowed = false;
+                    }
+                }
             }
 
             option.put("disabled", String.valueOf(isDisabled));
@@ -169,10 +180,7 @@ public class UpdateEmployeeServlet extends HttpServlet {
         String positionTitle = request.getParameter("positionTitle");
         String button = request.getParameter("button");
         Employee emp = empDAO.getEmployeeByEmpCode(empCode);
-        if (email.length() > 100) {
-            request.setAttribute("EmailErr", "Email have the max length is 100!");
-            validate = true;
-        }
+
         if (empDAO.existsByEmail(email) && !email.equals(emp.getEmail())) {
             request.setAttribute("EmailErr", "Email have been existed!");
             validate = true;
@@ -184,9 +192,62 @@ public class UpdateEmployeeServlet extends HttpServlet {
             empDAO.updateEmployee(emp);
             request.setAttribute("message", "Update successfully!");
         }
+        boolean hasDeptManager = empDAO.hasDeptManager(emp.getDept().getDepId());
+
+        boolean hasHRManager = empDAO.hasHRManager(emp.getDept().getDepId());
+        boolean hasAdmin = empDAO.hasAdminPosition();
         List<String> posList = empDAO.getAllPosition();
+        List<Map<String, String>> posOptions = new ArrayList<>();
+        for (String pos : posList) {
+            Map<String, String> option = new HashMap<>();
+            option.put("value", pos);
+            if (pos.equals(emp.getPositionTitle())) {
+                option.put("selected", "true");
+            } else {
+                option.put("selected", "false");
+            }
+
+            boolean isDisabled = false;
+            boolean notAllowed = false;
+
+            if (emp.getDept().getDepName().equals("HR") && pos.equals("Department Manager")) {
+                isDisabled = true;
+                notAllowed = true;
+            } else if (emp.getDept().getDepName().equals("HR") && pos.equals("HR Manager") && hasHRManager) {
+                isDisabled = true;
+                notAllowed = false;
+            } else if (!emp.getDept().getDepName().equals("HR") && pos.equals("HR Manager")) {
+                isDisabled = true;
+                notAllowed = true;
+            } else if (!emp.getDept().getDepName().equals("HR") && pos.equals("Dept Manager") && hasDeptManager) {
+                isDisabled = true;
+                notAllowed = false;
+            }
+
+            if (pos.equals("System Administrator")) {
+
+                if (!pos.equals(emp.getPositionTitle())) {
+                    if (hasAdmin) {
+                        isDisabled = true;
+                        notAllowed = false;
+                    }
+                }
+            }
+
+            option.put("disabled", String.valueOf(isDisabled));
+            if (notAllowed) {
+                option.put("label", "(Not Allowed)");
+            } else if (isDisabled) {
+                option.put("label", "(Already Assigned)");
+            } else {
+                option.put("label", "");
+            }
+
+            posOptions.add(option);
+        }
 
         request.setAttribute("posList", posList);
+        request.setAttribute("posOptions", posOptions);
         ses.setAttribute("emp", emp);
         request.getRequestDispatcher("Views/updateemployee.jsp").forward(request, response);
 

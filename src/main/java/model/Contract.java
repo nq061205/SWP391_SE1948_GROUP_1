@@ -15,7 +15,7 @@ public class Contract {
 
     private int contractId;
     private Employee employee;
-    private String type;        // Internship, Probation, Fixed-term, Permanent, Seasonal, Other
+    private String type;
     private Date startDate;
     private Date endDate;
     private String contractImg;

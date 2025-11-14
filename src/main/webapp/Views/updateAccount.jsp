@@ -173,21 +173,33 @@
             </c:forEach>
             ];
 
+            const hasAdmin = ${sessionScope.hasAdmin ? "true" : "false"};
+
             function updateRoleOptions(selectedDep) {
                 const roleSelect = document.getElementById("modalRoleId");
                 const isDeptHasManager = managerDepIds.includes(selectedDep);
 
                 for (let opt of roleSelect.options) {
-                    const roleName = opt.text.toLowerCase();
-                    opt.text = roleName.includes("hr manager") ? "HR Manager" : roleName.includes("manager") ? "Dept Manager" : opt.text;
-                    opt.disabled = false; // reset
+                    let roleName = opt.text.toLowerCase();
+                    opt.text =
+                            roleName.includes("hr manager") ? "HR Manager" :
+                            roleName.includes("dept manager") ? "Dept Manager" :
+                            roleName.includes("admin") ? "Admin" :
+                            opt.text;
+
+                    opt.disabled = false;
+                    roleName = opt.text.toLowerCase();
+                    if (roleName.toLowerCase().includes("admin") && hasAdmin) {
+                        opt.disabled = true;
+                        opt.text = "Admin (Already Assigned)";
+                    }
 
                     if (roleName.includes("hr manager")) {
                         if (selectedDep !== "D002") {
                             opt.disabled = true;
                             opt.text = "HR Manager (Only for HR)";
                         }
-                    } else if (roleName.includes("manager")) {
+                    } else if (roleName.includes("dept manager")) {
                         if (selectedDep === "D002") {
                             opt.disabled = true;
                             opt.text = "Dept Manager (Not available in HR)";
@@ -197,7 +209,6 @@
                         }
                     }
                 }
-
                 if (roleSelect.options[roleSelect.selectedIndex]?.disabled) {
                     roleSelect.selectedIndex = 0;
                 }
@@ -206,6 +217,7 @@
             document.getElementById("modalDepId").addEventListener("change", function () {
                 updateRoleOptions(this.value);
             });
+
             document.addEventListener("DOMContentLoaded", function () {
                 const depSelect = document.getElementById("modalDepId");
                 if (depSelect.value) {

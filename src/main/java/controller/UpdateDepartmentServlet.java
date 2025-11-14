@@ -101,17 +101,8 @@ public class UpdateDepartmentServlet extends HttpServlet {
         Department dept = dDAO.getDepartmentByDepartmentId(deptID);
 
         boolean hasErr = false;
-        if (depName.length() > 100) {
-            request.setAttribute("NameErr", "Name have the max length is 100");
-            hasErr = true;
-        }
         if (dDAO.existsByDepName(depName) && !depName.equals(dept.getDepName())) {
             request.setAttribute("NameErr", "DeptName have been existed!");
-            hasErr = true;
-        }
-
-        if (description.length() > 255) {
-            request.setAttribute("descripErr", "Description have the max length is 255");
             hasErr = true;
         }
 
