@@ -8,6 +8,7 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import dal.RecruitmentPostDAO;
+import jakarta.servlet.http.HttpSession;
 import model.RecruitmentPost;
 
 public class JobSiteServlet extends HttpServlet {
@@ -16,7 +17,12 @@ public class JobSiteServlet extends HttpServlet {
             throws ServletException, IOException {
 
         String action = request.getParameter("action");
-
+        HttpSession ses = request.getSession();
+        String s = (String)ses.getAttribute("successMessage");
+        if(s != null){
+            request.setAttribute("successMessage", s);
+            ses.removeAttribute("successMessage");
+        }
         if ("view".equals(action)) {
             viewPostDetail(request, response);
         } else {

@@ -104,12 +104,12 @@ public class ApplyJobServlet extends HttpServlet {
             candidate.setPost(rDAO.getPostById(post));
 
             if (cDAO.insertCandidate(candidate) && (eDAO.getEmployeeByEmail(candidate.getEmail()) == null || eDAO.getEmployeeByEmail(candidate.getEmail()).isStatus() == false)) {
-                request.setAttribute("successMessage", "Your application has been submitted successfully!");
+                request.getSession().setAttribute("successMessage", "Your application has been submitted successfully!");
+                response.sendRedirect("jobsite");
             } else {
                 request.setAttribute("errorMessage", "Apply failed, Email has been approve in system. Please try again.");
+                request.getRequestDispatcher("Views/applyjob.jsp").forward(request, response);
             }
-
-            request.getRequestDispatcher("Views/applyjob.jsp").forward(request, response);
 
         } catch (Exception e) {
             request.setAttribute("errorMessage", "Error: " + e.getMessage());

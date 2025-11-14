@@ -174,7 +174,7 @@ public class ScheduleInterviewServlet extends HttpServlet {
         request.getRequestDispatcher("Views/scheduleInterview.jsp").forward(request, response);
     }
 
-    private List<Candidate> getAvailableCandidatesByPost(List<Candidate> all, int postId, List<Interview> interviewList) {
+        private List<Candidate> getAvailableCandidatesByPost(List<Candidate> all, int postId, List<Interview> interviewList) {
         List<Candidate> result = new ArrayList<>();
         Set<Integer> interviewedIds = new HashSet<>();
         for (Interview i : interviewList) {
