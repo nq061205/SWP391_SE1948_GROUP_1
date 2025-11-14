@@ -3,7 +3,6 @@
 <!DOCTYPE html>
 <html lang="en">
     <head>
-        <!-- META ============================================= -->
         <meta charset="utf-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -19,6 +18,70 @@
         <link rel="stylesheet" href="${pageContext.request.contextPath}/assets2/css/style.css">
         <link rel="stylesheet" href="${pageContext.request.contextPath}/assets2/css/dashboard.css">
         <link class="skin" rel="stylesheet" href="${pageContext.request.contextPath}/assets2/css/color/color-1.css">
+
+        <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+
+        <style>
+            .chart-section {
+                margin-top: 30px;
+            }
+            .chart-container {
+                background-color: white;
+                border-radius: 8px;
+                padding: 30px;
+                box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+                height: 100%;
+            }
+            .chart-title {
+                color: #6c757d;
+                font-size: 18px;
+                font-weight: 600;
+                margin-bottom: 25px;
+                text-align: left;
+            }
+            .chart-canvas-wrapper {
+                position: relative;
+                margin: 0 auto;
+            }
+            .legend-container {
+                display: flex;
+                flex-wrap: wrap;
+                gap: 15px;
+                margin-top: 25px;
+                justify-content: flex-start;
+            }
+            .legend-item {
+                display: flex;
+                align-items: center;
+                gap: 8px;
+                font-size: 13px;
+                color: #6c757d;
+            }
+            .legend-color {
+                width: 14px;
+                height: 14px;
+                border-radius: 3px;
+            }
+            .chart-note {
+                display: flex;
+                align-items: center;
+                gap: 8px;
+                margin-top: 20px;
+                font-size: 13px;
+                color: #6b7280;
+            }
+            .chart-note::before {
+                content: "";
+                width: 8px;
+                height: 8px;
+                background-color: #ff6b35;
+                border-radius: 50%;
+            }
+            .note-increase {
+                color: #10b981;
+                font-weight: 600;
+            }
+        </style>
     </head>
 
     <body class="ttr-opened-sidebar ttr-pinned-sidebar">
@@ -27,9 +90,6 @@
 
         <main class="ttr-wrapper">
             <div class="container-fluid">
-
-
-
                 <!-- Breadcrumb -->
                 <div class="db-breadcrumb">
                     <h4 class="breadcrumb-title">Dashboard</h4>
@@ -39,15 +99,14 @@
                     </ul>
                 </div>
 
+                <!-- Widget Cards -->
                 <div class="row">
                     <div class="col-md-6 col-lg-3">
                         <div class="widget-card widget-bg1">
                             <div class="wc-item">
-                                <h4 class="wc-title">Total Employees</h4>
-                                <span class="wc-des">All active employees</span>
-                                <span class="wc-stats"><span class="counter">${totalEmployee}</span></span>
-                                <div class="progress wc-progress"><div class="progress-bar" style="width: 75%;"></div></div>
-                                <span class="wc-progress-bx"><span class="wc-change">Change</span><span class="wc-number ml-auto">75%</span></span>
+                                <h4 class="wc-title">Total Account</h4>
+                                <span class="wc-des">All active and inactive accounts</span>
+                                <span class="wc-stats"><span class="counter">${totalEmployee}</span></span>                               
                             </div>
                         </div>
                     </div>
@@ -55,11 +114,9 @@
                     <div class="col-md-6 col-lg-3">
                         <div class="widget-card widget-bg2">
                             <div class="wc-item">
-                                <h4 class="wc-title">New Applications</h4>
-                                <span class="wc-des">Pending candidate applications</span>
-                                <span class="wc-stats counter">35</span>
-                                <div class="progress wc-progress"><div class="progress-bar" style="width: 60%;"></div></div>
-                                <span class="wc-progress-bx"><span class="wc-change">Change</span><span class="wc-number ml-auto">60%</span></span>
+                                <h4 class="wc-title">Active Account</h4>
+                                <span class="wc-des">Active Accounts</span>
+                                <span class="wc-stats counter">35</span>                             
                             </div>
                         </div>
                     </div>
@@ -69,74 +126,61 @@
                             <div class="wc-item">
                                 <h4 class="wc-title">Departments</h4>
                                 <span class="wc-des">Active departments</span>
-                                <span class="wc-stats counter">${totalDept}</span>
-                                <div class="progress wc-progress"><div class="progress-bar" style="width: 80%;"></div></div>
-                                <span class="wc-progress-bx"><span class="wc-change">Change</span><span class="wc-number ml-auto">80%</span></span>
+                                <span class="wc-stats counter">${totalDept}</span>                             
                             </div>
                         </div>
                     </div>
 
-                    <div class="col-md-6 col-lg-3">
-                        <div class="widget-card widget-bg4">
-                            <div class="wc-item">
-                                <h4 class="wc-title">On Leave Today</h4>
-                                <span class="wc-des">Current approved leaves</span>
-                                <span class="wc-stats counter">5</span>
-                                <div class="progress wc-progress"><div class="progress-bar" style="width: 30%;"></div></div>
-                                <span class="wc-progress-bx"><span class="wc-change">Change</span><span class="wc-number ml-auto">30%</span></span>
-                            </div>
-                        </div>
-                    </div>
+
                 </div>
 
-                <div class="row">
-                    <div class="col-lg-8 m-b30">
-                        <div class="widget-box">
-                            <div class="wc-title"><h4>Employee Growth Overview</h4></div>
-                            <div class="widget-inner"><canvas id="chart" width="100" height="45"></canvas></div>
-                        </div>
-                    </div>
-
-                    <div class="col-lg-4 m-b30">
-                        <div class="widget-box">
-                            <div class="wc-title"><h4>Notifications</h4></div>
-                            <div class="widget-inner">
-                                <div class="noti-box-list">
-                                    <ul>
-                                        <li><span class="notification-icon dashbg-gray"><i class="fa fa-check"></i></span><span class="notification-text"><span>Admin</span> approved your leave.</span><span class="notification-time"><span>10:30 AM</span></span></li>
-                                        <li><span class="notification-icon dashbg-yellow"><i class="fa fa-bullhorn"></i></span><span class="notification-text"><span>New job posting available.</span></span><span class="notification-time"><span>2 hrs ago</span></span></li>
-                                        <li><span class="notification-icon dashbg-green"><i class="fa fa-comments-o"></i></span><span class="notification-text"><span>HR</span> commented on your application.</span><span class="notification-time"><span>Yesterday</span></span></li>
-                                    </ul>
+                <!-- Charts Section -->
+                <div class="row chart-section">
+                    <!-- Account Roles Distribution Chart -->
+                    <div class="col-md-6">
+                        <div class="chart-container">
+                            <h2 class="chart-title">Account Roles Distribution</h2>
+                            <div class="chart-canvas-wrapper" style="max-width: 500px; margin: 0 auto;">
+                                <canvas id="rolesChart"></canvas>
+                            </div>
+                            <div class="legend-container">
+                                <div class="legend-item">
+                                    <span class="legend-color" style="background-color: #92afd7;"></span>
+                                    <span>Admin</span>
+                                </div>
+                                <div class="legend-item">
+                                    <span class="legend-color" style="background-color: #9ca8c2;"></span>
+                                    <span>HR</span>
+                                </div>
+                                <div class="legend-item">
+                                    <span class="legend-color" style="background-color: #8ac4ba;"></span>
+                                    <span>HR Manager</span>
+                                </div>
+                                <div class="legend-item">
+                                    <span class="legend-color" style="background-color: #f4d791;"></span>
+                                    <span>Employee</span>
+                                </div>
+                                <div class="legend-item">
+                                    <span class="legend-color" style="background-color: #eb8c8c;"></span>
+                                    <span>Dept Manager</span>
                                 </div>
                             </div>
                         </div>
                     </div>
-                </div>
 
-                <!-- USERS & CALENDAR -->
-                <div class="row">
-                    <div class="col-lg-6 m-b30">
-                        <div class="widget-box">
-                            <div class="wc-title"><h4>New Employees</h4></div>
-                            <div class="widget-inner">
-                                <ul class="new-user-list">
-                                    <li><span class="new-users-pic"><img src="${pageContext.request.contextPath}/assets2/images/testimonials/pic1.jpg" alt=""/></span><span class="new-users-text"><a href="#" class="new-users-name">Anna Strong</a><span class="new-users-info">Developer - IT Department</span></span></li>
-                                    <li><span class="new-users-pic"><img src="${pageContext.request.contextPath}/assets2/images/testimonials/pic2.jpg" alt=""/></span><span class="new-users-text"><a href="#" class="new-users-name">John Smith</a><span class="new-users-info">Marketing Coordinator</span></span></li>
-                                    <li><span class="new-users-pic"><img src="${pageContext.request.contextPath}/assets2/images/testimonials/pic3.jpg" alt=""/></span><span class="new-users-text"><a href="#" class="new-users-name">Sara Lee</a><span class="new-users-info">HR Assistant</span></span></li>
-                                </ul>
+                    <!-- Employees By Department Chart -->
+                    <div class="col-md-6">
+                        <div class="chart-container">
+                            <h2 class="chart-title">Employees By Department</h2>
+                            <div class="chart-canvas-wrapper">
+                                <canvas id="deptChart"></canvas>
                             </div>
-                        </div>
-                    </div>
-
-                    <div class="col-lg-6 m-b30">
-                        <div class="widget-box">
-                            <div class="wc-title"><h4>Calendar</h4></div>
-                            <div class="widget-inner"><div id="calendar"></div></div>
                         </div>
                     </div>
                 </div>
             </div>
         </main>
+
         <c:if test="${not empty logMessage}">
             <script>
                 alert("${logMessage}");
@@ -158,43 +202,125 @@
         <script src="${pageContext.request.contextPath}/assets2/vendors/calendar/fullcalendar.js"></script>
         <script src="${pageContext.request.contextPath}/assets2/js/functions.js"></script>
         <script src="${pageContext.request.contextPath}/assets2/js/admin.js"></script>
-
         <script>
-                setTimeout(() => {
-                    const logBox = document.getElementById("logBox");
-                    if (logBox)
-                        logBox.remove();
-                }, 3000);
-
-                $(document).ready(function () {
-                    var ctx = document.getElementById("chart").getContext("2d");
-                    new Chart(ctx, {
-                        type: 'line',
+                // Roles Donut Chart
+                const rolesChart = new Chart(document.getElementById('rolesChart').getContext('2d'), {
+                type: 'doughnut',
                         data: {
-                            labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun"],
-                            datasets: [{
-                                    label: 'Employee Growth',
-                                    data: [5, 10, 8, 15, 12, 20],
-                                    backgroundColor: 'rgba(66,165,245,0.2)',
-                                    borderColor: '#42a5f5',
-                                    borderWidth: 2,
-                                    fill: true
+                        labels: [
+            <c:forEach var="entry" items="${roleData}" varStatus="status">
+                        "${entry.key}"<c:if test="${!status.last}">,</c:if>
+            </c:forEach>
+                        ],
+                                datasets: [{
+                                data: [
+            <c:forEach var="entry" items="${roleData}" varStatus="status">
+                ${entry.value}<c:if test="${!status.last}">,</c:if>
+            </c:forEach>
+                                ],
+                                        backgroundColor: [
+                                                '#92afd7', '#9ca8c2', '#8ac4ba', '#f4d791', '#eb8c8c'
+                                        ],
+                                        borderWidth: 0,
+                                        cutout: '65%'
                                 }]
                         },
-                        options: {responsive: true, maintainAspectRatio: false}
-                    });
-
-                    $('#calendar').fullCalendar({
-                        header: {left: 'prev,next today', center: 'title', right: 'month,agendaWeek,agendaDay'},
-                        editable: false,
-                        eventLimit: true,
-                        events: [
-                            {title: 'Company Meeting', start: '2025-10-19'},
-                            {title: 'HR Interview', start: '2025-10-21'},
-                            {title: 'System Maintenance', start: '2025-10-23'}
-                        ]
-                    });
+                        options: {
+                        responsive: true,
+                                maintainAspectRatio: true,
+                                plugins: {
+                                legend: { display: false },
+                                        tooltip: {
+                                        backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                                                padding: 12,
+                                                titleColor: '#fff',
+                                                bodyColor: '#fff',
+                                                borderColor: '#ddd',
+                                                borderWidth: 1,
+                                                callbacks: {
+                                                label: function(context) {
+                                                const label = context.label || '';
+                                                const value = context.parsed || 0;
+                                                const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                                                const percentage = ((value / total) * 100).toFixed(1);
+                                                return label + ': ' + value + ' (' + percentage + '%)';
+                                                }
+                                                }
+                                        }
+                                }
+                        }
                 });
+                // Departments Bar Chart
+                const deptChart = new Chart(document.getElementById('deptChart').getContext('2d'), {
+                type: 'bar',
+                        data: {
+                        labels: [
+            <c:forEach var="entry" items="${deptData}" varStatus="status">
+                        "${entry.key}"<c:if test="${!status.last}">,</c:if>
+            </c:forEach>
+                        ],
+                                datasets: [{
+                                label: 'Number of Employees',
+                                        data: [
+            <c:forEach var="entry" items="${deptData}" varStatus="status">
+                ${entry.value}<c:if test="${!status.last}">,</c:if>
+            </c:forEach>
+                                        ],
+                                        backgroundColor: '#ff6b35',
+                                        borderRadius: 4,
+                                        barThickness: 28
+                                }]
+                        },
+                        options: {
+                        indexAxis: 'y',
+                                responsive: true,
+                                maintainAspectRatio: true,
+                                scales: {
+                                x: {
+                                type: 'linear', // BẮT BUỘC
+                                        min: 0, // quan trọng
+                                        beginAtZero: true,
+                                        suggestedMin: 0, // giúp scale khởi tạo từ 0 nếu Chart.js optimize lại
+                                        grid: {
+                                        color: '#f0f0f0',
+                                                drawBorder: false
+                                        },
+                                        ticks: {
+                                        color: '#999',
+                                                font: { size: 11 }
+                                        }
+                                },
+                                        y: {
+                                        type: 'category', // Labels phòng ban
+                                                grid: {
+                                                display: false,
+                                                        drawBorder: false
+                                                },
+                                                ticks: {
+                                                color: '#6c757d',
+                                                        font: { size: 13 },
+                                                        padding: 8
+                                                }
+                                        }
+                                },
+                                plugins: {
+                                legend: { display: false },
+                                        tooltip: {
+                                        backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                                                padding: 12,
+                                                titleColor: '#fff',
+                                                bodyColor: '#fff',
+                                                callbacks: {
+                                                label: function(context) {
+                                                return 'Employees: ' + context.parsed.x;
+                                                }
+                                                }
+                                        }
+                                }
+                        }
+                });
+
         </script>
+
     </body>
 </html>

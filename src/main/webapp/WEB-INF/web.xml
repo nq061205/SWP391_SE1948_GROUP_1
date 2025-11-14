@@ -228,6 +228,10 @@
         <servlet-name>AdminDashboardServlet</servlet-name>
         <servlet-class>controller.admin.AdminDashboardServlet</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>HRMDashboardServlet</servlet-name>
+        <servlet-class>controller.hrm.HRMDashboardServlet</servlet-class>
+    </servlet>
     <servlet-mapping>
         <servlet-name>HomePageServlet</servlet-name>
         <url-pattern>/homepage</url-pattern>
@@ -456,6 +460,10 @@
     <servlet-mapping>
         <servlet-name>AdminDashboardServlet</servlet-name>
         <url-pattern>/admin-dashboard</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>HRMDashboardServlet</servlet-name>
+        <url-pattern>/hrm-dashboard</url-pattern>
     </servlet-mapping>
     <session-config>
         <session-timeout>30</session-timeout>
