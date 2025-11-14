@@ -66,11 +66,6 @@
                 <!-- Breadcrumb -->
                 <div class="db-breadcrumb">
                     <h4 class="breadcrumb-title">Monthly Attendance Report</h4>
-                    <ul class="db-breadcrumb-list">
-                        <li><a href="${pageContext.request.contextPath}/Views/HR/hrDashboard.jsp"><i class="fa fa-home"></i>Home</a></li>
-                        <li>Attendance Management</li>
-                        <li>Monthly Report</li>
-                    </ul>
                 </div>
 
                 <!-- Alert Messages -->
@@ -376,10 +371,13 @@
                                                 </tbody>
                                             </table>
                                         </div>
+                                        <!-- Lock Attendance Section - Đặt sau bảng chấm công -->
+                                        <!-- Lock Attendance Section - Đặt sau bảng chấm công -->
                                         <div class="row mt-4">
                                             <div class="col-12">
                                                 <c:choose>
                                                     <c:when test="${isAttendanceLocked}">
+                                                        <!-- TRẠNG THÁI: ĐÃ KHÓA TẤT CẢ -->
                                                         <div class="card border-success shadow-sm">
                                                             <div class="card-body bg-light">
                                                                 <div class="row align-items-center">
@@ -413,6 +411,7 @@
                                                         </div>
                                                     </c:when>
                                                     <c:otherwise>
+                                                        <!-- TRẠNG THÁI: CHƯA KHÓA CÔNG -->
                                                         <div class="card border-danger shadow-sm">
                                                             <div class="card-body">
                                                                 <div class="row align-items-center">
@@ -449,6 +448,7 @@
                                                 </c:choose>
                                             </div>
                                         </div>
+
 
                                         <!-- PAGINATION -->                
                                         <c:if test="${totalPages > 1}">
@@ -675,7 +675,7 @@
 
                         <!-- Button Save - Hiện khi đang edit -->
                         <button type="button" class="btn btn-primary" id="modalSaveBtn" style="display:none;">
-                            <i class="fa fa-save"></i> Save & Lock
+                            <i class="fa fa-save"></i> Save
                         </button>
 
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">
@@ -777,6 +777,8 @@
     <script>
         var isProcessing = false;
 
+        var isMonthLocked = ${isAttendanceLocked};  
+
         function lockAttendance() {
             if (isProcessing) {
                 alert('⏳ Processing... Please wait!');
@@ -803,9 +805,9 @@
             var wasLockedOriginally = false;
             var hasBeenUnlocked = false;
 
-            // ========== XỬ LÝ KHI ĐÓNG MODAL ==========
+            // ========== PROCESS WHEN CLOSE MODAL ==========
             $('#attendanceDetailModal').on('hidden.bs.modal', function () {
-                if (hasBeenUnlocked && wasLockedOriginally) {
+                if (isMonthLocked && hasBeenUnlocked && wasLockedOriginally) {
                     console.log('⚠️ Modal closed without saving. Re-locking attendance...');
 
                     $.ajax({
@@ -819,11 +821,11 @@
                         dataType: 'json',
                         success: function (response) {
                             if (response.status === 'success') {
-                                console.log('✅ Attendance re-locked successfully');
+                                console.log('Attendance re-locked successfully');
                             }
                         },
                         error: function () {
-                            console.error('❌ Failed to re-lock attendance');
+                            console.error('Failed to re-lock attendance');
                         }
                     });
                 }
@@ -848,7 +850,6 @@
                 var otHours = cell.data('ot-hours') || 0;
                 var checkIn = cell.data('check-in') || '';
                 var checkOut = cell.data('check-out') || '';
-
                 var note = String(cell.data('note') || '');
                 var isLocked = cell.data('is-locked') || false;
 
@@ -873,6 +874,7 @@
                 wasLockedOriginally = isLocked;
                 hasBeenUnlocked = false;
 
+                // Fill data
                 $('#modalEmpId').val(empId);
                 $('#modalEmpCode').val(empCode);
                 $('#modalFullname').val(empFullname);
@@ -895,21 +897,28 @@
                     $('#noteContainer').show();
                 }
 
-                // Disable form fields
                 $('#modalWorkDay, #modalOTHours, #modalNote')
                         .prop('readonly', true)
                         .prop('disabled', true);
                 $('#modalStatusSelect').prop('disabled', true).selectpicker('refresh');
-
-                if (isLocked) {
-                    $('#modalLockBadge').removeClass('badge-success').addClass('badge-danger')
-                            .text('🔒 Locked').show();
-                    $('#modalUnlockBtn').show();
-                    $('#modalUpdateBtn').hide();
-                    $('#modalSaveBtn').hide();
+                
+                if (isMonthLocked) {
+                    if (isLocked) {
+                        $('#modalLockBadge').removeClass('badge-success').addClass('badge-danger')
+                                .text('🔒 Locked').show();
+                        $('#modalUnlockBtn').show();
+                        $('#modalUpdateBtn').hide();
+                        $('#modalSaveBtn').hide();
+                    } else {
+                        $('#modalLockBadge').removeClass('badge-danger').addClass('badge-success')
+                                .text('🔓 Unlocked').show();
+                        $('#modalUnlockBtn').hide();
+                        $('#modalUpdateBtn').show();
+                        $('#modalSaveBtn').hide();
+                    }
                 } else {
                     $('#modalLockBadge').removeClass('badge-danger').addClass('badge-success')
-                            .text('🔓 Unlocked').show();
+                            .text('🔓 Editable').show();
                     $('#modalUnlockBtn').hide();
                     $('#modalUpdateBtn').show();
                     $('#modalSaveBtn').hide();
@@ -932,7 +941,7 @@
                         dataType: 'json',
                         success: function (response) {
                             if (response.status === 'success') {
-                                alert('✅ ' + response.message);
+                                alert(response.message);
 
                                 currentAttendance.isLocked = false;
                                 hasBeenUnlocked = true;
@@ -950,11 +959,11 @@
                                 $('#modalUpdateBtn').hide();
                                 $('#modalSaveBtn').show();
                             } else {
-                                alert('❌ ' + response.message);
+                                alert(response.message);
                             }
                         },
                         error: function () {
-                            alert('❌ Error unlocking attendance!');
+                            alert('Error unlocking attendance!');
                         }
                     });
                 }
@@ -978,7 +987,6 @@
                 var otHours = parseFloat($('#modalOTHours').val());
                 var note = $('#modalNote').val().trim();
 
-                // Validation
                 if (![0, 0.5, 1].includes(workDay)) {
                     alert('Workday only accepts value 0, 0.5 or 1!');
                     $('#modalWorkDay').focus();
@@ -994,13 +1002,23 @@
                     $('#modalNote').focus();
                     return;
                 }
+                if (note.length > 200) {
+                    alert('Please keep note under 200 characters!');
+                    $('#modalNote').focus();
+                    return;
+                }
 
-                if (!confirm('💾 Save changes?\n\nAttendance will be automatically locked after saving.')) {
+                var confirmMsg = '💾 Save changes?';
+                if (isMonthLocked) {
+                    confirmMsg += '\n️ Attendance will be automatically LOCKED after saving.';
+                }
+
+                if (!confirm(confirmMsg)) {
                     return;
                 }
 
                 var data = {
-                    action: 'update',
+                    action: isMonthLocked ? 'update' : 'update-no-lock',
                     empId: $('#modalEmpId').val(),
                     date: $('#modalDate').val(),
                     status: $('#modalStatusSelect').val(),
@@ -1015,13 +1033,12 @@
                     data: data,
                     dataType: 'json',
                     success: function (response) {
-                        console.log('Save response:', response);
 
                         if (response.status === 'success') {
                             hasBeenUnlocked = false;
                             wasLockedOriginally = false;
 
-                            alert('✅ ' + (response.message || 'Updated and locked successfully!'));
+                            alert('✅ ' + (response.message || 'Updated successfully!'));
 
                             $('#attendanceDetailModal').off('hidden.bs.modal');
                             $('#attendanceDetailModal').modal('hide');
@@ -1030,13 +1047,11 @@
                                 location.reload();
                             }, 300);
                         } else {
-                            alert('❌ ' + (response.message || 'Update failed!'));
+                            alert(response.message || 'Update failed!');
                         }
                     },
                     error: function (xhr, status, error) {
-                        console.error('AJAX error:', status, error);
-                        console.error('Response:', xhr.responseText);
-                        alert('❌ Error updating attendance!');
+                        alert('Error updating attendance!');
                     }
                 });
             });

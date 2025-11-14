@@ -76,10 +76,14 @@ public class EditApplicationServlet extends HttpServlet {
         LeaveRequestDAO leaveDAO = new LeaveRequestDAO();
         OTRequestDAO otDAO = new OTRequestDAO();
         EmployeeDAO empDAO = new EmployeeDAO();
+        int id = Integer.parseInt(request.getParameter("id"));
+        if (leaveDAO.getLeaveRequestByLeaveId(id) == null && otDAO.getOTRequestByOTId(id) == null) {
+            response.sendRedirect("Views/error-404.jsp");
+            return;
+        }
         try {
             switch (type.toUpperCase()) {
                 case "LEAVE": {
-                    int id = Integer.parseInt(request.getParameter("id"));
                     LeaveRequest leave = leaveDAO.getLeaveRequestByLeaveId(id);
                     String leaveType = request.getParameter("type_leave");
                     String content = request.getParameter("content").trim();
@@ -109,7 +113,6 @@ public class EditApplicationServlet extends HttpServlet {
                     break;
                 }
                 case "OT": {
-                    int id = Integer.parseInt(request.getParameter("id"));
                     Date date = Date.valueOf(request.getParameter("date"));
                     double hours = Double.parseDouble(request.getParameter("hours"));
                     otDAO.updateOTRequest(id, date, hours);

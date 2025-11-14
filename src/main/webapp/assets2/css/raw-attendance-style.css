@@ -1,0 +1,44 @@
+.pagination .page-link {
+    color: #007bff;
+    border: 1px solid #dee2e6;
+}
+
+.pagination .page-item.active .page-link {
+    background-color: #007bff;
+    border-color: #007bff;
+    color: white;
+}
+
+.pagination .page-item.disabled .page-link {
+    color: #6c757d;
+    background-color: #fff;
+    border-color: #dee2e6;
+}
+
+.pagination .page-link:hover {
+    color: #0056b3;
+    text-decoration: none;
+    background-color: #e9ecef;
+    border-color: #dee2e6;
+}
+
+.bootstrap-select .dropdown-toggle {
+    color: #000000 !important;
+}
+
+.bootstrap-select .dropdown-toggle .filter-option {
+    color: #000000 !important;
+}
+
+.bootstrap-select .dropdown-menu li a {
+    color: #000000 !important;
+}
+
+.bootstrap-select .dropdown-menu li a:hover {
+    background-color: #007bff !important;
+    color: #ffffff !important;
+}
+
+.bootstrap-select .dropdown-toggle .filter-option-inner-inner {
+    color: #000000 !important;
+}

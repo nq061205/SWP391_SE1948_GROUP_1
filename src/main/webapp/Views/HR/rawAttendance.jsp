@@ -1,10 +1,3 @@
-
-<%-- 
-    Document   : dashboard
-    Created on : Oct 4, 2025, 4:14:15 PM
-    Author     : admin
---%>
-
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
@@ -56,75 +49,12 @@
 
         <!-- STYLESHEETS ============================================= -->
         <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/assets2/css/style.css">
+        <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/assets2/css/raw-attendance-style.css">
         <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/assets2/css/dashboard.css">
         <link class="skin" rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/assets2/css/color/color-1.css">
 
         <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css">
         <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.11.5/css/dataTables.bootstrap4.min.css">
-        <style>
-            .pagination .page-link {
-                color: #007bff;
-                border: 1px solid #dee2e6;
-            }
-
-            .pagination .page-item.active .page-link {
-                background-color: #007bff;
-                border-color: #007bff;
-                color: white;
-            }
-
-            .pagination .page-item.disabled .page-link {
-                color: #6c757d;
-                background-color: #fff;
-                border-color: #dee2e6;
-            }
-
-            .pagination .page-link:hover {
-                color: #0056b3;
-                text-decoration: none;
-                background-color: #e9ecef;
-                border-color: #dee2e6;
-            }
-
-            .bootstrap-select .dropdown-toggle {
-                color: #000000 !important;
-            }
-
-            .bootstrap-select .dropdown-toggle .filter-option {
-                color: #000000 !important;
-            }
-
-            .bootstrap-select .dropdown-menu li a {
-                color: #000000 !important;
-            }
-
-            .bootstrap-select .dropdown-menu li a:hover {
-                background-color: #007bff !important;
-                color: #ffffff !important;
-            }
-
-            .bootstrap-select .dropdown-toggle .filter-option-inner-inner {
-                color: #000000 !important;
-            }/*
-
-            #processingModal .modal-content {
-                border-radius: 15px;
-                box-shadow: 0 10px 40px rgba(0,0,0,0.2);
-            }
-
-            #processingModal .spinner-border {
-                border-width: 0.4rem;
-            }
-
-            #processingModal .progress {
-                border-radius: 10px;
-            }
-
-            #processingModal .modal-body {
-                padding: 3rem 2rem;
-            }*/
-        </style>
-
     </head>
 
     <body class="ttr-opened-sidebar ttr-pinned-sidebar">
@@ -134,12 +64,8 @@
             <div class="container-fluid">
                 <div class="db-breadcrumb">
                     <h4 class="breadcrumb-title">Raw Attendance</h4>
-                    <ul class="db-breadcrumb-list">
-                        <li><a href="hr-dashboard"><i class="fa fa-home"></i>Home</a></li>
-                        <li>Attendance Management</li>
-                        <li>Raw Attendance</li>
-                    </ul>
                 </div>
+                
                 <!-- Display Success Message if any -->
                 <c:if test="${not empty success}">
                     <div class="alert alert-success alert-dismissible fade show" role="alert">
@@ -609,9 +535,8 @@
                                 </div>
                                 <h3 class="mb-3"><i class="fa fa-cog fa-spin"></i> Processing Import</h3>
 
-                                <!-- THÊM ID ĐỂ UPDATE MESSAGES -->
                                 <p class="text-muted mb-2 lead" id="processingMessage" style="min-height: 30px;">
-                                    <strong>Preparing to import...</strong>
+                                    <strong>Caculating attendance...</strong>
                                 </p>
 
                                 <div class="alert alert-warning mt-4 mb-0">
@@ -663,7 +588,6 @@
 
                                                                         const form = this;
 
-                                                                        // Show loading modal
                                                                         $('#processingModal').modal({
                                                                             backdrop: 'static',
                                                                             keyboard: false
@@ -671,10 +595,8 @@
 
                                                                         isProcessing = true;
 
-                                                                        // Disable all buttons
                                                                         $('button, a.btn').prop('disabled', true).addClass('disabled');
 
-                                                                        // Animate processing messages
                                                                         const messages = [
                                                                             '<i class="fa fa-check text-success"></i> Validating data...',
                                                                             '<i class="fa fa-database text-primary"></i> Importing raw attendance records...',
@@ -687,7 +609,6 @@
                                                                         const messageElement = $('#processingMessage');
                                                                         let step = 0;
 
-                                                                        // Update message every 500ms
                                                                         const messageInterval = setInterval(function () {
                                                                             if (step < messages.length) {
                                                                                 messageElement.fadeOut(200, function () {
@@ -699,10 +620,9 @@
                                                                             }
                                                                         }, 800);
 
-                                                                        // DELAY SUBMIT ĐỂ MODAL HIỂN THỊ ÍT NHẤT 3 GIÂY
                                                                         setTimeout(function () {
                                                                             form.submit();
-                                                                        }, 3000); // 3 seconds - đủ thời gian để user đọc messages
+                                                                        }, 3000); 
                                                                     }
                                                                 });
                                                             });
@@ -712,7 +632,4 @@
                                                                 document.getElementById(formId).submit();
                                                             }
     </script>
-
-
-
 </html>
