@@ -30,100 +30,15 @@
         <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/assets2/css/typography.css">
         <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/assets2/css/shortcodes/shortcodes.css">
         <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/assets2/css/style.css">
+        <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/assets2/css/payroll-management-style.css">
         <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/assets2/css/dashboard.css">
         <link class="skin" rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/assets2/css/color/color-1.css">
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
-
-        <style>
-            .bg-success-light {
-                background-color: #d4edda !important;
-            }
-            .align-middle {
-                vertical-align: middle !important;
-            }
-            .salary-report-table {
-                font-size: 0.9rem;
-            }
-            .salary-report-table th {
-                font-weight: 600;
-                white-space: nowrap;
-            }
-            .salary-report-table td {
-                vertical-align: middle;
-            }
-            /* Sticky columns */
-            .sticky-table th:nth-child(1),
-            .sticky-table td:nth-child(1) {
-                position: sticky;
-                left: 0;
-                z-index: 5;
-                box-shadow: 2px 0 5px rgba(0,0,0,0.1);
-            }
-
-            .sticky-table thead th:nth-child(1) {
-                z-index: 10;
-                background-color: #343a40 !important; /* Đen */
-            }
-
-            .sticky-table tbody td:nth-child(1) {
-                background-color: #fff;
-            }
-
-            .sticky-table th:nth-child(2),
-            .sticky-table td:nth-child(2) {
-                position: sticky;
-                left: 100px;
-                z-index: 5;
-                box-shadow: 2px 0 5px rgba(0,0,0,0.1);
-            }
-
-            .sticky-table thead th:nth-child(2) {
-                z-index: 10;
-                background-color: #343a40 !important; /* Đen */
-            }
-
-            .sticky-table tbody td:nth-child(2) {
-                background-color: #fff;
-            }
-
-            /* Tất cả header đều đen */
-            .sticky-table thead th {
-                position: sticky;
-                top: 0;
-                z-index: 8;
-                background-color: #343a40 !important; /* Đen */
-                color: #fff !important; /* Chữ trắng */
-            }
-
-            /* Total row */
-            .sticky-table .table-active td:nth-child(1),
-            .sticky-table .table-active td:nth-child(2) {
-                background-color: #e9ecef !important;
-            }
-
-            /* Badge locked */
-            .badge-danger {
-                padding: 0.5rem 1rem;
-                font-size: 0.9rem;
-                animation: pulse 2s infinite;
-            }
-
-            @keyframes pulse {
-                0%, 100% {
-                    opacity: 1;
-                }
-                50% {
-                    opacity: 0.7;
-                }
-            }
-
-        </style>
-
     </head>
 
     <body class="ttr-opened-sidebar ttr-pinned-sidebar">
         <%@ include file="../CommonItems/Header/dashboardHeader.jsp" %>
-        <%@ include file="../CommonItems/Navbar/hrNavbar.jsp" %>
+        <%@ include file="../CommonItems/Navbar/empNavbar.jsp" %>
         <main class="ttr-wrapper">
             <div class="container-fluid">
                 <!-- Breadcrumb -->
@@ -162,19 +77,9 @@
                         <div class="widget-box">
                             <div class="wc-title">
                                 <div class="float-right">
-                                    <div class="btn-group">
-                                        <button type="button" class="btn btn-success btn-sm dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                            <i class="fa fa-download"></i> Export
-                                        </button>
-                                        <div class="dropdown-menu dropdown-menu-right">
-                                            <a class="dropdown-item" href="#" onclick="exportPayroll('excel')">
-                                                <i class="fa fa-file-excel-o text-success"></i> Export to Excel
-                                            </a>
-                                            <a class="dropdown-item" href="#" onclick="exportPayroll('pdf')">
-                                                <i class="fa fa-file-pdf-o text-danger"></i> Export to PDF
-                                            </a>
-                                        </div>
-                                    </div>
+                                    <button type="button" class="btn btn-success btn-sm" onclick="exportPayroll('excel')">
+                                        <i class="fa fa-file-excel-o"></i> Export to Excel
+                                    </button>
                                 </div>
                             </div>
                             <div class="widget-inner">
@@ -519,8 +424,7 @@
                                         </div>
                                     </c:otherwise>
                                 </c:choose>
-                                <!-- Lock Payroll Section - Đặt dưới cùng -->
-                                <!-- Lock Payroll Section - Đặt dưới cùng -->
+                                <!-- Lock Payroll Section -->
                                 <div class="row mt-4">
                                     <div class="col-12">
                                         <c:choose>
@@ -587,7 +491,7 @@
             </div>
         </main>
 
-         <script src="${pageContext.request.contextPath}/assets2/js/jquery.min.js"></script>
+        <script src="${pageContext.request.contextPath}/assets2/js/jquery.min.js"></script>
         <script src="${pageContext.request.contextPath}/assets2/vendors/bootstrap/js/popper.min.js"></script>
         <script src="${pageContext.request.contextPath}/assets2/vendors/bootstrap/js/bootstrap.min.js"></script>
         <script src="${pageContext.request.contextPath}/assets2/vendors/bootstrap-select/bootstrap-select.min.js"></script>
@@ -604,7 +508,7 @@
         <script src="${pageContext.request.contextPath}/assets2/vendors/chart/chart.min.js"></script>
         <script src="${pageContext.request.contextPath}/assets2/js/admin.js"></script>
         <script src="${pageContext.request.contextPath}/assets2/vendors/switcher/switcher.js"></script>
-        
+
         <script>
                                                                     var isProcessing = false;
 
@@ -688,12 +592,7 @@
                                                                             return;
                                                                         }
                                                                         var params = form.serialize();
-                                                                        var url;
-                                                                        if (format === 'excel') {
-                                                                            url = 'export-salary-excel?' + params;
-                                                                        } else if (format === 'pdf') {
-                                                                            url = 'export-salary-pdf?' + params;
-                                                                        }
+                                                                        var url = 'export-salary-excel?' + params;
                                                                         window.location.href = url;
                                                                     }
 
@@ -715,9 +614,5 @@
                                                                         }
                                                                     }
         </script>
-
-
-
     </body>
-
 </html>

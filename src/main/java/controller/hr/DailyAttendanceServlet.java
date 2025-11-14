@@ -72,6 +72,7 @@ public class DailyAttendanceServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         String action = request.getParameter("action");
+
         if ("lock".equals(action)) {
             String monthParam = request.getParameter("month");
             String yearParam = request.getParameter("year");
@@ -85,15 +86,15 @@ public class DailyAttendanceServlet extends HttpServlet {
 
                 if (success) {
                     request.setAttribute("successMessage",
-                            "✅ All attendance records for " + month + "/" + year + " have been LOCKED successfully!");
+                            "All attendance records for " + month + "/" + year + " have been LOCKED successfully!");
                 } else {
                     request.setAttribute("errorMessage",
-                            "❌ Failed to lock attendance. No unlocked records found for " + month + "/" + year);
+                            "Failed to lock attendance. No unlocked records found for " + month + "/" + year);
                 }
 
             } catch (Exception e) {
                 request.setAttribute("errorMessage",
-                        "❌ Error locking attendance: " + e.getMessage());
+                        "Error locking attendance: " + e.getMessage());
                 e.printStackTrace();
             }
         }
