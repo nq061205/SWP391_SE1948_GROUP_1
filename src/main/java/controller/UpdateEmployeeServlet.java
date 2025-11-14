@@ -97,8 +97,9 @@ public class UpdateEmployeeServlet extends HttpServlet {
 
             boolean isDisabled = false;
             boolean notAllowed = false;
+            String depName = emp.getDept().getDepName();
 
-            if (emp.getDept().getDepName().equals("HR") && pos.equals("Department Manager")) {
+            if (emp.getDept().getDepName().equals("HR") && pos.endsWith("Manager")) {
                 isDisabled = true;
                 notAllowed = true;
             } else if (emp.getDept().getDepName().equals("HR") && pos.equals("HR Manager") && hasHRManager) {
@@ -107,7 +108,10 @@ public class UpdateEmployeeServlet extends HttpServlet {
             } else if (!emp.getDept().getDepName().equals("HR") && pos.equals("HR Manager")) {
                 isDisabled = true;
                 notAllowed = true;
-            } else if (!emp.getDept().getDepName().equals("HR") && pos.equals("Dept Manager") && hasDeptManager) {
+            } else if (!emp.getDept().getDepName().equals("HR") && pos.endsWith("Manager") && hasDeptManager) {
+                isDisabled = true;
+                notAllowed = false;
+            } else if (pos.endsWith("Manager") && hasDeptManager && depName.equals(emp.getDept().getDepName())) {
                 isDisabled = true;
                 notAllowed = false;
             }
@@ -210,7 +214,7 @@ public class UpdateEmployeeServlet extends HttpServlet {
             boolean isDisabled = false;
             boolean notAllowed = false;
 
-            if (emp.getDept().getDepName().equals("HR") && pos.equals("Department Manager")) {
+            if (emp.getDept().getDepName().equals("HR") && pos.endsWith("Manager")) {
                 isDisabled = true;
                 notAllowed = true;
             } else if (emp.getDept().getDepName().equals("HR") && pos.equals("HR Manager") && hasHRManager) {
@@ -219,7 +223,7 @@ public class UpdateEmployeeServlet extends HttpServlet {
             } else if (!emp.getDept().getDepName().equals("HR") && pos.equals("HR Manager")) {
                 isDisabled = true;
                 notAllowed = true;
-            } else if (!emp.getDept().getDepName().equals("HR") && pos.equals("Dept Manager") && hasDeptManager) {
+            } else if (!emp.getDept().getDepName().equals("HR") && pos.endsWith("Manager") && hasDeptManager) {
                 isDisabled = true;
                 notAllowed = false;
             }

@@ -691,7 +691,8 @@ public class EmployeeDAO extends DBContext {
     }
 
     public boolean hasDeptManager(String depId) {
-        String sql = "SELECT COUNT(*) FROM employee WHERE dep_id = ? AND position_title LIKE '%Department Manager%'";
+        String sql = "SELECT COUNT(*) FROM employee " +
+                 "WHERE dep_id = ? AND position_title LIKE '%Manager%' AND position_title NOT LIKE '%HR Manager%'";
         try (Connection conn = DBContext.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setString(1, depId);
             try (ResultSet rs = ps.executeQuery()) {
@@ -1089,7 +1090,7 @@ public class EmployeeDAO extends DBContext {
 
     public static void main(String[] args) {
         EmployeeDAO empDAO = new EmployeeDAO();
-        System.out.println(empDAO.hasAdminRole("E041"));
+        System.out.println(empDAO.hasDeptManager("D005"));
     }
 
 }
