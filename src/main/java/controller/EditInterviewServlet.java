@@ -9,6 +9,7 @@ import jakarta.servlet.http.*;
 import java.io.IOException;
 import java.sql.Date;
 import java.sql.Time;
+import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.logging.Level;
@@ -69,11 +70,16 @@ public class EditInterviewServlet extends HttpServlet {
 
             LocalDate selectedDate = LocalDate.parse(dateStr);
             LocalTime selectedTime = LocalTime.parse(timeStr);
-
+            DayOfWeek weekday = selectedDate.getDayOfWeek();
             LocalDate minDate = LocalDate.now().plusDays(2);
             if (selectedDate.isBefore(minDate)) {
                 setError(request, response, id,
                         "You can only edit the schedule when it has more than 2 days left.");
+                return;
+            }
+            if(weekday.getValue() == 6 || weekday.getValue() == 7){
+                setError(request, response, id,
+                        "Please choose from monday to friday.");
                 return;
             }
 
