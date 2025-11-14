@@ -50,6 +50,7 @@ public class ApplicationServlet extends HttpServlet {
             request.setAttribute("update", flash);
             session.removeAttribute("flashMessage");
         }
+        
         EmployeeDAO empDAO = new EmployeeDAO();
         Employee emp = empDAO.getEmployeeByEmpId(user.getEmpId());
         String typeApplication = request.getParameter("typeapplication");
