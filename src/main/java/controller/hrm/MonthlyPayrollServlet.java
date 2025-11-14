@@ -255,7 +255,6 @@ public class MonthlyPayrollServlet extends HttpServlet {
             double netSalary = grossSalary - totalInsurance - p.getTax();
             sumNetSalary += netSalary;
         }
-        System.out.println("payrollList: " + payrollList);
 
         int standardWorkDays = payrollService.getStandardWorkDays(selectedMonth, selectedYear);
         boolean isPayrollLocked = payrollDAO.isPayrollLocked(selectedMonth, selectedYear);

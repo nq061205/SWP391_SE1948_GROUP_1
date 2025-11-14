@@ -92,15 +92,12 @@ public class PayrollService {
         boolean saved = payrollDAO.saveOrUpdatePayroll(payroll);
         
         if (saved) {
-            System.out.println("✅ SUCCESS: Payroll saved for empId: " + empId);
             return payroll;
         } else {
-            System.err.println("❌ FAILED: Could not save payroll for empId: " + empId);
             return null;
         }
         
     } catch (Exception e) {
-        System.err.println("❌ EXCEPTION for empId " + empId + ": " + e.getMessage());
         e.printStackTrace();
         throw e;
     }

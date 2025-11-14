@@ -450,7 +450,7 @@ public class LeaveRequestDAO extends DBContext {
     }
 
     public List<LeaveRequest> findLeaveBySystemLogFilteredPaged(
-           String search, String type,
+            String search, String type,
             Date startDate, Date endDate,
             int offset, int size) {
 
@@ -567,11 +567,21 @@ public class LeaveRequestDAO extends DBContext {
         }
     }
 
+    public int updateSystemLog(int leaveId, String message) {
+        String sql = "UPDATE hrm.leave_request SET system_log = ? WHERE leave_id = ?";
+        try (Connection conn = DBContext.getConnection(); PreparedStatement stm = conn.prepareStatement(sql)) {
+            stm.setString(1, message);
+            stm.setInt(2, leaveId);
+            return stm.executeUpdate();
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+        return 0;
+    }
+
     public static void main(String[] args) {
         LeaveRequestDAO dao = new LeaveRequestDAO();
-//        dao.updateLeaveStatus(3, "Pending", "ahihu");
-//        dao.updateLeaveRequest(1, "Annual Leave", "aaa", Date.valueOf("2025-12-12"), Date.valueOf("2025-12-12"), null);
-        System.out.println(dao.countLeaveBySystemlogFiltered(null, null, null, null));
+      dao.updateSystemLog(1, "hahaha");
     }
 
 }
