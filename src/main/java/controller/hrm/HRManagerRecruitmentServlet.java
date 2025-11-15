@@ -272,7 +272,7 @@ public class HRManagerRecruitmentServlet extends HttpServlet {
 
                 filtered = filtered.stream()
                     .filter(post -> {
-                        Timestamp timestamp = post.getCreatedAt();
+                        Timestamp timestamp = post.getUpdatedAt();
                         if (timestamp == null) return false;
                         Date postDate = new Date(timestamp.getTime());
                         return !postDate.before(finalStartDate) && !postDate.after(finalEndDate);
