@@ -125,6 +125,24 @@
                 transform: translateY(-1px);
                 box-shadow: 0 2px 4px rgba(220, 53, 69, 0.3);
             }
+            thead th.sortable {
+                cursor: pointer;
+                user-select: none;
+                position: relative;
+                white-space: nowrap;
+            }
+            thead th.sortable:hover {
+                background-color: rgba(0,0,0,0.05);
+            }
+            thead th.sortable .fa {
+                margin-left: 5px;
+                opacity: 0.3;
+                font-size: 12px;
+            }
+            thead th.sortable.asc .fa-sort-asc,
+            thead th.sortable.desc .fa-sort-desc {
+                opacity: 1;
+            }
         </style>
     </head>
     <body class="ttr-opened-sidebar ttr-pinned-sidebar">
@@ -251,8 +269,10 @@
                                     <table class="table table-striped table-bordered">
                                         <thead class="thead-warning">
                                             <tr>
-                                                <th width="60">Index</th>
+                                                <th width="60" class="sortable" data-sort="index">Index <i class="fa fa-sort"></i><i class="fa fa-sort-asc" style="display:none"></i><i class="fa fa-sort-desc" style="display:none"></i></th>
                                                 <th>Title</th>
+                                                <th width="150">Department</th>
+                                                <th width="120" class="sortable" data-sort="time">Time <i class="fa fa-sort"></i><i class="fa fa-sort-asc" style="display:none"></i><i class="fa fa-sort-desc" style="display:none"></i></th>
                                                 <th width="100">Status</th>
                                                 <th width="180">Actions</th>
                                             </tr>
@@ -262,24 +282,44 @@
                                                 <c:when test="${not empty posts}">
                                                     <c:forEach items="${posts}" var="post" varStatus="loopStatus">
                                                         <tr>
-                                                            <td class="text-center">
+                                                            <td class="text-center" data-index="${(currentPage - 1) * pageSize + loopStatus.index + 1}">
                                                                 <span class="badge badge-secondary">${(currentPage - 1) * pageSize + loopStatus.index + 1}</span>
                                                             </td>
                                                             <td>
                                                                 <div class="d-flex flex-column">
                                                                     <strong class="text-primary">${post.title}</strong>
                                                                     <small class="text-muted">
-                                                                        ID: ${post.postId} |
-                                                                        <c:choose>
-                                                                            <c:when test="${not empty post.department}">
-                                                                                Department: ${post.department.depName}
-                                                                            </c:when>
-                                                                            <c:otherwise>
-                                                                                Department: N/A
-                                                                            </c:otherwise>
-                                                                        </c:choose>
+                                                                        ID: ${post.postId}
                                                                     </small>
                                                                 </div>
+                                                            </td>
+                                                            <td>
+                                                                <c:choose>
+                                                                    <c:when test="${not empty post.department}">
+                                                                        <div class="d-flex flex-column">
+                                                                            <span class="font-weight-bold">${post.department.depName}</span>
+                                                                            <small class="text-muted">ID: ${post.department.depId}</small>
+                                                                        </div>
+                                                                    </c:when>
+                                                                    <c:otherwise>
+                                                                        <span class="text-muted">N/A</span>
+                                                                    </c:otherwise>
+                                                                </c:choose>
+                                                            </td>
+                                                            <td data-time="${post.updatedAt.time}">
+                                                                <c:choose>
+                                                                    <c:when test="${not empty post.updatedAt}">
+                                                                        <div class="d-flex flex-column">
+                                                                            <fmt:formatDate value="${post.updatedAt}" pattern="MMM dd, yyyy" var="updatedDate"/>
+                                                                            <fmt:formatDate value="${post.updatedAt}" pattern="HH:mm" var="updatedTime"/>
+                                                                            <span class="font-weight-bold">${updatedDate}</span>
+                                                                            <small class="text-muted">${updatedTime}</small>
+                                                                        </div>
+                                                                    </c:when>
+                                                                    <c:otherwise>
+                                                                        <span class="text-muted">N/A</span>
+                                                                    </c:otherwise>
+                                                                </c:choose>
                                                             </td>
                                                             <td class="text-center">
                                                                 <c:choose>
@@ -323,7 +363,7 @@
                                                 </c:when>
                                                 <c:otherwise>
                                                     <tr>
-                                                        <td colspan="4" class="text-center p-0">
+                                                        <td colspan="6" class="text-center p-0">
                                                             <div class="text-center py-5">
                                                                 <div class="mb-3">
                                                                     <i class="fa fa-inbox fa-3x text-muted"></i>
@@ -410,6 +450,55 @@
                     $('#statusFilter').val('');
                     $('#pageSizeSelect').val('10');
                     $('#postReviewFilterForm').submit();
+                });
+
+                // Table sorting
+                $('.sortable').click(function() {
+                    var $th = $(this);
+                    var sortType = $th.data('sort');
+                    var $table = $th.closest('table');
+                    var $tbody = $table.find('tbody');
+                    var rows = $tbody.find('tr').toArray();
+                    var isAsc = $th.hasClass('asc');
+                    
+                    // Remove sort classes from all headers
+                    $('.sortable').removeClass('asc desc');
+                    $('.sortable .fa').hide();
+                    $('.sortable .fa-sort').show();
+                    
+                    // Add sort class to current header
+                    if (isAsc) {
+                        $th.removeClass('asc').addClass('desc');
+                        $th.find('.fa').hide();
+                        $th.find('.fa-sort-desc').show();
+                    } else {
+                        $th.addClass('asc');
+                        $th.find('.fa').hide();
+                        $th.find('.fa-sort-asc').show();
+                    }
+                    
+                    // Sort rows
+                    rows.sort(function(a, b) {
+                        var aVal, bVal;
+                        if (sortType === 'index') {
+                            aVal = parseInt($(a).find('td[data-index]').data('index'));
+                            bVal = parseInt($(b).find('td[data-index]').data('index'));
+                        } else if (sortType === 'time') {
+                            aVal = parseInt($(a).find('td[data-time]').data('time')) || 0;
+                            bVal = parseInt($(b).find('td[data-time]').data('time')) || 0;
+                        }
+                        
+                        if (isAsc) {
+                            return bVal - aVal;
+                        } else {
+                            return aVal - bVal;
+                        }
+                    });
+                    
+                    // Reappend sorted rows
+                    $.each(rows, function(index, row) {
+                        $tbody.append(row);
+                    });
                 });
             });
         </script>

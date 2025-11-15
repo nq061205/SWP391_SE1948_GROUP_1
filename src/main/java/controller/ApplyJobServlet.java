@@ -103,8 +103,34 @@ public class ApplyJobServlet extends HttpServlet {
             candidate.setPhone(phone);
             candidate.setPost(rDAO.getPostById(post));
 
-            if (cDAO.insertCandidate(candidate) && (eDAO.getEmployeeByEmail(candidate.getEmail()) == null || eDAO.getEmployeeByEmail(candidate.getEmail()).isStatus() == false)) {
-                request.getSession().setAttribute("successMessage", "Your application has been submitted successfully!");
+            if (cDAO.insertCandidate(candidate)
+                    && (eDAO.getEmployeeByEmail(candidate.getEmail()) == null
+                    || !eDAO.getEmployeeByEmail(candidate.getEmail()).isStatus())) {
+
+                try {
+                    String subject = "Application Received – Human Tech Group";
+
+                    String content
+                            = "Dear " + candidate.getName() + ",\n\n"
+                            + "Thank you for applying for the position: " + candidate.getPost().getTitle() + ".\n"
+                            + "We have successfully received your application and CV.\n\n"
+                            + "Our recruitment team will carefully review your profile. "
+                            + "If your qualifications match our requirements, we will contact you for the next steps.\n\n"
+                            + "If you have any questions or need further assistance, please feel free to reply to this email.\n\n"
+                            + "Best regards,\n"
+                            + "Human Tech Recruitment Team\n"
+                            + "Human Tech Group";
+
+                    EmailUtil.sendEmail(candidate.getEmail(), subject, content);
+
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                }
+                if (cDAO.getCandidateByEmail(candidate.getEmail()) != null && cDAO.getCandidateByEmail(candidate.getEmail()).getResult() == null) {
+                    request.getSession().setAttribute("successMessage", "Your application has been updated successfully!");
+                } else {
+                    request.getSession().setAttribute("successMessage", "Your application has been submitted successfully!");
+                }
                 response.sendRedirect("jobsite");
             } else {
                 request.setAttribute("errorMessage", "Apply failed, Email has been approve in system. Please try again.");

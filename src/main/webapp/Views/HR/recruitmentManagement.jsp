@@ -27,7 +27,6 @@
         <link class="skin" rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/assets2/css/color/color-1.css">
 
         <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/assets2/vendors/summernote/summernote.css">
-        <link href="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote-lite.min.css" rel="stylesheet">
         <style>
             .badge-purple {
                 background-color: #6f42c1;
@@ -65,14 +64,7 @@
         <jsp:include page="../CommonItems/Navbar/empNavbar.jsp" />
         <main class="ttr-wrapper">
             <div class="container-fluid">
-                <div class="db-breadcrumb">
-                    <h4 class="breadcrumb-title">Recruitment Management</h4>
-                    <ul class="db-breadcrumb-list">
-                        <li><a href="${pageContext.request.contextPath}/Views/HR/hrDashboard.jsp"><i class="fa fa-home"></i>Home</a></li>
-                        <li>Recruitment</li>
-                        <li>Approved Posts</li>
-                    </ul>
-                </div>
+                
 
                 <c:if test="${not empty successMessage}">
                     <div class="alert alert-success alert-dismissible fade show" role="alert">
@@ -717,9 +709,7 @@
         <script src="${pageContext.request.contextPath}/assets2/vendors/chart/chart.min.js"></script>
         <script src="${pageContext.request.contextPath}/assets2/js/admin.js"></script>
 
-
         <script src="${pageContext.request.contextPath}/assets2/vendors/summernote/summernote.js"></script>
-        <script src="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote-lite.min.js"></script>
 
         <script type="text/javascript">
 
@@ -782,7 +772,7 @@
                     }
                 });
 
-                // Clear filter for Notification section
+         
                 $('#clearNotifFilter').click(function(e) {
                     e.preventDefault();
                     $('#notifSearch').val('');
@@ -794,7 +784,7 @@
                     $('#notifFilterForm').submit();
                 });
 
-                // Clear filter for Approved Posts section
+         
                 $('#clearApprovedFilter').click(function(e) {
                     e.preventDefault();
                     $('#searchInput').val('');

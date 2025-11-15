@@ -51,7 +51,7 @@
                 
                 <% if (rpDAO.hasPermission(roleId, 7)) { %>
                 <li>
-                    <a href="${pageContext.request.contextPath}/Views/listapplication.jsp" class="ttr-material-button">
+                    <a class="ttr-material-button" style="color: #333">
                         <span class="ttr-icon"><i class="ti-clipboard"></i></span>
                         <span class="ttr-label">Application</span>
                         <span class="ttr-arrow-icon"><i class="fa fa-angle-down"></i></span>
@@ -182,7 +182,7 @@
 
                 <% if (rpDAO.hasPermission(roleId, 8)) { %>
                 <li>
-                    <a href="${pageContext.request.contextPath}/Views/listapplication.jsp" class="ttr-material-button">
+                    <a class="ttr-material-button" style="color: #333">
                         <span class="ttr-icon"><i class="ti-ruler-pencil"></i></span>
                         <span class="ttr-label">Application Management</span>
                         <span class="ttr-arrow-icon"><i class="fa fa-angle-down"></i></span>

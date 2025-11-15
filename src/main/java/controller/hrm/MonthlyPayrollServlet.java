@@ -288,7 +288,7 @@ public class MonthlyPayrollServlet extends HttpServlet {
         request.setAttribute("selectedDepartment", department != null ? department : "");
         request.setAttribute("standardWorkDays", standardWorkDays);
 
-        request.getRequestDispatcher("Views/HRM/payrollManagement.jsp").forward(request, response);
+        request.getRequestDispatcher("Views/HRM/PayrollManagement.jsp").forward(request, response);
     }
 
     /**
