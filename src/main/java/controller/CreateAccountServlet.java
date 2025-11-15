@@ -205,7 +205,7 @@ public class CreateAccountServlet extends HttpServlet {
 
             Role role = roleDAO.getRoleByRoleId(roleId);
             emp.setRole(role);
-            emp.setPassword("123456");
+            emp.setPassword("Newpassword@");
             emp.setGender(true);
             emp.setStatus(true);
             empDAO.createEmployee(emp);
