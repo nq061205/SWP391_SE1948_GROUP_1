@@ -332,9 +332,10 @@
         <script>
             document.addEventListener("DOMContentLoaded", function () {
                 const addModalEl = document.getElementById('addModal');
-                const addModal = new bootstrap.Modal(addModalEl); // chỉ tạo 1 lần
+                const addModal = new bootstrap.Modal(addModalEl);
 
                 const depSelect = document.getElementById('modalDepId');
+                
 
             <% if (request.getAttribute("EmailErr") != null) { %>
                 addModal.show();

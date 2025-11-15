@@ -212,12 +212,16 @@ public class CreateAccountServlet extends HttpServlet {
         }
         List<Interview> interList = interDAO.getFilteredInterviewsNotInEmployee("Pass", searchKey, startApplyDate, endApplyDate, startInterviewDate, endInterviewDate, page, pageSize);
         List<Role> roleList =roleDAO.getAllRoles();
+        List<String> managerDepIds =depDAO.getDepartmentsHavingManager();
+        boolean hasAdmin =empDAO.existsByRoleName("Admin");
         Map<String, Role> uniqueRolesMap = new LinkedHashMap<>();
         for (Role r : roleList) {
             uniqueRolesMap.putIfAbsent(r.getRoleName(), r);
         }
 
         List<Role> uniqueRoles = new ArrayList<>(uniqueRolesMap.values());
+         request.setAttribute("hasAdmin", hasAdmin);
+         ses.setAttribute("managerDepIds", managerDepIds);
         request.setAttribute("passedList", interList);
         ses.setAttribute("roleList", uniqueRoles);
         ses.setAttribute("deptList", depDAO.getAllDepartment());
